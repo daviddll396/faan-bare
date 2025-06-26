@@ -1,0 +1,264 @@
+.dashboard-page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.customer-dashboard-top {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.wallet-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e4e4;
+  padding: 32px 36px;
+
+  min-width: 340px;
+  max-width: 100%;
+}
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.wallet-icon img {
+  width: 48px;
+  height: 48px;
+}
+.wallet-label {
+  color: #969696;
+  font-size: 16px;
+  font-weight: 500;
+}
+.wallet-balance {
+  color: #007948;
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.fund-wallet-btn {
+  border: 1.5px solid #007948;
+  background: #fff;
+  color: #007948;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.fund-wallet-btn:hover {
+  background: #eafaf3;
+}
+.booking-cards-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 0;
+}
+.booking-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e4e4;
+  padding: 28px 0 18px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 160px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.booking-label {
+  color: #969696;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.booking-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #070600;
+}
+.booking-card.completed .booking-value {
+  color: #22c55e;
+}
+.booking-card.cancelled .booking-value {
+  color: #ef4444;
+}
+.booking-card.pending .booking-value {
+  color: #f59e42;
+}
+.booking-card.total .booking-value {
+  color: #2563eb;
+}
+@media (max-width: 900px) {
+  .booking-cards-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .wallet-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+}
+
+.fund-wallet-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+  padding: 36px 32px 32px 32px;
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fund-wallet-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #222;
+}
+.fund-wallet-title {
+  font-weight: 700;
+  font-size: 22px;
+  color: #222b45;
+  margin-bottom: 10px;
+  text-align: left;
+  width: 100%;
+}
+.fund-wallet-divider {
+  width: 100%;
+  height: 1px;
+  background: #e4e4e4;
+  margin-bottom: 22px;
+}
+.fund-wallet-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.fund-wallet-label {
+  color: #969696;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.fund-wallet-input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.fund-wallet-currency {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #007948;
+  font-size: 22px;
+  font-weight: 600;
+  pointer-events: none;
+}
+.fund-wallet-input {
+  width: 100%;
+  border: 2px solid #007948;
+  border-radius: 10px;
+  padding: 16px 18px 16px 44px;
+  font-size: 22px;
+  font-family: inherit;
+  background: #fff;
+  color: #222b45;
+  outline: none;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+.fund-wallet-input:focus {
+  border: 2px solid #15976c;
+}
+.fund-wallet-submit-btn {
+  width: 100%;
+  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.fund-wallet-submit-btn:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+
+.fund-wallet-success-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+  padding: 36px 32px 32px 32px;
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fund-wallet-success-icon-wrap {
+
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.fund-wallet-success-icon {
+  width: 100%;
+  height: 100%;
+}
+.fund-wallet-success-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #222b45;
+  text-align: center;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+.fund-wallet-success-desc {
+  color: #969696;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.fund-wallet-success-modal .fund-wallet-submit-btn {
+  width: 100%;
+  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.fund-wallet-success-modal .fund-wallet-submit-btn:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}

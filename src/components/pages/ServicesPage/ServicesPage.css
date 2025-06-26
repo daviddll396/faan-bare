@@ -1,0 +1,517 @@
+.category-badge-table {
+  display: flex;
+  align-items: center;
+  min-width: 173px;
+  position: relative;
+  padding: 10px 40px 10px 22px;
+  font-size: 15px;
+  color: #898989;
+  background: #f7f7f7;
+  background: transparent;
+  border-radius: 5px;
+  font-weight: 700;
+  border: 1px solid #e2e2e2;
+  cursor: pointer;
+}
+
+.category-chevron {
+  position: absolute;
+  right: 15px;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.border-button-flex {
+  display: flex;
+  gap: 10px;
+}
+
+.add-service-form-card {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e4e4e4;
+  padding: 30px 42px 30px 42px;
+  width: 100%;
+}
+
+.add-more-items-btn {
+  width: 200px;
+  height: 61px;
+  color: #007948;
+  background-color: #0079480d;
+  border: 1px solid #007948;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.service-index-circle {
+  color: red;
+}
+
+.service-form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.service-index-circle {
+  min-width: 48px;
+  min-height: 48px;
+  max-width: 48px;
+  max-height: 48px;
+  border-radius: 50%;
+  border: 2px solid #007948;
+  color: #007948;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.service-field-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+
+  height: 100%;
+}
+
+.service-field-group.service-name-group {
+  width: 531px;
+  min-width: 531px;
+  max-width: 531px;
+}
+
+.service-field-group.currency-group {
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+}
+
+.service-field-group.price-group {
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
+  margin: 0px;
+}
+
+.service-field-group label {
+  color: #6c7278;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.service-field-group input,
+.service-field-group select {
+  border: 1.5px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 18px;
+  font-family: inherit;
+  background: #fafafa;
+  color: #070600;
+  outline: none;
+  transition: border 0.2s;
+  font-weight: 500;
+}
+.service-field-group input {
+  background: #fff;
+}
+
+.service-field-group input:focus,
+.service-field-group select:focus {
+  border: 1.5px solid #007948;
+}
+
+/* Remove grid for user-form-list */
+.user-form-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-dropdown-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-dropdown-wrapper select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #fafafa;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 18px;
+  font-family: inherit;
+  color: #070600;
+  font-weight: 600;
+  outline: none;
+  transition: border 0.2s;
+  cursor: pointer;
+}
+
+.select-dropdown-wrapper select:focus {
+  border: 1.5px solid #007948;
+}
+
+.select-chevron {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.2s;
+}
+
+.select-dropdown-wrapper select option {
+  background: #fff;
+  color: #070600;
+  font-size: 17px;
+  font-family: inherit;
+  padding: 12px 16px;
+}
+
+.services-customer-page {
+  width: 100%;
+  padding: 0 16px;
+}
+.services-customer-header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 43px;
+  margin-top: 43px;
+}
+.services-customer-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #070600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.services-customer-title-icon {
+  width: 36px;
+  height: 36px;
+  background: #eafaf3;
+  border-radius: 8px;
+  display: inline-block;
+  margin-right: 8px;
+}
+.services-customer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  width: 100%;
+}
+.service-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e4e4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  transition: box-shadow 0.2s;
+}
+.service-card-img-wrap {
+  width: 100%;
+  height: 140px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  background: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.service-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+}
+.service-card-name {
+  font-size: 16px;
+  color: #969696;
+  font-weight: 500;
+  margin: 18px 0 0 0;
+  padding: 0 18px;
+  min-height: 36px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.service-card-price {
+  font-size: 22px;
+  font-weight: 800;
+  color: #070600;
+  margin: 2px 0 18px 0;
+  padding: 0 18px;
+}
+
+.service-card-btn {
+  width: calc(100% - 36px);
+  margin: 0 auto;
+  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  transition: background 0.2s;
+  display: block;
+}
+.service-card-btn:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+@media (max-width: 700px) {
+  .services-customer-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .service-card-img-wrap {
+    height: 120px;
+  }
+}
+
+.booking-form-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e4e4e4;
+  padding: 36px 32px 32px 32px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+.booking-tabs-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 0;
+  margin-top: 30px;
+}
+.booking-tab {
+  font-size: 16px;
+  font-weight: 500;
+  color: #969696;
+  cursor: pointer;
+  padding-bottom: 8px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border 0.2s;
+}
+.booking-tab.active {
+  color: #007948;
+  border-bottom: 2px solid #007948;
+}
+.booking-tab-underline {
+  width: 100%;
+  height: 1.5px;
+  background: #e4e4e4;
+  margin-bottom: 24px;
+  margin-top: -2px;
+}
+.booking-form-fields-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.booking-form-field-col {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.booking-form-label {
+  color: #6c7278;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+.booking-form-input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  padding: 0 18px;
+  font-size: 16px;
+  font-family: inherit;
+  background: #fff;
+  color: #070600;
+  outline: none;
+  font-weight: 500;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+.booking-form-input:focus {
+  border: 1px solid #007948;
+}
+.booking-form-input:disabled {
+  background: #f8f9fa;
+  color: #6c7278;
+  cursor: not-allowed;
+}
+.booking-add-passenger-btn {
+  border: 1px solid #007948;
+  background: #fff;
+  color: #007948;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 12px 28px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  margin-top: 20px;
+  transition: background 0.2s, color 0.2s;
+}
+.booking-add-passenger-btn:hover {
+  background: #eafaf3;
+}
+.booking-passengers-table-section {
+  margin-top: 18px;
+}
+.booking-passengers-table-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #070600;
+  margin-bottom: 10px;
+}
+.booking-passengers-table-wrap {
+  overflow-x: auto;
+}
+.booking-passengers-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  margin-bottom: 0;
+}
+.booking-passengers-table th,
+.booking-passengers-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e4e4e4;
+  text-align: left;
+}
+.booking-passengers-table th {
+  color: #070600;
+  font-weight: 600;
+  font-size: 15px;
+  background: #fff;
+}
+.booking-passengers-table td {
+  color: #898989;
+  font-weight: 500;
+  font-size: 15px;
+}
+.booking-delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.booking-summary-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #dbdbdb;
+  padding: 30px;
+  margin-top: 32px;
+  width: 100%;
+  max-width: 472px;
+  margin-left: 0;
+  margin-right: auto;
+  box-shadow: none;
+  display: block;
+}
+.booking-summary-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: #070600;
+  margin-bottom: 30px;
+  letter-spacing: 0.01em;
+}
+.booking-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 16px;
+  padding: 0 10px;
+}
+.booking-summary-row.total {
+  font-weight: 700;
+  background: #f6f8f9;
+  padding: 12px 10px;
+  border-radius: 6px;
+  font-size: 17px;
+  margin-bottom: 24px;
+}
+.booking-pay-btn {
+  width: 100%;
+  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 18px 0;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-top: 18px;
+  margin-bottom: 0;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(34, 43, 69, 0.06);
+  display: block;
+}
+.booking-pay-btn:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+@media (max-width: 900px) {
+  .booking-form-fields-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.booking-form-error {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 12px 0 0 0;
+  text-align: left;
+}
+
+select.booking-form-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #fff url("/icons/chevron-down.svg") no-repeat right 16px
+    center/18px 18px;
+  padding-right: 40px;
+  cursor: pointer;
+}

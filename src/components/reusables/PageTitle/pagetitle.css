@@ -1,0 +1,73 @@
+.page-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title-section img {
+  width: 24px;
+  height: 24px;
+}
+
+.page-title-section h2 {
+  color: #007948;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.breadcrumb-trail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.breadcrumb-link {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #969696;
+  cursor: pointer;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.breadcrumb-label-previous {
+  color: #969696 !important;
+  font-size: 18px;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+.breadcrumb-label {
+  color: #007948;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.breadcrumb-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.breadcrumb-icon-previous {
+  fill: #969696 !important;
+  filter: grayscale(1) brightness(0.7) !important;
+  opacity: 0.5 !important;
+}
+
+.breadcrumb-chevron-icon {
+  width: 7px !important;
+  height: 12px !important;
+}

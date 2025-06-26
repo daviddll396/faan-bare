@@ -1,0 +1,356 @@
+.customer-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #e4e4e4;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.customer-tab {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #b0b0b0;
+  padding: 0 7px 16px 7px;
+  margin-right: 16px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.customer-tab.active {
+  color: #007948;
+}
+
+.customer-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: #007948;
+  border-radius: 2px;
+}
+
+.customer-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding: 30px 47px 91px 47px;
+  max-width: 910px;
+
+  border: 1px solid #e4e4e4;
+}
+
+.customer-card-title {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #222b45;
+}
+
+.customer-card-helper {
+  color: #969696;
+  font-size: 17px;
+  font-weight: 400;
+  margin-bottom: 39px;
+  width: 70%;
+}
+
+.customer-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.customer-form-row {
+  display: flex;
+  gap: 24px;
+}
+
+.customer-form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.customer-form-group label {
+  color: #6c7278;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.customer-form-group input {
+  border: 1.5px solid #d9d9d9;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 16px;
+  font-family: inherit;
+  background: #fff;
+  color: #222b45;
+  outline: none;
+  transition: border 0.2s;
+  font-weight: 500;
+}
+
+.customer-form-group input:focus {
+  border: 1.5px solid #007948;
+}
+
+.customer-fetch-btn {
+  width: 100%;
+  background: linear-gradient(180deg, #007948 0%, #007948 100%);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: background 0.2s;
+  letter-spacing: 1px;
+}
+
+.customer-fetch-btn:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+
+.customer-loader-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.customer-loader-spinner {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+}
+
+.customer-table-card {
+  background: #fff;
+  border-radius: 10px;
+
+  max-width: 100%;
+
+  border: 1px solid #e4e4e4;
+}
+
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.customer-table th {
+  text-align: left;
+  color: #6c7278;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 8px;
+  border-bottom: 1.5px solid #e4e4e4;
+}
+
+.customer-table td {
+  padding: 14px 8px;
+  color: #222b45;
+  font-size: 16px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.customer-table tr:last-child td {
+  border-bottom: none;
+}
+
+.role-badge-table {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 4px 18px;
+  font-size: 15px;
+  color: #626262;
+  background: #fafafa;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge-table {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.status-badge-table.active {
+  color: #009a34;
+}
+
+.status-badge-table.inactive {
+  color: #d60000;
+}
+
+.action-btn-table {
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  transition: color 0.15s;
+}
+
+.action-btn-table.edit {
+  color: #009a34;
+}
+
+.action-btn-table.delete {
+  color: #d60000;
+}
+
+.view-more-btn {
+  background: none;
+  border: none;
+  color: #007948;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s;
+  padding: 0;
+}
+
+.view-more-btn svg {
+  color: #007948;
+}
+
+.view-more-btn:hover {
+  text-decoration: underline;
+  color: #007948;
+}
+
+.customer-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(34, 43, 69, 0.32);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customer-modal-center {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.customer-success-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+  padding: 48px 36px 36px 36px;
+  min-width: 370px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInScale 0.2s;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.customer-success-icon-wrap {
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.customer-success-icon {
+  width: 80px;
+  height: 80px;
+}
+
+.customer-success-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #222b45;
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.customer-success-desc {
+  color: #6c7278;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.customer-success-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+.customer-success-btn {
+  min-width: 130px;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.customer-success-btn.create-bill {
+  background: linear-gradient(180deg, #007948 0%, #007948 100%);
+  color: #fff;
+}
+.customer-success-btn.create-bill:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+.customer-success-btn.close {
+  background: #eafaf3;
+  color: #007948;
+}
+.customer-success-btn.close:hover {
+  background: #d2f5e3;
+}

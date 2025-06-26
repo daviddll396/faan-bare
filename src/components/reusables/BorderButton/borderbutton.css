@@ -1,0 +1,23 @@
+.border-button {
+  background: #f7f9fc;
+  border: 1px solid #007948;
+  border-radius: 12px;
+  padding: 12px;
+  color: #007948;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.border-button:hover {
+  background: #0079480d;
+}
+
+.button-icon {
+  width: 14px;
+  height: 14px;
+}

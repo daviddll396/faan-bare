@@ -1,0 +1,143 @@
+.page-title-section {
+  display: flex;
+  align-items: center;
+  background-color: #0079480d;
+  padding: 10px;
+  border-radius: 14px;
+}
+.page-title-section img {
+}
+.page-title-section h2 {
+  text-decoration: underline;
+
+  font-size: 18px;
+  font-weight: 700;
+  color: #007948;
+}
+
+.page-header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-container tbody tr:nth-child(even) {
+  background: #f7f7f7;
+}
+
+.add-user-form-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e4e4e4;
+  padding: 30px 47px 30px 47px;
+  max-width: 900px;
+}
+
+.add-user-title {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #222b45;
+}
+
+.add-user-helper {
+  color: #969696;
+  font-size: 17px;
+  font-weight: 400;
+  margin-bottom: 32px;
+}
+
+.user-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 32px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row-full {
+  grid-column: 1 / -1;
+}
+
+.user-form-grid input,
+.user-form-grid select {
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: 17px;
+  font-family: inherit;
+  background: #fff;
+  color: #222b45;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.user-form-grid input:focus,
+.user-form-grid select:focus {
+  border: 1.5px solid #007948;
+}
+
+.user-form-grid label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6c7278;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  margin-top: 32px;
+}
+
+.save-btn-full {
+  width: 100%;
+  background: linear-gradient(180deg, #007948 0%, #007948 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 1px;
+}
+
+.save-btn-full:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+
+.select-dropdown-wrapper {
+  position: relative;
+}
+
+.select-dropdown-wrapper,
+.select-dropdown-wrapper select {
+  cursor: pointer;
+}
+
+.select-dropdown-wrapper select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #fff;
+}
+
+.select-chevron {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.2s;
+}
+
+.select-dropdown-wrapper.open .select-chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
