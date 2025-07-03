@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Eye } from "lucide-react";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 import FaanLogo from "../../../../public/images/faan-logo.svg";
 import InvoiceFormIcon from "../../../../public/icons/invoice-form-icon.svg";
@@ -7,10 +6,40 @@ import IdFormIcon from "../../../../public/icons/id-form-icon.svg";
 import InvoiceAmountFormIcon from "../../../../public/icons/invoice-amount-form-icon.svg";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import { FiInfo, FiEye } from "react-icons/fi";
-import PageTitle from "../../reusables/PageTitle/PageTitle";
 import "./paymentpage.css";
 
 const tabs = ["All", "Processing", "Completed", "Cancelled"];
+
+// Add interface for invoice items
+interface InvoiceItem {
+  id: string;
+  name: string;
+  qty: number;
+  amount: number;
+  total: number;
+}
+
+// Add static invoice data
+const invoiceNumber = "INV-2024-001";
+const invoiceCustomerId = "CUST-12345";
+const invoiceAmount = "12,000";
+const invoiceTotal = "12,000";
+const invoiceItems: InvoiceItem[] = [
+  {
+    id: "1",
+    name: "International Arrival Service",
+    qty: 1,
+    amount: 12000,
+    total: 12000,
+  },
+  {
+    id: "2",
+    name: "VIP Lounge Access",
+    qty: 1,
+    amount: 12000,
+    total: 12000,
+  },
+];
 
 const staticPayments = [
   {
@@ -102,7 +131,11 @@ const statusColors = {
   Completed: "completed",
 };
 
-const PaymentPage = () => {
+interface PaymentPageProps {
+  role?: string;
+}
+
+const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [searchName, setSearchName] = useState("");
   const [searchBillNo, setSearchBillNo] = useState("");
@@ -163,7 +196,11 @@ const PaymentPage = () => {
                 <td className="table-data-item">{p.service}</td>
                 <td className="table-data-item">{p.amount}</td>
                 <td className="table-data-item">
-                  <span className={`payment-status-badge ${statusColors[p.status]}`}>
+                  <span
+                    className={`payment-status-badge ${
+                      statusColors[p.status as keyof typeof statusColors]
+                    }`}
+                  >
                     {p.status}
                   </span>
                 </td>
@@ -429,7 +466,7 @@ const PaymentPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {invoiceItems.map((item, idx) => (
+                    {invoiceItems.map((item: InvoiceItem, idx: number) => (
                       <tr
                         key={item.id}
                         style={{

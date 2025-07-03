@@ -1,3 +1,15 @@
+/* Logout Page Entrance Animations */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .logout-bg {
   min-height: 70vh;
 
@@ -17,6 +29,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: fadeInScale 0.3s ease-out;
 }
 
 .logout-icon {

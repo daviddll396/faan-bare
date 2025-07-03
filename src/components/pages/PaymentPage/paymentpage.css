@@ -1,4 +1,16 @@
 /* PaymentPage Styles */
+/* Payment Page Entrance Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .payment-page {
   width: 100%;
   padding: 0 0 32px 0;
@@ -11,6 +23,7 @@
   margin-top: 0;
   padding-left: 2px;
   position: relative;
+  animation: slideInUp 0.4s ease-out;
 }
 .payment-tab {
   font-size: 18px;
@@ -42,6 +55,7 @@
   display: flex;
   gap: 24px;
   margin: 32px 0 24px 0;
+  animation: slideInUp 0.4s ease-out 0.2s both;
 }
 .payment-table-card {
   background: #fff;
@@ -50,6 +64,7 @@
   padding: 0 0 0 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   padding-bottom: 10px;
+  animation: slideInUp 0.4s ease-out 0.4s both;
 }
 .payment-table {
   width: 100%;
