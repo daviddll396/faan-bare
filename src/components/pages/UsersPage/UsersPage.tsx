@@ -188,30 +188,44 @@ const UsersPage: React.FC<UsersPageProps> = () => {
             <p className="add-user-helper">
               Please input all required customer details to add a new user.
             </p>
-            <form className="user-form-grid">
-              <div className="form-row">
-                <label>First Name</label>
-                <input type="text" placeholder="" />
+            <form
+              className="user-form-grid"
+              onSubmit={(e) => {
+                e.preventDefault();
+                // Handle form submission here
+                console.log("Form submitted");
+                setShowAddUserForm(false);
+              }}
+            >
+              <div className="form-row-pair">
+                <div className="form-row">
+                  <label>First Name</label>
+                  <input type="text" placeholder="" />
+                </div>
+                <div className="form-row">
+                  <label>Last Name</label>
+                  <input type="text" placeholder="" />
+                </div>
               </div>
-              <div className="form-row">
-                <label>Last Name</label>
-                <input type="text" placeholder="" />
+              <div className="form-row-pair">
+                <div className="form-row">
+                  <label>Middle Name</label>
+                  <input type="text" placeholder="" />
+                </div>
+                <div className="form-row">
+                  <label>User Name</label>
+                  <input type="text" placeholder="" />
+                </div>
               </div>
-              <div className="form-row">
-                <label>Middle Name</label>
-                <input type="text" placeholder="" />
-              </div>
-              <div className="form-row">
-                <label>User Name</label>
-                <input type="text" placeholder="" />
-              </div>
-              <div className="form-row">
-                <label>Email Address</label>
-                <input type="email" placeholder="" />
-              </div>
-              <div className="form-row">
-                <label>Phone Number</label>
-                <input type="text" placeholder="" />
+              <div className="form-row-pair">
+                <div className="form-row">
+                  <label>Email Address</label>
+                  <input type="email" placeholder="" />
+                </div>
+                <div className="form-row">
+                  <label>Phone Number</label>
+                  <input type="text" placeholder="" />
+                </div>
               </div>
               <div className="form-row ">
                 <label>Role</label>

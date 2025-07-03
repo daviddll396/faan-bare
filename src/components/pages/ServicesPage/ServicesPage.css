@@ -61,6 +61,7 @@
   border-radius: 12px;
   font-size: 16px;
   animation: slideInUp 0.4s ease-out 0.6s both;
+  cursor: pointer;
 }
 
 .service-index-circle {
@@ -71,8 +72,10 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 32px;
+  margin-bottom: 45px;
   animation: slideInUp 0.4s ease-out both;
+  position: relative;
+  z-index: 1;
 }
 
 /* Staggered animation for service form rows */
@@ -112,8 +115,9 @@
   display: flex;
   flex-direction: column;
   min-width: 180px;
-
   height: 100%;
+  position: relative;
+  z-index: 5;
 }
 
 .service-field-group.service-name-group {
@@ -173,6 +177,7 @@
 .select-dropdown-wrapper {
   position: relative;
   width: 100%;
+  z-index: 10;
 }
 
 .select-dropdown-wrapper select {
@@ -184,10 +189,10 @@
   border: 1.5px solid #d9d9d9;
   border-radius: 12px;
   padding: 16px;
-  font-size: 18px;
+  font-size: 17px;
   font-family: inherit;
   color: #070600;
-  font-weight: 600;
+  font-weight: 500;
   outline: none;
   transition: border 0.2s;
   cursor: pointer;

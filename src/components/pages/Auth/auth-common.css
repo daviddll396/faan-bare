@@ -140,7 +140,7 @@
 }
 
 .form-row label {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   color: #898989;
 }
@@ -171,24 +171,9 @@
   transition: border 0.2s;
 }
 .form-input:focus {
-  border: 1.5px solid #6c63ff;
+  border: 1.5px solid #007948;
 }
-.save-btn-full {
-  width: 100%;
-  background: linear-gradient(180deg, #007948 0%, #007948 100%);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 0;
-  cursor: pointer;
-  transition: background 0.2s;
-  letter-spacing: 1px;
-}
-.save-btn-full:hover {
-  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
-}
+
 .auth-form-error {
   color: #c0392b;
   background: #ffeaea;

@@ -68,15 +68,24 @@
 }
 
 .user-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .form-row {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.form-row-pair {
+  display: flex;
+  gap: 32px;
+}
+
+.form-row-pair .form-row {
+  flex: 1;
 }
 
 .form-row-full {
@@ -124,6 +133,7 @@
   cursor: pointer;
   transition: background 0.2s;
   letter-spacing: 1px;
+  margin-top: 20px;
 }
 
 .save-btn-full:hover {

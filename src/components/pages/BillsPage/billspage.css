@@ -144,10 +144,11 @@
   padding: 12px 23px;
   display: flex;
   flex-direction: row;
-
+align-items: center;
   min-width: 240px;
   height: 101px;
   gap: 16px;
+  height:80px;
 
   flex: 1;
 }

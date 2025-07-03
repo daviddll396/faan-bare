@@ -478,6 +478,18 @@ table {
 }
 
 /* Responsive Design */
+@media (max-width: 1500px) {
+  .dashboard-content {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1350px) {
+  .dashboard-content {
+    zoom: 0.8;
+  }
+}
+
 @media (max-width: 1200px) {
   .dashboard-bottom {
     grid-template-columns: 1fr;
