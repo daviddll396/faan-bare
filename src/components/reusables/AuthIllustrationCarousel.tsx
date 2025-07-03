@@ -57,18 +57,18 @@ const AUTO_ADVANCE_MS = 5000;
 
 const AuthIllustrationCarousel: React.FC = () => {
   const [index, setIndex] = useState(0);
-  const [isFading, setIsFading] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   // Auto-advance logic
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setIsFading(true);
+      setIsTransitioning(true);
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % slides.length);
-        setIsFading(false);
-      }, 200);
+        setIsTransitioning(false);
+      }, 400);
     }, AUTO_ADVANCE_MS);
     return () => {
       if (timerRef.current) {
@@ -80,31 +80,35 @@ const AuthIllustrationCarousel: React.FC = () => {
   // Dot click handler
   const handleDotClick = (i: number) => {
     if (i === index) return;
-    setIsFading(true);
+    setIsTransitioning(true);
     setTimeout(() => {
       setIndex(i);
-      setIsFading(false);
-    }, 200);
+      setIsTransitioning(false);
+    }, 400);
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
-        setIsFading(true);
+        setIsTransitioning(true);
         setTimeout(() => {
           setIndex((prev) => (prev + 1) % slides.length);
-          setIsFading(false);
-        }, 200);
+          setIsTransitioning(false);
+        }, 400);
       }, AUTO_ADVANCE_MS);
     }
   };
 
   return (
     <div className="auth-carousel-container">
-      <div className={`auth-carousel-slide ${isFading ? "fade-out" : ""}`}>
+      <div
+        className={`auth-carousel-slide ${
+          isTransitioning ? "transitioning" : ""
+        }`}
+      >
         <div className="auth-carousel-collage">
           {slides[index].images.map((img, i) => (
             <div
               key={i}
-              className="auth-carousel-collage-img"
+              className={`auth-carousel-collage-img slide-${i + 1}`}
               style={img.style}
             >
               {img.src && (
