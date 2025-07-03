@@ -54,10 +54,9 @@ const RegisterPage: React.FC = () => {
     <div className="auth-split-screen">
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
-          <h2 className="auth-form-title-modern">Create Account</h2>
+          <h2 className="auth-form-title-modern">Sign Up</h2>
           <p className="auth-form-subtitle-modern">
-            Register for a new account to manage your bookings, payments, and
-            more.
+          Create an account to continue!
           </p>
           {error && (
             <div className="auth-form-error" style={{ marginBottom: 6 }}>
