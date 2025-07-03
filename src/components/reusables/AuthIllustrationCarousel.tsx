@@ -1,33 +1,54 @@
 import React, { useEffect, useRef, useState } from "react";
 import FaanLogo from "../../../public/images/faan-logo.svg";
 import "./authillustrationcarousel.css";
+import DashboardScreenOne from "../../../public/images/dashboard-screen-one.svg";
+import DashboardScreenTwo from "../../../public/images/dashboard-screen-two.svg";
+import PaymentScreenOne from "../../../public/images/payment-screen-one.svg";
+import PaymentScreenTwo from "../../../public/images/payment-screen-two.svg";
+import BookingScreenOne from "../../../public/images/bookings-screen-one.svg";
+import BookingScreenTwo from "../../../public/images/bookings-screen-two.svg";
 
 const slides = [
   {
-    main: "Manage your bookings",
-    sub: "Easily view, update, and track all your airport bookings in one place.",
+    main: "Overview your dashboard",
+    sub: "Get a comprehensive view of all your airport activities and metrics in one place.",
     images: [
-      { style: { left: 0, top: 0, zIndex: 2 } },
-      { style: { left: 40, top: 30, zIndex: 3 } },
-      { style: { left: 80, top: 10, zIndex: 1 } },
+      {
+        src: DashboardScreenTwo,
+        style: { left: -30, top: 0, zIndex: 2, width: "90%", height: "90%" },
+      },
+      {
+        src: DashboardScreenOne,
+        style: { left: 120, top: 20, zIndex: 3, width: "90%", height: "90%" },
+      },
+    ],
+  },
+  {
+    main: "Manage your bookings",
+    sub: "Easily view, update, and track all your airport bookings and reservations.",
+    images: [
+      {
+        src: BookingScreenTwo,
+        style: { left: -20, top: 10, zIndex: 2, width: "90%", height: "90%" },
+      },
+      {
+        src: BookingScreenOne,
+        style: { left: 130, top: -10, zIndex: 3, width: "90%", height: "90%" },
+      },
     ],
   },
   {
     main: "Track your payments",
-    sub: "Stay on top of your invoices and payment history effortlessly.",
+    sub: "Stay on top of your invoices, payment history, and financial transactions.",
     images: [
-      { style: { left: 30, top: 10, zIndex: 2 } },
-      { style: { left: 0, top: 40, zIndex: 3 } },
-      { style: { left: 60, top: 0, zIndex: 1 } },
-    ],
-  },
-  {
-    main: "Access customer support",
-    sub: "Get help and support quickly whenever you need it.",
-    images: [
-      { style: { left: 20, top: 0, zIndex: 2 } },
-      { style: { left: 60, top: 30, zIndex: 3 } },
-      { style: { left: 0, top: 40, zIndex: 1 } },
+      {
+        src: PaymentScreenTwo,
+        style: { left: 10, top: -10, zIndex: 2, width: "90%", height: "90%" },
+      },
+      {
+        src: PaymentScreenOne,
+        style: { left: 150, top: 30, zIndex: 3, width: "90%", height: "90%" },
+      },
     ],
   },
 ];
@@ -36,13 +57,18 @@ const AUTO_ADVANCE_MS = 5000;
 
 const AuthIllustrationCarousel: React.FC = () => {
   const [index, setIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   // Auto-advance logic
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setIndex((prev) => (prev + 1) % slides.length);
+      setIsFading(true);
+      setTimeout(() => {
+        setIndex((prev) => (prev + 1) % slides.length);
+        setIsFading(false);
+      }, 200);
     }, AUTO_ADVANCE_MS);
     return () => {
       if (timerRef.current) {
@@ -53,40 +79,57 @@ const AuthIllustrationCarousel: React.FC = () => {
 
   // Dot click handler
   const handleDotClick = (i: number) => {
-    setIndex(i);
+    if (i === index) return;
+    setIsFading(true);
+    setTimeout(() => {
+      setIndex(i);
+      setIsFading(false);
+    }, 200);
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
-        setIndex((prev) => (prev + 1) % slides.length);
+        setIsFading(true);
+        setTimeout(() => {
+          setIndex((prev) => (prev + 1) % slides.length);
+          setIsFading(false);
+        }, 200);
       }, AUTO_ADVANCE_MS);
     }
   };
 
   return (
     <div className="auth-carousel-container">
-      <div className="auth-carousel-slide">
+      <div className={`auth-carousel-slide ${isFading ? "fade-out" : ""}`}>
         <div className="auth-carousel-collage">
           {slides[index].images.map((img, i) => (
             <div
               key={i}
               className="auth-carousel-collage-img"
               style={img.style}
-            />
+            >
+              {img.src && (
+                <img
+                  src={img.src}
+                  alt="Payment screen"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              )}
+            </div>
           ))}
         </div>
         <div className="auth-carousel-main">{slides[index].main}</div>
         <div className="auth-carousel-sub">{slides[index].sub}</div>
-        <div className="auth-carousel-dots">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              className={`auth-carousel-dot${i === index ? " active" : ""}`}
-              onClick={() => handleDotClick(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              type="button"
-            />
-          ))}
-        </div>
+      </div>
+      <div className="auth-carousel-dots">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            className={`auth-carousel-dot${i === index ? " active" : ""}`}
+            onClick={() => handleDotClick(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            type="button"
+          />
+        ))}
       </div>
       <img src={FaanLogo} alt="FAAN Logo" className="auth-carousel-logo" />
     </div>

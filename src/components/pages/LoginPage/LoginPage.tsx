@@ -42,9 +42,9 @@ const LoginPage: React.FC = () => {
     <div className="auth-split-screen">
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
-          <h2 className="auth-form-title-modern">Login</h2>
+          <h2 className="auth-form-title-modern">Sign in to your Account</h2>
           <p className="auth-form-subtitle-modern">
-            See your growth and get consulting support!
+          Enter your email and password details to access your account 
           </p>
           {error && <div className="auth-form-error">{error}</div>}
           <div className="form-row-modern">
