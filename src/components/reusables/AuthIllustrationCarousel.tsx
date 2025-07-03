@@ -15,11 +15,11 @@ const slides = [
     images: [
       {
         src: DashboardScreenTwo,
-        style: { left: -30, top: 0, zIndex: 2, width: "90%", height: "90%" },
+        style: { left: -30, top: -90, zIndex: 2, width: "90%", height: "90%" },
       },
       {
         src: DashboardScreenOne,
-        style: { left: 120, top: 20, zIndex: 3, width: "90%", height: "90%" },
+        style: { left: 120, top: 10, zIndex: 3, width: "90%", height: "90%" },
       },
     ],
   },
@@ -29,11 +29,11 @@ const slides = [
     images: [
       {
         src: BookingScreenTwo,
-        style: { left: -20, top: 10, zIndex: 2, width: "90%", height: "90%" },
+        style: { left: -20, top: -80, zIndex: 2, width: "90%", height: "90%" },
       },
       {
         src: BookingScreenOne,
-        style: { left: 130, top: -10, zIndex: 3, width: "90%", height: "90%" },
+        style: { left: 130, top: 20, zIndex: 3, width: "90%", height: "90%" },
       },
     ],
   },
@@ -43,7 +43,7 @@ const slides = [
     images: [
       {
         src: PaymentScreenTwo,
-        style: { left: 10, top: -10, zIndex: 2, width: "90%", height: "90%" },
+        style: { left: 10, top: -100, zIndex: 2, width: "90%", height: "90%" },
       },
       {
         src: PaymentScreenOne,
