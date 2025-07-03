@@ -1,9 +1,22 @@
+/* Users Page Entrance Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .page-title-section {
   display: flex;
   align-items: center;
   background-color: #0079480d;
   padding: 10px;
   border-radius: 14px;
+  animation: slideInUp 0.4s ease-out;
 }
 .page-title-section img {
 }
@@ -19,10 +32,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  animation: slideInUp 0.4s ease-out 0.2s both;
 }
 
 .table-container tbody tr:nth-child(even) {
   background: #f7f7f7;
+}
+
+/* Add animation to content card */
+.content-card {
+  animation: slideInUp 0.4s ease-out 0.4s both;
 }
 
 .add-user-form-card {
@@ -31,6 +50,7 @@
   border: 1px solid #e4e4e4;
   padding: 30px 47px 30px 47px;
   max-width: 900px;
+  animation: slideInUp 0.4s ease-out;
 }
 
 .add-user-title {

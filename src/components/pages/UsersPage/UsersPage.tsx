@@ -8,7 +8,11 @@ import "./userspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 
-const UsersPage: React.FC = () => {
+interface UsersPageProps {
+  role?: string;
+}
+
+const UsersPage: React.FC<UsersPageProps> = () => {
   const users = [
     {
       id: 1,

@@ -20,7 +20,11 @@ import IdFormIcon from "../../../../public/icons/id-form-icon.svg";
 import InvoiceAmountFormIcon from "../../../../public/icons/invoice-amount-form-icon.svg";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 
-const BillsPage: React.FC = () => {
+interface BillsPageProps {
+  role?: string;
+}
+
+const BillsPage: React.FC<BillsPageProps> = () => {
   const [searching, setSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [showBillCreation, setShowBillCreation] = useState(false);

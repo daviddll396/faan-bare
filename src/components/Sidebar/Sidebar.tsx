@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onPageChange,
   onLogout,
   allowedPages,
-  userRole,
+  // userRole,
 }) => {
   const menuItems = [
     {

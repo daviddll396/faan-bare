@@ -22,7 +22,11 @@ const sampleFetchedCustomers = [
   },
 ];
 
-const CustomersPage: React.FC = () => {
+interface CustomersPageProps {
+  role?: string;
+}
+
+const CustomersPage: React.FC<CustomersPageProps> = () => {
   const [activeTab, setActiveTab] = useState("fetch");
   const [fetching, setFetching] = useState(false);
   const [fetched, setFetched] = useState(false);
