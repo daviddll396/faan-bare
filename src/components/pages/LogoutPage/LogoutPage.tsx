@@ -11,9 +11,15 @@ const LogoutPage = () => {
   };
 
   const handleLogout = () => {
-    logout();
-    // After logout, trigger a reload to reset to login (since AppContent checks isAuthenticated)
-    window.location.reload();
+    // Trigger preloader before logout
+    window.dispatchEvent(new CustomEvent("faan-show-preloader"));
+
+    // Wait for preloader to start, then logout
+    setTimeout(() => {
+      logout();
+      // After logout, trigger a reload to reset to login (since AppContent checks isAuthenticated)
+      window.location.reload();
+    }, 500);
   };
 
   return (

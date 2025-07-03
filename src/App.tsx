@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -32,6 +32,19 @@ const AppContent: React.FC = () => {
 
 function App() {
   const [showPreloader, setShowPreloader] = useState(true);
+
+  useEffect(() => {
+    // Listen for logout event to show preloader
+    const handleShowPreloader = () => {
+      setShowPreloader(true);
+    };
+
+    window.addEventListener("faan-show-preloader", handleShowPreloader);
+
+    return () => {
+      window.removeEventListener("faan-show-preloader", handleShowPreloader);
+    };
+  }, []);
 
   const handlePreloaderComplete = () => {
     setShowPreloader(false);
