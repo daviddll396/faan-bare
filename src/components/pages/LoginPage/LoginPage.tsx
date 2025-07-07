@@ -8,6 +8,10 @@ import "./LoginPage.css";
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [validationErrors, setValidationErrors] = useState({
+    email: "",
+    password: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
@@ -21,6 +25,57 @@ const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Validation functions
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case "email": {
+        if (!value.trim()) return "Email is required";
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value))
+          return "Please enter a valid email address";
+        return "";
+      }
+
+      case "password": {
+        if (!value) return "Password is required";
+        return "";
+      }
+
+      default:
+        return "";
+    }
+  };
+
+  // Check if form is valid
+  const isFormValid = (): boolean => {
+    const isEmailValid =
+      email.trim() !== "" && validateField("email", email) === "";
+    const isPasswordValid =
+      password.trim() !== "" && validateField("password", password) === "";
+    return isEmailValid && isPasswordValid;
+  };
+
+  // Handle field changes with validation
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    const error = validateField("email", value);
+    setValidationErrors((prev) => ({ ...prev, email: error }));
+
+    setToast((prev) => ({ ...prev, isVisible: false }));
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    const error = validateField("password", value);
+    setValidationErrors((prev) => ({ ...prev, password: error }));
+
+    setToast((prev) => ({ ...prev, isVisible: false }));
+  };
+
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
       message,
@@ -33,16 +88,21 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!email || !password) {
-      showToast("Please fill in all fields", "error");
+    // Final validation check
+    if (!isFormValid()) {
+      showToast("Please fix the errors in the form", "error");
       setIsSubmitting(false);
       return;
     }
 
     try {
+      // Use the AuthContext login function for all credentials (including mock)
       const success = await login(email, password);
       if (success) {
-        navigate("/dashboard");
+        showToast("Login successful!", "success");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
       } else {
         showToast("Invalid email or password", "error");
       }
@@ -73,26 +133,38 @@ const LoginPage: React.FC = () => {
             <input
               type="email"
               id="email"
-              className="form-input-modern"
+              className={`form-input-modern ${
+                validationErrors.email ? "error" : ""
+              }`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               placeholder="Enter your email"
               disabled={isSubmitting}
               required
             />
+            {validationErrors.email && (
+              <span className="validation-error">{validationErrors.email}</span>
+            )}
           </div>
           <div className="form-row-modern">
             <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
-              className="form-input-modern"
+              className={`form-input-modern ${
+                validationErrors.password ? "error" : ""
+              }`}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="Enter your password"
               disabled={isSubmitting}
               required
             />
+            {validationErrors.password && (
+              <span className="validation-error">
+                {validationErrors.password}
+              </span>
+            )}
           </div>
           <div className="form-row-modern form-row-remember">
             {/* <label className="remember-label">
@@ -111,7 +183,7 @@ const LoginPage: React.FC = () => {
           <button
             type="submit"
             className="login-btn-modern"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isFormValid()}
           >
             {isSubmitting ? "Logging in..." : "Log In"}
           </button>

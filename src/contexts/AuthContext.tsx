@@ -92,6 +92,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+      // Handle mock login for test credentials
+      if (email === "customer@faan.gov.ng" && password === "customer123") {
+        const mockUserData: User = {
+          id: "mock-user-123",
+          name: "Test Customer",
+          email: email,
+          role: "Customer",
+        };
+
+        setUser(mockUserData);
+        localStorage.setItem("faan_user", JSON.stringify(mockUserData));
+        localStorage.setItem("faan_token", "mock-jwt-token-for-testing");
+        return true;
+      }
+
+      // Regular API login for other credentials
       // Sample config
       const secretKey = "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/"; // 32 bytes (AES-256)
       const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes
