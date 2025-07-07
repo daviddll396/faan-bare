@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import "./billspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
-import BillTitleIcon from "../../../../public/icons/bill-title-icon.svg";
+import BillTitleIcon from "/icons/bill-title-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
-import AddIcon from "../../../../public/icons/add-icon.svg";
+import AddIcon from "/icons/add-icon.svg";
 
 import { Eye } from "lucide-react";
-import BillsNinIcon from "../../../../public/icons/bills-nin-icon.svg";
-import BillsIdIcon from "../../../../public/icons/bills-id-icon.svg";
-import BillsFnIcon from "../../../../public/icons/bills-fn-icon.svg";
-import BillsEmailIcon from "../../../../public/icons/bills-email-icon.svg";
+import BillsNinIcon from "/icons/bills-nin-icon.svg";
+import BillsIdIcon from "/icons/bills-id-icon.svg";
+import BillsFnIcon from "/icons/bills-fn-icon.svg";
+import BillsEmailIcon from "/icons/bills-email-icon.svg";
 import CurrencyDropdown from "../../reusables/CurrencyDropdown/CurrencyDropdown";
-import ChevronDown from "../../../../public/icons/chevron-down.svg";
-import EditFormIcon from "../../../../public/icons/edit-form-icon.svg";
-import RemoveFormIcon from "../../../../public/icons/remove-form-icon.svg";
-import FaanLogo from "../../../../public/images/faan-logo.svg";
-import InvoiceFormIcon from "../../../../public/icons/invoice-form-icon.svg";
-import IdFormIcon from "../../../../public/icons/id-form-icon.svg";
-import InvoiceAmountFormIcon from "../../../../public/icons/invoice-amount-form-icon.svg";
-import CheckCircle from "../../../../public/icons/check-circle.svg";
+import ChevronDown from "/icons/chevron-down.svg";
+import EditFormIcon from "/icons/edit-form-icon.svg";
+import RemoveFormIcon from "/icons/remove-form-icon.svg";
+import FaanLogo from "/images/faan-logo.svg";
+import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
+import IdFormIcon from "/icons/id-form-icon.svg";
+import InvoiceAmountFormIcon from "/icons/invoice-amount-form-icon.svg";
+import CheckCircle from "/icons/check-circle.svg";
 
 interface BillsPageProps {
   role?: string;

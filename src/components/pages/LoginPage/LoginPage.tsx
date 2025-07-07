@@ -1,24 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
+import MessageToast from "../../reusables/MessageToast";
 import "./LoginPage.css";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+    isVisible: boolean;
+  }>({
+    message: "",
+    type: "success",
+    isVisible: false,
+  });
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({
+      message,
+      type,
+      isVisible: true,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setIsSubmitting(true);
 
     if (!email || !password) {
-      setError("Please fill in all fields");
+      showToast("Please fill in all fields", "error");
       setIsSubmitting(false);
       return;
     }
@@ -28,11 +44,11 @@ const LoginPage: React.FC = () => {
       if (success) {
         navigate("/dashboard");
       } else {
-        setError("Invalid email or password");
+        showToast("Invalid email or password", "error");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("An error occurred during login");
+      showToast("An error occurred during login", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -40,13 +56,18 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="auth-split-screen">
+      <MessageToast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+      />
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
           <h2 className="auth-form-title-modern">Sign in to your Account</h2>
           <p className="auth-form-subtitle-modern">
-          Enter your email and password details to access your account 
+            Enter your email and password details to access your account
           </p>
-          {error && <div className="auth-form-error">{error}</div>}
           <div className="form-row-modern">
             <label htmlFor="email">Email</label>
             <input
@@ -92,10 +113,10 @@ const LoginPage: React.FC = () => {
             className="login-btn-modern"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Signing in..." : "Log In"}
+            {isSubmitting ? "Logging in..." : "Log In"}
           </button>
           <div className="auth-form-footer-modern">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="auth-form-link-modern">
               Sign Up
             </Link>

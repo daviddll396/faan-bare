@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import FaanLogo from "../../../public/images/faan-logo.svg";
+import FaanLogo from "/images/faan-logo.svg";
 import "./authillustrationcarousel.css";
-import DashboardScreenOne from "../../../public/images/dashboard-screen-one.svg";
-import DashboardScreenTwo from "../../../public/images/dashboard-screen-two.svg";
-import PaymentScreenOne from "../../../public/images/payment-screen-one.svg";
-import PaymentScreenTwo from "../../../public/images/payment-screen-two.svg";
-import BookingScreenOne from "../../../public/images/bookings-screen-one.svg";
-import BookingScreenTwo from "../../../public/images/bookings-screen-two.svg";
+import DashboardScreenOne from "/images/dashboard-screen-one.svg";
+import DashboardScreenTwo from "/images/dashboard-screen-two.svg";
+import PaymentScreenOne from "/images/payment-screen-one.svg";
+import PaymentScreenTwo from "/images/payment-screen-two.svg";
+import BookingScreenOne from "/images/bookings-screen-one.svg";
+import BookingScreenTwo from "/images/bookings-screen-two.svg";
 
 const slides = [
   {

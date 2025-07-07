@@ -2,6 +2,117 @@
 
 /* RegisterPage Styles */
 /* Register Page Entrance Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+
+
+.form-row-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 7px;
+  animation: slideInUp 0.4s ease-out both;
+}
+
+/* Staggered animation for form rows */
+.form-row-modern:nth-child(5) {
+  animation-delay: 0.15s;
+}
+.form-row-modern:nth-child(6) {
+  animation-delay: 0.2s;
+}
+.form-row-modern:nth-child(7) {
+  animation-delay: 0.25s;
+}
+.form-row-modern:nth-child(8) {
+  animation-delay: 0.3s;
+}
+.form-row-modern:nth-child(9) {
+  animation-delay: 0.35s;
+}
+.form-row-modern:nth-child(10) {
+  animation-delay: 0.4s;
+}
+.form-row-modern:nth-child(11) {
+  animation-delay: 0.45s;
+}
+
+.form-input-modern {
+  border: 1.5px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #fff;
+  color: #18181b;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.form-input-modern:focus {
+  border-color: #007948;
+}
+
+.login-btn-modern {
+  width: 100%;
+  background: linear-gradient(180deg, #007948 0%, #007948 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  animation: slideInUp 0.4s ease-out 0.5s both;
+}
+
+.login-btn-modern:hover:not(:disabled) {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+
+.login-btn-modern:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-form-footer-modern {
+  margin-top: 32px;
+  text-align: center;
+  width: 100%;
+  animation: fadeIn 0.4s ease-out 0.55s both;
+}
+
+.auth-form-link-modern {
+  color: #007948;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+
+
+
 
 .register-container {
   min-height: 100vh;

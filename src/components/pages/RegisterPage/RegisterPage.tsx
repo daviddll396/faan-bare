@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
-import axios, { AxiosError } from "axios";
+import MessageToast from "../../reusables/MessageToast";
 import CryptoJS from "crypto-js";
 import "./RegisterPage.css";
 
@@ -21,15 +21,21 @@ const encryptAESCBC = (
   return encrypted.toString(); // base64-encoded
 };
 
-// Type guard for AxiosError
-function isAxiosError(error: unknown): error is AxiosError {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "isAxiosError" in error &&
-    (error as AxiosError).isAxiosError === true
-  );
-}
+// AES decryption function (CBC with PKCS5 padding)
+const decryptAESCBC = (
+  encryptedText: string,
+  secret: string,
+  iv: string
+): string => {
+  const key = CryptoJS.enc.Utf8.parse(secret);
+  const ivBytes = CryptoJS.enc.Utf8.parse(iv);
+  const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
+    iv: ivBytes,
+    padding: CryptoJS.pad.Pkcs7,
+    mode: CryptoJS.mode.CBC,
+  });
+  return decrypted.toString(CryptoJS.enc.Utf8);
+};
 
 const RegisterPage: React.FC = () => {
   const [form, setForm] = useState({
@@ -41,9 +47,16 @@ const RegisterPage: React.FC = () => {
     confirmPassword: "",
     nin: "",
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+    isVisible: boolean;
+  }>({
+    message: "",
+    type: "success",
+    isVisible: false,
+  });
   const navigate = useNavigate();
 
   // Configuration for encryption
@@ -52,14 +65,20 @@ const RegisterPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
-    setSuccess("");
+    setToast((prev) => ({ ...prev, isVisible: false }));
+  };
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({
+      message,
+      type,
+      isVisible: true,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setToast((prev) => ({ ...prev, isVisible: false }));
     setIsSubmitting(true);
 
     if (
@@ -71,13 +90,13 @@ const RegisterPage: React.FC = () => {
       !form.confirmPassword ||
       !form.nin
     ) {
-      setError("Please fill in all fields");
+      showToast("Please fill in all fields", "error");
       setIsSubmitting(false);
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+      showToast("Passwords do not match", "error");
       setIsSubmitting(false);
       return;
     }
@@ -93,50 +112,84 @@ const RegisterPage: React.FC = () => {
         nin: form.nin,
       });
 
+      console.log("Sending register request:", JSON.parse(body));
+      console.log("Request URL: /auth/register");
+      console.log("Request method: POST");
+
       // Encrypt the body
       const encryptedPayload = encryptAESCBC(body, secretKey, ivKey);
 
       // Make the API call with encrypted payload and required headers
-      const response = await axios.post("/auth/register", encryptedPayload, {
+      const response = await fetch("/auth/register", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Client-Auth": "Basic dGVzdDp0ZXN0",
           "X-Source": "web",
         },
+        body: encryptedPayload,
       });
 
-      console.log("Register response:", response);
-      setSuccess("Registration successful! Redirecting to login...");
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (err: unknown) {
-      // Log everything from the error
-      if (isAxiosError(err) && err.response) {
-        const response = err.response;
-        console.error("Error response:", response);
-        console.error("Error data:", response.data);
-        console.error("Error status:", response.status);
-        console.error("Error headers:", response.headers);
-        let errorMsg = "An error occurred during registration";
-        if (response.data && typeof response.data === "object") {
-          if (
-            "message" in response.data &&
-            typeof response.data.message === "string"
-          ) {
-            errorMsg = response.data.message;
-          } else if (
-            "error" in response.data &&
-            typeof response.data.error === "string"
-          ) {
-            errorMsg = response.data.error;
-          }
-        }
-        setError(errorMsg);
-      } else {
-        console.error("Error:", err);
-        setError("An error occurred during registration");
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
+
+      // Get the raw response text (encrypted)
+      const rawResponseText = await response.text();
+      console.log("Raw encrypted response text:", rawResponseText);
+
+      // Decrypt the response
+      let decryptedResponse;
+      try {
+        decryptedResponse = decryptAESCBC(rawResponseText, secretKey, ivKey);
+        console.log("Decrypted response:", decryptedResponse);
+      } catch (decryptError) {
+        console.error("Decryption error:", decryptError);
+        console.log(
+          "Failed to decrypt response. Encrypted text:",
+          rawResponseText
+        );
+        showToast("Failed to process server response", "error");
+        return;
       }
+
+      // Parse the decrypted JSON
+      let responseData;
+      try {
+        responseData = JSON.parse(decryptedResponse);
+        console.log("Parsed response data:", responseData);
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        console.log("Failed to parse decrypted response:", decryptedResponse);
+        showToast("Invalid server response format", "error");
+        return;
+      }
+
+      // Check if registration was successful
+      if (
+        responseData.status === true &&
+        (responseData.statusCode === 200 || responseData.statusCode === 201)
+      ) {
+        console.log("Registration successful:", responseData.message);
+        showToast(
+          "Registration successful! Redirecting to login...",
+          "success"
+        );
+        setTimeout(() => {
+          navigate("/login");
+        }, 3500);
+      } else if (responseData.statusCode === 409) {
+        console.log("User already exists:", responseData.message);
+        showToast(
+          "User already exists. Please try logging in instead.",
+          "error"
+        );
+      } else {
+        console.log("Registration failed:", responseData.message);
+        showToast(responseData.message || "Registration failed", "error");
+      }
+    } catch (err: unknown) {
+      console.error("Registration error:", err);
+      showToast("An error occurred during registration", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -144,22 +197,18 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="auth-split-screen">
+      <MessageToast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+      />
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
           <h2 className="auth-form-title-modern">Sign Up</h2>
           <p className="auth-form-subtitle-modern">
             Create an account to continue!
           </p>
-          {error && (
-            <div className="auth-form-error" style={{ marginBottom: 6 }}>
-              {error}
-            </div>
-          )}
-          {success && (
-            <div className="auth-form-success" style={{ marginBottom: 6 }}>
-              {success}
-            </div>
-          )}
           <div className="form-row-modern">
             <label htmlFor="firstName">First Name</label>
             <input

@@ -16,6 +16,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   const [fundAmount, setFundAmount] = React.useState("");
   const [showFundLoading, setShowFundLoading] = React.useState(false);
   const [showFundSuccess, setShowFundSuccess] = React.useState(false);
+  const [walletBalance, setWalletBalance] = React.useState(0);
 
   const handleOpenFundWallet = () => setShowFundWallet(true);
   const handleCloseFundWallet = () => {
@@ -26,10 +27,20 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   };
   const handleFund = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate minimum amount
+    const amount = parseFloat(fundAmount);
+    if (amount < 200000) {
+      alert("Minimum fundable amount is ₦200,000");
+      return;
+    }
+
     setShowFundLoading(true);
     setTimeout(() => {
       setShowFundLoading(false);
       setShowFundSuccess(true);
+      // Add the funded amount to wallet balance
+      setWalletBalance((prevBalance) => prevBalance + amount);
     }, 1800);
   };
 
@@ -42,7 +53,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               <img src={WalletIcon} alt="Wallet" className="wallet-icon" />
               <div>
                 <div className="wallet-label">Wallet Balance</div>
-                <div className="wallet-balance">₦600,000</div>
+                <div className="wallet-balance">
+                  ₦{walletBalance.toLocaleString()}
+                </div>
               </div>
             </div>
             <BorderButton
@@ -144,15 +157,25 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                         <span className="fund-wallet-currency">₦</span>
                         <input
                           type="number"
-                          min="0"
+                          min="200000"
                           value={fundAmount}
                           onChange={(e) => setFundAmount(e.target.value)}
-                          placeholder="0"
+                          placeholder="200,000"
                           className="fund-wallet-input"
                           required
                         />
                       </div>
-                      <button className="fund-wallet-submit-btn" type="submit">
+                      <button
+                        className={`fund-wallet-submit-btn ${
+                          !fundAmount || parseFloat(fundAmount) < 200000
+                            ? "disabled"
+                            : ""
+                        }`}
+                        type="submit"
+                        disabled={
+                          !fundAmount || parseFloat(fundAmount) < 200000
+                        }
+                      >
                         FUND WALLET
                       </button>
                     </form>

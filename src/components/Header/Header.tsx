@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import "./header.css";
-import UserIcon from "../../../public/images/header-user.svg";
+import UserIcon from "/images/header-user.svg";
 
 interface HeaderProps {
   pageTitle: string;
