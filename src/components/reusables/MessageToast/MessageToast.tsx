@@ -21,9 +21,9 @@ const MessageToast: React.FC<MessageToastProps> = ({
   const [isAnimatingOut, setIsAnimatingOut] = React.useState(false);
 
   const timersRef = useRef<{
-    in?: NodeJS.Timeout;
-    out?: NodeJS.Timeout;
-    remove?: NodeJS.Timeout;
+    in?: number;
+    out?: number;
+    remove?: number;
   }>({});
 
   useEffect(() => {
