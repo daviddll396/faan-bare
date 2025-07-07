@@ -62,8 +62,6 @@ const LoginPage: React.FC = () => {
 
     const error = validateField("email", value);
     setValidationErrors((prev) => ({ ...prev, email: error }));
-
-    setToast((prev) => ({ ...prev, isVisible: false }));
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,8 +70,6 @@ const LoginPage: React.FC = () => {
 
     const error = validateField("password", value);
     setValidationErrors((prev) => ({ ...prev, password: error }));
-
-    setToast((prev) => ({ ...prev, isVisible: false }));
   };
 
   const showToast = (message: string, type: "success" | "error") => {
@@ -96,13 +92,9 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      // Use the AuthContext login function for all credentials (including mock)
       const success = await login(email, password);
       if (success) {
-        showToast("Login successful!", "success");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1000);
+        navigate("/dashboard");
       } else {
         showToast("Invalid email or password", "error");
       }

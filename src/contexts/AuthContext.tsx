@@ -92,22 +92,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Handle mock login for test credentials
-      if (email === "customer@faan.gov.ng" && password === "customer123") {
-        const mockUserData: User = {
-          id: "mock-user-123",
-          name: "Test Customer",
-          email: email,
-          role: "Customer",
-        };
+      // Mock login for testing - check for specific credentials first
+      const mockUsers = {
+        "admin@faan.gov.ng": {
+          password: "password123",
+          userData: {
+            id: "admin-001",
+            name: "FAAN Administrator",
+            email: "admin@faan.gov.ng",
+            role: "Admin",
+          },
+          token: "mock-admin-token-12345",
+        },
+        "customer@faan.gov.ng": {
+          password: "customer123",
+          userData: {
+            id: "customer-001",
+            name: "FAAN Customer",
+            email: "customer@faan.gov.ng",
+            role: "Customer",
+          },
+          token: "mock-customer-token-67890",
+        },
+      };
 
-        setUser(mockUserData);
-        localStorage.setItem("faan_user", JSON.stringify(mockUserData));
-        localStorage.setItem("faan_token", "mock-jwt-token-for-testing");
+      // Check if this is a mock user
+      const mockUser = mockUsers[email as keyof typeof mockUsers];
+      if (mockUser && mockUser.password === password) {
+        console.log("Mock login successful for:", email);
+        setUser(mockUser.userData);
+        localStorage.setItem("faan_user", JSON.stringify(mockUser.userData));
+        localStorage.setItem("faan_token", mockUser.token);
         return true;
       }
 
-      // Regular API login for other credentials
+      // If not a mock user, proceed with actual API call
       // Sample config
       const secretKey = "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/"; // 32 bytes (AES-256)
       const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes

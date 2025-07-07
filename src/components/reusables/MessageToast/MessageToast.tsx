@@ -14,7 +14,7 @@ const MessageToast: React.FC<MessageToastProps> = ({
   type,
   isVisible,
   onClose,
-  duration = 3000,
+  duration = 2000,
 }) => {
   const [shouldRender, setShouldRender] = React.useState(false);
   const [isAnimatingIn, setIsAnimatingIn] = React.useState(false);

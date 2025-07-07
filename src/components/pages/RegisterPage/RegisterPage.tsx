@@ -231,8 +231,6 @@ const RegisterPage: React.FC = () => {
         confirmPassword: confirmError,
       }));
     }
-
-    setToast((prev) => ({ ...prev, isVisible: false }));
   };
 
   const showToast = (message: string, type: "success" | "error") => {
