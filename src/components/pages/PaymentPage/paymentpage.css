@@ -175,6 +175,73 @@
   animation: slideInUp 0.4s ease-out 0.2s both;
 }
 
+/* Progressive gap reduction for payment search row as screen size decreases */
+@media (max-width: 1920px) {
+  .payment-search-row {
+    gap: 22px;
+  }
+}
+
+@media (max-width: 1800px) {
+  .payment-search-row {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1700px) {
+  .payment-search-row {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1600px) {
+  .payment-search-row {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .payment-search-row {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .payment-search-row {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1300px) {
+  .payment-search-row {
+    gap: 13px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .payment-search-row {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .payment-search-row {
+    gap: 11px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .payment-search-row {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .payment-search-row {
+    gap: 10px;
+  }
+}
+
 .payment-table-card {
   background: #fff;
   border-radius: 12px;
@@ -421,123 +488,6 @@
 .customer-modal-center {
   transform: scale(1) !important;
   transform-origin: center center !important;
-}
-
-/* Additional modal content protection */
-.customer-modal-center > div {
-  zoom: 1 !important;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-}
-
-/* Specific zoom scaling for payment page modal content to handle high DPI displays */
-@media (max-width: 1920px) {
-  .customer-modal-center > div {
-    zoom: 0.85 !important;
-  }
-}
-
-@media (max-width: 1800px) {
-  .customer-modal-center > div {
-    zoom: 0.8 !important;
-  }
-}
-
-@media (max-width: 1700px) {
-  .customer-modal-center > div {
-    zoom: 0.75 !important;
-  }
-}
-
-@media (max-width: 1600px) {
-  .customer-modal-center > div {
-    zoom: 0.7 !important;
-  }
-}
-
-@media (max-width: 1500px) {
-  .customer-modal-center > div {
-    zoom: 0.68 !important;
-  }
-}
-
-@media (max-width: 1450px) {
-  .customer-modal-center > div {
-    zoom: 0.66 !important;
-  }
-}
-
-@media (max-width: 1400px) {
-  .customer-modal-center > div {
-    zoom: 0.64 !important;
-  }
-}
-
-@media (max-width: 1350px) {
-  .customer-modal-center > div {
-    zoom: 0.62 !important;
-  }
-}
-
-@media (max-width: 1300px) {
-  .customer-modal-center > div {
-    zoom: 0.6 !important;
-  }
-}
-
-@media (max-width: 1250px) {
-  .customer-modal-center > div {
-    zoom: 0.58 !important;
-  }
-}
-
-@media (max-width: 1200px) {
-  .customer-modal-center > div {
-    zoom: 0.56 !important;
-  }
-}
-
-@media (max-width: 1150px) {
-  .customer-modal-center > div {
-    zoom: 0.54 !important;
-  }
-}
-
-@media (max-width: 1100px) {
-  .customer-modal-center > div {
-    zoom: 0.52 !important;
-  }
-}
-
-@media (max-width: 1050px) {
-  .customer-modal-center > div {
-    zoom: 0.5 !important;
-  }
-}
-
-@media (max-width: 1000px) {
-  .customer-modal-center > div {
-    zoom: 0.48 !important;
-  }
-}
-
-@media (max-width: 950px) {
-  .customer-modal-center > div {
-    zoom: 0.46 !important;
-  }
-}
-
-@media (max-width: 900px) {
-  .customer-modal-center > div {
-    zoom: 0.44 !important;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .customer-modal-center > div {
-    zoom: 1 !important;
-  }
 }
 
 /* Protection for bill-customer-card elements inside modals to prevent over-scaling */

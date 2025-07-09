@@ -13,6 +13,7 @@ const API_ENDPOINTS = {
   USER_DETAILS: "/api/faan/customers/profile",
   FUND_WALLET: "/api/faan/transactions/fund-wallet",
   GET_ALL_TARIFFS: "/api/faan/transactions/tariffs",
+  MAKE_PAYMENT: "/api/faan/transactions/make-payment",
 };
 
 const ENCRYPTION_CONFIG = {
@@ -62,10 +63,8 @@ interface User {
 interface Tariff {
   id: number;
   name: string;
-  price: number;
-  currency?: string;
-  description?: string;
-  // Add more fields as they become available from the API
+  description: string;
+  amount: number;
 }
 
 // Define interface for tariffs API response
@@ -84,6 +83,8 @@ interface AuthContextType {
   logout: () => void;
   fundWallet: (amount: number) => Promise<boolean>;
   getAllTariffs: () => Promise<TariffsResponse | null>;
+  makePayment: (reference: string, tariffId: number) => Promise<boolean>;
+  refreshUserDetails: () => Promise<boolean>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -581,6 +582,205 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const makePayment = async (
+    reference: string,
+    tariffId: number
+  ): Promise<boolean> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for making payment");
+        return false;
+      }
+
+      console.log("🚀 === STARTING MAKE PAYMENT REQUEST ===");
+      console.log("📍 Request URL:", API_ENDPOINTS.MAKE_PAYMENT);
+      console.log("🔑 Using token:", token);
+      console.log("📋 Payment reference:", reference);
+      console.log("🎯 Tariff ID:", tariffId);
+      console.log("⏰ Request timestamp:", new Date().toISOString());
+
+      const requestBody = {
+        reference: reference,
+        tariffId: tariffId,
+      };
+
+      console.log("📤 Request body:", requestBody);
+
+      const response = await fetch(API_ENDPOINTS.MAKE_PAYMENT, {
+        method: "POST",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("📥 Make payment response status:", response.status);
+      console.log("📥 Make payment response status text:", response.statusText);
+      console.log("📥 Response timestamp:", new Date().toISOString());
+      console.log("🔧 Make payment request headers:", {
+        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+        Authorization: `Bearer ${token}`,
+      });
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to make payment:",
+          response.status,
+          response.statusText
+        );
+        const errorText = await response.text();
+        console.error("❌ Error response body:", errorText);
+        return false;
+      }
+
+      const responseText = await response.text();
+      console.log("📄 Raw make payment response:", responseText);
+      console.log("📏 Response length:", responseText.length);
+
+      // Check if response has content
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty make payment response");
+        return false;
+      }
+
+      // Parse the JSON response
+      let data;
+      try {
+        data = JSON.parse(responseText);
+        console.log("✅ Parsed make payment data:", data);
+        console.log("✅ Data structure:", typeof data);
+        if (data && typeof data === "object") {
+          console.log("✅ Data keys:", Object.keys(data));
+          if (data.data) {
+            console.log("✅ Data.data type:", typeof data.data);
+            console.log("✅ Data.data content:", data.data);
+          }
+        }
+      } catch (error) {
+        console.error("❌ Failed to parse make payment JSON:", error);
+        console.error("❌ Raw response that failed to parse:", responseText);
+        return false;
+      }
+
+      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+        console.log("🎉 === MAKE PAYMENT COMPLETED SUCCESSFULLY ===");
+        return true;
+      } else {
+        console.error("❌ Payment failed:", data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error("💥 Make payment error:", error);
+      return false;
+    }
+  };
+
+  const refreshUserDetails = async (): Promise<boolean> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for refreshing user details");
+        return false;
+      }
+
+      console.log("=== STARTING REFRESH USER DETAILS REQUEST ===");
+      console.log("📍 Request URL:", API_ENDPOINTS.USER_DETAILS);
+      console.log("🔑 Using token:", token);
+      console.log("⏰ Request timestamp:", new Date().toISOString());
+
+      const response = await fetch(API_ENDPOINTS.USER_DETAILS, {
+        method: "GET",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("📥 Refresh user details response status:", response.status);
+      console.log(
+        "📥 Refresh user details response status text:",
+        response.statusText
+      );
+      console.log("📥 Response timestamp:", new Date().toISOString());
+      console.log("🔧 Refresh user details request headers:", {
+        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+        Authorization: `Bearer ${token}`,
+      });
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to refresh user details:",
+          response.status,
+          response.statusText
+        );
+        const errorText = await response.text();
+        console.error("❌ Error response body:", errorText);
+        return false;
+      }
+
+      const responseText = await response.text();
+      console.log("📄 Raw refresh user details response:", responseText);
+      console.log("📏 Response length:", responseText.length);
+
+      // Check if response has content
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty refresh user details response");
+        return false;
+      }
+
+      // Parse the JSON response directly (no decryption needed for this endpoint)
+      let data;
+      try {
+        data = JSON.parse(responseText);
+        console.log("✅ Parsed refresh user details data:", data);
+      } catch (error) {
+        console.error("❌ Failed to parse refresh user details JSON:", error);
+        console.error("❌ Raw response that failed to parse:", responseText);
+        return false;
+      }
+
+      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+        console.log("🎉 === REFRESH USER DETAILS COMPLETED SUCCESSFULLY ===");
+        // Update user's details from the API response
+        if (user && data.data.customerProfile) {
+          const updatedUser: User = {
+            ...user,
+            id: data.data.customerProfile.customerId,
+            customerId: data.data.customerProfile.customerId,
+            firstName: data.data.customerProfile.firstName,
+            lastName: data.data.customerProfile.lastName,
+            name: `${data.data.customerProfile.firstName} ${data.data.customerProfile.lastName}`,
+            email: data.data.customerProfile.email,
+            phoneNumber: data.data.customerProfile.phoneNumber,
+            nin: data.data.customerProfile.nin,
+            dob: data.data.customerProfile.dob,
+            address: data.data.customerProfile.address,
+            customerType: data.data.customerProfile.customerType,
+            role: "Customer",
+            walletBalance: data.data.walletBalance,
+            transactionStats: data.data.transactionStats,
+          };
+          setUser(updatedUser);
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+          console.log("Updated user details stored:", updatedUser);
+        }
+        return true;
+      } else {
+        console.error("❌ Refresh user details failed:", data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error("💥 Refresh user details error:", error);
+      return false;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -589,6 +789,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     fundWallet,
     getAllTariffs,
+    makePayment,
+    refreshUserDetails,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -11,6 +11,7 @@ import "./ServicesPage.css";
 import { Edit, Trash2 } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
+import MessageToast from "../../reusables/MessageToast/MessageToast";
 
 interface ServicesPageProps {
   role?: string;
@@ -34,48 +35,56 @@ const customerServices = [
     id: 1,
     name: "International Arrival",
     price: "8,000",
+    amount: 8000,
     image: "/images/intl-arrival.svg",
   },
   {
     id: 2,
     name: "International Departure",
     price: "10,000",
+    amount: 10000,
     image: "/images/intl-departure.svg",
   },
   {
     id: 3,
     name: "VIP Lounge International",
     price: "6,000",
+    amount: 6000,
     image: "/images/vip-lounge.svg",
   },
   {
     id: 4,
     name: "Abuja International OneOff",
     price: "12,000",
+    amount: 12000,
     image: "/images/abj-intl.svg",
   },
   {
     id: 5,
     name: "One Year Protocol Service(Domestic operations PH)",
     price: "500,000",
+    amount: 500000,
     image: "/images/one-year.svg",
   },
   {
     id: 6,
     name: "Additional One(1) Unit(Domestic ODC PH)",
     price: "300,000",
+    amount: 300000,
     image: "/images/add-one-unit.svg",
   },
   {
     id: 7,
     name: "Port Harcourt Domestic Service",
     price: "1,000,000",
+    amount: 1000000,
     image: "/images/ph-domestic.svg",
   },
   {
     id: 8,
     name: "Protocol Car Park Porthacourt",
     price: "800,000",
+    amount: 800000,
     image: "/images/ph-protocol.svg",
   },
 ];
@@ -98,7 +107,7 @@ interface BookingPassenger {
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
-  const { getAllTariffs } = useAuth();
+  const { getAllTariffs, makePayment, refreshUserDetails } = useAuth();
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [services, setServices] = useState([{ ...initialService }]);
   const [serviceNameSelectOpen, setServiceNameSelectOpen] = useState<
@@ -139,10 +148,46 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     useState(customerServices);
 
   // Add state for API tariffs
-  const [apiTariffs, setApiTariffs] = useState<
-    { id: number; name: string; price: number }[]
-  >([]);
   const [isLoadingTariffs, setIsLoadingTariffs] = useState(true);
+
+  // Add toast state for tariff fetching feedback
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+    isVisible: boolean;
+  }>({
+    message: "",
+    type: "success",
+    isVisible: false,
+  });
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({
+      message,
+      type,
+      isVisible: true,
+    });
+  };
+
+  // Function to map API tariff name to existing image
+  const getImageForTariff = (tariffName: string): string => {
+    // Map API tariff names to existing mock images
+    const imageMap: { [key: string]: string } = {
+      "International Arrival": "/images/intl-arrival.svg",
+      "International Departure": "/images/intl-departure.svg",
+      "VIP lounge International": "/images/vip-lounge.svg",
+      "Abuja International OneOff": "/images/abj-intl.svg",
+      "One Year Protocol Service (Domestic operations PH)":
+        "/images/one-year.svg",
+      "Additional One(1) Unit(Domestic ODC PH)": "/images/add-one-unit.svg",
+      "Extra ODC": "/images/add-one-unit.svg", // Use same image as additional unit
+      "Protocol Car Park Porthacourt": "/images/ph-protocol.svg",
+      "Protocol Lounge porthacourt": "/images/vip-lounge.svg", // Use VIP lounge image
+      "Port Harcourt Domestic Service": "/images/ph-domestic.svg",
+    };
+
+    return imageMap[tariffName] || "/images/default-service.svg";
+  };
 
   // Add useEffect to fetch tariffs when component mounts
   useEffect(() => {
@@ -158,7 +203,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             "🎯 ServicesPage: Setting API tariffs:",
             tariffsData.data
           );
-          setApiTariffs(tariffsData.data);
 
           // If API has data, use it; otherwise fall back to static data
           if (tariffsData.data.length > 0) {
@@ -167,32 +211,57 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             );
             // Convert API tariffs to customer service format
             const convertedServices = tariffsData.data.map(
-              (
-                tariff: { id: number; name: string; price: number },
-                index: number
-              ) => ({
-                id: tariff.id || index + 1,
-                name: tariff.name || `Service ${index + 1}`,
-                price: tariff.price?.toString() || "0",
-                image: `/images/service-${index + 1}.svg`, // Default image pattern
+              (tariff: {
+                id: number;
+                name: string;
+                description: string;
+                amount: number;
+              }) => ({
+                id: tariff.id,
+                name: tariff.name,
+                price: tariff.amount.toLocaleString(), // Convert amount to formatted string
+                amount: tariff.amount, // Keep the raw amount for calculations
+                image: getImageForTariff(tariff.name), // Map to existing image
               })
             );
             setCustomerFilteredServices(convertedServices);
+            console.log(
+              "🎯 ServicesPage: Converted services:",
+              convertedServices
+            );
+            setTimeout(() => {
+              showToast(
+                `${tariffsData.data.length} services loaded successfully`,
+                "success"
+              );
+            }, 500);
           } else {
             console.log(
               "🎯 ServicesPage: API returned empty data, using static services"
             );
+            setTimeout(() => {
+              showToast(
+                "No services available from server, using default services",
+                "error"
+              );
+            }, 500);
           }
         } else {
           console.log(
             "🎯 ServicesPage: API call failed or returned invalid data, using static services"
           );
+          setTimeout(() => {
+            showToast("Failed to load services from server", "error");
+          }, 500);
         }
       } catch (error) {
         console.error("🎯 ServicesPage: Error fetching tariffs:", error);
         console.log(
           "🎯 ServicesPage: Falling back to static services due to error"
         );
+        setTimeout(() => {
+          showToast("Error loading services, using default services", "error");
+        }, 500);
       } finally {
         setIsLoadingTariffs(false);
       }
@@ -303,13 +372,95 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   if (role === "Customer") {
     // Booking form view
     if (selectedService) {
-      // Example summary values
-      const subTotal = 12000;
-      const otherCharges = 500;
-      const total = 12000;
+      // Calculate summary values based on selected service and passenger count
+      const passengerCount = passengers.length || 1; // At least 1 for the service itself
+      const serviceAmount = selectedService.amount || 0;
+      const subTotal = serviceAmount * passengerCount;
+      const otherCharges = 500; // Fixed charge
+      const total = subTotal + otherCharges;
+
+      // Function to handle payment
+      const handlePayment = async () => {
+        if (!selectedService?.id) {
+          showToast("No service selected for payment", "error");
+          return;
+        }
+
+        if (passengers.length === 0) {
+          showToast("Please add at least one passenger", "error");
+          return;
+        }
+
+        setShowPaymentLoading(true);
+
+        try {
+          // Generate payment reference
+          const reference = `NM-${Date.now()}-${
+            selectedService.id
+          }-${Math.random().toString(36).substring(2, 8)}`;
+
+          console.log("🎯 ServicesPage: Starting payment process");
+          console.log("🎯 Payment reference:", reference);
+          console.log("🎯 Tariff ID:", selectedService.id);
+          console.log("🎯 Total amount:", total);
+          console.log("🎯 Passenger count:", passengers.length);
+
+          const paymentSuccess = await makePayment(
+            reference,
+            selectedService.id
+          );
+
+          if (paymentSuccess) {
+            setShowPaymentLoading(false);
+            setShowPaymentSuccess(true);
+
+            // Refresh user details to get updated wallet balance and transaction stats
+            console.log(
+              "🔄 ServicesPage: Refreshing user details after successful payment"
+            );
+            try {
+              await refreshUserDetails();
+              console.log(
+                "✅ ServicesPage: User details refreshed successfully"
+              );
+            } catch (error) {
+              console.error(
+                "❌ ServicesPage: Failed to refresh user details:",
+                error
+              );
+            }
+
+            setTimeout(() => {
+              showToast("Payment successful!", "success");
+            }, 500);
+            console.log("🎯 ServicesPage: Payment completed successfully");
+          } else {
+            setShowPaymentLoading(false);
+            setTimeout(() => {
+              showToast("Payment failed. Please try again.", "error");
+            }, 500);
+            console.log("🎯 ServicesPage: Payment failed");
+          }
+        } catch (error) {
+          console.error("🎯 ServicesPage: Payment error:", error);
+          setShowPaymentLoading(false);
+          setTimeout(() => {
+            showToast(
+              "An error occurred during payment. Please try again.",
+              "error"
+            );
+          }, 500);
+        }
+      };
 
       return (
         <div className="services-customer-page">
+          <MessageToast
+            message={toast.message}
+            type={toast.type}
+            isVisible={toast.isVisible}
+            onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+          />
           <div className="page-header">
             <PageTitle
               icon={ServicesIcon}
@@ -597,14 +748,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 <span>₦{total.toLocaleString()}</span>
               </div>
               <button
-                className="booking-pay-btn"
-                onClick={() => {
-                  setShowPaymentLoading(true);
-                  setTimeout(() => {
-                    setShowPaymentLoading(false);
-                    setShowPaymentSuccess(true);
-                  }, 1800);
-                }}
+                className={`booking-pay-btn ${
+                  passengers.length === 0 ? "disabled" : ""
+                }`}
+                onClick={handlePayment}
+                disabled={passengers.length === 0}
               >
                 PAY
               </button>
@@ -647,8 +795,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             )}
             {/* Payment Success Modal Overlay */}
             {showPaymentSuccess && (
-              <div className="bill-modal-backdrop">
-                <div className="bill-modal-center">
+              <div className="customer-modal-backdrop">
+                <div className="customer-modal-center">
                   <div className="customer-success-modal">
                     <div className="customer-success-icon-wrap">
                       <img
@@ -666,9 +814,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <div className="customer-success-actions">
                       <button
                         className="customer-success-btn create-bill"
-                        onClick={() => setShowPaymentSuccess(false)}
+                        onClick={() => {
+                          setShowPaymentSuccess(false);
+                          setSelectedService(null);
+                          setPassengers([]);
+                          setBookingForm({
+                            firstName: "",
+                            lastName: "",
+                            designation: "",
+                            gender: "",
+                            mobile: "",
+                            specialReq: "",
+                            airport: "",
+                            travelDate: "",
+                            flightNumber: "",
+                            airportTime: "",
+                            airline: "",
+                            destination: "",
+                          });
+                          setActiveTab("passenger");
+                        }}
                       >
-                        CLOSE
+                        BACK TO SERVICES
                       </button>
                     </div>
                   </div>
@@ -683,6 +850,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     // Service grid view
     return (
       <div className="services-customer-page">
+        <MessageToast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+        />
         <div className="page-header">
           <PageTitle icon={ServicesIcon} title="Services" />
         </div>
@@ -715,53 +888,37 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
         {/* Show services when not loading */}
         {!isLoadingTariffs && (
-          <>
-            {/* Debug info showing API tariffs count */}
-            {apiTariffs.length > 0 && (
-              <div
-                style={{
-                  padding: "10px",
-                  backgroundColor: "#f0f0f0",
-                  margin: "10px 0",
-                  fontSize: "12px",
-                }}
-              >
-                API Tariffs loaded: {apiTariffs.length} items
-              </div>
-            )}
-
-            <div className="services-customer-grid">
-              {customerFilteredServices.map((service) => (
-                <div className="service-card" key={service.id}>
-                  <div className="service-card-img-wrap">
-                    <img
-                      src={service.image}
-                      alt={service.name}
-                      className="service-card-img"
-                    />
-                  </div>
-                  <div className="service-card-name">{service.name}</div>
-                  <div className="service-card-price">
-                    <TbCurrencyNaira
-                      style={{
-                        fontSize: 24,
-                        fontWeight: 800,
-                        verticalAlign: "middle",
-                        marginTop: -2,
-                      }}
-                    />
-                    {service.price}
-                  </div>
-                  <button
-                    className="service-card-btn"
-                    onClick={() => setSelectedService(service)}
-                  >
-                    BOOK SERVICE
-                  </button>
+          <div className="services-customer-grid">
+            {customerFilteredServices.map((service) => (
+              <div className="service-card" key={service.id}>
+                <div className="service-card-img-wrap">
+                  <img
+                    src={service.image}
+                    alt={service.name}
+                    className="service-card-img"
+                  />
                 </div>
-              ))}
-            </div>
-          </>
+                <div className="service-card-name">{service.name}</div>
+                <div className="service-card-price">
+                  <TbCurrencyNaira
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 800,
+                      verticalAlign: "middle",
+                      marginTop: -2,
+                    }}
+                  />
+                  {service.price}
+                </div>
+                <button
+                  className="service-card-btn"
+                  onClick={() => setSelectedService(service)}
+                >
+                  BOOK SERVICE
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     );
