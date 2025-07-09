@@ -8,12 +8,13 @@ import React, {
 import CryptoJS from "crypto-js";
 
 // Constants
+const API_BASE_URL = "http://197.253.19.78:9091";
 const API_ENDPOINTS = {
-  LOGIN: "/auth/faan/login",
-  USER_DETAILS: "/api/faan/customers/profile",
-  FUND_WALLET: "/api/faan/transactions/fund-wallet",
-  GET_ALL_TARIFFS: "/api/faan/transactions/tariffs",
-  MAKE_PAYMENT: "/api/faan/transactions/make-payment",
+  LOGIN: `${API_BASE_URL}/auth/faan/login`,
+  USER_DETAILS: `${API_BASE_URL}/api/faan/customers/profile`,
+  FUND_WALLET: `${API_BASE_URL}/api/faan/transactions/fund-wallet`,
+  GET_ALL_TARIFFS: `${API_BASE_URL}/api/faan/transactions/tariffs`,
+  MAKE_PAYMENT: `${API_BASE_URL}/api/faan/transactions/make-payment`,
 };
 
 const ENCRYPTION_CONFIG = {
