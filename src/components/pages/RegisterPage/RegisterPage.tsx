@@ -294,14 +294,14 @@ const RegisterPage: React.FC = () => {
       const body = JSON.stringify(requestData);
 
       console.log("Sending register request:", requestData);
-      console.log("Request URL: /auth/register");
+      console.log("Request URL: /auth/faan/register");
       console.log("Request method: POST");
 
       // Encrypt the body
       const encryptedPayload = encryptAESCBC(body, secretKey, ivKey);
 
       // Make the API call with encrypted payload and required headers
-      const response = await fetch("/auth/register", {
+      const response = await fetch("/auth/faan/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

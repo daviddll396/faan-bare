@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../../contexts/AuthContext";
 import AddIcon from "../../../../public/icons/add-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
@@ -97,12 +98,12 @@ interface BookingPassenger {
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
+  const { getAllTariffs } = useAuth();
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [services, setServices] = useState([{ ...initialService }]);
   const [serviceNameSelectOpen, setServiceNameSelectOpen] = useState<
     number | null
   >(null);
-  const [search, setSearch] = useState("");
   const [selectedService, setSelectedService] =
     useState<CustomerService | null>(null);
   const [activeTab, setActiveTab] = React.useState<"passenger" | "airport">(
@@ -126,6 +127,79 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const [bookingFormError, setBookingFormError] = React.useState("");
   const [showPaymentLoading, setShowPaymentLoading] = React.useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
+
+  // Add search state for admin view
+  const [searchName, setSearchName] = useState("");
+  const [filteredServices, setFilteredServices] = useState(customerServices);
+  const [allServices] = useState(customerServices); // Rename for clarity
+
+  // Customer search state
+  const [customerSearchName, setCustomerSearchName] = useState("");
+  const [customerFilteredServices, setCustomerFilteredServices] =
+    useState(customerServices);
+
+  // Add state for API tariffs
+  const [apiTariffs, setApiTariffs] = useState<
+    { id: number; name: string; price: number }[]
+  >([]);
+  const [isLoadingTariffs, setIsLoadingTariffs] = useState(true);
+
+  // Add useEffect to fetch tariffs when component mounts
+  useEffect(() => {
+    const fetchTariffs = async () => {
+      console.log("🎯 ServicesPage: Attempting to fetch all tariffs...");
+      setIsLoadingTariffs(true);
+      try {
+        const tariffsData = await getAllTariffs();
+        console.log("🎯 ServicesPage: Received tariffs data:", tariffsData);
+
+        if (tariffsData && tariffsData.status && tariffsData.data) {
+          console.log(
+            "🎯 ServicesPage: Setting API tariffs:",
+            tariffsData.data
+          );
+          setApiTariffs(tariffsData.data);
+
+          // If API has data, use it; otherwise fall back to static data
+          if (tariffsData.data.length > 0) {
+            console.log(
+              "🎯 ServicesPage: Using API tariffs for customer services"
+            );
+            // Convert API tariffs to customer service format
+            const convertedServices = tariffsData.data.map(
+              (
+                tariff: { id: number; name: string; price: number },
+                index: number
+              ) => ({
+                id: tariff.id || index + 1,
+                name: tariff.name || `Service ${index + 1}`,
+                price: tariff.price?.toString() || "0",
+                image: `/images/service-${index + 1}.svg`, // Default image pattern
+              })
+            );
+            setCustomerFilteredServices(convertedServices);
+          } else {
+            console.log(
+              "🎯 ServicesPage: API returned empty data, using static services"
+            );
+          }
+        } else {
+          console.log(
+            "🎯 ServicesPage: API call failed or returned invalid data, using static services"
+          );
+        }
+      } catch (error) {
+        console.error("🎯 ServicesPage: Error fetching tariffs:", error);
+        console.log(
+          "🎯 ServicesPage: Falling back to static services due to error"
+        );
+      } finally {
+        setIsLoadingTariffs(false);
+      }
+    };
+
+    fetchTariffs();
+  }, [getAllTariffs]);
 
   // Helper to format number with commas
   function formatNumberWithCommas(value: string) {
@@ -192,11 +266,41 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     setPassengers(passengers.filter((_, i) => i !== idx));
   };
 
-  if (role === "Customer") {
-    const filteredServices = customerServices.filter((service) =>
-      service.name.toLowerCase().includes(search.toLowerCase())
-    );
+  // Search functionality for admin view
+  const handleSearch = () => {
+    const filtered = allServices.filter((service) => {
+      const nameMatch = searchName
+        ? service.name.toLowerCase().includes(searchName.toLowerCase())
+        : true;
 
+      return nameMatch;
+    });
+    setFilteredServices(filtered);
+  };
+
+  const handleClearSearch = () => {
+    setSearchName("");
+    setFilteredServices(allServices);
+  };
+
+  // Customer search functionality
+  const handleCustomerSearch = () => {
+    const filtered = customerServices.filter((service) => {
+      const nameMatch = customerSearchName
+        ? service.name.toLowerCase().includes(customerSearchName.toLowerCase())
+        : true;
+
+      return nameMatch;
+    });
+    setCustomerFilteredServices(filtered);
+  };
+
+  const handleCustomerClearSearch = () => {
+    setCustomerSearchName("");
+    setCustomerFilteredServices(customerServices);
+  };
+
+  if (role === "Customer") {
     // Booking form view
     if (selectedService) {
       // Example summary values
@@ -585,41 +689,80 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
         <div className="services-customer-header">
           <SearchInput
             placeholder="Search services"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={customerSearchName}
+            onChange={(e) => setCustomerSearchName(e.target.value)}
           />
+          <div style={{ display: "flex", gap: 12 }}>
+            <BorderButton
+              text="Search"
+              onClick={handleCustomerSearch}
+              className="border-button-userspage"
+            />
+            <BorderButton
+              text="Clear"
+              onClick={handleCustomerClearSearch}
+              className="border-button-userspage"
+            />
+          </div>
         </div>
-        <div className="services-customer-grid">
-          {filteredServices.map((service) => (
-            <div className="service-card" key={service.id}>
-              <div className="service-card-img-wrap">
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="service-card-img"
-                />
-              </div>
-              <div className="service-card-name">{service.name}</div>
-              <div className="service-card-price">
-                <TbCurrencyNaira
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 800,
-                    verticalAlign: "middle",
-                    marginTop: -2,
-                  }}
-                />
-                {service.price}
-              </div>
-              <button
-                className="service-card-btn"
-                onClick={() => setSelectedService(service)}
+
+        {/* Show loading state while fetching tariffs */}
+        {isLoadingTariffs && (
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <p>Loading services...</p>
+          </div>
+        )}
+
+        {/* Show services when not loading */}
+        {!isLoadingTariffs && (
+          <>
+            {/* Debug info showing API tariffs count */}
+            {apiTariffs.length > 0 && (
+              <div
+                style={{
+                  padding: "10px",
+                  backgroundColor: "#f0f0f0",
+                  margin: "10px 0",
+                  fontSize: "12px",
+                }}
               >
-                BOOK SERVICE
-              </button>
+                API Tariffs loaded: {apiTariffs.length} items
+              </div>
+            )}
+
+            <div className="services-customer-grid">
+              {customerFilteredServices.map((service) => (
+                <div className="service-card" key={service.id}>
+                  <div className="service-card-img-wrap">
+                    <img
+                      src={service.image}
+                      alt={service.name}
+                      className="service-card-img"
+                    />
+                  </div>
+                  <div className="service-card-name">{service.name}</div>
+                  <div className="service-card-price">
+                    <TbCurrencyNaira
+                      style={{
+                        fontSize: 24,
+                        fontWeight: 800,
+                        verticalAlign: "middle",
+                        marginTop: -2,
+                      }}
+                    />
+                    {service.price}
+                  </div>
+                  <button
+                    className="service-card-btn"
+                    onClick={() => setSelectedService(service)}
+                  >
+                    BOOK SERVICE
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     );
   }
@@ -631,15 +774,29 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           <>
             <div className="page-header-bottom">
               <div style={{ display: "flex", gap: 24 }}>
-                <SearchInput placeholder="Search name" />
+                <SearchInput
+                  placeholder="Search name"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                />
               </div>
-              <div className="border-button-flex">
+              <div style={{ display: "flex", gap: 12 }}>
+                <BorderButton
+                  text="Search"
+                  onClick={handleSearch}
+                  className="border-button-servicespage"
+                />
+                <BorderButton
+                  text="Clear"
+                  onClick={handleClearSearch}
+                  className="border-button-servicespage"
+                />
                 <BorderButton
                   text="Add New Service"
                   icon={AddIcon}
                   onClick={() => setShowAddServiceForm(true)}
+                  className="border-button-servicespage"
                 />
-                {/* <BorderButton text="Batch Upload" icon={AddIcon} /> */}
               </div>
             </div>
 
@@ -656,7 +813,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {customerServices.map((product) => (
+                    {filteredServices.map((product) => (
                       <tr key={product.id}>
                         <td className="table-data-item">{product.id}</td>
                         <td className="table-data-item">{product.name}</td>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
+import BorderButton from "../../reusables/BorderButton/BorderButton";
 import FaanLogo from "/images/faan-logo.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
@@ -139,18 +140,34 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [searchName, setSearchName] = useState("");
   const [searchBillNo, setSearchBillNo] = useState("");
+  const [appliedSearchName, setAppliedSearchName] = useState("");
+  const [appliedSearchBillNo, setAppliedSearchBillNo] = useState("");
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [modal, setModal] = useState<{
     type: "invoice" | "receipt" | "reason";
     data: any;
   } | null>(null);
 
+  const handleSearch = () => {
+    setAppliedSearchName(searchName);
+    setAppliedSearchBillNo(searchBillNo);
+  };
+
+  const handleClearSearch = () => {
+    setSearchName("");
+    setSearchBillNo("");
+    setAppliedSearchName("");
+    setAppliedSearchBillNo("");
+  };
+
   const filteredPayments = staticPayments.filter((p) => {
     const matchesTab =
       activeTab === "All" || p.status.toLowerCase() === activeTab.toLowerCase();
     const matchesName =
-      !searchName || p.service.toLowerCase().includes(searchName.toLowerCase());
-    const matchesBillNo = !searchBillNo || p.billNo.includes(searchBillNo);
+      !appliedSearchName ||
+      p.service.toLowerCase().includes(appliedSearchName.toLowerCase());
+    const matchesBillNo =
+      !appliedSearchBillNo || p.billNo.includes(appliedSearchBillNo);
     return matchesTab && matchesName && matchesBillNo;
   });
 
@@ -178,6 +195,18 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           value={searchBillNo}
           onChange={(e) => setSearchBillNo(e.target.value)}
         />
+        <div style={{ marginLeft: "auto", display: "flex", gap: 12 }}>
+          <BorderButton
+            text="Search"
+            onClick={handleSearch}
+            className="border-button-paymentpage"
+          />
+          <BorderButton
+            text="Clear"
+            onClick={handleClearSearch}
+            className="border-button-paymentpage"
+          />
+        </div>
       </div>
       <div className="payment-table-card">
         <table className="payment-table">
@@ -516,8 +545,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         }}
                       >
                         TOTAL
-                        </td>
-                        <td
+                      </td>
+                      <td
                         style={{
                           fontWeight: 700,
                           color: "#070600",
@@ -525,7 +554,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         }}
                       >
                         ₦75,000
-                        </td>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -777,7 +806,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       <td className="table-data-item">1</td>
                       <td className="table-data-item">{modal.data.amount}</td>
                       <td className="table-data-item">{modal.data.amount}</td>
-                      </tr>
+                    </tr>
                     <tr>
                       <td
                         colSpan={4}

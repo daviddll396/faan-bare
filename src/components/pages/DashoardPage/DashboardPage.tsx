@@ -1,7 +1,9 @@
 import React from "react";
+import { useAuth } from "../../../contexts/AuthContext";
 import MetricsCards from "./MetricCard/MetricsCards";
 import ChartSection from "./ChartSection/ChartSection";
 import TransactionsTable from "./TransactionsTable/TransactionsTable";
+import MessageToast from "../../reusables/MessageToast/MessageToast";
 import "./dashboardpage.css";
 import WalletIcon from "/icons/dashboard-wallet-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
@@ -12,11 +14,38 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
+  const { user, fundWallet } = useAuth();
   const [showFundWallet, setShowFundWallet] = React.useState(false);
   const [fundAmount, setFundAmount] = React.useState("");
   const [showFundLoading, setShowFundLoading] = React.useState(false);
   const [showFundSuccess, setShowFundSuccess] = React.useState(false);
-  const [walletBalance, setWalletBalance] = React.useState(0);
+  const [toast, setToast] = React.useState<{
+    message: string;
+    type: "success" | "error";
+    isVisible: boolean;
+  }>({
+    message: "",
+    type: "success",
+    isVisible: false,
+  });
+
+  // Use wallet balance from user data, fallback to 0
+  const walletBalance = user?.walletBalance || 0;
+  const [localWalletBalance, setLocalWalletBalance] =
+    React.useState(walletBalance);
+
+  // Update local wallet balance when user data changes
+  React.useEffect(() => {
+    setLocalWalletBalance(walletBalance);
+  }, [walletBalance]);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({
+      message,
+      type,
+      isVisible: true,
+    });
+  };
 
   const handleOpenFundWallet = () => setShowFundWallet(true);
   const handleCloseFundWallet = () => {
@@ -25,27 +54,49 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     setShowFundLoading(false);
     setShowFundSuccess(false);
   };
-  const handleFund = (e: React.FormEvent) => {
+
+  const handleFund = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate minimum amount
     const amount = parseFloat(fundAmount);
     if (amount < 200000) {
-      alert("Minimum fundable amount is ₦200,000");
+      showToast("Minimum fundable amount is ₦200,000", "error");
       return;
     }
 
     setShowFundLoading(true);
-    setTimeout(() => {
+
+    try {
+      const success = await fundWallet(amount);
+
+      if (success) {
+        setShowFundLoading(false);
+        setShowFundSuccess(true);
+        showToast("Wallet funded successfully!", "success");
+        // Note: The wallet balance will be automatically updated by the AuthContext
+      } else {
+        setShowFundLoading(false);
+        showToast("Failed to fund wallet. Please try again.", "error");
+      }
+    } catch (error) {
+      console.error("Fund wallet error:", error);
       setShowFundLoading(false);
-      setShowFundSuccess(true);
-      // Add the funded amount to wallet balance
-      setWalletBalance((prevBalance) => prevBalance + amount);
-    }, 1800);
+      showToast(
+        "An error occurred while funding wallet. Please try again.",
+        "error"
+      );
+    }
   };
 
   return (
     <div className="dashboard-page-content">
+      <MessageToast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+      />
       {role === "Customer" && (
         <div className="customer-dashboard-top">
           <div className="wallet-card">
@@ -54,13 +105,13 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               <div>
                 <div className="wallet-label">Wallet Balance</div>
                 <div className="wallet-balance">
-                  ₦{walletBalance.toLocaleString()}
+                  ₦{localWalletBalance.toLocaleString()}
                 </div>
               </div>
             </div>
             <BorderButton
               text="FUND WALLET"
-              className="fund-wallet-btn"
+              className="fund-wallet-btn-dashboard"
               onClick={handleOpenFundWallet}
             />
           </div>

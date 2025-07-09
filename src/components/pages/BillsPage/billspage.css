@@ -17,6 +17,115 @@
   align-items: stretch;
 }
 
+/* Zoom scaling for bill search card */
+@media (max-width: 1920px) {
+  .bill-search-card {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .bill-search-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .bill-search-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .bill-search-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .bill-search-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .bill-search-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .bill-search-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .bill-search-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .bill-search-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .bill-search-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .bill-search-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .bill-search-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .bill-search-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .bill-search-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .bill-search-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .bill-search-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .bill-search-card {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 768px) {
+  .bill-search-card {
+    zoom: 1;
+  }
+}
+
 .bill-search-title {
   font-size: 20px;
   font-weight: 500;
@@ -93,24 +202,28 @@
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100% !important;
+  height: 100% !important;
   background: rgba(34, 43, 69, 0.32);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
 }
 
 .bill-modal-center {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
   top: 0;
   left: 0;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
 }
 
 .bill-loader-spinner {
@@ -121,6 +234,12 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+  width: 128px !important;
+  height: 128px !important;
+  flex-shrink: 0;
+  position: relative;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
 }
 
 .bill-results-wrapper {
@@ -144,13 +263,122 @@
   padding: 23px 12px;
   display: flex;
   flex-direction: row;
-align-items: center;
+  align-items: center;
   min-width: 240px;
   height: 101px;
   gap: 16px;
-  height:80px;
+  height: 80px;
 
   flex: 1;
+}
+
+/* Zoom scaling for bill customer cards */
+@media (max-width: 1920px) {
+  .bill-customer-card {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .bill-customer-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .bill-customer-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .bill-customer-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .bill-customer-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .bill-customer-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .bill-customer-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .bill-customer-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .bill-customer-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .bill-customer-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .bill-customer-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .bill-customer-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .bill-customer-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .bill-customer-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .bill-customer-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .bill-customer-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .bill-customer-card {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 768px) {
+  .bill-customer-card {
+    zoom: 1;
+  }
 }
 
 .bill-customer-icon-bg {
@@ -204,9 +432,121 @@ align-items: center;
 }
 
 .bill-results-title {
-  font-size: 24px;
-  font-weight: 500;
-  color: #222b45;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for bill results title with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .bill-results-title {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .bill-results-title {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .bill-results-title {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .bill-results-title {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .bill-results-title {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .bill-results-title {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .bill-results-title {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .bill-results-title {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .bill-results-title {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .bill-results-title {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .bill-results-title {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .bill-results-title {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .bill-results-title {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .bill-results-title {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .bill-results-title {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .bill-results-title {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .bill-results-title {
+    zoom: 0.4;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .bill-results-title {
+    zoom: 1;
+  }
 }
 
 .bill-results-table-card {
@@ -216,6 +556,115 @@ align-items: center;
   margin-top: 12px;
   padding: 0 0 0 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Zoom scaling for bill results table card */
+@media (max-width: 1920px) {
+  .bill-results-table-card {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .bill-results-table-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .bill-results-table-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .bill-results-table-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .bill-results-table-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .bill-results-table-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .bill-results-table-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .bill-results-table-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .bill-results-table-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .bill-results-table-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .bill-results-table-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .bill-results-table-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .bill-results-table-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .bill-results-table-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .bill-results-table-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .bill-results-table-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .bill-results-table-card {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 768px) {
+  .bill-results-table-card {
+    zoom: 1;
+  }
 }
 
 .bill-results-table {
@@ -258,4 +707,125 @@ align-items: center;
 
 .invoice-header-item {
   color: #070600;
+}
+
+/* Bill Creation Form Zoom Scaling */
+.add-service-form-card {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e4e4e4;
+  padding: 30px 42px 30px 42px;
+  width: 100%;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for bill creation form with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .add-service-form-card {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .add-service-form-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .add-service-form-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .add-service-form-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .add-service-form-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .add-service-form-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .add-service-form-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .add-service-form-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .add-service-form-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .add-service-form-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .add-service-form-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .add-service-form-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .add-service-form-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .add-service-form-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .add-service-form-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .add-service-form-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .add-service-form-card {
+    zoom: 0.4;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .add-service-form-card {
+    zoom: 1;
+  }
 }

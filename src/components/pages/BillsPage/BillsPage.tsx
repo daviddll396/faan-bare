@@ -365,6 +365,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 text="Create New Bill"
                 icon={AddIcon}
                 onClick={() => setShowBillCreation(true)}
+                className="border-button-userspage"
               />
             </div>
             <div className="bill-results-table-card">

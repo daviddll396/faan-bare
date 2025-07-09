@@ -42,15 +42,240 @@
 /* Add animation to content card */
 .content-card {
   animation: slideInUp 0.4s ease-out 0.4s both;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for content card with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .content-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1800px) {
+  .content-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1700px) {
+  .content-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1600px) {
+  .content-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1500px) {
+  .content-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1450px) {
+  .content-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1400px) {
+  .content-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1350px) {
+  .content-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1300px) {
+  .content-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1250px) {
+  .content-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1200px) {
+  .content-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1150px) {
+  .content-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1100px) {
+  .content-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1050px) {
+  .content-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 1000px) {
+  .content-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 950px) {
+  .content-card {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 900px) {
+  .content-card {
+    zoom: 0.38;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .content-card {
+    zoom: 1;
+  }
 }
 
 .add-user-form-card {
-  background: #fff;
+  background: white;
   border-radius: 12px;
   border: 1px solid #e4e4e4;
-  padding: 30px 47px 30px 47px;
-  max-width: 900px;
-  animation: slideInUp 0.4s ease-out;
+  overflow: hidden;
+  padding: 32px 40px;
+  margin-top: 24px;
+  animation: slideInUp 0.4s ease-out 0.6s both;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for add user form card with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .add-user-form-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1800px) {
+  .add-user-form-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1700px) {
+  .add-user-form-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1600px) {
+  .add-user-form-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1500px) {
+  .add-user-form-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1450px) {
+  .add-user-form-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1400px) {
+  .add-user-form-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1350px) {
+  .add-user-form-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1300px) {
+  .add-user-form-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1250px) {
+  .add-user-form-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1200px) {
+  .add-user-form-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1150px) {
+  .add-user-form-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1100px) {
+  .add-user-form-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1050px) {
+  .add-user-form-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 1000px) {
+  .add-user-form-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 950px) {
+  .add-user-form-card {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 900px) {
+  .add-user-form-card {
+    zoom: 0.38;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .add-user-form-card {
+    zoom: 1;
+  }
 }
 
 .add-user-title {
@@ -170,4 +395,120 @@
 
 .select-dropdown-wrapper.open .select-chevron {
   transform: translateY(-50%) rotate(180deg);
+}
+
+/* Zoom scaling for BorderButton component on users page */
+.border-button-userspage {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for border button with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .border-button-userspage {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1800px) {
+  .border-button-userspage {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1700px) {
+  .border-button-userspage {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1600px) {
+  .border-button-userspage {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1500px) {
+  .border-button-userspage {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1450px) {
+  .border-button-userspage {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1400px) {
+  .border-button-userspage {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1350px) {
+  .border-button-userspage {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1300px) {
+  .border-button-userspage {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1250px) {
+  .border-button-userspage {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1200px) {
+  .border-button-userspage {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1150px) {
+  .border-button-userspage {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1100px) {
+  .border-button-userspage {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1050px) {
+  .border-button-userspage {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 1000px) {
+  .border-button-userspage {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 950px) {
+  .border-button-userspage {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 900px) {
+  .border-button-userspage {
+    zoom: 0.38;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .border-button-userspage {
+    zoom: 1;
+  }
 }

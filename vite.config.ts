@@ -13,6 +13,13 @@ export default defineConfig({
         // Optionally, remove /auth from the path if your backend expects it
         // rewrite: (path) => path.replace(/^\/auth/, '/auth'),
       },
+      // Proxy API requests starting with /api to your backend
+      "/api": {
+        target: "http://197.253.19.78:9091",
+        changeOrigin: true,
+        // Keep the /api path as is
+        // rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
     },
   },
 });

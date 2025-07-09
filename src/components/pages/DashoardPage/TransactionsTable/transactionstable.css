@@ -9,13 +9,124 @@
 
 .transactions-table {
   width: 100%;
-
   background: white;
   border-radius: 12px;
-
   border: 1px solid #e2e8f0;
   padding: 21px;
   box-sizing: border-box;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Responsive zoom scaling for the transactions table to handle different desktop sizes and scaling */
+/* Progressive zoom scaling with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .transactions-table {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1800px) {
+  .transactions-table {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1700px) {
+  .transactions-table {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1600px) {
+  .transactions-table {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1500px) {
+  .transactions-table {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1450px) {
+  .transactions-table {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1400px) {
+  .transactions-table {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1350px) {
+  .transactions-table {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1300px) {
+  .transactions-table {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1250px) {
+  .transactions-table {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1200px) {
+  .transactions-table {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1150px) {
+  .transactions-table {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1100px) {
+  .transactions-table {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1050px) {
+  .transactions-table {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 1000px) {
+  .transactions-table {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 950px) {
+  .transactions-table {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 900px) {
+  .transactions-table {
+    zoom: 0.38;
+  }
+}
+
+/* Reset zoom for mobile devices to use standard responsive behavior */
+@media (max-width: 768px) {
+  .transactions-table {
+    zoom: 1;
+  }
 }
 
 .transactions-table table {

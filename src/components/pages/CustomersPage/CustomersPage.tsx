@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./customerspage.css";
 import { Eye } from "lucide-react";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
+import "./customerspage.css";
 
 const sampleFetchedCustomers = [
   {
@@ -26,8 +26,45 @@ interface CustomersPageProps {
   role?: string;
 }
 
+// Reusable Loading Spinner Component
+const LoadingSpinner: React.FC = () => (
+  <div className="customer-modal-backdrop">
+    <div className="customer-modal-center">
+      <div className="customer-loader-spinner">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle
+            cx="32"
+            cy="32"
+            r="24"
+            stroke="#e4e4e4"
+            strokeWidth="6"
+            fill="none"
+            opacity="0.4"
+          />
+          <path
+            d="M56 32a24 24 0 0 1-24 24"
+            stroke="#007948"
+            strokeWidth="6"
+            fill="none"
+            strokeLinecap="round"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 32 32"
+              to="360 32 32"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </svg>
+      </div>
+    </div>
+  </div>
+);
+
 const CustomersPage: React.FC<CustomersPageProps> = () => {
-  const [activeTab, setActiveTab] = useState("fetch");
+  const [activeTab, setActiveTab] = useState("create");
   const [fetching, setFetching] = useState(false);
   const [fetched, setFetched] = useState(false);
 
@@ -71,16 +108,16 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     <div className="customers-page-bg">
       <div className="customer-tabs">
         <button
-          className={`customer-tab${activeTab === "fetch" ? " active" : ""}`}
-          onClick={() => setActiveTab("fetch")}
-        >
-          Fetch Customer Info
-        </button>
-        <button
           className={`customer-tab${activeTab === "create" ? " active" : ""}`}
           onClick={() => setActiveTab("create")}
         >
           Create New Customer
+        </button>
+        <button
+          className={`customer-tab${activeTab === "fetch" ? " active" : ""}`}
+          onClick={() => setActiveTab("fetch")}
+        >
+          Fetch Customer Info
         </button>
       </div>
       {activeTab === "fetch" && !fetching && !fetched && (
@@ -117,41 +154,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
           </form>
         </div>
       )}
-      {activeTab === "fetch" && fetching && (
-        <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
-            <div className="customer-loader-spinner">
-              <svg width="64" height="64" viewBox="0 0 64 64">
-                <circle
-                  cx="32"
-                  cy="32"
-                  r="24"
-                  stroke="#e4e4e4"
-                  strokeWidth="6"
-                  fill="none"
-                  opacity="0.4"
-                />
-                <path
-                  d="M56 32a24 24 0 0 1-24 24"
-                  stroke="#007948"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeLinecap="round"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    type="rotate"
-                    from="0 32 32"
-                    to="360 32 32"
-                    dur="1s"
-                    repeatCount="indefinite"
-                  />
-                </path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      )}
+      {activeTab === "fetch" && fetching && <LoadingSpinner />}
       {activeTab === "fetch" && fetched && (
         <div className="customer-table-card">
           <div className="table-container">
@@ -272,41 +275,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
             </button>
           </form>
           {/* Loading Spinner Overlay */}
-          {creating && (
-            <div className="customer-modal-backdrop">
-              <div className="customer-modal-center">
-                <div className="customer-loader-spinner">
-                  <svg width="64" height="64" viewBox="0 0 64 64">
-                    <circle
-                      cx="32"
-                      cy="32"
-                      r="24"
-                      stroke="#e4e4e4"
-                      strokeWidth="6"
-                      fill="none"
-                      opacity="0.4"
-                    />
-                    <path
-                      d="M56 32a24 24 0 0 1-24 24"
-                      stroke="#007948"
-                      strokeWidth="6"
-                      fill="none"
-                      strokeLinecap="round"
-                    >
-                      <animateTransform
-                        attributeName="transform"
-                        type="rotate"
-                        from="0 32 32"
-                        to="360 32 32"
-                        dur="1s"
-                        repeatCount="indefinite"
-                      />
-                    </path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          )}
+          {creating && <LoadingSpinner />}
           {/* Success Modal Overlay */}
           {showSuccess && (
             <div className="customer-modal-backdrop">

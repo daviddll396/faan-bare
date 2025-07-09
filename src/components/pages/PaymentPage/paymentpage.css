@@ -15,6 +15,7 @@
   width: 100%;
   padding: 0 0 32px 0;
 }
+
 .payment-tabs-row {
   display: flex;
   gap: 36px;
@@ -24,7 +25,120 @@
   padding-left: 2px;
   position: relative;
   animation: slideInUp 0.4s ease-out;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
 }
+
+/* Progressive zoom scaling for payment tabs with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .payment-tabs-row {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .payment-tabs-row {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .payment-tabs-row {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .payment-tabs-row {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .payment-tabs-row {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .payment-tabs-row {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .payment-tabs-row {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .payment-tabs-row {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .payment-tabs-row {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .payment-tabs-row {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .payment-tabs-row {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .payment-tabs-row {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .payment-tabs-row {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .payment-tabs-row {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .payment-tabs-row {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .payment-tabs-row {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .payment-tabs-row {
+    zoom: 0.4;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .payment-tabs-row {
+    zoom: 1;
+  }
+}
+
 .payment-tab {
   font-size: 18px;
   font-weight: 500;
@@ -38,9 +152,11 @@
   outline: none;
   transition: color 0.2s;
 }
+
 .payment-tab.active {
   color: #007948;
 }
+
 .payment-tab.active::after {
   content: "";
   position: absolute;
@@ -51,12 +167,14 @@
   background: #007948;
   border-radius: 2px;
 }
+
 .payment-search-row {
   display: flex;
   gap: 24px;
   margin: 32px 0 24px 0;
   animation: slideInUp 0.4s ease-out 0.2s both;
 }
+
 .payment-table-card {
   background: #fff;
   border-radius: 12px;
@@ -65,12 +183,126 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   padding-bottom: 10px;
   animation: slideInUp 0.4s ease-out 0.4s both;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
 }
+
+/* Progressive zoom scaling for payment table card with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .payment-table-card {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .payment-table-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .payment-table-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .payment-table-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .payment-table-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .payment-table-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .payment-table-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .payment-table-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .payment-table-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .payment-table-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .payment-table-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .payment-table-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .payment-table-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .payment-table-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .payment-table-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .payment-table-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .payment-table-card {
+    zoom: 0.4;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .payment-table-card {
+    zoom: 1;
+  }
+}
+
 .payment-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 16px;
 }
+
 /* .payment-table th {
   color: #070600;
   font-weight: 700;
@@ -88,34 +320,39 @@
   border-bottom: 1px solid #f2f2f2;
   text-align: center;
 } */
+
 .payment-table .alt-row {
   background: #f7f7f7;
 }
+
 .payment-status-badge {
   display: inline-block;
   font-size: 17px;
   font-weight: 500;
   border-radius: 5px;
   padding: 10px 8px;
-
   text-align: center;
   letter-spacing: 0.01em;
   background: #f7f7f7;
   margin: 0 auto;
   border: none;
 }
+
 .payment-status-badge.cancelled {
   background: #fdeaea;
   color: #b91c1c;
 }
+
 .payment-status-badge.processing {
   background: #f7ede5;
   color: #b45309;
 }
+
 .payment-status-badge.completed {
   background: #e3f6ef;
   color: #15803d;
 }
+
 .action-btn {
   display: inline-flex;
   align-items: center;
@@ -130,40 +367,411 @@
   white-space: nowrap;
   box-shadow: none;
 }
+
 .action-btn:hover,
 .action-btn:focus {
   background: none !important;
   box-shadow: none !important;
 }
+
 .action-btn .action-icon {
   font-size: 22px;
   vertical-align: middle;
   flex-shrink: 0;
 }
+
 .action-btn.reason {
   color: #b91c1c;
 }
+
 .action-btn.reason .action-icon {
   color: #b91c1c;
 }
+
 .action-btn.receipt {
   color: #15803d;
 }
+
 .action-btn.receipt .action-icon {
   color: #15803d;
 }
+
 .action-btn.invoice {
   color: #b91c1c;
 }
+
 .action-btn.invoice .action-icon {
   color: #b91c1c;
 }
+
 .action-btn.view {
   color: #b91c1c;
 }
+
 .action-btn.view .action-icon {
   color: #b91c1c;
 }
+
+/* Modal protection from zoom scaling */
+.customer-modal-backdrop {
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+}
+
+.customer-modal-center {
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+}
+
+/* Additional modal content protection */
+.customer-modal-center > div {
+  zoom: 1 !important;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+}
+
+/* Specific zoom scaling for payment page modal content to handle high DPI displays */
+@media (max-width: 1920px) {
+  .customer-modal-center > div {
+    zoom: 0.85 !important;
+  }
+}
+
+@media (max-width: 1800px) {
+  .customer-modal-center > div {
+    zoom: 0.8 !important;
+  }
+}
+
+@media (max-width: 1700px) {
+  .customer-modal-center > div {
+    zoom: 0.75 !important;
+  }
+}
+
+@media (max-width: 1600px) {
+  .customer-modal-center > div {
+    zoom: 0.7 !important;
+  }
+}
+
+@media (max-width: 1500px) {
+  .customer-modal-center > div {
+    zoom: 0.68 !important;
+  }
+}
+
+@media (max-width: 1450px) {
+  .customer-modal-center > div {
+    zoom: 0.66 !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .customer-modal-center > div {
+    zoom: 0.64 !important;
+  }
+}
+
+@media (max-width: 1350px) {
+  .customer-modal-center > div {
+    zoom: 0.62 !important;
+  }
+}
+
+@media (max-width: 1300px) {
+  .customer-modal-center > div {
+    zoom: 0.6 !important;
+  }
+}
+
+@media (max-width: 1250px) {
+  .customer-modal-center > div {
+    zoom: 0.58 !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .customer-modal-center > div {
+    zoom: 0.56 !important;
+  }
+}
+
+@media (max-width: 1150px) {
+  .customer-modal-center > div {
+    zoom: 0.54 !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .customer-modal-center > div {
+    zoom: 0.52 !important;
+  }
+}
+
+@media (max-width: 1050px) {
+  .customer-modal-center > div {
+    zoom: 0.5 !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .customer-modal-center > div {
+    zoom: 0.48 !important;
+  }
+}
+
+@media (max-width: 950px) {
+  .customer-modal-center > div {
+    zoom: 0.46 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .customer-modal-center > div {
+    zoom: 0.44 !important;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .customer-modal-center > div {
+    zoom: 1 !important;
+  }
+}
+
+/* Protection for bill-customer-card elements inside modals to prevent over-scaling */
+.customer-modal-center .bill-customer-card {
+  zoom: 1 !important;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+}
+
+/* Moderate scaling for bill customer cards in modals - less aggressive than modal content */
+@media (max-width: 1920px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 1 !important;
+  }
+}
+
+@media (max-width: 1800px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.98 !important;
+  }
+}
+
+@media (max-width: 1700px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.95 !important;
+  }
+}
+
+@media (max-width: 1600px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.92 !important;
+  }
+}
+
+@media (max-width: 1500px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.9 !important;
+  }
+}
+
+@media (max-width: 1450px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.88 !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.86 !important;
+  }
+}
+
+@media (max-width: 1350px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.84 !important;
+  }
+}
+
+@media (max-width: 1300px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.82 !important;
+  }
+}
+
+@media (max-width: 1250px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.8 !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.78 !important;
+  }
+}
+
+@media (max-width: 1150px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.76 !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.74 !important;
+  }
+}
+
+@media (max-width: 1050px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.72 !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.7 !important;
+  }
+}
+
+@media (max-width: 950px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.68 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.66 !important;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .customer-modal-center .bill-customer-card {
+    zoom: 1 !important;
+  }
+}
+
+.border-button-paymentpage {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for payment page border buttons with aggressive scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .border-button-paymentpage {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .border-button-paymentpage {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .border-button-paymentpage {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .border-button-paymentpage {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .border-button-paymentpage {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .border-button-paymentpage {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .border-button-paymentpage {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .border-button-paymentpage {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .border-button-paymentpage {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .border-button-paymentpage {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .border-button-paymentpage {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .border-button-paymentpage {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .border-button-paymentpage {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .border-button-paymentpage {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .border-button-paymentpage {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .border-button-paymentpage {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .border-button-paymentpage {
+    zoom: 0.4;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .border-button-paymentpage {
+    zoom: 1;
+  }
+}
+
 @media (max-width: 900px) {
   .payment-search-row {
     flex-direction: column;

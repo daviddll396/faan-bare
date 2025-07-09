@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useAuth } from "../../../../contexts/AuthContext";
 import "./metriccard.css";
 import BillIcon from "/icons/bill-metric-icon.svg";
 import PaymentIcon from "/icons/payment-metric-icon.svg";
@@ -7,31 +7,41 @@ import CancelledIcon from "/icons/dashboard-cancelled-bookings.svg";
 import PendingIcon from "/icons/dashboard-pending-bookings.svg";
 
 const MetricsCards: React.FC = () => {
+  const { user } = useAuth();
+
+  // Get transaction stats from user data, fallback to 0 if not available
+  const transactionStats = user?.transactionStats || {
+    total: 0,
+    completed: 0,
+    pending: 0,
+    cancelled: 0,
+  };
+
   const metrics = [
     {
       title: "Total Bookings",
-      value: "50",
+      value: transactionStats.total.toString(),
       icon: BillIcon,
       color: "#3B82F6",
       bgColor: "#EFF6FF",
     },
     {
       title: "Completed Bookings",
-      value: "47",
+      value: transactionStats.completed.toString(),
       icon: PaymentIcon,
       color: "#10B981",
       bgColor: "#ECFDF5",
     },
     {
       title: "Cancelled Bookings",
-      value: "1",
+      value: transactionStats.cancelled.toString(),
       icon: CancelledIcon,
       color: "#EF4444",
       bgColor: "#FEF2F2",
     },
     {
       title: "Pending Bookings",
-      value: "2",
+      value: transactionStats.pending.toString(),
       icon: PendingIcon,
       color: "#8B5CF6",
       bgColor: "#F3E8FF",

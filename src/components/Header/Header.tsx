@@ -1,8 +1,8 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
 import "./header.css";
 import UserIcon from "/images/header-user.svg";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface HeaderProps {
   pageTitle: string;
