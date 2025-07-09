@@ -301,18 +301,15 @@ const RegisterPage: React.FC = () => {
       const encryptedPayload = encryptAESCBC(body, secretKey, ivKey);
 
       // Make the API call with encrypted payload and required headers
-      const response = await fetch(
-        "http://197.253.19.78:9091/auth/faan/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Client-Auth": "Basic dGVzdDp0ZXN0",
-            "X-Source": "web",
-          },
-          body: encryptedPayload,
-        }
-      );
+      const response = await fetch("/auth/faan/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Client-Auth": "Basic dGVzdDp0ZXN0",
+          "X-Source": "web",
+        },
+        body: encryptedPayload,
+      });
 
       console.log("Response status:", response.status);
       console.log("Response headers:", response.headers);

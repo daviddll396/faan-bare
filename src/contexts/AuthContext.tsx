@@ -7,8 +7,25 @@ import React, {
 } from "react";
 import CryptoJS from "crypto-js";
 
+// API Base URL - configure for different environments
+const getApiBaseUrl = (): string => {
+  // Detect if we're in production by checking the hostname
+  const isProduction =
+    window.location.hostname.includes("vercel.app") ||
+    window.location.hostname.includes("netlify.app") ||
+    !window.location.hostname.includes("localhost");
+
+  if (isProduction) {
+    // In production (Vercel), use the proxy path
+    return "";
+  }
+  // Local development - use the direct API server
+  return "http://197.253.19.78:9091";
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
 // Constants
-const API_BASE_URL = "http://197.253.19.78:9091";
 const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/faan/login`,
   USER_DETAILS: `${API_BASE_URL}/api/faan/customers/profile`,
