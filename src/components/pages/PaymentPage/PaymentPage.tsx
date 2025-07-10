@@ -277,7 +277,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       </div>
       {modal && modal.type === "invoice" && (
         <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
+          <div className="payment-modal-center">
             <div
               style={{
                 background: "#fff",
@@ -584,7 +584,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       )}
       {modal && modal.type === "receipt" && (
         <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
+          <div className="payment-modal-center">
             <div
               style={{
                 background: "#fff",
@@ -857,7 +857,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       )}
       {modal && modal.type === "reason" && (
         <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
+          <div className="payment-modal-center">
             <div
               style={{
                 background: "#fff",
@@ -1011,7 +1011,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       {/* Payment Success Modal Overlay */}
       {showPaymentSuccess && (
         <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
+          <div className="payment-modal-center">
             <div className="customer-success-modal">
               <div className="customer-success-icon-wrap">
                 <img

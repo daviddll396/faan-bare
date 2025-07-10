@@ -259,6 +259,9 @@
   .payment-table-card {
     zoom: 0.9;
   }
+  .payment-modal-center {
+    zoom: 0.7;
+  }
 }
 
 @media (max-width: 1800px) {
@@ -295,6 +298,9 @@
   .payment-table-card {
     zoom: 0.6;
   }
+  .payment-modal-center {
+    zoom: 0.6;
+  }
 }
 
 @media (max-width: 1350px) {
@@ -306,6 +312,9 @@
 @media (max-width: 1300px) {
   .payment-table-card {
     zoom: 0.56;
+  }
+  .payment-modal-center {
+    zoom: 0.7;
   }
 }
 
@@ -319,11 +328,15 @@
   .payment-table-card {
     zoom: 0.52;
   }
+ 
 }
 
 @media (max-width: 1150px) {
   .payment-table-card {
     zoom: 0.5;
+  }
+  .payment-modal-center {
+    zoom: 0.7;
   }
 }
 
@@ -331,11 +344,17 @@
   .payment-table-card {
     zoom: 0.48;
   }
+  .payment-modal-center {
+    zoom: 0.6;
+  }
 }
 
 @media (max-width: 1050px) {
   .payment-table-card {
     zoom: 0.46;
+  }
+  .payment-modal-center {
+    zoom: 0.5;
   }
 }
 
@@ -491,7 +510,7 @@
 }
 
 /* Protection for bill-customer-card elements inside modals to prevent over-scaling */
-.customer-modal-center .bill-customer-card {
+.payment-modal-center .bill-customer-card {
   zoom: 1 !important;
   transform: scale(1) !important;
   transform-origin: center center !important;
@@ -499,110 +518,110 @@
 
 /* Moderate scaling for bill customer cards in modals - less aggressive than modal content */
 @media (max-width: 1920px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 1 !important;
   }
 }
 
 @media (max-width: 1800px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.98 !important;
   }
 }
 
 @media (max-width: 1700px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.95 !important;
   }
 }
 
 @media (max-width: 1600px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.92 !important;
   }
 }
 
 @media (max-width: 1500px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.9 !important;
   }
 }
 
 @media (max-width: 1450px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.88 !important;
   }
 }
 
 @media (max-width: 1400px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.86 !important;
   }
 }
 
 @media (max-width: 1350px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.84 !important;
   }
 }
 
 @media (max-width: 1300px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.82 !important;
   }
 }
 
 @media (max-width: 1250px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.8 !important;
   }
 }
 
 @media (max-width: 1200px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.78 !important;
   }
 }
 
 @media (max-width: 1150px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.76 !important;
   }
 }
 
 @media (max-width: 1100px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.74 !important;
   }
 }
 
 @media (max-width: 1050px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.72 !important;
   }
 }
 
 @media (max-width: 1000px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.7 !important;
   }
 }
 
 @media (max-width: 950px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.68 !important;
   }
 }
 
 @media (max-width: 900px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 0.66 !important;
   }
 }
 
 /* Reset zoom for mobile devices */
 @media (max-width: 768px) {
-  .customer-modal-center .bill-customer-card {
+  .payment-modal-center .bill-customer-card {
     zoom: 1 !important;
   }
 }
