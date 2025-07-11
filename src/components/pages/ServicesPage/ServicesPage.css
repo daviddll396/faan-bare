@@ -1596,5 +1596,121 @@ select.booking-form-input {
 }
 
 .customer-success-btn.close:hover {
-  background: #d4d4d4;
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Services Action Buttons Row Scaling */
+.services-action-buttons-row {
+  zoom: 1;
+  transition: zoom 0.3s ease;
+}
+
+@media (max-width: 1920px) {
+  .services-action-buttons-row {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .services-action-buttons-row {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .services-action-buttons-row {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .services-action-buttons-row {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .services-action-buttons-row {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .services-action-buttons-row {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .services-action-buttons-row {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .services-action-buttons-row {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .services-action-buttons-row {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .services-action-buttons-row {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .services-action-buttons-row {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .services-action-buttons-row {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .services-action-buttons-row {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .services-action-buttons-row {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .services-action-buttons-row {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .services-action-buttons-row {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .services-action-buttons-row {
+    zoom: 0.4;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .services-action-buttons-row {
+    zoom: 1;
+  }
 }

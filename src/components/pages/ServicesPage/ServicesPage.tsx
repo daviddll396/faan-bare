@@ -937,7 +937,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   onChange={(e) => setSearchName(e.target.value)}
                 />
               </div>
-              <div style={{ display: "flex", gap: 12 }}>
+              <div
+                style={{ display: "flex", gap: 12 }}
+                className="services-action-buttons-row"
+              >
                 <BorderButton
                   text="Search"
                   onClick={handleSearch}

@@ -147,6 +147,12 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Mock admin credentials
+const MOCK_ADMIN_CREDENTIALS = {
+  email: "admin@faan.gov.ng",
+  password: "password123",
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -260,6 +266,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+      // Check for mock admin credentials first
+      if (
+        email === MOCK_ADMIN_CREDENTIALS.email &&
+        password === MOCK_ADMIN_CREDENTIALS.password
+      ) {
+        console.log("Mock admin login detected");
+
+        // Create mock admin user
+        const mockAdminUser: User = {
+          id: "admin-001",
+          customerId: "ADMIN-001",
+          firstName: "System",
+          lastName: "Administrator",
+          name: "System Administrator",
+          email: "admin@faan.gov.ng",
+          phoneNumber: "+234-800-ADMIN",
+          nin: "00000000000",
+          dob: "1980-01-01",
+          address: "FAAN Headquarters, Lagos",
+          customerType: "ADMIN",
+          role: "Admin",
+          walletBalance: 0,
+          transactionStats: {
+            total: 0,
+            completed: 0,
+            pending: 0,
+            cancelled: 0,
+          },
+        };
+
+        // Generate a mock token for admin
+        const mockToken = `mock-admin-token-${Date.now()}`;
+
+        // Store admin user and token
+        setUser(mockAdminUser);
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockAdminUser));
+        localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken);
+
+        console.log("Mock admin user created and stored:", mockAdminUser);
+        return true;
+      }
+
+      // If not mock admin credentials, proceed with API login
       const requestBody = { username: email, password };
       const body = JSON.stringify(requestBody);
 
