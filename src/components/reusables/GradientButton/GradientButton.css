@@ -1,0 +1,153 @@
+/* Base Gradient Button Styles */
+.gradient-button {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  outline: none;
+}
+
+.gradient-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+.gradient-button:hover {
+  transform: translateY(-1px);
+}
+
+.gradient-button:hover::before {
+  opacity: 1;
+}
+
+.gradient-button:active {
+  transform: translateY(0);
+}
+
+/* Primary Variant (Green) */
+.gradient-button--primary {
+  background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
+  color: #fff;
+}
+
+.gradient-button--primary::before {
+  background: linear-gradient(180deg, #1aa476 0%, #058e5b 100%);
+}
+
+/* Secondary Variant (Gray) */
+.gradient-button--secondary {
+  background: linear-gradient(180deg, #6c7278 0%, #4a5568 100%);
+  color: #fff;
+}
+
+.gradient-button--secondary::before {
+  background: linear-gradient(180deg, #8a91a0 0%, #4a5568 100%);
+}
+
+/* Size Variants */
+.gradient-button--small {
+  font-size: 12px;
+  padding: 10px 16px;
+}
+
+.gradient-button--medium {
+  font-size: 14px;
+  padding: 16px 24px;
+}
+
+.gradient-button--large {
+  font-size: 16px;
+  padding: 18px 32px;
+}
+
+/* Full Width */
+.gradient-button--full-width {
+  width: 100%;
+}
+
+/* Disabled State */
+.gradient-button--disabled,
+.gradient-button:disabled {
+  background: #e4e4e4 !important;
+  color: #969696 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.gradient-button--disabled::before,
+.gradient-button:disabled::before {
+  display: none;
+}
+
+.gradient-button--disabled:hover,
+.gradient-button:disabled:hover {
+  transform: none !important;
+}
+
+/* Focus State */
+.gradient-button:focus {
+  box-shadow: 0 0 0 3px rgba(23, 151, 108, 0.2);
+}
+
+.gradient-button--secondary:focus {
+  box-shadow: 0 0 0 3px rgba(108, 114, 120, 0.2);
+}
+
+/* Loading State (for future use) */
+.gradient-button--loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.gradient-button--loading::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Close Variant (Light Green) */
+.gradient-button--close {
+  background: #eafaf3;
+  color: #007948;
+}
+
+.gradient-button--close:hover {
+  transform: none;
+}
+
+.gradient-button--close:hover::before {
+  opacity: 0;
+}
+
+.gradient-button--close:active {
+  transform: none;
+}

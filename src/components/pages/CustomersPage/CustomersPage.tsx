@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Eye } from "lucide-react";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
+import FaanLogo from "../../../../public/images/faan-logo.svg";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
+import { useLoading } from "../../../contexts/LoadingContext";
 import "./customerspage.css";
 
 const sampleFetchedCustomers = [
@@ -26,46 +29,9 @@ interface CustomersPageProps {
   role?: string;
 }
 
-// Reusable Loading Spinner Component
-const LoadingSpinner: React.FC = () => (
-  <div className="customer-modal-backdrop">
-    <div className="customer-modal-center">
-      <div className="customer-loader-spinner">
-        <svg width="64" height="64" viewBox="0 0 64 64">
-          <circle
-            cx="32"
-            cy="32"
-            r="24"
-            stroke="#e4e4e4"
-            strokeWidth="6"
-            fill="none"
-            opacity="0.4"
-          />
-          <path
-            d="M56 32a24 24 0 0 1-24 24"
-            stroke="#007948"
-            strokeWidth="6"
-            fill="none"
-            strokeLinecap="round"
-          >
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 32 32"
-              to="360 32 32"
-              dur="1s"
-              repeatCount="indefinite"
-            />
-          </path>
-        </svg>
-      </div>
-    </div>
-  </div>
-);
-
 const CustomersPage: React.FC<CustomersPageProps> = () => {
+  const { showLoading, hideLoading } = useLoading();
   const [activeTab, setActiveTab] = useState("create");
-  const [fetching, setFetching] = useState(false);
   const [fetched, setFetched] = useState(false);
 
   // State for create new customer form
@@ -78,17 +44,36 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     address: "",
     nin: "",
   });
-  const [creating, setCreating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<
+    (typeof sampleFetchedCustomers)[0] | null
+  >(null);
 
   const handleFetch = (e: React.FormEvent) => {
     e.preventDefault();
-    setFetching(true);
+    showLoading("Fetching customer information...");
     setFetched(false);
     setTimeout(() => {
-      setFetching(false);
+      hideLoading();
       setFetched(true);
     }, 2000);
+  };
+
+  const handleViewMore = (customer: (typeof sampleFetchedCustomers)[0]) => {
+    setSelectedCustomer(customer);
+    setShowCustomerDetails(true);
+  };
+
+  const handleCloseCustomerDetails = () => {
+    setShowCustomerDetails(false);
+    setSelectedCustomer(null);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCloseCustomerDetails();
+    }
   };
 
   const handleCreateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,9 +82,9 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setCreating(true);
+    showLoading("Creating new customer...");
     setTimeout(() => {
-      setCreating(false);
+      hideLoading();
       setShowSuccess(true);
     }, 2000);
   };
@@ -120,7 +105,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
           Fetch Customer Info
         </button>
       </div>
-      {activeTab === "fetch" && !fetching && !fetched && (
+      {activeTab === "fetch" && !fetched && (
         <div className="customer-card">
           <h2 className="customer-card-title">Input Customer Details</h2>
           <p className="customer-card-helper">
@@ -148,15 +133,14 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 <input type="date" />
               </div>
             </div>
-            <button className="customer-fetch-btn" type="submit">
+            <GradientButton type="submit" fullWidth>
               FETCH
-            </button>
+            </GradientButton>
           </form>
         </div>
       )}
-      {activeTab === "fetch" && fetching && <LoadingSpinner />}
       {activeTab === "fetch" && fetched && (
-        <div className="customer-table-card">
+        <div className="content-card">
           <div className="table-container">
             <table>
               <thead>
@@ -180,7 +164,10 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                     <td className="table-data-item">{user.phone}</td>
                     <td className="table-data-item">{user.email}</td>
                     <td className="table-data-item">
-                      <button className="view-more-btn">
+                      <button
+                        className="view-more-btn"
+                        onClick={() => handleViewMore(user)}
+                      >
                         <Eye size={20} /> View More
                       </button>
                     </td>
@@ -270,12 +257,12 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 />
               </div>
             </div>
-            <button className="customer-fetch-btn" type="submit">
-              SAVE
-            </button>
+            <div className="customer-success-btn-container">
+              <GradientButton type="submit" fullWidth>
+                SAVE
+              </GradientButton>
+            </div>
           </form>
-          {/* Loading Spinner Overlay */}
-          {creating && <LoadingSpinner />}
           {/* Success Modal Overlay */}
           {showSuccess && (
             <div className="customer-modal-backdrop">
@@ -297,20 +284,79 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                     You can proceed to create a bill for the customer.
                   </div>
                   <div className="customer-success-actions">
-                    <button className="customer-success-btn create-bill">
+                    <GradientButton variant="primary" size="medium">
                       CREATE BILL
-                    </button>
-                    <button
-                      className="customer-success-btn close"
+                    </GradientButton>
+                    <GradientButton
+                      variant="close"
+                      size="medium"
                       onClick={() => setShowSuccess(false)}
                     >
                       CLOSE
-                    </button>
+                    </GradientButton>
                   </div>
                 </div>
               </div>
             </div>
           )}
+        </div>
+      )}
+      {showCustomerDetails && selectedCustomer && (
+        <div className="customer-details-modal" onClick={handleBackdropClick}>
+          <div className="customer-details-content">
+            <div className="customer-details-header">
+              <img
+                src={FaanLogo}
+                alt="FAAN Logo"
+                className="customer-details-logo"
+              />
+              <div className="customer-details-org-name">
+                FEDERAL AIRPORT AUTHORITY OF NIGERIA
+              </div>
+            </div>
+            <h2 className="customer-details-title">Customer Details</h2>
+            <div className="customer-details-info">
+              <div className="customer-details-item">
+                <div className="customer-details-label">First Name:</div>
+                <div className="customer-details-value">
+                  {selectedCustomer.firstName}
+                </div>
+              </div>
+              <div className="customer-details-item">
+                <div className="customer-details-label">Last Name:</div>
+                <div className="customer-details-value">
+                  {selectedCustomer.lastName}
+                </div>
+              </div>
+              <div className="customer-details-item">
+                <div className="customer-details-label">ID Number:</div>
+                <div className="customer-details-value highlight">
+                  {selectedCustomer.idNo}
+                </div>
+              </div>
+              <div className="customer-details-item">
+                <div className="customer-details-label">Phone Number:</div>
+                <div className="customer-details-value">
+                  {selectedCustomer.phone}
+                </div>
+              </div>
+              <div className="customer-details-item">
+                <div className="customer-details-label">Email Address:</div>
+                <div className="customer-details-value">
+                  {selectedCustomer.email}
+                </div>
+              </div>
+            </div>
+            <div className="customer-details-actions">
+              <GradientButton
+                variant="close"
+                size="medium"
+                onClick={handleCloseCustomerDetails}
+              >
+                CLOSE
+              </GradientButton>
+            </div>
+          </div>
         </div>
       )}
     </div>

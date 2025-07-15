@@ -3,7 +3,9 @@ import "./billspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import BillTitleIcon from "/icons/bill-title-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 import AddIcon from "/icons/add-icon.svg";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 import { Eye } from "lucide-react";
 import BillsNinIcon from "/icons/bills-nin-icon.svg";
@@ -24,21 +26,31 @@ interface BillsPageProps {
   role?: string;
 }
 
+interface Bill {
+  billNo: string;
+  itemName: string;
+  qty: number;
+  amount: string;
+  paid: string;
+  outstanding: string;
+  date: string;
+}
+
 const BillsPage: React.FC<BillsPageProps> = () => {
-  const [searching, setSearching] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
   const [showResults, setShowResults] = useState(false);
   const [showBillCreation, setShowBillCreation] = useState(false);
-  const [showInvoiceLoading, setShowInvoiceLoading] = React.useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = React.useState(false);
-  const [showPaymentLoading, setShowPaymentLoading] = React.useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
+  const [showReceiptModal, setShowReceiptModal] = React.useState(false);
+  const [selectedBill, setSelectedBill] = React.useState<Bill | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSearching(true);
+    showLoading("Searching for customer...");
     setShowResults(false);
     setTimeout(() => {
-      setSearching(false);
+      hideLoading();
       setShowResults(true);
     }, 2000);
   };
@@ -218,42 +230,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
         )}
       </div>
       <div className="bill-search-center">
-        {searching && (
-          <div className="bill-modal-backdrop">
-            <div className="bill-modal-center">
-              <div className="bill-loader-spinner">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                  <circle
-                    cx="32"
-                    cy="32"
-                    r="24"
-                    stroke="#e4e4e4"
-                    strokeWidth="6"
-                    fill="none"
-                    opacity="0.4"
-                  />
-                  <path
-                    d="M56 32a24 24 0 0 1-24 24"
-                    stroke="#007948"
-                    strokeWidth="6"
-                    fill="none"
-                    strokeLinecap="round"
-                  >
-                    <animateTransform
-                      attributeName="transform"
-                      type="rotate"
-                      from="0 32 32"
-                      to="360 32 32"
-                      dur="1s"
-                      repeatCount="indefinite"
-                    />
-                  </path>
-                </svg>
-              </div>
-            </div>
-          </div>
-        )}
-        {!searching && !showResults && (
+        {!showResults && (
           <div className="bill-search-card">
             <div className="bill-search-title">Bill Search</div>
             <div className="bill-search-subtitle">
@@ -273,13 +250,13 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 <label>Customer NIN</label>
                 <input type="text" placeholder="" />
               </div>
-              <button className="bill-search-btn" type="submit">
+              <GradientButton type="submit" fullWidth>
                 SEARCH
-              </button>
+              </GradientButton>
             </form>
           </div>
         )}
-        {!searching && showResults && !showBillCreation && (
+        {showResults && !showBillCreation && (
           <div className="bill-results-wrapper">
             <div className="bill-results-title">Customer Details</div>
             <div className="bill-customer-details-row">
@@ -392,8 +369,14 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                       <td className="table-data-item">{bill.paid}</td>
                       <td className="table-data-item">{bill.outstanding}</td>
                       <td className="table-data-item">{bill.date}</td>
-                      <td>
-                        <button className="bill-view-receipt-btn">
+                      <td className="table-data-item">
+                        <button
+                          className="bill-view-receipt-btn"
+                          onClick={() => {
+                            setSelectedBill(bill);
+                            setShowReceiptModal(true);
+                          }}
+                        >
                           <Eye size={18} /> View Receipt
                         </button>
                       </td>
@@ -404,8 +387,8 @@ const BillsPage: React.FC<BillsPageProps> = () => {
             </div>
           </div>
         )}
-        {!searching && showBillCreation && (
-          <div className="add-service-form-card">
+        {showBillCreation && (
+          <div className="add-service-form-bill">
             <h2 className="add-user-title">Bill Creation</h2>
             <p className="add-user-helper">
               To create a Bill for a customer, input the Item, Base Tariff,
@@ -415,16 +398,16 @@ const BillsPage: React.FC<BillsPageProps> = () => {
               className="user-form-list"
               onSubmit={(e) => {
                 e.preventDefault();
-                setShowInvoiceLoading(true);
+                showLoading("Generating invoice...");
                 setTimeout(() => {
-                  setShowInvoiceLoading(false);
+                  hideLoading();
                   setShowInvoiceModal(true);
                 }, 2000);
               }}
             >
               {billItems.map((bill, idx) => (
                 <div
-                  className="service-form-row"
+                  className="bill-form-row"
                   key={idx}
                   style={{ alignItems: "center" }}
                 >
@@ -564,50 +547,14 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 </button>
               </div>
               <div className="form-actions">
-                <button type="submit" className="save-btn-full">
+                <GradientButton type="submit" fullWidth>
                   GENERATE INVOICE
-                </button>
+                </GradientButton>
               </div>
             </form>
           </div>
         )}
       </div>
-      {/* Loading Spinner Overlay */}
-      {showInvoiceLoading && (
-        <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
-            <div className="customer-loader-spinner">
-              <svg width="64" height="64" viewBox="0 0 64 64">
-                <circle
-                  cx="32"
-                  cy="32"
-                  r="24"
-                  stroke="#e4e4e4"
-                  strokeWidth="6"
-                  fill="none"
-                  opacity="0.4"
-                />
-                <path
-                  d="M56 32a24 24 0 0 1-24 24"
-                  stroke="#007948"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeLinecap="round"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    type="rotate"
-                    from="0 32 32"
-                    to="360 32 32"
-                    dur="1s"
-                    repeatCount="indefinite"
-                  />
-                </path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Invoice Modal Overlay */}
       {showInvoiceModal && (
         <div className="customer-modal-backdrop">
@@ -903,69 +850,19 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                   </tbody>
                 </table>
               </div>
-              <button
-                style={{
-                  width: "100%",
-                  background:
-                    "linear-gradient(180deg, #007948 0%, #007948 100%)",
-                  color: "#fff",
-                  fontSize: 18,
-                  fontWeight: 700,
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "16px 0",
-                  cursor: "pointer",
-                  letterSpacing: 1,
-                  marginTop: 8,
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowPaymentLoading(true);
+              <GradientButton
+                fullWidth
+                onClick={() => {
+                  showLoading("Processing payment...");
                   setTimeout(() => {
-                    setShowPaymentLoading(false);
+                    hideLoading();
                     setShowInvoiceModal(false);
                     setShowPaymentSuccess(true);
                   }, 2000);
                 }}
               >
                 PAY
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Payment Loading Spinner Overlay */}
-      {showPaymentLoading && (
-        <div className="customer-modal-backdrop">
-          <div className="customer-modal-center">
-            <div className="customer-loader-spinner">
-              <svg width="64" height="64" viewBox="0 0 64 64">
-                <circle
-                  cx="32"
-                  cy="32"
-                  r="24"
-                  stroke="#e4e4e4"
-                  strokeWidth="6"
-                  fill="none"
-                  opacity="0.4"
-                />
-                <path
-                  d="M56 32a24 24 0 0 1-24 24"
-                  stroke="#007948"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeLinecap="round"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    type="rotate"
-                    from="0 32 32"
-                    to="360 32 32"
-                    dur="1s"
-                    repeatCount="indefinite"
-                  />
-                </path>
-              </svg>
+              </GradientButton>
             </div>
           </div>
         </div>
@@ -987,12 +884,279 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 Your payment has been successfully done.
               </div>
               <div className="customer-success-actions">
-                <button
-                  className="customer-success-btn create-bill"
-                  onClick={() => setShowPaymentSuccess(false)}
+                <GradientButton onClick={() => setShowPaymentSuccess(false)}>
+                  CLOSE
+                </GradientButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Receipt Modal Overlay */}
+      {showReceiptModal && (
+        <div className="customer-modal-backdrop">
+          <div className="customer-modal-center">
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                boxShadow: "0 4px 32px rgba(34, 43, 69, 0.1)",
+                padding: 36,
+                minWidth: 520,
+                maxWidth: "95vw",
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <button
+                style={{
+                  position: "absolute",
+                  top: 18,
+                  right: 18,
+                  background: "none",
+                  border: "none",
+                  fontSize: 24,
+                  cursor: "pointer",
+                  color: "#222",
+                }}
+                onClick={() => setShowReceiptModal(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  marginBottom: 18,
+                  justifyContent: "flex-start",
+                }}
+              >
+                <img
+                  src={FaanLogo}
+                  alt="FAAN Logo"
+                  style={{ width: 72, height: 72, borderRadius: 8 }}
+                />
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: 18,
+                    color: "#222b45",
+                    letterSpacing: 0.2,
+                    textAlign: "left",
+                  }}
+                >
+                  FEDERAL AIRPORT AUTHORITY OF NIGERIA
+                </div>
+              </div>
+              <div
+                style={{
+                  width: "100%",
+                  marginBottom: 18,
+                  display: "flex",
+                  gap: 18,
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  className="bill-customer-card"
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    minWidth: 140,
+                    padding: "18px 24px",
+                    gap: 16,
+                  }}
+                >
+                  <div className="bill-customer-icon-bg">
+                    <img
+                      src={InvoiceFormIcon}
+                      alt="Receipt Number"
+                      className="bill-customer-icon"
+                    />
+                  </div>
+                  <div
+                    className="bill-customer-info-col"
+                    style={{ alignItems: "center" }}
+                  >
+                    <div
+                      className="bill-customer-label"
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 15,
+                      }}
+                    >
+                      Receipt Number
+                    </div>
+                    <div
+                      className="bill-customer-value highlight"
+                      style={{
+                        color: "#007948",
+                        fontWeight: 700,
+                        fontSize: 18,
+                      }}
+                    >
+                      {selectedBill?.billNo}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="bill-customer-card"
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    minWidth: 140,
+                    padding: "18px 24px",
+                    gap: 16,
+                  }}
+                >
+                  <div className="bill-customer-icon-bg">
+                    <img
+                      src={IdFormIcon}
+                      alt="Customer ID"
+                      className="bill-customer-icon"
+                    />
+                  </div>
+                  <div
+                    className="bill-customer-info-col"
+                    style={{ alignItems: "center" }}
+                  >
+                    <div
+                      className="bill-customer-label"
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 15,
+                      }}
+                    >
+                      Customer ID
+                    </div>
+                    <div
+                      className="bill-customer-value highlight"
+                      style={{
+                        color: "#009a34",
+                        fontWeight: 700,
+                        fontSize: 18,
+                      }}
+                    >
+                      {customer.idNo}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="bill-customer-card"
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    minWidth: 140,
+                    padding: "18px 24px",
+                    gap: 16,
+                  }}
+                >
+                  <div className="bill-customer-icon-bg">
+                    <img
+                      src={InvoiceAmountFormIcon}
+                      alt="Amount Paid"
+                      className="bill-customer-icon"
+                    />
+                  </div>
+                  <div
+                    className="bill-customer-info-col"
+                    style={{ alignItems: "center" }}
+                  >
+                    <div
+                      className="bill-customer-label"
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 15,
+                      }}
+                    >
+                      Amount Paid
+                    </div>
+                    <div
+                      className="bill-customer-value highlight"
+                      style={{
+                        color: "#009a34",
+                        fontWeight: 700,
+                        fontSize: 18,
+                      }}
+                    >
+                      {selectedBill?.paid}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ width: "100%", marginBottom: 18 }}>
+                <table
+                  style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    fontSize: 15,
+                  }}
+                >
+                  <thead>
+                    <tr style={{ background: "#fafafa" }}>
+                      <th className="table-header-item">ID</th>
+                      <th className="table-header-item">Item Name</th>
+                      <th className="table-header-item">Qty</th>
+                      <th className="table-header-item">Amount</th>
+                      <th className="table-header-item">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedBill && (
+                      <tr>
+                        <td className="table-data-item">
+                          {selectedBill.billNo}
+                        </td>
+                        <td className="table-data-item">
+                          {selectedBill.itemName}
+                        </td>
+                        <td className="table-data-item">{selectedBill.qty}</td>
+                        <td className="table-data-item">
+                          {selectedBill.amount}
+                        </td>
+                        <td className="table-data-item">{selectedBill.paid}</td>
+                      </tr>
+                    )}
+                    <tr>
+                      <td
+                        colSpan={4}
+                        style={{
+                          textAlign: "left",
+                          fontWeight: 700,
+                          color: "#222b45",
+                          padding: "10px 8px",
+                        }}
+                      >
+                        TOTAL
+                      </td>
+                      <td
+                        style={{
+                          fontWeight: 700,
+                          color: "#070600",
+                          padding: "10px 8px",
+                        }}
+                      >
+                        {selectedBill?.paid}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: 8, width: "100%" }}>
+                <GradientButton
+                  onClick={() => setShowReceiptModal(false)}
+                  fullWidth
                 >
                   CLOSE
-                </button>
+                </GradientButton>
               </div>
             </div>
           </div>

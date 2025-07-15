@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
 import MessageToast from "../../reusables/MessageToast";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 import "./LoginPage.css";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({
     email: "",
     password: "",
@@ -140,18 +143,28 @@ const LoginPage: React.FC = () => {
           </div>
           <div className="form-row-modern">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              className={`form-input-modern ${
-                validationErrors.password ? "error" : ""
-              }`}
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Enter your password"
-              disabled={isSubmitting}
-              required
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                className={`form-input-modern ${
+                  validationErrors.password ? "error" : ""
+                }`}
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="Enter your password"
+                disabled={isSubmitting}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             {validationErrors.password && (
               <span className="validation-error">
                 {validationErrors.password}
@@ -159,26 +172,17 @@ const LoginPage: React.FC = () => {
             )}
           </div>
           <div className="form-row-modern form-row-remember">
-            {/* <label className="remember-label">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                className="remember-checkbox"
-              />
-              Remember me
-            </label> */}
             <Link to="/forgot-password" className="forgot-link">
               Forgot password?
             </Link>
           </div>
-          <button
+          <GradientButton
             type="submit"
-            className="login-btn-modern"
+            fullWidth
             disabled={isSubmitting || !isFormValid()}
           >
-            {isSubmitting ? "Logging in..." : "Log In"}
-          </button>
+            {isSubmitting ? "LOGGING IN..." : "LOG IN"}
+          </GradientButton>
           <div className="auth-form-footer-modern">
             Don't have an account?{" "}
             <Link to="/register" className="auth-form-link-modern">

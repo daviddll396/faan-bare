@@ -2,8 +2,11 @@ import React from "react";
 import { Edit, Trash2 } from "lucide-react";
 import AddIcon from "../../../../public/icons/add-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 import UsersIcon from "../../../../public/icons/users-icon.svg";
 import ChevronDown from "../../../../public/icons/chevron-down.svg";
+import { useLoading } from "../../../contexts/LoadingContext";
+import ConfirmationModal from "../../reusables/ConfirmationModal/ConfirmationModal";
 import "./userspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
@@ -13,7 +16,9 @@ interface UsersPageProps {
 }
 
 const UsersPage: React.FC<UsersPageProps> = () => {
-  const allUsers = [
+  const { showLoading, hideLoading } = useLoading();
+
+  const initialUsers = [
     {
       id: 1,
       firstName: "Obi",
@@ -88,6 +93,10 @@ const UsersPage: React.FC<UsersPageProps> = () => {
     },
   ];
 
+  // User management state
+  const [allUsers, setAllUsers] = React.useState(initialUsers);
+  const [editingUser, setEditingUser] = React.useState<any>(null);
+
   // Search state
   const [searchName, setSearchName] = React.useState("");
   const [searchEmail, setSearchEmail] = React.useState("");
@@ -97,6 +106,35 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   // UI state
   const [showAddUserForm, setShowAddUserForm] = React.useState(false);
   const [roleSelectFocused, setRoleSelectFocused] = React.useState(false);
+
+  // Confirmation modal state
+  const [showDeleteConfirmation, setShowDeleteConfirmation] =
+    React.useState(false);
+  const [userToDelete, setUserToDelete] = React.useState<any>(null);
+
+  // Form state
+  const [formData, setFormData] = React.useState({
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    userName: "",
+    email: "",
+    phone: "",
+    role: "",
+  });
+
+  // Update filtered users when allUsers changes
+  React.useEffect(() => {
+    handleSearch();
+  }, [allUsers]);
+
+  // Helper function to get current date
+  const getCurrentDate = () => {
+    const now = new Date();
+    return `${String(now.getDate()).padStart(2, "0")}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}-${now.getFullYear()}`;
+  };
 
   // Search function
   const handleSearch = () => {
@@ -134,6 +172,128 @@ const UsersPage: React.FC<UsersPageProps> = () => {
     setFilteredUsers(allUsers);
   };
 
+  // Handle form input changes
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    showLoading(editingUser ? "Updating user..." : "Creating new user...");
+
+    setTimeout(() => {
+      const currentDate = getCurrentDate();
+
+      if (editingUser) {
+        // Update existing user
+        const updatedUsers = allUsers.map((user) =>
+          user.id === editingUser.id
+            ? {
+                ...user,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                role: formData.role,
+                dateModified: currentDate,
+              }
+            : user
+        );
+        setAllUsers(updatedUsers);
+        setEditingUser(null);
+      } else {
+        // Add new user
+        const newUser = {
+          id: Math.max(...allUsers.map((u) => u.id)) + 1,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          role: formData.role,
+          status: "Active",
+          dateModified: currentDate,
+        };
+        setAllUsers((prev) => [...prev, newUser]);
+      }
+
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        middleName: "",
+        userName: "",
+        email: "",
+        phone: "",
+        role: "",
+      });
+
+      hideLoading();
+      setShowAddUserForm(false);
+    }, 2000);
+  };
+
+  // Handle edit action
+  const handleEdit = (user: any) => {
+    setEditingUser(user);
+    setFormData({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      middleName: "",
+      userName: "",
+      email: user.email,
+      phone: "",
+      role: user.role,
+    });
+    setShowAddUserForm(true);
+  };
+
+  // Handle delete action - show confirmation modal
+  const handleDelete = (user: any) => {
+    setUserToDelete(user);
+    setShowDeleteConfirmation(true);
+  };
+
+  // Confirm delete action
+  const confirmDelete = () => {
+    if (userToDelete) {
+      showLoading("Deleting user...");
+      setTimeout(() => {
+        setAllUsers((prev) =>
+          prev.filter((user) => user.id !== userToDelete.id)
+        );
+        hideLoading();
+        setShowDeleteConfirmation(false);
+        setUserToDelete(null);
+      }, 1500);
+    }
+  };
+
+  // Cancel delete action
+  const cancelDelete = () => {
+    setShowDeleteConfirmation(false);
+    setUserToDelete(null);
+  };
+
+  // Reset form when switching to add mode
+  const handleAddNewUser = () => {
+    setEditingUser(null);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      middleName: "",
+      userName: "",
+      email: "",
+      phone: "",
+      role: "",
+    });
+    setShowAddUserForm(true);
+  };
+
   return (
     <div className="users-page">
       <div className="page-content">
@@ -146,7 +306,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
               title="Users"
               breadcrumb={[
                 { label: "Users", icon: UsersIcon },
-                { label: "Add User" },
+                { label: editingUser ? "Edit User" : "Add User" },
               ]}
               onBreadcrumbClick={(idx) => {
                 if (idx === 0) setShowAddUserForm(false);
@@ -191,7 +351,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                 <BorderButton
                   text="Add New User"
                   icon={AddIcon}
-                  onClick={() => setShowAddUserForm(true)}
+                  onClick={handleAddNewUser}
                   className="border-button-userspage"
                 />
               </div>
@@ -231,10 +391,16 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                         </td>
                         <td className="table-data-item">{user.dateModified}</td>
                         <td className="table-data-item">
-                          <button className="action-btn-table edit">
+                          <button
+                            className="action-btn-table edit"
+                            onClick={() => handleEdit(user)}
+                          >
                             <Edit size={16} /> Edit
                           </button>
-                          <button className="action-btn-table delete">
+                          <button
+                            className="action-btn-table delete"
+                            onClick={() => handleDelete(user)}
+                          >
                             <Trash2 size={16} /> Delete
                           </button>
                         </td>
@@ -247,47 +413,72 @@ const UsersPage: React.FC<UsersPageProps> = () => {
           </>
         ) : (
           <div className="add-user-form-card">
-            <h2 className="add-user-title">Add User</h2>
+            <h2 className="add-user-title">
+              {editingUser ? "Edit User" : "Add User"}
+            </h2>
             <p className="add-user-helper">
-              Please input all required customer details to add a new user.
+              Please input all required customer details to{" "}
+              {editingUser ? "update the" : "add a new"} user.
             </p>
-            <form
-              className="user-form-grid"
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Handle form submission here
-                console.log("Form submitted");
-                setShowAddUserForm(false);
-              }}
-            >
+            <form className="user-form-grid" onSubmit={handleFormSubmit}>
               <div className="form-row-pair">
                 <div className="form-row">
                   <label>First Name</label>
-                  <input type="text" placeholder="" />
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div className="form-row">
                   <label>Last Name</label>
-                  <input type="text" placeholder="" />
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
               <div className="form-row-pair">
                 <div className="form-row">
                   <label>Middle Name</label>
-                  <input type="text" placeholder="" />
+                  <input
+                    type="text"
+                    name="middleName"
+                    value={formData.middleName}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div className="form-row">
                   <label>User Name</label>
-                  <input type="text" placeholder="" />
+                  <input
+                    type="text"
+                    name="userName"
+                    value={formData.userName}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
               <div className="form-row-pair">
                 <div className="form-row">
                   <label>Email Address</label>
-                  <input type="email" placeholder="" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
                 </div>
                 <div className="form-row">
                   <label>Phone Number</label>
-                  <input type="text" placeholder="" />
+                  <input
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
               <div className="form-row ">
@@ -298,6 +489,9 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                   }`}
                 >
                   <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
                     onFocus={() => setRoleSelectFocused(true)}
                     onBlur={() => setRoleSelectFocused(false)}
                   >
@@ -313,14 +507,30 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                 </div>
               </div>
               <div className="form-actions">
-                <button type="submit" className="save-btn-full">
-                  SAVE
-                </button>
+                <GradientButton type="submit" fullWidth>
+                  {editingUser ? "UPDATE" : "SAVE"}
+                </GradientButton>
               </div>
             </form>
           </div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        title="Delete User"
+        message={
+          userToDelete
+            ? `Are you sure you want to delete ${userToDelete.firstName} ${userToDelete.lastName}? This action cannot be undone.`
+            : ""
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        variant="danger"
+      />
     </div>
   );
 };

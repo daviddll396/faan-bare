@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import AddIcon from "../../../../public/icons/add-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 import CurrencyDropdown from "../../reusables/CurrencyDropdown/CurrencyDropdown";
 import ChevronDown from "../../../../public/icons/chevron-down.svg";
@@ -930,17 +931,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
         {!showAddServiceForm ? (
           <>
             <div className="page-header-bottom">
-              <div style={{ display: "flex", gap: 24 }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                 <SearchInput
                   placeholder="Search name"
                   value={searchName}
                   onChange={(e) => setSearchName(e.target.value)}
                 />
-              </div>
-              <div
-                style={{ display: "flex", gap: 12 }}
-                className="services-action-buttons-row"
-              >
                 <BorderButton
                   text="Search"
                   onClick={handleSearch}
@@ -951,6 +947,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   onClick={handleClearSearch}
                   className="border-button-servicespage"
                 />
+              </div>
+              <div>
                 <BorderButton
                   text="Add New Service"
                   icon={AddIcon}
@@ -1086,9 +1084,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 </button>
               </div>
               <div className="form-actions">
-                <button type="submit" className="save-btn-full">
+                <GradientButton type="submit" fullWidth>
                   SAVE ITEM(S)
-                </button>
+                </GradientButton>
               </div>
             </form>
           </div>

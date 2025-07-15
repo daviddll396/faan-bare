@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 import FaanLogo from "/images/faan-logo.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
@@ -559,25 +560,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   </tbody>
                 </table>
               </div>
-              <button
-                style={{
-                  width: "100%",
-                  background:
-                    "linear-gradient(180deg, #007948 0%, #007948 100%)",
-                  color: "#fff",
-                  fontSize: 18,
-                  fontWeight: 700,
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "16px 0",
-                  cursor: "pointer",
-                  letterSpacing: 1,
-                  marginTop: 8,
-                }}
-                onClick={() => setModal(null)}
-              >
-                PAY
-              </button>
+              <div style={{ marginTop: 8, width: "100%" }}>
+                <GradientButton onClick={() => setModal(null)} fullWidth>
+                  PAY
+                </GradientButton>
+              </div>
             </div>
           </div>
         </div>
@@ -632,7 +619,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 />
                 <div
                   style={{
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 18,
                     color: "#070600",
                     letterSpacing: 0.2,
@@ -832,25 +819,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   </tbody>
                 </table>
               </div>
-              <button
-                style={{
-                  width: "100%",
-                  background:
-                    "linear-gradient(180deg, #007948 0%, #007948 100%)",
-                  color: "#fff",
-                  fontSize: 18,
-                  fontWeight: 700,
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "16px 0",
-                  cursor: "pointer",
-                  letterSpacing: 1,
-                  marginTop: 8,
-                }}
-                onClick={() => setModal(null)}
-              >
-                CLOSE
-              </button>
+              <div style={{ marginTop: 8, width: "100%" }}>
+                <GradientButton onClick={() => setModal(null)} fullWidth>
+                  CLOSE
+                </GradientButton>
+              </div>
             </div>
           </div>
         </div>
@@ -909,7 +882,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 />
                 <div
                   style={{
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 18,
                     color: "#070600",
                     letterSpacing: 0.2,
@@ -956,7 +929,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <div
                       style={{
                         color: "#070600",
-                        fontWeight: 700,
+                        fontWeight: 600,
                         fontSize: 16,
                       }}
                     >
@@ -976,7 +949,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <div
                       style={{
                         color: "#070600",
-                        fontWeight: 700,
+                        fontWeight: 600,
                         fontSize: 16,
                       }}
                     >
@@ -985,25 +958,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   </div>
                 </div>
               </div>
-              <button
-                style={{
-                  width: "100%",
-                  background:
-                    "linear-gradient(180deg, #007948 0%, #007948 100%)",
-                  color: "#fff",
-                  fontSize: 18,
-                  fontWeight: 700,
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "16px 0",
-                  cursor: "pointer",
-                  letterSpacing: 1,
-                  marginTop: 8,
-                }}
-                onClick={() => setModal(null)}
-              >
-                CLOSE
-              </button>
+              <div style={{ marginTop: 8, width: "100%" }}>
+                <GradientButton onClick={() => setModal(null)} fullWidth>
+                  CLOSE
+                </GradientButton>
+              </div>
             </div>
           </div>
         </div>
@@ -1024,13 +983,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               <div className="customer-success-desc">
                 Your payment has been successfully done.
               </div>
-              <div className="customer-success-actions">
-                <button
-                  className="customer-success-btn create-bill"
+              <div style={{ width: "100%" }}>
+                <GradientButton
                   onClick={() => setShowPaymentSuccess(false)}
+                  fullWidth
                 >
                   CLOSE
-                </button>
+                </GradientButton>
               </div>
             </div>
           </div>

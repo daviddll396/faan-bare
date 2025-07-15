@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
 import MessageToast from "../../reusables/MessageToast";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 import CryptoJS from "crypto-js";
 import "./RegisterPage.css";
 
@@ -642,13 +643,12 @@ const RegisterPage: React.FC = () => {
             </div>
           </div>
 
-          <button
+          <GradientButton
             type="submit"
-            className="login-btn-modern"
             disabled={isSubmitting || !isFormValid()}
           >
-            {isSubmitting ? "Registering..." : "Register"}
-          </button>
+            {isSubmitting ? "REGISTERING..." : "REGISTER"}
+          </GradientButton>
 
           <div className="auth-form-footer-modern">
             Already have an account?{" "}

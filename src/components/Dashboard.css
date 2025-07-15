@@ -228,13 +228,51 @@ table {
   border-bottom: 1px solid #e4e4e4;
 }
 
+.table-header-item:first-child {
+  padding-left: 200px;
+}
+
+.table-header-item:last-child {
+  padding-right: 200px;
+}
+
+.table-data-item:first-child {
+  padding-left: 200px;
+}
+
+.table-data-item:last-child {
+  padding-right: 200px;
+}
+
+/* Remove extra padding for tables inside modals */
+.customer-modal-backdrop .table-header-item:first-child,
+.payment-modal-center .table-header-item:first-child {
+  padding-left: 20px;
+}
+
+.customer-modal-backdrop .table-header-item:last-child,
+.payment-modal-center .table-header-item:last-child {
+  padding-right: 20px;
+}
+
+.customer-modal-backdrop .table-data-item:first-child,
+.payment-modal-center .table-data-item:first-child {
+  padding-left: 20px;
+}
+
+.customer-modal-backdrop .table-data-item:last-child,
+.payment-modal-center .table-data-item:last-child {
+  padding-right: 20px;
+}
+
 .table-data-item {
-  padding: 12px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid #f1f5f9;
   font-size: 16px;
   color: #898989;
   font-family: "Nunito Sans", sans-serif;
-  font-weight: 700;
+
+  font-weight: 600;
 }
 .table-data-item-role {
   padding: 10px 20px;

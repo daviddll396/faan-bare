@@ -177,6 +177,102 @@
   border: 1.5px solid #007948;
 }
 
+/* Bill Form Row - Similar to service-form-row but tailored for bills page */
+.bill-form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  animation: slideInUp 0.4s ease-out both;
+  position: relative;
+  z-index: 1;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* Staggered animation for bill form rows */
+.bill-form-row:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.bill-form-row:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.bill-form-row:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.bill-form-row:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.bill-form-row:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* Bill form field groups with better spacing */
+.bill-form-row .service-field-group {
+  margin-right: 0;
+  flex-shrink: 0;
+}
+
+.bill-form-row .service-field-group:last-child {
+  margin-right: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Service index circle in bill form */
+.bill-form-row .service-index-circle {
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+/* Better alignment for form elements */
+.bill-form-row .service-name-group {
+  flex-shrink: 0;
+}
+
+.bill-form-row .price-group {
+  flex-shrink: 0;
+}
+
+/* Responsive behavior for bill form rows */
+@media (max-width: 1400px) {
+  .bill-form-row {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .bill-form-row {
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+
+  .bill-form-row .service-field-group {
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 900px) {
+  .bill-form-row {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .bill-form-row .service-field-group {
+    margin-right: 0;
+    width: 100%;
+    min-width: auto;
+    max-width: none;
+  }
+
+  .bill-form-row .service-index-circle {
+    margin-bottom: 8px;
+  }
+}
+
 .bill-search-btn {
   width: 100%;
   background: linear-gradient(180deg, #007948 0%, #007948 100%);
@@ -745,7 +841,7 @@
 } */
 
 .bill-results-table tbody tr:nth-child(even) {
-  background: #f7f7f7;
+  /* background: #f7f7f7; */
 }
 
 .bill-view-receipt-btn {
@@ -777,7 +873,7 @@
 }
 
 /* Bill Creation Form Zoom Scaling */
-.add-service-form-card {
+.add-service-form-bill {
   background: #fff;
   border-radius: 10px;
   border: 1px solid #e4e4e4;
@@ -789,110 +885,198 @@
 
 /* Progressive zoom scaling for bill creation form with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.9;
   }
 }
 
 @media (max-width: 1800px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.85;
   }
 }
 
 @media (max-width: 1700px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.8;
   }
 }
 
 @media (max-width: 1600px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.75;
   }
 }
 
 @media (max-width: 1500px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.7;
   }
 }
 
 @media (max-width: 1450px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.65;
   }
 }
 
 @media (max-width: 1400px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.6;
   }
 }
 
 @media (max-width: 1350px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.58;
   }
 }
 
 @media (max-width: 1300px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.56;
   }
 }
 
 @media (max-width: 1250px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.54;
   }
 }
 
 @media (max-width: 1200px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.52;
   }
 }
 
 @media (max-width: 1150px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.5;
   }
 }
 
 @media (max-width: 1100px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.48;
   }
 }
 
 @media (max-width: 1050px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.46;
   }
 }
 
 @media (max-width: 1000px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.44;
   }
 }
 
 @media (max-width: 950px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.42;
   }
 }
 
 @media (max-width: 900px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 0.4;
   }
 }
 
 /* Reset zoom for mobile devices */
 @media (max-width: 768px) {
-  .add-service-form-card {
+  .add-service-form-bill {
     zoom: 1;
+  }
+}
+
+/* Modal animations */
+.customer-modal-backdrop {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.customer-modal-center {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Add zoom scaling for customer modal center to match PaymentPage */
+.customer-modal-center {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Progressive zoom scaling for customer modal center with same values as PaymentPage */
+@media (max-width: 1920px) {
+  .customer-modal-center {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1400px) {
+  .customer-modal-center {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1300px) {
+  .customer-modal-center {
+    zoom: 0.45;
+  }
+}
+
+@media (max-width: 1150px) {
+  .customer-modal-center {
+    zoom: 0.4;
+  }
+}
+
+@media (max-width: 1100px) {
+  .customer-modal-center {
+    zoom: 0.35;
+  }
+}
+
+@media (max-width: 1050px) {
+  .customer-modal-center {
+    zoom: 0.3;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .customer-modal-center {
+    zoom: 1;
+  }
+}
+
+.customer-modal-center > div {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.customer-success-modal {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

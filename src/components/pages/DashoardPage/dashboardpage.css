@@ -245,6 +245,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: scaleIn 0.3s ease-out;
 }
 .fund-wallet-close-btn {
   position: absolute;
@@ -365,6 +366,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: scaleIn 0.3s ease-out;
 }
 .fund-wallet-success-icon-wrap {
   width: 96px;
@@ -418,24 +420,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100% !important;
-  height: 100% !important;
-  background: rgba(34, 43, 69, 0.32);
-  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .bill-modal-center {
-  width: 100% !important;
-  height: 100% !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+  animation: scaleIn 0.3s ease-out;
+}
+
+.bill-modal-center > div {
+  animation: scaleIn 0.3s ease-out;
 }
 
 /* Apply zoom scaling to modal content instead of centering container */
@@ -551,5 +554,63 @@
 @media (max-width: 768px) {
   .bill-modal-center > div {
     zoom: 1;
+  }
+}
+
+/* Modal animations */
+.bill-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.bill-modal-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+  animation: scaleIn 0.3s ease-out;
+}
+
+.bill-modal-center > div {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Fund wallet modal animations */
+.fund-wallet-modal {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.fund-wallet-success-modal {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

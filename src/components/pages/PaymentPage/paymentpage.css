@@ -328,7 +328,6 @@
   .payment-table-card {
     zoom: 0.52;
   }
- 
 }
 
 @media (max-width: 1150px) {
@@ -502,11 +501,47 @@
 .customer-modal-backdrop {
   transform: scale(1) !important;
   transform-origin: center center !important;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .customer-modal-center {
   transform: scale(1) !important;
   transform-origin: center center !important;
+}
+
+.payment-modal-center {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Modal content animations */
+.payment-modal-center > div {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Success modal animations */
+.customer-success-modal {
+  animation: scaleIn 0.3s ease-out;
 }
 
 /* Protection for bill-customer-card elements inside modals to prevent over-scaling */
