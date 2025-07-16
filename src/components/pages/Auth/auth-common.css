@@ -420,9 +420,9 @@
 }
 
 .auth-form-footer-modern {
-  margin-top: 6px;
+  margin-top: 30px;
   font-size: 0.93rem;
-  text-align: left;
+  text-align: center;
   color: #18181b;
   font-family: "Poppins", sans-serif;
 }

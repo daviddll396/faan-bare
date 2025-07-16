@@ -3,7 +3,17 @@ import React from "react";
 import "./transactionstable.css";
 import AirplaneIcon from "/icons/airplane-icon.svg";
 
-const TransactionsTable: React.FC = () => {
+interface TransactionsTableProps {
+  onSeeAll?: () => void;
+  expanded?: boolean;
+  hideTitle?: boolean;
+}
+
+const TransactionsTable: React.FC<TransactionsTableProps> = ({
+  onSeeAll,
+  expanded,
+  hideTitle,
+}) => {
   const transactions = [
     { id: 1, service: "International Arrival", price: "₦50,000" },
     { id: 2, service: "International Departure", price: "₦50,000" },
@@ -19,16 +29,23 @@ const TransactionsTable: React.FC = () => {
     },
     { id: 8, service: "Abuja Domestic Service", price: "₦50,000" },
   ];
-
+  const visibleTransactions = expanded
+    ? transactions
+    : transactions.slice(0, 5);
   return (
-    <div className="transactions-table">
+    <div className={`transactions-table${hideTitle ? " no-top-padding" : ""}`}>
       <div className="table-header">
-        <div className="table-title">
-          <h3>Recent Transactions</h3>
-        </div>{" "}
-        <button className="see-all-btn">See All</button>
+        {!hideTitle && (
+          <div className="table-title">
+            <h3>Recent Transactions</h3>
+          </div>
+        )}
+        {!expanded && (
+          <button className="see-all-btn" onClick={onSeeAll}>
+            See All
+          </button>
+        )}
       </div>
-
       <div className="table-container">
         <table>
           <colgroup>
@@ -50,7 +67,7 @@ const TransactionsTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction, index) => (
+            {visibleTransactions.map((transaction, index) => (
               <tr key={transaction.id}>
                 <td className="centered-col">{index + 1}.</td>
                 <td className="gap-col"></td>

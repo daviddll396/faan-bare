@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import MetricsCards from "./MetricCard/MetricsCards";
 import ChartSection from "./ChartSection/ChartSection";
@@ -29,6 +29,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     type: "success",
     isVisible: false,
   });
+  const [showAllTransactions, setShowAllTransactions] = useState(false);
 
   // Use wallet balance from user data, fallback to 0
   const walletBalance = user?.walletBalance || 0;
@@ -254,8 +255,61 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
       <MetricsCards />
       <div className="dashboard-bottom-grid">
         <ChartSection />
-        <TransactionsTable />
+        <TransactionsTable onSeeAll={() => setShowAllTransactions(true)} />
       </div>
+      {/* All Transactions Modal */}
+      {showAllTransactions && (
+        <div
+          className="bill-modal-backdrop"
+          onClick={() => setShowAllTransactions(false)}
+        >
+          <div
+            className="bill-modal-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                minWidth: 640,
+                maxWidth: 800,
+                padding: 32,
+                position: "relative",
+                minHeight: 400,
+              }}
+            >
+              <button
+                className="fund-wallet-close-btn"
+                onClick={() => setShowAllTransactions(false)}
+                aria-label="Close"
+                style={{
+                  position: "absolute",
+                  top: 18,
+                  right: 18,
+                  fontSize: 24,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#222",
+                }}
+              >
+                ×
+              </button>
+              <h2
+                style={{
+                  fontWeight: 700,
+                  fontSize: 22,
+                  color: "#222b45",
+                  marginBottom: 18,
+                }}
+              >
+                All Transactions
+              </h2>
+              <TransactionsTable expanded hideTitle />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

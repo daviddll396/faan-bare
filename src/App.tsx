@@ -7,6 +7,7 @@ import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
 import Preloader from "./components/reusables/Preloader";
 import LoadingSpinner from "./components/reusables/LoadingSpinner/LoadingSpinner";
+import ForgotPasswordPage from "./components/pages/ForgotPasswordPage/ForgotPasswordPage";
 import "./App.css";
 
 const AppContent: React.FC = () => {
@@ -25,6 +26,12 @@ const AppContent: React.FC = () => {
         <Route
           path="/register"
           element={isAuthenticated ? <Navigate to="/" /> : <RegisterPage />}
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            isAuthenticated ? <Navigate to="/" /> : <ForgotPasswordPage />
+          }
         />
         <Route
           path="/*"

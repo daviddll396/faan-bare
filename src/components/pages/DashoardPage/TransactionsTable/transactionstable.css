@@ -207,3 +207,7 @@
   display: block;
   max-width: 100%; /* adjust as needed */
 }
+
+.no-top-padding {
+  padding-top: 0 !important;
+}
