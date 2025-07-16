@@ -35,12 +35,12 @@ const LogoutPage = () => {
         <div className="logout-text">Are you sure you want to Log Out?</div>
         <div style={{ width: "100%", marginBottom: 14 }}>
           <GradientButton onClick={handleLogout} fullWidth>
-            YES, LOG OUT
+          YES, LOG OUT
           </GradientButton>
         </div>
         <div style={{ width: "100%" }}>
           <GradientButton variant="close" onClick={handleCancel} fullWidth>
-            CANCEL
+          CANCEL
           </GradientButton>
         </div>
       </div>

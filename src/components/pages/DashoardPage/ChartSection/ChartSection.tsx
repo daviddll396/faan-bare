@@ -11,28 +11,61 @@ import {
 } from "recharts";
 import ExportIcon from "/icons/charts-export-icon.svg";
 import BorderButton from "../../../reusables/BorderButton/BorderButton";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 const ChartSection: React.FC = () => {
-  const data = [
-    { month: "Jan", Bills: 45, Payment: 30 },
-    { month: "Feb", Bills: 52, Payment: 35 },
-    { month: "Mar", Bills: 38, Payment: 42 },
-    { month: "Apr", Bills: 65, Payment: 48 },
-    { month: "May", Bills: 58, Payment: 52 },
-    { month: "Jun", Bills: 42, Payment: 38 },
-    { month: "Jul", Bills: 48, Payment: 35 },
-    { month: "Aug", Bills: 72, Payment: 58 },
-    { month: "Sep", Bills: 55, Payment: 45 },
-    { month: "Oct", Bills: 38, Payment: 32 },
-    { month: "Nov", Bills: 62, Payment: 48 },
-    { month: "Dec", Bills: 58, Payment: 52 },
+  const { user } = useAuth();
+  const transactionStats = user?.transactionStats || { total: 0, completed: 0 };
+
+  // List of all months
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
+  const currentMonth = new Date().toLocaleString("default", { month: "short" });
+  const data = months.map((month) =>
+    month === currentMonth
+      ? {
+          month,
+          Bills: transactionStats.total,
+          Payment: transactionStats.completed,
+        }
+      : { month, Bills: 0, Payment: 0 }
+  );
+
+  // Export chart data as CSV
+  const handleExport = () => {
+    const csvRows = [
+      ["Month", "Total Bookings", "Completed Bookings"],
+      ...data.map((row) => [row.month, row.Bills, row.Payment]),
+    ];
+    const csvContent = csvRows.map((e) => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "dashboard-bookings.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="chart-section">
       <div className="chart-header">
         <h3>Total Bookings vs. Completed Services</h3>
-        <BorderButton text="Export" icon={ExportIcon} />
+        <BorderButton text="Export" icon={ExportIcon} onClick={handleExport} />
       </div>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={300}>

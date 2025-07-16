@@ -8,6 +8,7 @@ import "./dashboardpage.css";
 import WalletIcon from "/icons/dashboard-wallet-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import CheckCircle from "/icons/check-circle.svg";
+import GradientButton from "../../reusables/GradientButton/GradientButton";
 
 interface DashboardPageProps {
   role?: string;
@@ -177,12 +178,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                     <div className="fund-wallet-success-desc">
                       Your payment was successful.
                     </div>
-                    <button
-                      className="fund-wallet-submit-btn"
-                      onClick={handleCloseFundWallet}
-                    >
+                    <GradientButton onClick={handleCloseFundWallet} fullWidth>
                       CLOSE
-                    </button>
+                    </GradientButton>
                   </div>
                 )}
                 {/* Fund Wallet Form */}
@@ -216,19 +214,16 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                           required
                         />
                       </div>
-                      <button
-                        className={`fund-wallet-submit-btn ${
-                          !fundAmount || parseFloat(fundAmount) < 200000
-                            ? "disabled"
-                            : ""
-                        }`}
+                      <GradientButton
                         type="submit"
+                        fullWidth
                         disabled={
                           !fundAmount || parseFloat(fundAmount) < 200000
                         }
+                        className="fund-wallet-submit-btn"
                       >
                         FUND WALLET
-                      </button>
+                      </GradientButton>
                     </form>
                   </div>
                 )}

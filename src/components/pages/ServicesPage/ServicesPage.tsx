@@ -13,6 +13,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
+import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 
 interface ServicesPageProps {
   role?: string;
@@ -748,52 +749,21 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 <span>TOTAL</span>
                 <span>₦{total.toLocaleString()}</span>
               </div>
-              <button
-                className={`booking-pay-btn ${
-                  passengers.length === 0 ? "disabled" : ""
-                }`}
-                onClick={handlePayment}
-                disabled={passengers.length === 0}
-              >
-                PAY
-              </button>
+              <div style={{ width: "100%" }}>
+                <GradientButton
+                  fullWidth
+                  onClick={handlePayment}
+                  disabled={passengers.length === 0}
+                >
+                  PAY
+                </GradientButton>
+              </div>
             </div>
             {/* Payment Loading Spinner Overlay */}
-            {showPaymentLoading && (
-              <div className="bill-modal-backdrop">
-                <div className="bill-modal-center">
-                  <div className="bill-loader-spinner">
-                    <svg width="64" height="64" viewBox="0 0 64 64">
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="24"
-                        stroke="#e4e4e4"
-                        strokeWidth="6"
-                        fill="none"
-                        opacity="0.4"
-                      />
-                      <path
-                        d="M56 32a24 24 0 0 1-24 24"
-                        stroke="#007948"
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                      >
-                        <animateTransform
-                          attributeName="transform"
-                          type="rotate"
-                          from="0 32 32"
-                          to="360 32 32"
-                          dur="1s"
-                          repeatCount="indefinite"
-                        />
-                      </path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            )}
+            <LoadingSpinner
+              isVisible={showPaymentLoading}
+              message="Processing payment..."
+            />
             {/* Payment Success Modal Overlay */}
             {showPaymentSuccess && (
               <div className="customer-modal-backdrop">
@@ -813,31 +783,33 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       Your payment has been successfully done.
                     </div>
                     <div className="customer-success-actions">
-                      <button
-                        className="customer-success-btn create-bill"
-                        onClick={() => {
-                          setShowPaymentSuccess(false);
-                          setSelectedService(null);
-                          setPassengers([]);
-                          setBookingForm({
-                            firstName: "",
-                            lastName: "",
-                            designation: "",
-                            gender: "",
-                            mobile: "",
-                            specialReq: "",
-                            airport: "",
-                            travelDate: "",
-                            flightNumber: "",
-                            airportTime: "",
-                            airline: "",
-                            destination: "",
-                          });
-                          setActiveTab("passenger");
-                        }}
-                      >
-                        BACK TO SERVICES
-                      </button>
+                      <div style={{ width: "100%" }}>
+                        <GradientButton
+                          fullWidth
+                          onClick={() => {
+                            setShowPaymentSuccess(false);
+                            setSelectedService(null);
+                            setPassengers([]);
+                            setBookingForm({
+                              firstName: "",
+                              lastName: "",
+                              designation: "",
+                              gender: "",
+                              mobile: "",
+                              specialReq: "",
+                              airport: "",
+                              travelDate: "",
+                              flightNumber: "",
+                              airportTime: "",
+                              airline: "",
+                              destination: "",
+                            });
+                            setActiveTab("passenger");
+                          }}
+                        >
+                          BACK TO SERVICES
+                        </GradientButton>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -911,12 +883,14 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   />
                   {service.price}
                 </div>
-                <button
-                  className="service-card-btn"
-                  onClick={() => setSelectedService(service)}
-                >
-                  BOOK SERVICE
-                </button>
+                <div style={{ padding: "0 18px", width: "100%" }}>
+                  <GradientButton
+                    fullWidth
+                    onClick={() => setSelectedService(service)}
+                  >
+                    BOOK SERVICE
+                  </GradientButton>
+                </div>
               </div>
             ))}
           </div>
