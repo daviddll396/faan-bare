@@ -180,7 +180,7 @@ const initialFamilyForm = {
 };
 
 const RegisterPage: React.FC = () => {
-  const [form, setForm] = useState({
+  const [form] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -190,20 +190,7 @@ const RegisterPage: React.FC = () => {
     phoneNumber: "",
     dob: "",
     address: "",
-    customerType: "INDIVIDUAL" as "INDIVIDUAL" | "CORPORATE",
-    cacNumber: "",
-  });
-
-  const [validationErrors, setValidationErrors] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    nin: "",
-    phoneNumber: "",
-    dob: "",
-    address: "",
+    customerType: "INDIVIDUAL",
     cacNumber: "",
   });
 
@@ -354,210 +341,12 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  // Check if form is valid
-  const isFormValid = (): boolean => {
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "email",
-      "phoneNumber",
-      "nin",
-      "dob",
-      "address",
-      "password",
-      "confirmPassword",
-    ];
-
-    // Check if CAC number is required and valid for corporate customers
-    const isCacValid =
-      form.customerType === "INDIVIDUAL" ||
-      (form.customerType === "CORPORATE" &&
-        form.cacNumber.trim() !== "" &&
-        validateField("cacNumber", form.cacNumber) === "");
-
-    // Check all required fields are filled and valid
-    const areRequiredFieldsValid = requiredFields.every((field) => {
-      const value = form[field as keyof typeof form] as string;
-      return value.trim() !== "" && validateField(field, value) === "";
-    });
-
-    return areRequiredFieldsValid && isCacValid;
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-
-    // Update form state
-    if (name === "customerType" && value === "INDIVIDUAL") {
-      setForm((prev) => ({ ...prev, [name]: value, cacNumber: "" }));
-      setValidationErrors((prev) => ({ ...prev, cacNumber: "" }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-
-    // Validate field in real-time
-    const error = validateField(name, value);
-    setValidationErrors((prev) => ({ ...prev, [name]: error }));
-
-    // Revalidate confirm password if password changes
-    if (name === "password" && form.confirmPassword) {
-      const confirmError = validateField(
-        "confirmPassword",
-        form.confirmPassword
-      );
-      setValidationErrors((prev) => ({
-        ...prev,
-        confirmPassword: confirmError,
-      }));
-    }
-  };
-
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
       message,
       type,
       isVisible: true,
     });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setToast((prev) => ({ ...prev, isVisible: false }));
-    setIsSubmitting(true);
-
-    // Validation
-    if (
-      !form.firstName ||
-      !form.lastName ||
-      !form.email ||
-      !form.password ||
-      !form.confirmPassword ||
-      !form.nin ||
-      !form.phoneNumber ||
-      !form.dob ||
-      !form.address ||
-      !form.customerType
-    ) {
-      showToast("Please fill in all required fields", "error");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (form.customerType === "CORPORATE" && !form.cacNumber) {
-      showToast("CAC Number is required for corporate customers", "error");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (form.password !== form.confirmPassword) {
-      showToast("Passwords do not match", "error");
-      setIsSubmitting(false);
-      return;
-    }
-
-    try {
-      // Create the request body according to new format
-      const requestData = {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        password: form.password,
-        nin: form.nin,
-        phoneNumber: form.phoneNumber,
-        dob: form.dob,
-        address: form.address,
-        customerType: form.customerType,
-        cacNumber: form.customerType === "CORPORATE" ? form.cacNumber : null,
-      };
-
-      const body = JSON.stringify(requestData);
-
-      console.log("Sending register request:", requestData);
-      console.log("Request URL: /auth/faan/register");
-      console.log("Request method: POST");
-
-      // Encrypt the body
-      const encryptedPayload = encryptAESCBC(body, secretKey, ivKey);
-
-      // Make the API call with encrypted payload and required headers
-      const response = await fetch("/auth/faan/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Client-Auth": "Basic dGVzdDp0ZXN0",
-          "X-Source": "web",
-        },
-        body: encryptedPayload,
-      });
-
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers);
-
-      // Get the raw response text (encrypted)
-      const rawResponseText = await response.text();
-      console.log("Raw encrypted response text:", rawResponseText);
-
-      // Decrypt the response
-      let decryptedResponse;
-      try {
-        decryptedResponse = decryptAESCBC(rawResponseText, secretKey, ivKey);
-        console.log("Decrypted response:", decryptedResponse);
-      } catch (decryptError) {
-        console.error("Decryption error:", decryptError);
-        console.log(
-          "Failed to decrypt response. Encrypted text:",
-          rawResponseText
-        );
-        showToast("Failed to process server response", "error");
-        return;
-      }
-
-      // Parse the decrypted JSON
-      let responseData;
-      try {
-        responseData = JSON.parse(decryptedResponse);
-        console.log("Parsed response data:", responseData);
-      } catch (parseError) {
-        console.error("JSON parse error:", parseError);
-        console.log("Failed to parse decrypted response:", decryptedResponse);
-        showToast("Invalid server response format", "error");
-        return;
-      }
-
-      // Check if registration was successful
-      if (
-        responseData.status === true &&
-        (responseData.statusCode === 200 || responseData.statusCode === 201)
-      ) {
-        console.log("Registration successful:", responseData.message);
-        showToast(
-          "Registration successful! Redirecting to login...",
-          "success"
-        );
-        setTimeout(() => {
-          navigate("/login");
-        }, 3500);
-      } else {
-        // Handle all error cases - display the server message
-        console.log("Registration failed:", responseData.message);
-        const errorMessage = responseData.message || "Registration failed";
-
-        if (responseData.statusCode === 409) {
-          console.log("Conflict error (409):", errorMessage);
-          showToast(errorMessage, "error");
-        } else {
-          console.log("Other error:", errorMessage);
-          showToast(errorMessage, "error");
-        }
-      }
-    } catch (err: unknown) {
-      console.error("Registration error:", err);
-      showToast("An error occurred during registration", "error");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleIndividualChange = (
@@ -665,9 +454,12 @@ const RegisterPage: React.FC = () => {
       let decryptedResponse;
       try {
         decryptedResponse = decryptAESCBC(rawResponseText, secretKey, ivKey);
-      } catch (decryptError) {
+      } catch {
+        console.log(
+          "Failed to decrypt response. Encrypted text:",
+          rawResponseText
+        );
         showToast("Failed to process server response", "error");
-        setIsSubmitting(false);
         return;
       }
 
@@ -675,9 +467,9 @@ const RegisterPage: React.FC = () => {
       let responseData;
       try {
         responseData = JSON.parse(decryptedResponse);
-      } catch (parseError) {
+      } catch {
+        console.log("Failed to parse decrypted response:", decryptedResponse);
         showToast("Invalid server response format", "error");
-        setIsSubmitting(false);
         return;
       }
 
@@ -698,6 +490,7 @@ const RegisterPage: React.FC = () => {
         showToast(errorMessage, "error");
       }
     } catch (err: unknown) {
+      console.error("Registration error:", err);
       showToast("An error occurred during registration", "error");
     } finally {
       setIsSubmitting(false);
@@ -937,14 +730,6 @@ const RegisterPage: React.FC = () => {
   const isFamilyFormValid = () => {
     const errors = validateFamilyForm();
     return Object.keys(errors).length === 0;
-  };
-
-  const handleFamilySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const errors = validateFamilyForm();
-    setFamilyFormErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-    setStep("credentials");
   };
 
   return (
