@@ -15,7 +15,7 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
-  const { user, fundWallet } = useAuth();
+  const { user, fundWallet, getTransactionHistory } = useAuth();
   const [showFundWallet, setShowFundWallet] = React.useState(false);
   const [fundAmount, setFundAmount] = React.useState("");
   const [showFundLoading, setShowFundLoading] = React.useState(false);
@@ -30,6 +30,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     isVisible: false,
   });
   const [showAllTransactions, setShowAllTransactions] = useState(false);
+  const [transactions, setTransactions] = useState<any[]>([]);
 
   // Use wallet balance from user data, fallback to 0
   const walletBalance = user?.walletBalance || 0;
@@ -40,6 +41,22 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   React.useEffect(() => {
     setLocalWalletBalance(walletBalance);
   }, [walletBalance]);
+
+  // Fetch transactions for the last 6 months on mount
+  React.useEffect(() => {
+    const fetchTransactions = async () => {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setMonth(endDate.getMonth() - 6);
+      const format = (d: Date) => d.toISOString().slice(0, 10);
+      const txns = await getTransactionHistory(
+        format(startDate),
+        format(endDate)
+      );
+      if (txns) setTransactions(txns);
+    };
+    fetchTransactions();
+  }, [getTransactionHistory]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
@@ -255,7 +272,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
       <MetricsCards />
       <div className="dashboard-bottom-grid">
         <ChartSection />
-        <TransactionsTable onSeeAll={() => setShowAllTransactions(true)} />
+        <TransactionsTable
+          onSeeAll={() => setShowAllTransactions(true)}
+          transactions={transactions}
+        />
       </div>
       {/* All Transactions Modal */}
       {showAllTransactions && (
@@ -275,7 +295,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                 maxWidth: 800,
                 padding: 32,
                 position: "relative",
-                
               }}
             >
               <button
@@ -306,7 +325,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                 All Transactions
               </h2>
               <div className="all-transactions-table-container">
-                <TransactionsTable expanded hideTitle />
+                <TransactionsTable
+                  expanded
+                  hideTitle
+                  transactions={transactions}
+                />
               </div>
             </div>
           </div>

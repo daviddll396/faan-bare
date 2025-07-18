@@ -129,9 +129,9 @@ const serviceTypeOptions = [
 ];
 
 const initialIndividualForm = {
-  firstName: "",
-  lastName: "",
-  email: "",
+    firstName: "",
+    lastName: "",
+    email: "",
   phoneNumber: "",
   meansOfId: "NIN",
   idNumber: "",
@@ -150,15 +150,15 @@ const initialCorporateForm = {
   registrationNumber: "",
   email: "",
   phoneNumber: "",
-  password: "",
-  confirmPassword: "",
+    password: "",
+    confirmPassword: "",
 };
 
 const initialGovernmentForm = {
   officeName: "",
   address: "",
   email: "",
-  phoneNumber: "",
+    phoneNumber: "",
   password: "",
   confirmPassword: "",
   officeType: "State",
@@ -173,7 +173,7 @@ const initialFamilyForm = {
   phoneNumber: "",
   meansOfId: "NIN",
   idNumber: "",
-  address: "",
+    address: "",
   gender: "Male",
   isStudent: "No",
   dob: "",
@@ -487,7 +487,7 @@ const RegisterPage: React.FC = () => {
         }, 3500);
       } else {
         const errorMessage = responseData.message || "Registration failed";
-        showToast(errorMessage, "error");
+          showToast(errorMessage, "error");
       }
     } catch (err: unknown) {
       console.error("Registration error:", err);
@@ -860,43 +860,43 @@ const RegisterPage: React.FC = () => {
               </span>
             </div>
             <div className="register-individual-grid">
-              <div className="form-row-modern">
+            <div className="form-row-modern">
                 <label>First Name</label>
-                <input
+              <input
                   className="form-input-modern"
-                  name="firstName"
+                name="firstName"
                   value={individualForm.firstName}
                   onChange={handleIndividualChange}
                   placeholder="First Name"
                   autoComplete="off"
                 />
                 {formErrors.firstName && (
-                  <span className="validation-error">
+                <span className="validation-error">
                     {formErrors.firstName}
-                  </span>
-                )}
-              </div>
-              <div className="form-row-modern">
+                </span>
+              )}
+            </div>
+            <div className="form-row-modern">
                 <label>Last Name</label>
-                <input
+              <input
                   className="form-input-modern"
-                  name="lastName"
+                name="lastName"
                   value={individualForm.lastName}
                   onChange={handleIndividualChange}
                   placeholder="Last Name"
                   autoComplete="off"
                 />
                 {formErrors.lastName && (
-                  <span className="validation-error">
+                <span className="validation-error">
                     {formErrors.lastName}
-                  </span>
-                )}
-              </div>
+                </span>
+              )}
+            </div>
               <div className="form-row-modern">
                 <label>Email</label>
-                <input
+            <input
                   className="form-input-modern"
-                  name="email"
+              name="email"
                   value={individualForm.email}
                   onChange={handleIndividualChange}
                   placeholder="Email"
@@ -904,25 +904,25 @@ const RegisterPage: React.FC = () => {
                 />
                 {formErrors.email && (
                   <span className="validation-error">{formErrors.email}</span>
-                )}
-              </div>
-              <div className="form-row-modern">
+            )}
+          </div>
+            <div className="form-row-modern">
                 <label>Phone Number</label>
-                <input
+              <input
                   className="form-input-modern"
-                  name="phoneNumber"
+                name="phoneNumber"
                   value={individualForm.phoneNumber}
                   onChange={handleIndividualChange}
                   placeholder="Phone Number"
                   autoComplete="off"
                 />
                 {formErrors.phoneNumber && (
-                  <span className="validation-error">
+                <span className="validation-error">
                     {formErrors.phoneNumber}
-                  </span>
-                )}
-              </div>
-              <div className="form-row-modern">
+                </span>
+              )}
+            </div>
+            <div className="form-row-modern">
                 <label>Means of Identification</label>
                 <select
                   className="form-input-modern"
@@ -939,7 +939,7 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="form-row-modern">
                 <label>Identification Number</label>
-                <input
+              <input
                   className="form-input-modern"
                   name="idNumber"
                   value={individualForm.idNumber}
@@ -951,8 +951,8 @@ const RegisterPage: React.FC = () => {
                   <span className="validation-error">
                     {formErrors.idNumber}
                   </span>
-                )}
-              </div>
+              )}
+            </div>
               <div className="form-row-modern">
                 <label>Address</label>
                 <input
@@ -966,8 +966,8 @@ const RegisterPage: React.FC = () => {
                 {formErrors.address && (
                   <span className="validation-error">{formErrors.address}</span>
                 )}
-              </div>
-              <div className="form-row-modern">
+          </div>
+            <div className="form-row-modern">
                 <label>Gender</label>
                 <select
                   className="form-input-modern"
@@ -1007,9 +1007,9 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="form-row-modern">
                 <label>Date of Birth</label>
-                <input
+              <input
                   className="form-input-modern"
-                  name="dob"
+                name="dob"
                   type="date"
                   value={individualForm.dob}
                   onChange={handleIndividualChange}
@@ -1017,8 +1017,8 @@ const RegisterPage: React.FC = () => {
                 />
                 {formErrors.dob && (
                   <span className="validation-error">{formErrors.dob}</span>
-                )}
-              </div>
+              )}
+            </div>
             </div>
             <GradientButton
               type="submit"
@@ -1095,7 +1095,7 @@ const RegisterPage: React.FC = () => {
                   style={{ background: "#f7f7f7", color: "#b0b0b0" }}
                 />
               </div>
-              <div className="form-row-modern">
+            <div className="form-row-modern">
                 <label>Password</label>
                 <div className="password-input-container">
                   <input
@@ -1262,8 +1262,8 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="form-row-modern">
                 <label>Nature of Business</label>
-                <select
-                  className="form-input-modern"
+              <select
+                className="form-input-modern"
                   name="natureOfBusiness"
                   value={corporateForm.natureOfBusiness}
                   onChange={handleCorporateChange}
@@ -1273,13 +1273,13 @@ const RegisterPage: React.FC = () => {
                       {opt.label}
                     </option>
                   ))}
-                </select>
+              </select>
                 {corporateFormErrors.natureOfBusiness && (
                   <span className="validation-error">
                     {corporateFormErrors.natureOfBusiness}
                   </span>
                 )}
-              </div>
+            </div>
               <div className="form-row-modern">
                 <label>Service Type</label>
                 <select
@@ -1299,10 +1299,10 @@ const RegisterPage: React.FC = () => {
                     {corporateFormErrors.serviceType}
                   </span>
                 )}
-              </div>
+          </div>
               <div className="form-row-modern">
                 <label>Year of Incorporation</label>
-                <input
+            <input
                   className="form-input-modern"
                   name="yearOfIncorporation"
                   value={corporateForm.yearOfIncorporation}
@@ -1311,14 +1311,14 @@ const RegisterPage: React.FC = () => {
                   autoComplete="off"
                 />
                 {corporateFormErrors.yearOfIncorporation && (
-                  <span className="validation-error">
+              <span className="validation-error">
                     {corporateFormErrors.yearOfIncorporation}
-                  </span>
-                )}
-              </div>
+              </span>
+            )}
+          </div>
               <div className="form-row-modern">
                 <label>Registered Address</label>
-                <input
+            <input
                   className="form-input-modern"
                   name="registeredAddress"
                   value={corporateForm.registeredAddress}
@@ -1327,14 +1327,14 @@ const RegisterPage: React.FC = () => {
                   autoComplete="off"
                 />
                 {corporateFormErrors.registeredAddress && (
-                  <span className="validation-error">
+              <span className="validation-error">
                     {corporateFormErrors.registeredAddress}
-                  </span>
-                )}
-              </div>
-              <div className="form-row-modern">
+              </span>
+            )}
+          </div>
+            <div className="form-row-modern">
                 <label>Registration Number</label>
-                <input
+              <input
                   className="form-input-modern"
                   name="registrationNumber"
                   value={corporateForm.registrationNumber}
@@ -1385,7 +1385,7 @@ const RegisterPage: React.FC = () => {
                 <div className="password-input-container">
                   <input
                     className="form-input-modern"
-                    name="password"
+                name="password"
                     type={showCorporatePassword ? "text" : "password"}
                     value={corporateForm.password}
                     onChange={(e) => {
@@ -1424,17 +1424,17 @@ const RegisterPage: React.FC = () => {
                   </button>
                 </div>
                 {corporateFormErrors.password && (
-                  <span className="validation-error">
+                <span className="validation-error">
                     {corporateFormErrors.password}
-                  </span>
-                )}
-              </div>
-              <div className="form-row-modern">
+                </span>
+              )}
+            </div>
+            <div className="form-row-modern">
                 <label>Confirm Password</label>
                 <div className="password-input-container">
-                  <input
+              <input
                     className="form-input-modern"
-                    name="confirmPassword"
+                name="confirmPassword"
                     type={showCorporateConfirmPassword ? "text" : "password"}
                     value={corporateForm.confirmPassword}
                     onChange={(e) => {
@@ -1474,12 +1474,12 @@ const RegisterPage: React.FC = () => {
                   </button>
                 </div>
                 {corporateFormErrors.confirmPassword && (
-                  <span className="validation-error">
+                <span className="validation-error">
                     {corporateFormErrors.confirmPassword}
-                  </span>
-                )}
-              </div>
+                </span>
+              )}
             </div>
+          </div>
             <GradientButton
               type="submit"
               fullWidth
@@ -1617,7 +1617,7 @@ const RegisterPage: React.FC = () => {
                   style={{ display: "none" }}
                   onChange={handleFileInput}
                 />
-                <button
+          <button
                   type="button"
                   style={{
                     marginTop: 8,
@@ -1760,7 +1760,7 @@ const RegisterPage: React.FC = () => {
               )}
             </div>
             <GradientButton
-              type="submit"
+            type="submit"
               fullWidth
               disabled={uploadedFiles.length === 0 || isSubmitting}
               loading={isSubmitting}
@@ -1923,7 +1923,7 @@ const RegisterPage: React.FC = () => {
                     ) : (
                       <Eye size={18} />
                     )}
-                  </button>
+          </button>
                 </div>
                 {governmentFormErrors.password && (
                   <span className="validation-error">
@@ -2067,11 +2067,11 @@ const RegisterPage: React.FC = () => {
               className="auth-form-subtitle-modern"
               style={{ marginBottom: 4 }}
             >
-              Already have an account?{" "}
+            Already have an account?{" "}
               <Link to="/login" className="register-login-link">
                 Log In
-              </Link>
-            </div>
+            </Link>
+          </div>
             <div className="register-progress-row">
               <span
                 className="register-progress-individual clickable"
@@ -2228,7 +2228,7 @@ const RegisterPage: React.FC = () => {
             >
               CREATE ACCOUNT
             </GradientButton>
-          </form>
+        </form>
         ) : selectedRole === "FAMILY" && step === "form" ? (
           <form
             key="family-form"
@@ -2252,7 +2252,7 @@ const RegisterPage: React.FC = () => {
               <Link to="/login" className="register-login-link">
                 Log In
               </Link>
-            </div>
+      </div>
             <div className="register-progress-row">
               <span
                 className="register-progress-individual clickable"

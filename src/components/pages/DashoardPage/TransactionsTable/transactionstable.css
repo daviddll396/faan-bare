@@ -181,6 +181,22 @@
   line-height: 16px;
 }
 
+/* Increased spacing for expanded table (All Transactions modal) */
+.transactions-table.expanded .table-container td {
+  padding: 12px 0px;
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.transactions-table.expanded .table-container th {
+  padding: 16px 0px 12px 0px;
+  font-size: 13px;
+}
+
+.transactions-table.expanded .service-cell {
+  gap: 12px;
+}
+
 .transaction-icon {
   width: 31px;
   height: 31px;

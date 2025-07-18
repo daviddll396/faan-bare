@@ -93,6 +93,16 @@ interface TariffsResponse {
   data: Tariff[]; // Array of tariff objects
 }
 
+interface TransactionHistoryItem {
+  customerId: string;
+  tariffId: number;
+  tariffName: string;
+  amount: number;
+  status: string;
+  createdAt: string;
+  id: number;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -103,6 +113,10 @@ interface AuthContextType {
   getAllTariffs: () => Promise<TariffsResponse | null>;
   makePayment: (reference: string, tariffId: number) => Promise<boolean>;
   refreshUserDetails: () => Promise<boolean>;
+  getTransactionHistory: (
+    startDate: string,
+    endDate: string
+  ) => Promise<TransactionHistoryItem[] | null>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -848,6 +862,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const getTransactionHistory = async (
+    startDate: string,
+    endDate: string
+  ): Promise<TransactionHistoryItem[] | null> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for fetching transaction history");
+        return null;
+      }
+      const url = `${API_BASE_URL}/api/faan/transactions/history?startdate=${startDate}&&enddate=${endDate}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        console.error(
+          "Failed to fetch transaction history:",
+          response.status,
+          response.statusText
+        );
+        return null;
+      }
+      const responseText = await response.text();
+      if (!responseText || responseText.trim() === "") {
+        return null;
+      }
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (error) {
+        console.error("Failed to parse transaction history JSON:", error);
+        return null;
+      }
+      if (Array.isArray(data)) {
+        return data as TransactionHistoryItem[];
+      } else if (Array.isArray(data.data)) {
+        return data.data as TransactionHistoryItem[];
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching transaction history:", error);
+      return null;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -858,6 +923,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getAllTariffs,
     makePayment,
     refreshUserDetails,
+    getTransactionHistory,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

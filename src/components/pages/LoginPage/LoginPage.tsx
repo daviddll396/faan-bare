@@ -166,18 +166,18 @@ const LoginPage: React.FC = () => {
           <div className="form-row-modern">
             <label htmlFor="password">Password</label>
             <div className="password-input-container">
-              <input
+            <input
                 type={showPassword ? "text" : "password"}
-                id="password"
-                className={`form-input-modern ${
-                  validationErrors.password ? "error" : ""
-                }`}
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="Enter your password"
-                disabled={isSubmitting}
-                required
-              />
+              id="password"
+              className={`form-input-modern ${
+                validationErrors.password ? "error" : ""
+              }`}
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Enter your password"
+              disabled={isSubmitting}
+              required
+            />
               <button
                 type="button"
                 className="password-toggle-btn"

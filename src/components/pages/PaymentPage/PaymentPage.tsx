@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import FaanLogo from "/images/faan-logo.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
 import InvoiceAmountFormIcon from "/icons/invoice-amount-form-icon.svg";
 import CheckCircle from "/icons/check-circle.svg";
 import { FiInfo, FiEye } from "react-icons/fi";
+import { useAuth } from "../../../contexts/AuthContext";
 import "./paymentpage.css";
 
 const tabs = ["All", "Pending", "Completed", "Cancelled"];
@@ -43,94 +45,10 @@ const tabs = ["All", "Pending", "Completed", "Cancelled"];
 //   },
 // ];
 
-const staticPayments = [
-  {
-    billNo: "2189020",
-    service: "International Arrival",
-    amount: "₦12,000",
-    status: "Cancelled",
-    date: "12-08-2024 @11:32pm",
-    action: "View Reason",
-    actionType: "reason",
-  },
-  {
-    billNo: "2189021",
-    service: "VIP Lounge International",
-    amount: "₦18,500",
-    status: "Pending",
-    date: "13-08-2024 @09:15am",
-    action: "View Invoice",
-    actionType: "invoice",
-  },
-  {
-    billNo: "2189022",
-    service: "Domestic Departure",
-    amount: "₦7,200",
-    status: "Completed",
-    date: "14-08-2024 @02:45pm",
-    action: "View Receipt",
-    actionType: "receipt",
-  },
-  {
-    billNo: "2189023",
-    service: "VIP Lounge Domestic",
-    amount: "₦10,000",
-    status: "Pending",
-    date: "15-08-2024 @11:00am",
-    action: "View Invoice",
-    actionType: "invoice",
-  },
-  {
-    billNo: "2189024",
-    service: "International Departure",
-    amount: "₦15,000",
-    status: "Cancelled",
-    date: "16-08-2024 @04:20pm",
-    action: "View Reason",
-    actionType: "reason",
-  },
-  {
-    billNo: "2189025",
-    service: "VIP Lounge International",
-    amount: "₦18,500",
-    status: "Completed",
-    date: "17-08-2024 @07:30pm",
-    action: "View Receipt",
-    actionType: "receipt",
-  },
-  {
-    billNo: "2189026",
-    service: "Domestic Arrival",
-    amount: "₦8,000",
-    status: "Pending",
-    date: "18-08-2024 @10:10am",
-    action: "View Invoice",
-    actionType: "invoice",
-  },
-  {
-    billNo: "2189027",
-    service: "VIP Lounge Domestic",
-    amount: "₦10,000",
-    status: "Completed",
-    date: "19-08-2024 @01:55pm",
-    action: "View Receipt",
-    actionType: "receipt",
-  },
-  {
-    billNo: "2189028",
-    service: "International Arrival",
-    amount: "₦12,000",
-    status: "Cancelled",
-    date: "20-08-2024 @03:40pm",
-    action: "View Reason",
-    actionType: "reason",
-  },
-];
-
 const statusColors = {
-  Cancelled: "cancelled",
-  Pending: "processing",
-  Completed: "completed",
+  CANCELLED: "cancelled",
+  PENDING: "processing",
+  COMPLETED: "completed",
 };
 
 interface PaymentItem {
@@ -148,16 +66,67 @@ interface PaymentPageProps {
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = () => {
+  const { getTransactionHistory } = useAuth();
   const [activeTab, setActiveTab] = useState("All");
   const [searchName, setSearchName] = useState("");
   const [searchBillNo, setSearchBillNo] = useState("");
   const [appliedSearchName, setAppliedSearchName] = useState("");
   const [appliedSearchBillNo, setAppliedSearchBillNo] = useState("");
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [payments, setPayments] = useState<PaymentItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [modal, setModal] = useState<{
     type: "invoice" | "receipt" | "reason";
     data: PaymentItem;
   } | null>(null);
+
+  // Fetch transaction history on component mount
+  React.useEffect(() => {
+    const fetchTransactions = async () => {
+      setIsLoading(true);
+      try {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(endDate.getMonth() - 6);
+        const format = (d: Date) => d.toISOString().slice(0, 10);
+
+        const transactions = await getTransactionHistory(
+          format(startDate),
+          format(endDate)
+        );
+
+        if (transactions) {
+          // Map API response to PaymentItem format
+          const mappedPayments: PaymentItem[] = transactions.map((txn) => ({
+            billNo: txn.id.toString(),
+            service: txn.tariffName,
+            amount: `₦${txn.amount.toLocaleString()}`,
+            status: txn.status,
+            date: new Date(txn.createdAt).toLocaleString(),
+            action:
+              txn.status === "COMPLETED"
+                ? "View Receipt"
+                : txn.status === "PENDING"
+                ? "View Invoice"
+                : "View Reason",
+            actionType:
+              txn.status === "COMPLETED"
+                ? "receipt"
+                : txn.status === "PENDING"
+                ? "invoice"
+                : "reason",
+          }));
+          setPayments(mappedPayments);
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [getTransactionHistory]);
 
   const handleSearch = () => {
     setAppliedSearchName(searchName);
@@ -171,7 +140,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     setAppliedSearchBillNo("");
   };
 
-  const filteredPayments = staticPayments.filter((p) => {
+  const filteredPayments = payments.filter((p) => {
     const matchesTab =
       activeTab === "All" || p.status.toLowerCase() === activeTab.toLowerCase();
     const matchesName =
@@ -220,71 +189,77 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         </div>
       </div>
       <div className="payment-table-card">
-        <table className="payment-table">
-          <thead>
-            <tr>
-              <th className="table-header-item">Bill No.</th>
-              <th className="table-header-item">Service</th>
-              <th className="table-header-item">Amount</th>
-              <th className="table-header-item">Status</th>
-              <th className="table-header-item">Bill Date/Time</th>
-              <th className="table-header-item">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPayments.map((p, idx) => (
-              <tr key={idx} className={idx % 2 === 1 ? "alt-row" : ""}>
-                <td className="table-data-item">{p.billNo}</td>
-                <td className="table-data-item">{p.service}</td>
-                <td className="table-data-item">{p.amount}</td>
-                <td className="table-data-item">
-                  <span
-                    className={`payment-status-badge ${
-                      statusColors[p.status as keyof typeof statusColors]
-                    }`}
-                  >
-                    {p.status}
-                  </span>
-                </td>
-                <td className="table-data-item">{p.date}</td>
-                <td className="table-data-item">
-                  {p.actionType === "reason" && (
-                    <button
-                      className="action-btn reason"
-                      onClick={() => setModal({ type: "reason", data: p })}
-                    >
-                      <FiInfo className="action-icon" />
-                      <span>View Reason</span>
-                    </button>
-                  )}
-                  {p.actionType === "receipt" && (
-                    <button
-                      className="action-btn receipt"
-                      onClick={() => setModal({ type: "receipt", data: p })}
-                    >
-                      <FiEye className="action-icon" />
-                      <span>View Receipt</span>
-                    </button>
-                  )}
-                  {p.actionType === "invoice" && (
-                    <button
-                      className="action-btn invoice"
-                      onClick={() => setModal({ type: "invoice", data: p })}
-                    >
-                      <FiEye className="action-icon" />
-                      <span>View Invoice</span>
-                    </button>
-                  )}
-                  {p.actionType === "view" && (
-                    <button className="action-btn view">
-                      <FiEye className="action-icon" />
-                    </button>
-                  )}
-                </td>
+        <LoadingSpinner
+          isVisible={isLoading}
+          message="Loading transactions..."
+        />
+        {!isLoading && (
+          <table className="payment-table">
+            <thead>
+              <tr>
+                <th className="table-header-item">Bill No.</th>
+                <th className="table-header-item">Service</th>
+                <th className="table-header-item">Amount</th>
+                <th className="table-header-item">Status</th>
+                <th className="table-header-item">Bill Date/Time</th>
+                <th className="table-header-item">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredPayments.map((p, idx) => (
+                <tr key={idx} className={idx % 2 === 1 ? "alt-row" : ""}>
+                  <td className="table-data-item">{p.billNo}</td>
+                  <td className="table-data-item">{p.service}</td>
+                  <td className="table-data-item">{p.amount}</td>
+                  <td className="table-data-item">
+                    <span
+                      className={`payment-status-badge ${
+                        statusColors[p.status as keyof typeof statusColors]
+                      }`}
+                    >
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="table-data-item">{p.date}</td>
+                  <td className="table-data-item">
+                    {p.actionType === "reason" && (
+                      <button
+                        className="action-btn reason"
+                        onClick={() => setModal({ type: "reason", data: p })}
+                      >
+                        <FiInfo className="action-icon" />
+                        <span>View Reason</span>
+                      </button>
+                    )}
+                    {p.actionType === "receipt" && (
+                      <button
+                        className="action-btn receipt"
+                        onClick={() => setModal({ type: "receipt", data: p })}
+                      >
+                        <FiEye className="action-icon" />
+                        <span>View Receipt</span>
+                      </button>
+                    )}
+                    {p.actionType === "invoice" && (
+                      <button
+                        className="action-btn invoice"
+                        onClick={() => setModal({ type: "invoice", data: p })}
+                      >
+                        <FiEye className="action-icon" />
+                        <span>View Invoice</span>
+                      </button>
+                    )}
+                    {p.actionType === "view" && (
+                      <button className="action-btn view">
+                        <FiEye className="action-icon" />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
       {modal && modal.type === "invoice" && (
         <div className="customer-modal-backdrop">
@@ -654,6 +629,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         color: "#6c7278",
                         fontWeight: 500,
                         fontSize: 15,
+                        whiteSpace: "nowrap",
                       }}
                     >
                       Receipt Number
