@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useLoading } from "../../../contexts/LoadingContext";
 import AddIcon from "../../../../public/icons/add-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
@@ -13,7 +14,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
-import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
+import PaymentModal from "../../reusables/PaymentModal/PaymentModal";
 
 interface ServicesPageProps {
   role?: string;
@@ -110,6 +111,7 @@ interface BookingPassenger {
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const { getAllTariffs, makePayment, refreshUserDetails } = useAuth();
+  const { showLoading, hideLoading } = useLoading();
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [services, setServices] = useState([{ ...initialService }]);
   const [serviceNameSelectOpen, setServiceNameSelectOpen] = useState<
@@ -136,8 +138,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   });
   const [passengers, setPassengers] = React.useState<BookingPassenger[]>([]);
   const [bookingFormError, setBookingFormError] = React.useState("");
-  const [showPaymentLoading, setShowPaymentLoading] = React.useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
+  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
 
   // Add search state for admin view
   const [searchName, setSearchName] = useState("");
@@ -148,9 +150,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const [customerSearchName, setCustomerSearchName] = useState("");
   const [customerFilteredServices, setCustomerFilteredServices] =
     useState(customerServices);
-
-  // Add state for API tariffs
-  const [isLoadingTariffs, setIsLoadingTariffs] = useState(true);
 
   // Add toast state for tariff fetching feedback
   const [toast, setToast] = useState<{
@@ -195,7 +194,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   useEffect(() => {
     const fetchTariffs = async () => {
       console.log("🎯 ServicesPage: Attempting to fetch all tariffs...");
-      setIsLoadingTariffs(true);
+      showLoading("Loading services...");
       try {
         const tariffsData = await getAllTariffs();
         console.log("🎯 ServicesPage: Received tariffs data:", tariffsData);
@@ -265,7 +264,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           showToast("Error loading services, using default services", "error");
         }, 500);
       } finally {
-        setIsLoadingTariffs(false);
+        hideLoading();
       }
     };
 
@@ -381,8 +380,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       const otherCharges = 500; // Fixed charge
       const total = subTotal + otherCharges;
 
-      // Function to handle payment
-      const handlePayment = async () => {
+      // Function to show payment modal
+      const handlePayment = () => {
         if (!selectedService?.id) {
           showToast("No service selected for payment", "error");
           return;
@@ -393,7 +392,13 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           return;
         }
 
-        setShowPaymentLoading(true);
+        setShowPaymentModal(true);
+      };
+
+      // Function to process payment after modal submission
+      const handlePaymentSubmit = async () => {
+        setShowPaymentModal(false);
+        showLoading("Processing payment...");
 
         try {
           // Generate payment reference
@@ -413,7 +418,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           );
 
           if (paymentSuccess) {
-            setShowPaymentLoading(false);
+            hideLoading();
             setShowPaymentSuccess(true);
 
             // Refresh user details to get updated wallet balance and transaction stats
@@ -437,7 +442,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             }, 500);
             console.log("🎯 ServicesPage: Payment completed successfully");
           } else {
-            setShowPaymentLoading(false);
+            hideLoading();
             setTimeout(() => {
               showToast("Payment failed. Please try again.", "error");
             }, 500);
@@ -445,7 +450,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           }
         } catch (error) {
           console.error("🎯 ServicesPage: Payment error:", error);
-          setShowPaymentLoading(false);
+          hideLoading();
           setTimeout(() => {
             showToast(
               "An error occurred during payment. Please try again.",
@@ -759,11 +764,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 </GradientButton>
               </div>
             </div>
-            {/* Payment Loading Spinner Overlay */}
-            <LoadingSpinner
-              isVisible={showPaymentLoading}
-              message="Processing payment..."
-            />
+
             {/* Payment Success Modal Overlay */}
             {showPaymentSuccess && (
               <div className="customer-modal-backdrop">
@@ -815,6 +816,17 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 </div>
               </div>
             )}
+
+            {/* Payment Modal */}
+            <PaymentModal
+              isVisible={showPaymentModal}
+              onClose={() => setShowPaymentModal(false)}
+              onPaymentSubmit={handlePaymentSubmit}
+              amount={total}
+              accountNumber="0035678923"
+              bankName="Access Bank"
+              accountName="FAAN A/C"
+            />
           </div>
         </div>
       );
@@ -852,49 +864,40 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           </div>
         </div>
 
-        {/* Show loading state while fetching tariffs */}
-        {isLoadingTariffs && (
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            <p>Loading services...</p>
-          </div>
-        )}
-
-        {/* Show services when not loading */}
-        {!isLoadingTariffs && (
-          <div className="services-customer-grid">
-            {customerFilteredServices.map((service) => (
-              <div className="service-card" key={service.id}>
-                <div className="service-card-img-wrap">
-                  <img
-                    src={service.image}
-                    alt={service.name}
-                    className="service-card-img"
-                  />
-                </div>
-                <div className="service-card-name">{service.name}</div>
-                <div className="service-card-price">
-                  <TbCurrencyNaira
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 800,
-                      verticalAlign: "middle",
-                      marginTop: -2,
-                    }}
-                  />
-                  {service.price}
-                </div>
-                <div style={{ padding: "0 18px", width: "100%" }}>
-                  <GradientButton
-                    fullWidth
-                    onClick={() => setSelectedService(service)}
-                  >
-                    BOOK SERVICE
-                  </GradientButton>
-                </div>
+        {/* Show services */}
+        <div className="services-customer-grid">
+          {customerFilteredServices.map((service) => (
+            <div className="service-card" key={service.id}>
+              <div className="service-card-img-wrap">
+                <img
+                  src={service.image}
+                  alt={service.name}
+                  className="service-card-img"
+                />
               </div>
-            ))}
-          </div>
-        )}
+              <div className="service-card-name">{service.name}</div>
+              <div className="service-card-price">
+                <TbCurrencyNaira
+                  style={{
+                    fontSize: 24,
+                    fontWeight: 800,
+                    verticalAlign: "middle",
+                    marginTop: -2,
+                  }}
+                />
+                {service.price}
+              </div>
+              <div style={{ padding: "0 18px", width: "100%" }}>
+                <GradientButton
+                  fullWidth
+                  onClick={() => setSelectedService(service)}
+                >
+                  BOOK SERVICE
+                </GradientButton>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

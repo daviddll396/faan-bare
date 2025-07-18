@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import FaanLogo from "/images/faan-logo.svg";
+import OnboardingImage from "/images/onboarding-image.svg";
 import CryptoJS from "crypto-js";
 import "./RegisterPage.css";
 
@@ -381,13 +382,31 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="auth-split-screen">
+    <div className="auth-split-screen" >
       <MessageToast
         message={toast.message}
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
+      <div className="auth-illustration-side">
+        <div className="auth-outer-container">
+          <div className="auth-inner-container">
+            <img
+              src={OnboardingImage}
+              alt="Airport operations"
+              className="auth-background-image"
+            />
+            <div className="auth-image-overlay">
+              <img src={FaanLogo} alt="FAAN Logo" className="auth-logo" />
+              <div className="auth-image-text">
+                Seamless access to airport operations, services, and staff
+                resources <span className="highlight">anytime, anywhere.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
           <h2 className="auth-form-title-modern">Sign Up</h2>
@@ -620,7 +639,7 @@ const RegisterPage: React.FC = () => {
               )}
             </div>
 
-            <div className="form-row-modern">
+            <div className="form-row-modern"  style={{marginBottom: "20px"}}>
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type="password"
@@ -644,6 +663,7 @@ const RegisterPage: React.FC = () => {
           </div>
 
           <GradientButton
+         
             type="submit"
             disabled={isSubmitting || !isFormValid()}
           >
@@ -657,9 +677,6 @@ const RegisterPage: React.FC = () => {
             </Link>
           </div>
         </form>
-      </div>
-      <div className="auth-illustration-side purple-gradient-bg">
-        <AuthIllustrationCarousel />
       </div>
     </div>
   );

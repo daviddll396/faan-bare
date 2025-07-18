@@ -264,7 +264,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           onClick={() => setShowAllTransactions(false)}
         >
           <div
-            className="bill-modal-center"
+            className="all-transactions-modal-center"
             onClick={(e) => e.stopPropagation()}
           >
             <div
@@ -275,7 +275,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                 maxWidth: 800,
                 padding: 32,
                 position: "relative",
-                minHeight: 400,
+                
               }}
             >
               <button
@@ -305,7 +305,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               >
                 All Transactions
               </h2>
-              <TransactionsTable expanded hideTitle />
+              <div className="all-transactions-table-container">
+                <TransactionsTable expanded hideTitle />
+              </div>
             </div>
           </div>
         </div>

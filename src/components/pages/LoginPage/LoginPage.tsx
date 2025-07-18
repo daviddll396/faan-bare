@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import FaanLogo from "/images/faan-logo.svg";
+import OnboardingImage from "/images/onboarding-image.svg";
 import "./LoginPage.css";
 
 const LoginPage: React.FC = () => {
@@ -117,11 +118,32 @@ const LoginPage: React.FC = () => {
         isVisible={toast.isVisible}
         onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
+      <div className="auth-illustration-side">
+        <div className="auth-outer-container">
+          <div className="auth-inner-container">
+            <img
+              src={OnboardingImage}
+              alt="Airport operations"
+              className="auth-background-image"
+            />
+            <div className="auth-image-overlay">
+              <img src={FaanLogo} alt="FAAN Logo" className="auth-logo" />
+              <div className="auth-image-text">
+                Seamless access to airport operations, services, and staff
+                resources <span className="highlight">anytime, anywhere.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
-          <h2 className="auth-form-title-modern">Sign in to your Account</h2>
+          <h2 className="auth-form-title-modern">Log In</h2>
           <p className="auth-form-subtitle-modern">
-            Enter your email and password details to access your account
+            Don't have an account?{" "}
+            <Link to="/register" className="auth-form-link-modern">
+              Sign Up
+            </Link>
           </p>
           <div className="form-row-modern">
             <label htmlFor="email">Email</label>
@@ -183,16 +205,7 @@ const LoginPage: React.FC = () => {
           >
             {isSubmitting ? "LOGGING IN..." : "LOG IN"}
           </GradientButton>
-          <div className="auth-form-footer-modern">
-            Don't have an account?{" "}
-            <Link to="/register" className="auth-form-link-modern">
-              Sign Up
-            </Link>
-          </div>
         </form>
-      </div>
-      <div className="auth-illustration-side purple-gradient-bg">
-        <AuthIllustrationCarousel />
       </div>
     </div>
   );

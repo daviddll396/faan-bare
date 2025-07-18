@@ -281,6 +281,7 @@
   text-decoration: none;
   font-weight: 500;
   margin-left: auto;
+  margin-bottom:20px;
 }
 .forgot-link:hover {
   text-decoration: underline;
@@ -348,7 +349,7 @@
 /* Validation error styling */
 .validation-error {
   color: #dc2626;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   margin-top: 4px;
   margin-left: 2px;

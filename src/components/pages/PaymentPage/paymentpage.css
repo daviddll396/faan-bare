@@ -260,12 +260,15 @@
     zoom: 0.9;
   }
   .payment-modal-center {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1800px) {
   .payment-table-card {
+    zoom: 0.85;
+  }
+  .payment-modal-center {
     zoom: 0.85;
   }
 }
@@ -274,10 +277,16 @@
   .payment-table-card {
     zoom: 0.8;
   }
+  .payment-modal-center {
+    zoom: 0.8;
+  }
 }
 
 @media (max-width: 1600px) {
   .payment-table-card {
+    zoom: 0.75;
+  }
+  .payment-modal-center {
     zoom: 0.75;
   }
 }
@@ -286,10 +295,16 @@
   .payment-table-card {
     zoom: 0.7;
   }
+  .payment-modal-center {
+    zoom: 0.7;
+  }
 }
 
 @media (max-width: 1450px) {
   .payment-table-card {
+    zoom: 0.65;
+  }
+  .payment-modal-center {
     zoom: 0.65;
   }
 }
@@ -307,6 +322,9 @@
   .payment-table-card {
     zoom: 0.58;
   }
+  .payment-modal-center {
+    zoom: 0.58;
+  }
 }
 
 @media (max-width: 1300px) {
@@ -314,7 +332,7 @@
     zoom: 0.56;
   }
   .payment-modal-center {
-    zoom: 0.7;
+    zoom: 0.56;
   }
 }
 
@@ -322,10 +340,16 @@
   .payment-table-card {
     zoom: 0.54;
   }
+  .payment-modal-center {
+    zoom: 0.54;
+  }
 }
 
 @media (max-width: 1200px) {
   .payment-table-card {
+    zoom: 0.52;
+  }
+  .payment-modal-center {
     zoom: 0.52;
   }
 }
@@ -335,7 +359,7 @@
     zoom: 0.5;
   }
   .payment-modal-center {
-    zoom: 0.7;
+    zoom: 0.5;
   }
 }
 
@@ -344,7 +368,7 @@
     zoom: 0.48;
   }
   .payment-modal-center {
-    zoom: 0.6;
+    zoom: 0.48;
   }
 }
 
@@ -353,18 +377,24 @@
     zoom: 0.46;
   }
   .payment-modal-center {
-    zoom: 0.5;
+    zoom: 0.46;
   }
 }
 
 @media (max-width: 1000px) {
   .payment-table-card {
-    zoom: 0.44;
+    zoom: 0.9;
+  }
+  .payment-modal-center {
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 950px) {
   .payment-table-card {
+    zoom: 0.42;
+  }
+  .payment-modal-center {
     zoom: 0.42;
   }
 }
@@ -373,11 +403,17 @@
   .payment-table-card {
     zoom: 0.4;
   }
+  .payment-modal-center {
+    zoom: 0.4;
+  }
 }
 
 /* Reset zoom for mobile devices */
 @media (max-width: 768px) {
   .payment-table-card {
+    zoom: 1;
+  }
+  .payment-modal-center {
     zoom: 1;
   }
 }

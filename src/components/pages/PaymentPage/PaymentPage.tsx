@@ -191,12 +191,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
         />
-        <SearchInput
-          placeholder="Bill No."
-          value={searchBillNo}
-          onChange={(e) => setSearchBillNo(e.target.value)}
-        />
-        <div style={{ marginLeft: "auto", display: "flex", gap: 12 }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <SearchInput
+            placeholder="Bill No."
+            value={searchBillNo}
+            onChange={(e) => setSearchBillNo(e.target.value)}
+          />
           <BorderButton
             text="Search"
             onClick={handleSearch}

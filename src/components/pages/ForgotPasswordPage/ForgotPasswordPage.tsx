@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import AuthIllustrationCarousel from "../../reusables/AuthIllustrationCarousel";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import FaanLogo from "/images/faan-logo.svg";
+import OnboardingImage from "/images/onboarding-image.svg";
 import "./ForgotPasswordPage.css";
 
 const ForgotPasswordPage: React.FC = () => {
@@ -63,13 +64,31 @@ const ForgotPasswordPage: React.FC = () => {
         isVisible={toast.isVisible}
         onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
+      <div className="auth-illustration-side">
+        <div className="auth-outer-container">
+          <div className="auth-inner-container">
+            <img
+              src={OnboardingImage}
+              alt="Airport operations"
+              className="auth-background-image"
+            />
+            <div className="auth-image-overlay">
+              <img src={FaanLogo} alt="FAAN Logo" className="auth-logo" />
+              <div className="auth-image-text">
+                Seamless access to airport operations, services, and staff
+                resources <span className="highlight">anytime, anywhere.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
           <h2 className="auth-form-title-modern">Forgot Password</h2>
           <p className="auth-form-subtitle-modern">
             Enter your email address and we'll send you a password reset link.
           </p>
-          <div className="form-row-modern" style={{ marginBottom: "15px" }}>
+          <div className="form-row-modern" style={{ marginBottom: "20px" }}>
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -86,10 +105,10 @@ const ForgotPasswordPage: React.FC = () => {
             )}
           </div>
           <GradientButton
+          
             type="submit"
             fullWidth
             disabled={isSubmitting || !!validationError || !email}
-            
           >
             {isSubmitting ? "SENDING..." : "SEND RESET LINK"}
           </GradientButton>
@@ -99,9 +118,6 @@ const ForgotPasswordPage: React.FC = () => {
             </Link>
           </div>
         </form>
-      </div>
-      <div className="auth-illustration-side purple-gradient-bg">
-        <AuthIllustrationCarousel />
       </div>
     </div>
   );

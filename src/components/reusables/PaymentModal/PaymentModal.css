@@ -1,0 +1,368 @@
+/* Payment Modal uses the same backdrop and scaling as PaymentPage modals */
+/* The modal content is now styled inline to match PaymentPage patterns */
+
+/* Modal protection from zoom scaling - same as PaymentPage */
+.customer-modal-backdrop {
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.payment-modal-center {
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Animation keyframes - same as PaymentPage */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Progressive zoom scaling for payment modal - same as PaymentPage */
+
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .payment-modal-center {
+    zoom: 1;
+  }
+}
+
+/* Payment Modal Backdrop */
+.payment-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(34, 43, 69, 0.32);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.payment-modal-center {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Payment Modal Container */
+.payment-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+  padding: 32px;
+  min-width: 480px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Header */
+.payment-modal-header {
+  margin-bottom: 24px;
+}
+
+.payment-modal-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.faan-logo-emblem {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #007948 0%, #1ec28b 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faan-logo-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.faan-logo-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222b45;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-modal-divider {
+  position: relative;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e4e4e7;
+}
+
+.payment-label {
+  position: absolute;
+  top: -8px;
+  left: 0;
+  background: #fff;
+  padding: 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222b45;
+}
+
+/* Payment Details Box */
+.payment-details-box {
+  background: #f8fafc;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.payment-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.payment-detail-row:last-child {
+  border-bottom: none;
+}
+
+.payment-detail-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.payment-detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222b45;
+}
+
+/* Payment Method Section */
+.payment-method-section {
+  margin-bottom: 24px;
+}
+
+.payment-method-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222b45;
+  margin-bottom: 12px;
+}
+
+.payment-method-options {
+  display: flex;
+  gap: 24px;
+}
+
+.payment-method-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #222b45;
+}
+
+.payment-method-option input[type="radio"] {
+  display: none;
+}
+
+.radio-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.payment-method-option input[type="radio"]:checked + .radio-custom {
+  border-color: #007948;
+  background: #007948;
+}
+
+.payment-method-option input[type="radio"]:checked + .radio-custom::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Card Details Section */
+.card-details-section {
+  margin-bottom: 24px;
+}
+
+.card-input-group {
+  margin-bottom: 16px;
+}
+
+.card-input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222b45;
+  margin-bottom: 6px;
+}
+
+.card-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e4e4e7;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #fff;
+  color: #18181b;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.card-input:focus {
+  border-color: #007948;
+}
+
+.card-input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.save-card-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #222b45;
+  margin-top: 12px;
+}
+
+.save-card-option input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.save-card-option input[type="checkbox"]:checked + .checkbox-custom {
+  border-color: #007948;
+  background: #007948;
+}
+
+.save-card-option input[type="checkbox"]:checked + .checkbox-custom::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Submit Button */
+.payment-submit-btn {
+  width: 100%;
+  background: linear-gradient(180deg, #007948 0%, #007948 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.payment-submit-btn:hover {
+  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+}
+
+/* Privacy Policy */
+.privacy-policy {
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.privacy-link {
+  color: #007948;
+  text-decoration: underline;
+}
+
+.privacy-link:hover {
+  color: #058e5b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payment-modal {
+    min-width: 320px;
+    padding: 24px;
+    margin: 16px;
+  }
+
+  .card-input-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .payment-method-options {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
