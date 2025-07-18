@@ -54,74 +54,74 @@ const staticPayments = [
     actionType: "reason",
   },
   {
-    billNo: "2189020",
+    billNo: "2189021",
     service: "VIP Lounge International",
-    amount: "₦12,000",
+    amount: "₦18,500",
     status: "Pending",
-    date: "12-08-2024 @11:32pm",
+    date: "13-08-2024 @09:15am",
     action: "View Invoice",
     actionType: "invoice",
   },
   {
-    billNo: "2189020",
-    service: "International Arrival",
-    amount: "₦12,000",
-    status: "Cancelled",
-    date: "12-08-2024 @11:32pm",
-    action: "View Reason",
-    actionType: "reason",
-  },
-  {
-    billNo: "2189020",
-    service: "VIP Lounge International",
-    amount: "₦12,000",
+    billNo: "2189022",
+    service: "Domestic Departure",
+    amount: "₦7,200",
     status: "Completed",
-    date: "12-08-2024 @11:32pm",
+    date: "14-08-2024 @02:45pm",
     action: "View Receipt",
     actionType: "receipt",
   },
   {
-    billNo: "2189020",
-    service: "International Arrival",
-    amount: "₦12,000",
-    status: "Cancelled",
-    date: "12-08-2024 @11:32pm",
-    action: "View Reason",
-    actionType: "reason",
-  },
-  {
-    billNo: "2189020",
-    service: "VIP Lounge International",
-    amount: "₦12,000",
+    billNo: "2189023",
+    service: "VIP Lounge Domestic",
+    amount: "₦10,000",
     status: "Pending",
-    date: "12-08-2024 @11:32pm",
+    date: "15-08-2024 @11:00am",
     action: "View Invoice",
     actionType: "invoice",
   },
   {
-    billNo: "2189020",
-    service: "International Arrival",
-    amount: "₦12,000",
+    billNo: "2189024",
+    service: "International Departure",
+    amount: "₦15,000",
     status: "Cancelled",
-    date: "12-08-2024 @11:32pm",
+    date: "16-08-2024 @04:20pm",
     action: "View Reason",
     actionType: "reason",
   },
   {
-    billNo: "2189020",
+    billNo: "2189025",
     service: "VIP Lounge International",
-    amount: "₦12,000",
+    amount: "₦18,500",
     status: "Completed",
-    date: "12-08-2024 @11:32pm",
+    date: "17-08-2024 @07:30pm",
     action: "View Receipt",
     actionType: "receipt",
   },
   {
-    billNo: "2189020",
+    billNo: "2189026",
+    service: "Domestic Arrival",
+    amount: "₦8,000",
+    status: "Pending",
+    date: "18-08-2024 @10:10am",
+    action: "View Invoice",
+    actionType: "invoice",
+  },
+  {
+    billNo: "2189027",
+    service: "VIP Lounge Domestic",
+    amount: "₦10,000",
+    status: "Completed",
+    date: "19-08-2024 @01:55pm",
+    action: "View Receipt",
+    actionType: "receipt",
+  },
+  {
+    billNo: "2189028",
     service: "International Arrival",
     amount: "₦12,000",
     status: "Cancelled",
-    date: "12-08-2024 @11:32pm",
+    date: "20-08-2024 @03:40pm",
     action: "View Reason",
     actionType: "reason",
   },
@@ -132,6 +132,16 @@ const statusColors = {
   Pending: "processing",
   Completed: "completed",
 };
+
+interface PaymentItem {
+  billNo: string;
+  service: string;
+  amount: string;
+  status: string;
+  date: string;
+  action: string;
+  actionType: string;
+}
 
 interface PaymentPageProps {
   role?: string;
@@ -146,7 +156,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [modal, setModal] = useState<{
     type: "invoice" | "receipt" | "reason";
-    data: any;
+    data: PaymentItem;
   } | null>(null);
 
   const handleSearch = () => {
@@ -506,34 +516,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Static items, replace with dynamic if available */}
+                    {/* Dynamic items based on clicked payment */}
                     <tr>
                       <td className="table-data-item">1001</td>
-                      <td className="table-data-item">Bricks & Mortar</td>
-                      <td className="table-data-item">5</td>
-                      <td className="table-data-item">₦10,000</td>
-                      <td className="table-data-item">₦50,000</td>
-                    </tr>
-                    <tr>
-                      <td className="table-data-item">1002</td>
-                      <td className="table-data-item">Titanium</td>
-                      <td className="table-data-item">2</td>
-                      <td className="table-data-item">₦5,000</td>
-                      <td className="table-data-item">₦10,000</td>
-                    </tr>
-                    <tr>
-                      <td className="table-data-item">1003</td>
-                      <td className="table-data-item">Boarding Bridge</td>
-                      <td className="table-data-item">2</td>
-                      <td className="table-data-item">₦2,500</td>
-                      <td className="table-data-item">₦5,000</td>
-                    </tr>
-                    <tr>
-                      <td className="table-data-item">1004</td>
-                      <td className="table-data-item">Bricks & Mortar</td>
-                      <td className="table-data-item">5</td>
-                      <td className="table-data-item">₦2,000</td>
-                      <td className="table-data-item">₦10,000</td>
+                      <td className="table-data-item">{modal.data.service}</td>
+                      <td className="table-data-item">1</td>
+                      <td className="table-data-item">{modal.data.amount}</td>
+                      <td className="table-data-item">{modal.data.amount}</td>
                     </tr>
                     <tr>
                       <td
@@ -554,7 +543,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           padding: "10px 8px",
                         }}
                       >
-                        ₦75,000
+                        {modal.data.amount}
                       </td>
                     </tr>
                   </tbody>

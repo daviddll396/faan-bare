@@ -757,13 +757,13 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               <div style={{ width: "100%" }}>
                 <GradientButton
                   fullWidth
-                  onClick={handlePayment}
-                  disabled={passengers.length === 0}
-                >
-                  PAY
+                onClick={handlePayment}
+                disabled={passengers.length === 0}
+              >
+                PAY
                 </GradientButton>
-              </div>
             </div>
+                  </div>
 
             {/* Payment Success Modal Overlay */}
             {showPaymentSuccess && (
@@ -787,28 +787,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       <div style={{ width: "100%" }}>
                         <GradientButton
                           fullWidth
-                          onClick={() => {
-                            setShowPaymentSuccess(false);
-                            setSelectedService(null);
-                            setPassengers([]);
-                            setBookingForm({
-                              firstName: "",
-                              lastName: "",
-                              designation: "",
-                              gender: "",
-                              mobile: "",
-                              specialReq: "",
-                              airport: "",
-                              travelDate: "",
-                              flightNumber: "",
-                              airportTime: "",
-                              airline: "",
-                              destination: "",
-                            });
-                            setActiveTab("passenger");
-                          }}
-                        >
-                          BACK TO SERVICES
+                        onClick={() => {
+                          setShowPaymentSuccess(false);
+                          setSelectedService(null);
+                          setPassengers([]);
+                          setBookingForm({
+                            firstName: "",
+                            lastName: "",
+                            designation: "",
+                            gender: "",
+                            mobile: "",
+                            specialReq: "",
+                            airport: "",
+                            travelDate: "",
+                            flightNumber: "",
+                            airportTime: "",
+                            airline: "",
+                            destination: "",
+                          });
+                          setActiveTab("passenger");
+                        }}
+                      >
+                        BACK TO SERVICES
                         </GradientButton>
                       </div>
                     </div>
@@ -865,28 +865,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
         </div>
 
         {/* Show services */}
-        <div className="services-customer-grid">
-          {customerFilteredServices.map((service) => (
-            <div className="service-card" key={service.id}>
-              <div className="service-card-img-wrap">
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="service-card-img"
-                />
-              </div>
-              <div className="service-card-name">{service.name}</div>
-              <div className="service-card-price">
-                <TbCurrencyNaira
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 800,
-                    verticalAlign: "middle",
-                    marginTop: -2,
-                  }}
-                />
-                {service.price}
-              </div>
+          <div className="services-customer-grid">
+            {customerFilteredServices.map((service) => (
+              <div className="service-card" key={service.id}>
+                <div className="service-card-img-wrap">
+                  <img
+                    src={service.image}
+                    alt={service.name}
+                    className="service-card-img"
+                  />
+                </div>
+                <div className="service-card-name">{service.name}</div>
+                <div className="service-card-price">
+                  <TbCurrencyNaira
+                    style={{
+                      fontSize: 24,
+                      fontWeight: 800,
+                      verticalAlign: "middle",
+                      marginTop: -2,
+                    }}
+                  />
+                  {service.price}
+                </div>
               <div style={{ padding: "0 18px", width: "100%" }}>
                 <GradientButton
                   fullWidth
@@ -895,9 +895,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   BOOK SERVICE
                 </GradientButton>
               </div>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
       </div>
     );
   }

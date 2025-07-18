@@ -28,6 +28,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  zoom: 1.08;
+  transition: zoom 0.3s ease;
 }
 
 .login-header {
@@ -281,7 +283,7 @@
   text-decoration: none;
   font-weight: 500;
   margin-left: auto;
-  margin-bottom:20px;
+  margin-bottom: 20px;
 }
 .forgot-link:hover {
   text-decoration: underline;
@@ -415,4 +417,95 @@
 /* Ensure the toggle button doesn't interfere with input focus */
 .password-input-container .form-input-modern:focus {
   border-color: #007948;
+}
+
+@media (max-width: 1920px) {
+  .login-card {
+    zoom: 1;
+  }
+}
+@media (max-width: 1800px) {
+  .login-card {
+    zoom: 0.95;
+  }
+}
+@media (max-width: 1700px) {
+  .login-card {
+    zoom: 0.9;
+  }
+}
+@media (max-width: 1600px) {
+  .login-card {
+    zoom: 0.85;
+  }
+}
+@media (max-width: 1500px) {
+  .login-card {
+    zoom: 0.8;
+  }
+}
+@media (max-width: 1450px) {
+  .login-card {
+    zoom: 0.75;
+  }
+}
+@media (max-width: 1400px) {
+  .login-card {
+    zoom: 0.7;
+  }
+}
+@media (max-width: 1350px) {
+  .login-card {
+    zoom: 0.68;
+  }
+}
+@media (max-width: 1300px) {
+  .login-card {
+    zoom: 0.66;
+  }
+}
+@media (max-width: 1250px) {
+  .login-card {
+    zoom: 0.64;
+  }
+}
+@media (max-width: 1200px) {
+  .login-card {
+    zoom: 0.62;
+  }
+}
+@media (max-width: 1150px) {
+  .login-card {
+    zoom: 0.6;
+  }
+}
+@media (max-width: 1100px) {
+  .login-card {
+    zoom: 0.58;
+  }
+}
+@media (max-width: 1050px) {
+  .login-card {
+    zoom: 0.56;
+  }
+}
+@media (max-width: 1000px) {
+  .login-card {
+    zoom: 1;
+  }
+}
+@media (max-width: 950px) {
+  .login-card {
+    zoom: 0.52;
+  }
+}
+@media (max-width: 900px) {
+  .login-card {
+    zoom: 0.5;
+  }
+}
+@media (max-width: 768px) {
+  .login-card {
+    zoom: 1;
+  }
 }

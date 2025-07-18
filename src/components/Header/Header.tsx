@@ -1,7 +1,6 @@
 import React from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, User } from "lucide-react";
 import "./header.css";
-import UserIcon from "/images/header-user.svg";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface HeaderProps {
@@ -16,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
       <h1 className="page-title">{pageTitle}</h1>
       <div className="user-profile">
         <div className="user-avatar">
-          <img src={UserIcon} alt="User" />
+          <User size={40} color="#007948" />
         </div>
         <div className="user-info">
           <span className="user-name">{user?.name || "Guest User"}</span>
