@@ -443,7 +443,7 @@
 } */
 
 .payment-table .alt-row {
-  background: #f7f7f7;
+  background: var(--bg-color);
 }
 
 .payment-status-badge {
@@ -454,7 +454,7 @@
   padding: 10px 8px;
   text-align: center;
   letter-spacing: 0.01em;
-  background: #f7f7f7;
+  background: var(--bg-color);
   margin: 0 auto;
   border: none;
 }

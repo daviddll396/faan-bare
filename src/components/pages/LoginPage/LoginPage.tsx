@@ -138,12 +138,16 @@ const LoginPage: React.FC = () => {
       </div>
       <div className="auth-form-side">
         <form className="auth-form-modern" onSubmit={handleSubmit}>
-          <h2 className="auth-form-title-modern">Log In</h2>
-          <p className="auth-form-subtitle-modern">
+          <h2 className="auth-form-title-modern desktop-only">Log In</h2>
+          <h2 className="auth-form-title-modern mobile-only">Sign in to your account</h2>
+          <p className="auth-form-subtitle-modern desktop-only">
             Don't have an account?{" "}
             <Link to="/register" className="auth-form-link-modern">
               Sign Up
             </Link>
+          </p>
+          <p className="auth-form-subtitle-modern mobile-only">
+          Enter your email and password details to log in 
           </p>
           <div className="form-row-modern">
             <label htmlFor="email">Email</label>
@@ -155,7 +159,7 @@ const LoginPage: React.FC = () => {
               }`}
               value={email}
               onChange={handleEmailChange}
-              placeholder="Enter your email"
+              placeholder="example@gmail.com"
               disabled={isSubmitting}
               required
             />
@@ -174,7 +178,7 @@ const LoginPage: React.FC = () => {
               }`}
               value={password}
               onChange={handlePasswordChange}
-              placeholder="Enter your password"
+              placeholder="********"
               disabled={isSubmitting}
               required
             />
@@ -206,8 +210,16 @@ const LoginPage: React.FC = () => {
           >
             LOG IN
           </GradientButton>
+          <p className="auth-form-subtitle-modern mobile-only" style={{marginTop: "10px",textAlign:"center"}}>
+            Don't have an account?{" "}
+            <Link to="/register" className="auth-form-link-modern">
+              Sign Up
+            </Link>
+          </p>
         </form>
+        
       </div>
+     
     </div>
   );
 };

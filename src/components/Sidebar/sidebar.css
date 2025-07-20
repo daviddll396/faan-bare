@@ -215,3 +215,159 @@
     hue-rotate(118deg) brightness(95%) contrast(101%);
   transition: all 2s ease;
 }
+
+/* Desktop vs Mobile Icon/Label Visibility - Desktop */
+.desktop-icon,
+.desktop-label {
+  display: block;
+}
+
+.mobile-icon,
+.mobile-label {
+  display: none;
+}
+
+/* ======================================== */
+/* MOBILE RESPONSIVE DESIGN - BOTTOM NAVIGATION */
+/* ======================================== */
+
+@media (max-width: 768px) {
+  /* Transform sidebar into floating bottom navigation */
+  .sidebar {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+    height: 60px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 0px 0px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ececec;
+  }
+
+  /* Hide header and footer on mobile */
+  .sidebar-header,
+  .sidebar-footer {
+    display: none;
+  }
+
+  /* Transform navigation into horizontal layout */
+  .sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+    height: 100%;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  /* Style navigation items for mobile bottom bar */
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 77px;
+    gap: 3px;
+    margin: 0;
+    padding: 7px 11px;
+    border-radius: 12px;
+    background: transparent;
+    color: #979797;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+    height: 100%;
+  }
+
+  /* Active state for mobile bottom navigation */
+  .nav-item.active {
+    background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
+    color: white;
+    border-radius: 12px;
+    height: 100%;
+  }
+
+  /* Hover state for mobile */
+  .nav-item:hover {
+    background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
+    color: white;
+  }
+
+  /* Active hover state */
+  .nav-item.active:hover {
+    background: #007948;
+    color: white;
+  }
+
+  /* Icon styling for mobile */
+  .nav-item img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) saturate(100%) invert(45%) sepia(0%) saturate(0%)
+      hue-rotate(0deg) brightness(90%) contrast(90%);
+    transition: all 0.2s ease;
+  }
+
+  /* Active icon styling */
+  .nav-item.active img {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
+      hue-rotate(0deg) brightness(100%) contrast(100%);
+  }
+
+  /* Text styling for mobile */
+  .nav-item span {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  /* Ensure proper spacing and touch targets */
+  .nav-item:active {
+    transform: scale(0.95);
+  }
+
+  /* Desktop vs Mobile Icon/Label Visibility */
+  .desktop-icon,
+  .desktop-label {
+    display: none;
+  }
+
+  .mobile-icon,
+  .mobile-label {
+    display: block;
+  }
+
+  /* Mobile icon styling for Lucide icons */
+  .mobile-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* Active mobile icon styling */
+  .nav-item.active .mobile-icon svg {
+    stroke: white;
+  }
+
+  /* Add safe area padding for devices with home indicators */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .sidebar {
+      bottom: calc(10px + env(safe-area-inset-bottom));
+    }
+  }
+}

@@ -772,12 +772,7 @@ const RegisterPage: React.FC = () => {
               </Link>
             </div>
             <div
-              style={{
-                fontWeight: 500,
-                color: "#6C7278",
-                fontSize: 15,
-                marginBottom: 18,
-              }}
+            className="auth-form-subtitle-modern select-role-text"
             >
               Select a role to register:
             </div>
@@ -813,7 +808,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "INDIVIDUAL" && step === "form" ? (
           <form
             key="individual-form"
-            className="register-individual-form-card"
+            className="register-individual-form-card long-register-form"
             onSubmit={handleIndividualSubmit}
             autoComplete="off"
           >
@@ -1195,7 +1190,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "CORPORATE" && step === "form" ? (
           <form
             key="corporate-form"
-            className="register-individual-form-card"
+            className="register-individual-form-card long-register-form"
             onSubmit={handleCorporateSubmit}
             autoComplete="off"
           >
@@ -1554,13 +1549,7 @@ const RegisterPage: React.FC = () => {
               }}
             >
               <div
-                style={{
-                  color: "#007948",
-                  fontWeight: 600,
-                  fontSize: 16,
-                  marginBottom: 18,
-                  textAlign: "center",
-                }}
+               className="register-file-upload-text"
               >
                 Upload your CAC Certificate and other support documents
               </div>
@@ -1596,14 +1585,14 @@ const RegisterPage: React.FC = () => {
                   </svg>
                 </div>
                 <div
-                  style={{ fontWeight: 600, fontSize: 16, color: "#222b45" }}
+                  className="register-file-upload-text"
                 >
                   Choose a File or drag & drop it here
                 </div>
                 <div
                   style={{
                     color: "#6C7278",
-                    fontSize: 14,
+                    fontSize: 13,
                     margin: "8px 0 12px 0",
                   }}
                 >
@@ -1627,7 +1616,7 @@ const RegisterPage: React.FC = () => {
                     border: "1.5px solid #d1d5db",
                     borderRadius: 8,
                     fontWeight: 500,
-                    fontSize: 15,
+                    fontSize: 14,
                     padding: "5px 14px",
                     cursor: "pointer",
                     transition: "border 0.2s, color 0.2s",
@@ -1771,7 +1760,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "GOVERNMENT" && step === "form" ? (
           <form
             key="government-form"
-            className="register-individual-form-card"
+            className="register-individual-form-card long-register-form"
             onSubmit={handleGovernmentSubmit}
             autoComplete="off"
           >
@@ -2232,7 +2221,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "FAMILY" && step === "form" ? (
           <form
             key="family-form"
-            className="register-individual-form-card"
+            className="register-individual-form-card long-register-form"
             onSubmit={(e) => {
               e.preventDefault();
               const errors = validateFamilyForm();

@@ -52,10 +52,15 @@ select:-webkit-autofill,
 select:-webkit-autofill:focus,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
-  box-shadow: 0 0 0 1000px #fff inset !important;
-  background-color: #fff !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-color) inset !important;
+  box-shadow: 0 0 0 1000px var(--bg-color) inset !important;
+  background-color: var(--bg-color) !important;
   color: #222b45 !important;
   -webkit-text-fill-color: #222b45 !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+:root {
+  --bg-color: #f7f7f7;
+  --mobile-margin-top: 100px;
 }

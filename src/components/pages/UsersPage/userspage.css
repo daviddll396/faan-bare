@@ -36,7 +36,7 @@
 }
 
 .table-container tbody tr:nth-child(even) {
-  background: #f7f7f7;
+  background: var(--bg-color);
 }
 
 /* Add animation to content card */

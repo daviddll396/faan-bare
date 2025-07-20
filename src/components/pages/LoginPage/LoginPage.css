@@ -1,5 +1,27 @@
 @import "../Auth/auth-common.css";
 
+/* LoginPage Styles */
+/* Login Page Entrance Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .login-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f7f7f7 0%, #eafaf3 100%);
@@ -110,27 +132,6 @@
   margin-top: 32px;
   text-align: center;
   width: 100%;
-}
-
-/* Login Page Entrance Animations */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .form-row-modern {
@@ -309,7 +310,7 @@
 
 .form-row-modern label {
   font-size: 12px;
-  color: #6c7278;
+  color: #898989;
   font-weight: 500;
   margin-bottom: 1px;
   margin-left: 2px;
@@ -327,25 +328,6 @@
 .auth-form-footer-modern,
 .auth-form-link-modern {
   font-family: "Poppins", sans-serif;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  .login-card {
-    padding: 32px 24px;
-  }
-
-  .login-title {
-    font-size: 24px;
-  }
-
-  .login-subtitle {
-    font-size: 14px;
-  }
-  .forgot-link {
-    font-size: 12px;
-    font-weight: 500;
-  }
 }
 
 /* Validation error styling */
@@ -419,93 +401,148 @@
   border-color: #007948;
 }
 
+/* ======================================== */
+/* MEDIA QUERIES - RESPONSIVE DESIGN */
+/* ======================================== */
+
+/* Desktop Zoom Scaling */
 @media (max-width: 1920px) {
   .login-card {
     zoom: 1;
   }
 }
+
 @media (max-width: 1800px) {
   .login-card {
     zoom: 0.95;
   }
 }
+
 @media (max-width: 1700px) {
   .login-card {
     zoom: 0.9;
   }
 }
+
 @media (max-width: 1600px) {
   .login-card {
     zoom: 0.85;
   }
 }
+
 @media (max-width: 1500px) {
   .login-card {
     zoom: 0.8;
   }
 }
+
 @media (max-width: 1450px) {
   .login-card {
     zoom: 0.75;
   }
 }
+
 @media (max-width: 1400px) {
   .login-card {
     zoom: 0.7;
   }
 }
+
 @media (max-width: 1350px) {
   .login-card {
     zoom: 0.68;
   }
 }
+
 @media (max-width: 1300px) {
   .login-card {
     zoom: 0.66;
   }
 }
+
 @media (max-width: 1250px) {
   .login-card {
     zoom: 0.64;
   }
 }
+
 @media (max-width: 1200px) {
   .login-card {
     zoom: 0.62;
   }
 }
+
 @media (max-width: 1150px) {
   .login-card {
     zoom: 0.6;
   }
 }
+
 @media (max-width: 1100px) {
   .login-card {
     zoom: 0.58;
   }
 }
+
 @media (max-width: 1050px) {
   .login-card {
     zoom: 0.56;
   }
 }
+
 @media (max-width: 1000px) {
   .login-card {
     zoom: 1;
   }
 }
+
 @media (max-width: 950px) {
   .login-card {
     zoom: 0.52;
   }
 }
+
 @media (max-width: 900px) {
   .login-card {
     zoom: 0.5;
   }
 }
+
+/* Tablet and Mobile Breakpoints */
 @media (max-width: 768px) {
   .login-card {
     zoom: 1;
+  }
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 24px;
+  }
+
+  .login-title {
+    font-size: 24px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+  }
+
+  .forgot-link {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .auth-form-side {
+    padding: 16px;
+  }
+
+  .auth-form-title-modern {
+    font-size: 22px;
+  }
+
+  .form-input-modern {
+    padding: 14px 16px;
   }
 }

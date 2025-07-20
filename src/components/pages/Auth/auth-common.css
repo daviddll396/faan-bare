@@ -1,5 +1,13 @@
 /* Shared Auth Styles for Login and Register Pages */
 
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
 .auth-split-screen {
   display: flex;
   height: 100vh;
@@ -11,7 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f7f7f7;
+  background: var(--bg-color);
 }
 
 .auth-illustration-side {
@@ -32,7 +40,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px 0 20px 20px; /* Top, right, bottom, left - no padding on right */
-  background: #f7f7f7;
+  background: var(--bg-color);
 }
 
 .auth-inner-container {
@@ -42,7 +50,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f7f7f7;
+  background: var(--bg-color);
   border-radius: 20px;
   overflow: hidden;
 }
@@ -177,7 +185,7 @@
 
 .form-input:disabled {
   background: #f8f9fa;
-  color: #898989 ;
+  color: #898989;
   cursor: not-allowed;
 }
 
@@ -293,7 +301,7 @@
   width: 100%;
   max-width: 582px;
   margin: 0 auto;
-  background: #f7f7f7;
+  background: var(--bg-color);
   border-radius: 12px;
   box-shadow: none;
   padding: 18px 10px 10px 10px;
@@ -306,22 +314,119 @@
   transition: zoom 0.3s ease;
 }
 
-/* Progressive zoom scaling for auth forms */
-@media (max-width: 1920px) {
-  .auth-form-modern {
-    zoom: 0.9;
-  }
+.auth-form-title-modern {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
 }
 
-@media (max-width: 1800px) {
+.auth-form-subtitle-modern {
+  color: #969696;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.form-row-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 7px;
+  margin-top: 10px;
+}
+
+.form-row-remember {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 0;
+  width: 100%;
+}
+
+.form-input-modern {
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--bg-color);
+  color: #070600;
+  outline: none;
+  transition: border 0.2s;
+  font-family: "Poppins", sans-serif;
+}
+.form-input-modern:focus {
+  border-color: #007948;
+}
+
+.login-btn-modern {
+  width: 100%;
+  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 0;
+  cursor: pointer;
+  margin-bottom: 8px;
+  margin-top: 10px;
+  transition: background 0.2s;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: "Poppins", sans-serif;
+}
+.login-btn-modern:disabled {
+  background: #b3b3b3;
+  cursor: not-allowed;
+}
+
+.auth-form-footer-modern {
+  margin-top: 30px;
+  font-size: 0.93rem;
+  text-align: center;
+  color: #18181b;
+  font-family: "Poppins", sans-serif;
+}
+.auth-form-link-modern {
+  color: #007948;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 4px;
+  font-family: "Poppins", sans-serif;
+}
+.auth-form-link-modern:hover {
+  text-decoration: underline;
+}
+
+.form-row-modern label {
+  font-size: 12px;
+  color: #898989;
+  font-weight: 500;
+  margin-bottom: 1px;
+  margin-left: 0px;
+  text-align: left;
+  letter-spacing: -2%;
+}
+
+/* ======================================== */
+/* MEDIA QUERIES - RESPONSIVE DESIGN */
+/* ======================================== */
+
+/* Desktop Zoom Scaling */
+@media (max-width: 1920px) {
   .auth-form-modern {
-    zoom: 0.86;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1700px) {
   .auth-form-modern {
-    zoom: 0.82;
+    zoom: 0.95;
   }
 }
 
@@ -403,6 +508,7 @@
   }
 }
 
+/* Tablet and Mobile Breakpoints */
 @media (max-width: 900px) {
   .auth-split-screen {
     flex-direction: column;
@@ -418,7 +524,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    background: var(--bg-color);
   }
   .auth-illustration-side {
     display: none !important;
@@ -439,6 +545,15 @@
 
 /* Mobile responsive for image side */
 @media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+  .mobile-only {
+    display: block;
+  }
+  .auth-form-modern {
+    zoom: 1 !important;
+  }
   .auth-image-overlay {
     padding: 24px;
   }
@@ -447,8 +562,110 @@
     width: 60px;
   }
 
-  .auth-image-text {
+  /* Hide the illustration side on mobile */
+  .auth-illustration-side {
+    display: none;
+  }
+
+  /* Make the form side take full width */
+  .auth-form-side {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+  }
+
+  /* Add FAAN logo to mobile login page */
+  .auth-form-side::before {
+    content: "";
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 109px;
+    height: 60px;
+    background-image: url("/images/faan-logo.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
+  }
+
+  /* Add background to FAAN logo that spans full page width */
+  .auth-form-side::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: var(--bg-color);
+    z-index: 5;
+  }
+
+  /* Ensure logo appears above the background */
+  .auth-form-side::before {
+    z-index: 10;
+  }
+
+  /* Adjust the split screen layout for mobile */
+  .auth-split-screen {
+    display: block;
+  }
+
+  /* Center the form on mobile */
+  .auth-form-modern {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Adjust form title for mobile */
+  .auth-form-title-modern {
+    font-size: 32px;
+    text-align: left;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  /* Adjust form subtitle for mobile */
+  .auth-form-subtitle-modern {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 400;
+    color: #969696;
+    margin-bottom: 20px;
+  }
+
+  /* Ensure inputs are properly sized for mobile */
+  .form-input-modern {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 12px 14px;
+  }
+
+  /* Adjust button for better mobile touch target */
+  .login-btn-modern {
+    padding: 16px 0;
     font-size: 16px;
+  }
+
+  /* Ensure password toggle button is properly sized for mobile */
+  .password-toggle-btn {
+    height: 40px;
+    width: 40px;
+  }
+
+  /* Adjust forgot password link for mobile */
+  .forgot-link {
+    font-size: 14px;
+    text-align: right;
+    display: block;
+    margin-bottom: 10px;
+  }
+  .form-row-remember {
+    margin-bottom: 10px;
   }
 }
 
@@ -458,106 +675,25 @@
     font-size: 12px;
     text-align: center;
   }
-}
+  .forgot-link {
+    font-size: 12px;
+  }
+  .register-role-label {
+    font-size: 12px;
+  }
 
-.auth-form-title-modern {
-  font-size: 30px;
-  font-weight: 600;
-  color: #000000;
-  margin-bottom: 10px;
-  letter-spacing: -0.5px;
-  font-family: "Poppins", sans-serif;
-}
+  .register-role-select-card {
+    padding: 0;
+  }
 
-.auth-form-subtitle-modern {
-  color: #969696;
-  font-size: 14px;
-  font-weight: 400;
-  margin-bottom: 19px;
-  font-family: "Poppins", sans-serif;
-}
+  /* Remove center alignment for auth form at 480px and below */
+  .auth-form-side {
+    justify-content: flex-start;
+  }
 
-.form-row-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 7px;
-  margin-top: 10px;
-}
-
-.form-row-remember {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 0;
-  width: 100%;
-}
-
-.form-input-modern {
-  border: 1px solid #D9D9D9;
-  border-radius: 12px;
-  padding: 13px;
-  font-size: 13px;
-  font-weight: 500;
-  background: #fff;
-  color: #070600;
-  outline: none;
-  transition: border 0.2s;
-  font-family: "Poppins", sans-serif;
-}
-.form-input-modern:focus {
-  border-color: #007948;
-}
-
-.login-btn-modern {
-  width: 100%;
-  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 11px 0;
-  cursor: pointer;
-  margin-bottom: 8px;
-  margin-top: 10px;
-  transition: background 0.2s;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-family: "Poppins", sans-serif;
-}
-.login-btn-modern:disabled {
-  background: #b3b3b3;
-  cursor: not-allowed;
-}
-
-.auth-form-footer-modern {
-  margin-top: 30px;
-  font-size: 0.93rem;
-  text-align: center;
-  color: #18181b;
-  font-family: "Poppins", sans-serif;
-}
-.auth-form-link-modern {
-  color: #007948;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 4px;
-  font-family: "Poppins", sans-serif;
-}
-.auth-form-link-modern:hover {
-  text-decoration: underline;
-}
-
-.form-row-modern label {
-  font-size: 13px;
-  color: #6C7278;
-  font-weight: 500;
-  margin-bottom: 1px;
-  margin-left: 2px;
-  text-align: left;
-  letter-spacing: -2%;
-  font-family: "Poppins", sans-serif;
+  .auth-form-modern {
+    margin: 0;
+    align-self: flex-start;
+    margin-top: var(--mobile-margin-top);
+  }
 }

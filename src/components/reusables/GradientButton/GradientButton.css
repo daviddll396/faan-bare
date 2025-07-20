@@ -152,3 +152,9 @@
   transform: none;
 }
  
+@media (max-width: 768px) {
+    .gradient-button--large, .gradient-button--medium, .gradient-button--small {
+     font-size:12px;
+     padding:15px 16px;
+    }
+}
