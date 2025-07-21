@@ -87,6 +87,9 @@
   .metrics-cards {
     zoom: 0.5;
   }
+  .metrics-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 1150px) {
@@ -122,13 +125,6 @@
 @media (max-width: 900px) {
   .metrics-cards {
     zoom: 0.38;
-  }
-}
-
-/* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
-  .metrics-cards {
-    zoom: 1;
   }
 }
 
@@ -197,4 +193,50 @@
 
 .dashboard-bottom-grid > .transactions-table {
   grid-column: span 1;
+}
+
+/* Reset zoom for mobile devices to use standard responsive behavior */
+@media (max-width: 768px) {
+  .metrics-cards {
+    zoom: 1;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+  .metric-card {
+    border-radius: 10px;
+    padding: 12px;
+    height: auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .metric-header {
+    gap: 8px;
+    min-width: 0;
+  }
+  .metric-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+  .metric-icon img {
+    width: 100%;
+    height: 100%;
+  }
+  .metric-text {
+    min-width: 0;
+    flex: 1;
+  }
+  .metric-title {
+    font-size: 11px !important;
+    width: 100%;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+  .metric-value {
+    font-size: 18px;
+    line-height: 1.1;
+  }
 }

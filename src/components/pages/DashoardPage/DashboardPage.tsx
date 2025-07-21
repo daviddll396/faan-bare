@@ -9,6 +9,7 @@ import WalletIcon from "/icons/dashboard-wallet-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import { Eye, EyeOff, ChevronLeft } from "lucide-react";
 
 interface DashboardPageProps {
   role?: string;
@@ -20,6 +21,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   const [fundAmount, setFundAmount] = React.useState("");
   const [showFundLoading, setShowFundLoading] = React.useState(false);
   const [showFundSuccess, setShowFundSuccess] = React.useState(false);
+  const [showBalance, setShowBalance] = React.useState(true);
   const [toast, setToast] = React.useState<{
     message: string;
     type: "success" | "error";
@@ -123,8 +125,20 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               <img src={WalletIcon} alt="Wallet" className="wallet-icon" />
               <div>
                 <div className="wallet-label">Wallet Balance</div>
-                <div className="wallet-balance">
-                  ₦{localWalletBalance.toLocaleString()}
+                <div className="wallet-balance-container">
+                  <div className="wallet-balance">
+                    {showBalance
+                      ? `₦${localWalletBalance.toLocaleString()}`
+                      : "₦••••••••"}
+                  </div>
+                  <button
+                    type="button"
+                    className="balance-toggle-btn mobile-only"
+                    onClick={() => setShowBalance(!showBalance)}
+                    aria-label={showBalance ? "Hide balance" : "Show balance"}
+                  >
+                    {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
             </div>
@@ -277,7 +291,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           transactions={transactions}
         />
       </div>
-      {/* All Transactions Modal */}
+      {/* Desktop All Transactions Modal */}
       {showAllTransactions && (
         <div
           className="bill-modal-backdrop"
@@ -331,6 +345,39 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                   transactions={transactions}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile All Transactions Modal */}
+      {showAllTransactions && (
+        <div
+          className="mobile-transactions-modal-backdrop mobile-only"
+          onClick={() => setShowAllTransactions(false)}
+        >
+          <div
+            className="mobile-transactions-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mobile-transactions-modal-header">
+              <button
+                className="mobile-transactions-back-btn"
+                onClick={() => setShowAllTransactions(false)}
+                aria-label="Go back"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <h2 className="mobile-transactions-modal-title">
+                All Transactions
+              </h2>
+            </div>
+            <div className="mobile-transactions-modal-body">
+              <TransactionsTable
+                expanded
+                hideTitle
+                transactions={transactions}
+              />
             </div>
           </div>
         </div>

@@ -161,10 +161,15 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Mock admin credentials
+// Mock credentials
 const MOCK_ADMIN_CREDENTIALS = {
   email: "admin@faan.gov.ng",
   password: "password123",
+};
+
+const MOCK_CUSTOMER_CREDENTIALS = {
+  email: "customer@faan.gov.ng",
+  password: "customer123",
 };
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -322,7 +327,52 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return true;
       }
 
-      // If not mock admin credentials, proceed with API login
+      // Check for mock customer credentials
+      if (
+        email === MOCK_CUSTOMER_CREDENTIALS.email &&
+        password === MOCK_CUSTOMER_CREDENTIALS.password
+      ) {
+        console.log("Mock customer login detected");
+
+        // Create mock customer user
+        const mockCustomerUser: User = {
+          id: "customer-001",
+          customerId: "CUST-001",
+          firstName: "John",
+          lastName: "Customer",
+          name: "John Customer",
+          email: "customer@faan.gov.ng",
+          phoneNumber: "+234-800-CUSTOMER",
+          nin: "12345678901",
+          dob: "1990-05-15",
+          address: "123 Customer Street, Lagos",
+          customerType: "INDIVIDUAL",
+          role: "Customer",
+          walletBalance: 50000,
+          transactionStats: {
+            total: 5,
+            completed: 3,
+            pending: 1,
+            cancelled: 1,
+          },
+        };
+
+        // Generate a mock token for customer
+        const mockToken = `mock-customer-token-${Date.now()}`;
+
+        // Store customer user and token
+        setUser(mockCustomerUser);
+        localStorage.setItem(
+          STORAGE_KEYS.USER,
+          JSON.stringify(mockCustomerUser)
+        );
+        localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken);
+
+        console.log("Mock customer user created and stored:", mockCustomerUser);
+        return true;
+      }
+
+      // If not mock credentials, proceed with API login
       const requestBody = { username: email, password };
       const body = JSON.stringify(requestBody);
 

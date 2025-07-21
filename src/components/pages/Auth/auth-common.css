@@ -696,4 +696,32 @@
     align-self: flex-start;
     margin-top: var(--mobile-margin-top);
   }
+  .form-input-modern {
+    font-size: 13px; /* Prevent zoom on iOS */
+    padding: 10px 12px;
+    height:auto;
+  }
+  .form-input-modern::placeholder {
+    font-size: 13px; /* Prevent zoom on iOS */
+  
+  }
+  .validation-error{
+    font-size:11px;
+  }
+  .password-toggle-btn{
+    height:30px;
+    width:30px;
+  }
+  select.form-input-modern{
+    font-size:13px;
+    padding:10px 12px;
+    height:auto;
+  }
+
+  .auth-form-side::after {
+  
+    height: 90px;
+    
+  }
+
 }

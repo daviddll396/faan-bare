@@ -307,7 +307,7 @@
 
   /* Active hover state */
   .nav-item.active:hover {
-    background: #007948;
+    background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;
   }
 

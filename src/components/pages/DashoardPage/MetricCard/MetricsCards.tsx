@@ -43,8 +43,8 @@ const MetricsCards: React.FC = () => {
       title: "Pending Bookings",
       value: transactionStats.pending.toString(),
       icon: PendingIcon,
-      color: "#8B5CF6",
-      bgColor: "#F3E8FF",
+      color: "#CC52001A",
+      bgColor: "#FEF3C7",
     },
   ];
 

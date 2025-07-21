@@ -523,30 +523,9 @@ table {
     grid-template-columns: 1fr;
   }
 
-  .metrics-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
+
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 240px;
-  }
-
-  .metrics-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-content {
-    padding: 24px 20px;
-  }
-
-  .table-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-}
 
 /* Progressive padding scaling for dashboard content */
 @media (max-width: 1920px) {
@@ -753,4 +732,14 @@ table {
   .page-content {
     gap: 24px;
   }
+  .sidebar {
+    width: 240px;
+  }
+
+
+  .dashboard-content {
+    padding: 20px var(--mobile-x-padding);
+  }
+
+ 
 }

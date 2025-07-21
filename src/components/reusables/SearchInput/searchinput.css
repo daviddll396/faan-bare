@@ -117,12 +117,7 @@
   }
 }
 
-/* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
-  .search-input-wrapper {
-    zoom: 1;
-  }
-}
+
 
 .search-input-icon {
   width: 24px;
@@ -213,4 +208,37 @@
 
 .search-input-dropdown-wrapper.open .search-input-chevron {
   transform: rotate(180deg);
+}
+
+/* Reset zoom for mobile devices to use standard responsive behavior */
+@media (max-width: 768px) {
+  .search-input-wrapper {
+    zoom: 1;
+    height:38px;
+    padding:0 16px;
+    border-radius: 10px !important;
+  }
+  .search-input{
+    font-size:12px;
+  
+  }
+  .search-input::placeholder{
+    font-size:12px;
+  }
+  .search-dropdown-value{
+    font-size:12px;
+  }
+  .search-dropdown-placeholder{
+    font-size:12px;
+  }
+  .search-input-icon{
+    width:18px;
+    height:18px;
+  }
+  .search-input-chevron{
+    width:10px;
+    height:6px;
+  }
+
+
 }

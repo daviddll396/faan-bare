@@ -24,6 +24,16 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [activePage, setActivePage] = useState<PageType>("dashboard");
   const [prevPage, setPrevPage] = useState<PageType>("dashboard");
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Define allowed pages based on role
   const allowedPages: PageType[] =
@@ -111,7 +121,11 @@ const Dashboard: React.FC = () => {
         userRole={user?.role}
       />
       <div className="main-content">
-        <Header pageTitle={getPageTitle(activePage)} />
+        {/* Show header only on dashboard page when screen width is 768px and below */}
+        {(activePage === "dashboard" && windowWidth <= 768) ||
+        windowWidth > 768 ? (
+          <Header pageTitle={getPageTitle(activePage)} />
+        ) : null}
         <div className="dashboard-content">{renderPageContent()}</div>
       </div>
     </div>

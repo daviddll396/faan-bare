@@ -10,6 +10,15 @@
   transition: zoom 0.3s ease;
 }
 
+/* Desktop vs Mobile Visibility Classes */
+.desktop-only-header {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
 /* Responsive zoom scaling for the header to handle different desktop sizes and scaling */
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
@@ -187,4 +196,76 @@
   font-size: 12px;
   color: #007948;
   font-weight: 500;
+}
+
+/* ======================================== */
+/* MOBILE HEADER STYLES - 768px and below */
+/* ======================================== */
+
+@media (max-width: 768px) {
+  .desktop-only-header {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  /* Mobile Header */
+  .mobile-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px var(--mobile-x-padding);
+    padding-bottom: 10px;
+    background: var(--bg-color);
+    border-bottom: none;
+  }
+
+  /* Mobile User Profile */
+  .mobile-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0px;
+    border-radius: 12px;
+    background-color: var(--bg-color);
+    border: none;
+  }
+
+  /* Mobile User Avatar */
+  .mobile-user-avatar {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 50%;
+    padding: 8px;
+  }
+
+  /* Mobile User Info */
+  .mobile-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  /* Mobile User Greeting */
+  .mobile-user-greeting {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--black);
+    font-family: "Poppins", sans-serif;
+  }
+
+  /* Mobile User Subtitle */
+  .mobile-user-subtitle {
+    font-size: 12px;
+    font-weight: 400;
+    color: #898989;
+    font-family: "Poppins", sans-serif;
+  }
 }

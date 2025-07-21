@@ -10,23 +10,7 @@
   }
 }
 
-.page-title-section {
-  display: flex;
-  align-items: center;
-  background-color: #0079480d;
-  padding: 10px;
-  border-radius: 14px;
-  animation: slideInUp 0.4s ease-out;
-}
-.page-title-section img {
-}
-.page-title-section h2 {
-  text-decoration: underline;
 
-  font-size: 18px;
-  font-weight: 700;
-  color: #007948;
-}
 
 .page-header-bottom {
   display: flex;
@@ -277,6 +261,7 @@
   .add-user-form-card {
     zoom: 1;
   }
+  
 }
 
 .add-user-title {

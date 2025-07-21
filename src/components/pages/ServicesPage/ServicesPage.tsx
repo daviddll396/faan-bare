@@ -887,7 +887,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   />
                   {service.price}
                 </div>
-              <div style={{ padding: "0 18px", width: "100%" }}>
+              <div className="service-card-btn-wrap">
                 <GradientButton
                   fullWidth
                   onClick={() => setSelectedService(service)}

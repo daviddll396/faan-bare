@@ -127,7 +127,9 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           </button>
         )}
       </div>
-      <div className="table-container">
+
+      {/* Desktop Table View */}
+      <div className="table-container desktop-only">
         <table>
           <colgroup>
             <col style={{ width: "6%" }} />
@@ -204,6 +206,42 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="mobile-transactions mobile-only">
+        {visibleTransactions.map((transaction, index) => (
+          <div key={transaction.id} className="transaction-card">
+            <div className="transaction-icon-container">
+              <img
+                className="transaction-icon-mobile"
+                src={AirplaneIcon}
+                alt="Airplane"
+                width={20}
+                height={20}
+              />
+            </div>
+            <div className="transaction-details">
+              <div className="transaction-service">
+                {getServiceName(transaction)}
+              </div>
+              <div className="transaction-date">
+                {transaction.createdAt && transaction.createdAt !== ""
+                  ? new Date(transaction.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    )
+                  : "Wed. Jun 11, 2025"}
+              </div>
+            </div>
+            <div className="transaction-amount">{getAmount(transaction)}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
