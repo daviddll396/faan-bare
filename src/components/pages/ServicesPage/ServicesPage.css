@@ -417,11 +417,10 @@
   background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
 }
 
-.service-card-btn-wrap{
-  padding:0 18px;
-  width:100%;
+.service-card-btn-wrap {
+  padding: 0 18px;
+  width: 100%;
 }
-
 
 /* ======================================== */
 /* BOOKING FORM COMPONENTS */
@@ -610,7 +609,6 @@ select.booking-form-input {
   padding-right: 40px;
   cursor: pointer;
 }
-
 
 /* ======================================== */
 /* BOOKING SUMMARY COMPONENTS */
@@ -1436,16 +1434,16 @@ select.booking-form-input {
   .service-card-img-wrap {
     height: 100px;
   }
-  .service-card-btn-wrap{
-    padding:0 12px;
-    width:100%;
+  .service-card-btn-wrap {
+    padding: 0 12px;
+    width: 100%;
   }
   .service-card {
     padding: 0 0 12px 0;
   }
   .service-card-name {
     font-size: 13px;
-    
+
     margin: 12px 0 0 0;
     padding: 0 12px;
     min-height: 32px;

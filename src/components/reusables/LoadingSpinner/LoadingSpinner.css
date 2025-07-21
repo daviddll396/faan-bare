@@ -190,7 +190,7 @@
 @media (max-width: 768px) {
   .loading-spinner-container {
     zoom: 1;
-    padding: 24px 28px;
+    padding: 20px 20px;
     min-width: 120px;
     min-height: 120px;
   }
@@ -206,7 +206,10 @@
   }
 
   .loading-spinner-message {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
- 
+
+.segmented-spinner {
+  display: block;
+}
