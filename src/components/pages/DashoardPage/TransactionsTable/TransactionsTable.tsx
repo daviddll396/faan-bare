@@ -210,7 +210,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
 
       {/* Mobile Card View */}
       <div className="mobile-transactions mobile-only">
-        {visibleTransactions.map((transaction, index) => (
+        {visibleTransactions.map((transaction) => (
           <div key={transaction.id} className="transaction-card">
             <div className="transaction-icon-container">
               <img
