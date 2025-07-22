@@ -63,6 +63,15 @@
 }
 
 /* Size Variants */
+.gradient-button--tiny {
+  font-size: 12px;
+  padding: 0;
+  width: 29px;
+  height: 29px;
+  min-width: 29px;
+  min-height: 29px;
+}
+
 .gradient-button--small {
   font-size: 12px;
   padding: 10px 16px;
@@ -151,10 +160,24 @@
 .gradient-button--close:active {
   transform: none;
 }
- 
+
 @media (max-width: 768px) {
-    .gradient-button--large, .gradient-button--medium, .gradient-button--small {
-     font-size:12px;
-     padding:14px;
-    }
+  .gradient-button--large,
+  .gradient-button--medium,
+  .gradient-button--small,
+  .gradient-button--tiny {
+    font-size: 12px;
+    padding: 14px;
+  }
+
+  .gradient-button--tiny {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 50%;
+    align-self: flex-end;
+
+    background:#0079481A;
+  }
 }

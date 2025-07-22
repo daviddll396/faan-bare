@@ -8,6 +8,7 @@ import CustomersPage from "./pages/CustomersPage/CustomersPage";
 import BillsPage from "./pages/BillsPage/BillsPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import LogoutPage from "./pages/LogoutPage/LogoutPage";
+import ProfilePage from "./pages/ProfilePage";
 import { useAuth } from "../contexts/AuthContext";
 import "./Dashboard.css";
 
@@ -18,7 +19,8 @@ export type PageType =
   | "customers"
   | "bills"
   | "payment"
-  | "logout";
+  | "logout"
+  | "profile";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -38,7 +40,7 @@ const Dashboard: React.FC = () => {
   // Define allowed pages based on role
   const allowedPages: PageType[] =
     user?.role === "Customer"
-      ? ["dashboard", "services", "payment", "logout"]
+      ? ["dashboard", "services", "payment", "logout", "profile"]
       : [
           "dashboard",
           "users",
@@ -71,6 +73,7 @@ const Dashboard: React.FC = () => {
       bills: "Bills",
       payment: "Payment",
       logout: "Log Out",
+      profile: "Profile",
     };
     return titles[page];
   };
@@ -94,6 +97,8 @@ const Dashboard: React.FC = () => {
         return <PaymentPage role={user?.role} />;
       case "logout":
         return <LogoutPage />;
+      case "profile":
+        return <ProfilePage role={user?.role} />;
       default:
         return <DashboardPage role={user?.role} />;
     }

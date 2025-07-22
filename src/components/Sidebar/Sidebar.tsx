@@ -20,6 +20,11 @@ import {
   CreditCard,
 } from "lucide-react";
 
+import HomeBottomBarIcon from "/icons/home-bottombar.svg";
+import ServicesBottomBarIcon from "/icons/services-bottombar.svg";
+import PaymentsBottomBarIcon from "/icons/payments-bottombar.svg";
+import ProfileBottomBarIcon from "/icons/profile-bottombar.svg";
+
 interface SidebarProps {
   activePage: PageType;
   onPageChange: (page: PageType) => void;
@@ -33,60 +38,124 @@ const Sidebar: React.FC<SidebarProps> = ({
   onPageChange,
   onLogout,
   allowedPages,
-  // userRole,
+  userRole,
 }) => {
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const menuItems = [
     {
       icon: () => (
         <img src={DashboardIcon} alt="Dashboard" width={20} height={20} />
       ),
-      mobileIcon: () => <Home size={20} />,
+      mobileIcon: () => (
+        <img
+          src={HomeBottomBarIcon}
+          alt="Home"
+          className="sidebar-mobile-svg"
+        />
+      ),
       label: "Dashboard",
       mobileLabel: "Home",
       page: "dashboard" as PageType,
+      showForCustomer: true,
+      showForAdmin: true,
     },
     {
       icon: () => <img src={UserIcon} alt="Users" width={20} height={20} />,
-      mobileIcon: () => <Users size={20} />,
+      mobileIcon: null, // No mobile icon for users
       label: "Users",
       mobileLabel: "Users",
       page: "users" as PageType,
+      showForCustomer: false,
+      showForAdmin: true,
     },
     {
       icon: () => (
         <img src={ProductIcon} alt="Products" width={20} height={20} />
       ),
-      mobileIcon: () => <Grid3X3 size={20} />,
+      mobileIcon: () => (
+        <img
+          src={ServicesBottomBarIcon}
+          alt="Services"
+          className="sidebar-mobile-svg"
+        />
+      ),
       label: "Services",
       mobileLabel: "Services",
       page: "services" as PageType,
+      showForCustomer: true,
+      showForAdmin: true,
     },
     {
       icon: () => (
         <img src={CustomerIcon} alt="Customers" width={20} height={20} />
       ),
-      mobileIcon: () => <UserCheck size={20} />,
+      mobileIcon: null, // No mobile icon for customers
       label: "Customers",
       mobileLabel: "Customers",
       page: "customers" as PageType,
+      showForCustomer: false,
+      showForAdmin: true,
     },
     {
       icon: () => <img src={BillIcon} alt="Bills" width={20} height={20} />,
-      mobileIcon: () => <FileText size={20} />,
+      mobileIcon: null, // No mobile icon for bills
       label: "Bills",
       mobileLabel: "Bills",
       page: "bills" as PageType,
+      showForCustomer: false,
+      showForAdmin: true,
     },
     {
       icon: () => (
         <img src={PaymentIcon} alt="Payment" width={20} height={20} />
       ),
-      mobileIcon: () => <CreditCard size={20} />,
+      mobileIcon: () => (
+        <img
+          src={PaymentsBottomBarIcon}
+          alt="Payments"
+          className="sidebar-mobile-svg"
+        />
+      ),
       label: "Payment",
       mobileLabel: "Payments",
       page: "payment" as PageType,
+      showForCustomer: true,
+      showForAdmin: true,
+    },
+    // Profile only for Customer
+    {
+      icon: null,
+      mobileIcon: () => (
+        <img
+          src={ProfileBottomBarIcon}
+          alt="Profile"
+          className="sidebar-mobile-svg"
+        />
+      ),
+      label: "Profile",
+      mobileLabel: "Profile",
+      page: "profile" as PageType,
+      showForCustomer: true,
+      showForAdmin: false,
+      mobileOnly: true,
     },
   ];
+
+  // Filter menu items based on role and windowWidth for Profile
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (item.page === "profile") {
+      return userRole === "Customer" && windowWidth <= 768;
+    }
+    if (userRole === "Customer")
+      return item.showForCustomer && (!item.mobileOnly || windowWidth <= 768);
+    return item.showForAdmin && (!item.mobileOnly || windowWidth <= 768);
+  });
 
   return (
     <div className="sidebar">
@@ -97,7 +166,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <nav className="sidebar-nav">
-        {menuItems
+        {filteredMenuItems
           .filter((item) => allowedPages.includes(item.page))
           .map((item, index) => (
             <div
@@ -106,13 +175,17 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => onPageChange(item.page)}
             >
               {/* Desktop Icon */}
-              <div className="desktop-icon">
-                <item.icon />
-              </div>
+              {item.icon && (
+                <div className="desktop-icon">
+                  <item.icon />
+                </div>
+              )}
               {/* Mobile Icon */}
-              <div className="mobile-icon">
-                <item.mobileIcon />
-              </div>
+              {item.mobileIcon && (
+                <div className="mobile-icon">
+                  <item.mobileIcon />
+                </div>
+              )}
               {/* Desktop Label */}
               <span className="desktop-label">{item.label}</span>
               {/* Mobile Label */}

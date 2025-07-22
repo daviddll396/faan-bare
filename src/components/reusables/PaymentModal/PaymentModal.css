@@ -37,7 +37,6 @@
 
 /* Progressive zoom scaling for payment modal - same as PaymentPage */
 
-
 /* Reset zoom for mobile devices */
 @media (max-width: 768px) {
   .payment-modal-center {
@@ -350,6 +349,9 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .payment-modal-center {
+    zoom: .8 !important;
+  }
   .payment-modal {
     min-width: 320px;
     padding: 24px;

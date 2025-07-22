@@ -10,6 +10,7 @@ import BorderButton from "../../reusables/BorderButton/BorderButton";
 import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { Eye, EyeOff, ChevronLeft } from "lucide-react";
+import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 
 interface DashboardPageProps {
   role?: string;
@@ -158,33 +159,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                 {/* Loading Spinner */}
                 {showFundLoading && (
                   <div className="bill-loader-spinner">
-                    <svg width="64" height="64" viewBox="0 0 64 64">
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="24"
-                        stroke="#e4e4e4"
-                        strokeWidth="6"
-                        fill="none"
-                        opacity="0.4"
-                      />
-                      <path
-                        d="M56 32a24 24 0 0 1-24 24"
-                        stroke="#007948"
-                        strokeWidth="6"
-                        fill="none"
-                        strokeLinecap="round"
-                      >
-                        <animateTransform
-                          attributeName="transform"
-                          type="rotate"
-                          from="0 32 32"
-                          to="360 32 32"
-                          dur="1s"
-                          repeatCount="indefinite"
-                        />
-                      </path>
-                    </svg>
+                    <LoadingSpinner isVisible={true} />
                   </div>
                 )}
                 {/* Success Modal */}
@@ -360,19 +335,19 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
             className="mobile-transactions-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mobile-transactions-modal-header">
-              <button
-                className="mobile-transactions-back-btn"
-                onClick={() => setShowAllTransactions(false)}
-                aria-label="Go back"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <h2 className="mobile-transactions-modal-title">
-                All Transactions
-              </h2>
-            </div>
             <div className="mobile-transactions-modal-body">
+              <div className="mobile-transactions-modal-header">
+                <button
+                  className="mobile-transactions-back-btn"
+                  onClick={() => setShowAllTransactions(false)}
+                  aria-label="Go back"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <h2 className="mobile-transactions-modal-title">
+                  All Transactions
+                </h2>
+              </div>
               <TransactionsTable
                 expanded
                 hideTitle

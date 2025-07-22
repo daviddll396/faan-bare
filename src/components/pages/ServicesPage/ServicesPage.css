@@ -694,6 +694,13 @@ select.booking-form-input {
   background: #e4e4e4 !important;
 }
 
+.booking-form-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--black);
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
+}
 /* ======================================== */
 /* CUSTOMER MODAL COMPONENTS */
 /* ======================================== */
@@ -771,14 +778,6 @@ select.booking-form-input {
   text-align: center;
   margin-bottom: 10px;
   margin-top: 0;
-}
-
-.customer-success-desc {
-  color: #969696;
-  font-size: 18px;
-  font-weight: 400;
-  margin-bottom: 32px;
-  text-align: center;
 }
 
 .customer-success-close-btn {
@@ -944,7 +943,7 @@ select.booking-form-input {
   .services-page .content-card {
     zoom: 0.75;
   }
-  .services-page .add-service-form-card {
+.services-page .add-service-form-card {
     zoom: 0.75;
   }
   .border-button-userspage {
@@ -1286,7 +1285,7 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.46;
   }
-  .customer-modal-center > div {
+.customer-modal-center > div {
     zoom: 2.5 !important;
   }
 }
@@ -1395,6 +1394,51 @@ select.booking-form-input {
   }
   .booking-summary-card {
     zoom: 1;
+    padding: 14px 23px;
+    border-radius: 10px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+  width: 100%;
+  }
+  .booking-summary-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #070600;
+  margin-bottom: 10px;
+    letter-spacing: 0.01em;
+    text-align: left;
+  }
+  .booking-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+  font-weight: 400;
+    color: #898989;
+    margin-bottom: 6px;
+    padding: 0;
+  }
+  .booking-summary-row span:last-child {
+    font-weight: 600;
+    color: #070600;
+    font-size: 16px;
+  }
+  .booking-summary-row.total {
+    font-weight: 600;
+  background: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: 15px;
+    margin-bottom: 0;
+    color: #070600;
+  }
+  .booking-summary-row.total span:last-child {
+    font-size: 16px;
+    font-weight: 600;
+    color: #070600;
   }
   .services-page .content-card {
     zoom: 1;
@@ -1419,13 +1463,19 @@ select.booking-form-input {
   }
   .services-customer-page {
     padding: 0px;
+    padding-bottom: var(--page-bottom-padding-mobile);
   }
   .services-customer-header {
     margin: 20px 0px;
   }
-}
 
-@media (max-width: 700px) {
+  .service-card-btn-wrap {
+    padding: 0px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
   .services-customer-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -1440,17 +1490,19 @@ select.booking-form-input {
   }
   .service-card {
     padding: 0 0 12px 0;
+    border-radius: 10px;
+    box-shadow: none;
   }
   .service-card-name {
     font-size: 13px;
 
-    margin: 12px 0 0 0;
+    margin: 0px 0 0 0;
     padding: 0 12px;
     min-height: 32px;
   }
   .service-card-price {
     font-size: 16px;
-    margin: 2px 0 8px 0;
+    margin: 2px 0 -20px 0;
     padding: 0 12px;
   }
   .service-card-btn {
@@ -1458,5 +1510,218 @@ select.booking-form-input {
     font-size: 14px;
     padding: 12px 0;
     margin-top: 6px;
+  }
+  .service-card-img {
+    border-radius: 10px;
+    height: 131px;
+  }
+  .service-card-img img {
+    border-radius: 10px !important;
+  }
+  .service-card-img-wrap {
+    padding: 12px;
+    height: auto;
+    background: #fff;
+  }
+
+  /* Responsive Add Passenger Form (Booking Form) */
+  .booking-form-card {
+    padding: 20px 18px 18px 18px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    box-shadow: none;
+    border-radius: 15px;
+    border: none;
+    background: #fff;
+  }
+
+  .booking-tabs-row {
+    gap: 10px;
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
+  .booking-tab {
+    font-size: 13px;
+    padding-bottom: 4px;
+    width: 100%;
+    text-align: center;
+    color: #898989;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .booking-tab-underline {
+    margin-bottom: 12px;
+  }
+  .booking-form-fields-row {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .booking-form-field-col {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+  .booking-form-label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .booking-form-input {
+    font-size: 13px;
+    padding: 0px 12px;
+    height: 38px;
+    border-radius: 8px;
+  }
+  .booking-add-passenger-btn {
+    font-size: 13px;
+    padding: 10px 0;
+    border-radius: 8px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    width: 100%;
+  }
+  .booking-form-error {
+    font-size: 12px;
+    padding: 8px 10px;
+    margin: 8px 0 0 0;
+  }
+  .booking-form-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .category-chevron {
+    right: 12px;
+    width: 15px !important;
+    height: 15px !important;
+  }
+  .select-chevron {
+    right: 12px;
+
+    width: 15px;
+    height: 15px;
+  }
+  select.booking-form-input {
+    background: #fff url("/icons/chevron-down.svg") no-repeat right 12px
+      center/14px 14px;
+  }
+  .booking-form-field-col {
+    max-width: 100%;
+  }
+  .booking-form-input[type="date"],
+  .booking-form-input[type="time"] {
+    min-width: calc(100% - 14px);
+    max-width: 100%;
+    height: 38px !important;
+  }
+  .booking-form-fields-row-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+    width: 100%;
+    margin-top: 15px;
+  }
+  .booking-form-field-col-mobile {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .booking-passengers-table-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    margin-top: 30px;
+    display: none;
+  }
+  .booking-passengers-mobile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .passenger-mobile-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 15px;
+
+    padding: 12px;
+    gap: 12px;
+    border: none;
+  }
+  .passenger-mobile-icon-wrap {
+    border-radius: 8px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .passenger-mobile-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .passenger-mobile-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0px;
+    min-width: 0;
+  }
+  .passenger-mobile-title {
+    font-size: 14px;
+    color: #898989;
+    font-weight: 400;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .passenger-mobile-price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #070600;
+    margin: 0;
+  }
+  .passenger-mobile-name {
+    font-size: 14px;
+    color: var(--green);
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .passenger-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+  }
+  .passenger-mobile-edit,
+  .passenger-mobile-delete {
+    background: #f5f5f5;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    padding: 0;
+  }
+  .passenger-mobile-edit:hover {
+    background: #e0e0e0;
+  }
+  .passenger-mobile-delete:hover {
+    background: #ffeaea;
   }
 }

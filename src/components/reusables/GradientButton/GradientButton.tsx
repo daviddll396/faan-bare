@@ -8,7 +8,7 @@ interface GradientButtonProps {
   disabled?: boolean;
   className?: string;
   variant?: "primary" | "secondary" | "close";
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "tiny";
   fullWidth?: boolean;
   loading?: boolean;
 }
@@ -24,6 +24,14 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   fullWidth = false,
   loading = false,
 }) => {
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const buttonClasses = [
     "gradient-button",
     `gradient-button--${variant}`,
@@ -34,6 +42,9 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   ]
     .filter(Boolean)
     .join(" ");
+
+  // Show plus icon instead of text when tiny size and mobile
+  const shouldShowPlusIcon = size === "tiny" && windowWidth <= 768;
 
   return (
     <button
@@ -82,6 +93,12 @@ const GradientButton: React.FC<GradientButtonProps> = ({
             </path>
           </svg>
         </span>
+      ) : shouldShowPlusIcon ? (
+        <img
+          src="/icons/plus-icon.svg"
+          alt="Add"
+          style={{ width: "16px", height: "16px" }}
+        />
       ) : (
         children
       )}

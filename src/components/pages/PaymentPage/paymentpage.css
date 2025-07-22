@@ -29,116 +29,6 @@
   transition: zoom 0.3s ease;
 }
 
-/* Progressive zoom scaling for payment tabs with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .payment-tabs-row {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1800px) {
-  .payment-tabs-row {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1700px) {
-  .payment-tabs-row {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1600px) {
-  .payment-tabs-row {
-    zoom: 0.75;
-  }
-}
-
-@media (max-width: 1500px) {
-  .payment-tabs-row {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1450px) {
-  .payment-tabs-row {
-    zoom: 0.65;
-  }
-}
-
-@media (max-width: 1400px) {
-  .payment-tabs-row {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 1350px) {
-  .payment-tabs-row {
-    zoom: 0.58;
-  }
-}
-
-@media (max-width: 1300px) {
-  .payment-tabs-row {
-    zoom: 0.56;
-  }
-}
-
-@media (max-width: 1250px) {
-  .payment-tabs-row {
-    zoom: 0.54;
-  }
-}
-
-@media (max-width: 1200px) {
-  .payment-tabs-row {
-    zoom: 0.52;
-  }
-}
-
-@media (max-width: 1150px) {
-  .payment-tabs-row {
-    zoom: 0.5;
-  }
-}
-
-@media (max-width: 1100px) {
-  .payment-tabs-row {
-    zoom: 0.48;
-  }
-}
-
-@media (max-width: 1050px) {
-  .payment-tabs-row {
-    zoom: 0.46;
-  }
-}
-
-@media (max-width: 1000px) {
-  .payment-tabs-row {
-    zoom: 0.44;
-  }
-}
-
-@media (max-width: 950px) {
-  .payment-tabs-row {
-    zoom: 0.42;
-  }
-}
-
-@media (max-width: 900px) {
-  .payment-tabs-row {
-    zoom: 0.4;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .payment-tabs-row {
-    zoom: 1;
-  }
-}
-
 .payment-tab {
   font-size: 18px;
   font-weight: 500;
@@ -175,73 +65,6 @@
   animation: slideInUp 0.4s ease-out 0.2s both;
 }
 
-/* Progressive gap reduction for payment search row as screen size decreases */
-@media (max-width: 1920px) {
-  .payment-search-row {
-    gap: 22px;
-  }
-}
-
-@media (max-width: 1800px) {
-  .payment-search-row {
-    gap: 20px;
-  }
-}
-
-@media (max-width: 1700px) {
-  .payment-search-row {
-    gap: 18px;
-  }
-}
-
-@media (max-width: 1600px) {
-  .payment-search-row {
-    gap: 16px;
-  }
-}
-
-@media (max-width: 1500px) {
-  .payment-search-row {
-    gap: 15px;
-  }
-}
-
-@media (max-width: 1400px) {
-  .payment-search-row {
-    gap: 14px;
-  }
-}
-
-@media (max-width: 1300px) {
-  .payment-search-row {
-    gap: 13px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .payment-search-row {
-    gap: 12px;
-  }
-}
-
-@media (max-width: 1100px) {
-  .payment-search-row {
-    gap: 11px;
-  }
-}
-
-@media (max-width: 1000px) {
-  .payment-search-row {
-    gap: 10px;
-  }
-}
-
-@media (max-width: 900px) {
-  .payment-search-row {
-    gap: 10px;
-  }
-}
-
 .payment-table-card {
   background: #fff;
   border-radius: 12px;
@@ -254,193 +77,11 @@
   transition: zoom 0.3s ease;
 }
 
-/* Progressive zoom scaling for payment table card with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .payment-table-card {
-    zoom: 0.9;
-  }
-  .payment-modal-center {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1800px) {
-  .payment-table-card {
-    zoom: 0.85;
-  }
-  .payment-modal-center {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1700px) {
-  .payment-table-card {
-    zoom: 0.8;
-  }
-  .payment-modal-center {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1600px) {
-  .payment-table-card {
-    zoom: 0.75;
-  }
-  .payment-modal-center {
-    zoom: 0.75;
-  }
-}
-
-@media (max-width: 1500px) {
-  .payment-table-card {
-    zoom: 0.7;
-  }
-  .payment-modal-center {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1450px) {
-  .payment-table-card {
-    zoom: 0.65;
-  }
-  .payment-modal-center {
-    zoom: 0.65;
-  }
-}
-
-@media (max-width: 1400px) {
-  .payment-table-card {
-    zoom: 0.6;
-  }
-  .payment-modal-center {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 1350px) {
-  .payment-table-card {
-    zoom: 0.58;
-  }
-  .payment-modal-center {
-    zoom: 0.58;
-  }
-}
-
-@media (max-width: 1300px) {
-  .payment-table-card {
-    zoom: 0.56;
-  }
-  .payment-modal-center {
-    zoom: 0.56;
-  }
-}
-
-@media (max-width: 1250px) {
-  .payment-table-card {
-    zoom: 0.54;
-  }
-  .payment-modal-center {
-    zoom: 0.54;
-  }
-}
-
-@media (max-width: 1200px) {
-  .payment-table-card {
-    zoom: 0.52;
-  }
-  .payment-modal-center {
-    zoom: 0.52;
-  }
-}
-
-@media (max-width: 1150px) {
-  .payment-table-card {
-    zoom: 0.5;
-  }
-  .payment-modal-center {
-    zoom: 0.5;
-  }
-}
-
-@media (max-width: 1100px) {
-  .payment-table-card {
-    zoom: 0.48;
-  }
-  .payment-modal-center {
-    zoom: 0.48;
-  }
-}
-
-@media (max-width: 1050px) {
-  .payment-table-card {
-    zoom: 0.46;
-  }
-  .payment-modal-center {
-    zoom: 0.46;
-  }
-}
-
-@media (max-width: 1000px) {
-  .payment-table-card {
-    zoom: 0.9;
-  }
-  .payment-modal-center {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 950px) {
-  .payment-table-card {
-    zoom: 0.42;
-  }
-  .payment-modal-center {
-    zoom: 0.42;
-  }
-}
-
-@media (max-width: 900px) {
-  .payment-table-card {
-    zoom: 0.4;
-  }
-  .payment-modal-center {
-    zoom: 0.4;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .payment-table-card {
-    zoom: 1;
-  }
-  .payment-modal-center {
-    zoom: 1;
-  }
-}
-
 .payment-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 16px;
 }
-
-/* .payment-table th {
-  color: #070600;
-  font-weight: 700;
-  font-size: 16px;
-  background: #fff;
-  padding: 18px 8px 18px 18px;
-  text-align: left;
-  border-bottom: 1.5px solid #e4e4e4;
-}
-.payment-table td {
-  color: #222b45;
-  font-weight: 500;
-  font-size: 16px;
-  padding: 18px 8px 18px 18px;
-  border-bottom: 1px solid #f2f2f2;
-  text-align: center;
-} */
 
 .payment-table .alt-row {
   background: var(--bg-color);
@@ -451,7 +92,7 @@
   font-size: 17px;
   font-weight: 600;
   border-radius: 5px;
-  padding: 10px 8px;
+  padding: 8px;
   text-align: center;
   letter-spacing: 0.01em;
   background: var(--bg-color);
@@ -472,11 +113,11 @@
 .payment-status-badge.completed {
   background: #f0f9f4;
   color: #166534;
-  border: 1px solid #dcfce7;
+
   border-radius: 8px;
 }
 
-.action-btn {
+.payment-action-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -491,51 +132,50 @@
   box-shadow: none;
 }
 
-.action-btn:hover,
-.action-btn:focus {
+.payment-action-btn:hover,
+.payment-action-btn:focus {
   background: none !important;
   box-shadow: none !important;
 }
 
-.action-btn .action-icon {
+.payment-action-btn .payment-action-icon {
   font-size: 22px;
   vertical-align: middle;
   flex-shrink: 0;
 }
 
-.action-btn.reason {
+.payment-action-btn.reason {
   color: #b91c1c;
 }
 
-.action-btn.reason .action-icon {
+.payment-action-btn.reason .payment-action-icon {
   color: #b91c1c;
 }
 
-.action-btn.receipt {
+.payment-action-btn.receipt {
   color: #15803d;
 }
 
-.action-btn.receipt .action-icon {
+.payment-action-btn.receipt .payment-action-icon {
   color: #15803d;
 }
 
-.action-btn.invoice {
+.payment-action-btn.invoice {
   color: #b91c1c;
 }
 
-.action-btn.invoice .action-icon {
+.payment-action-btn.invoice .payment-action-icon {
   color: #b91c1c;
 }
 
-.action-btn.view {
+.payment-action-btn.view {
   color: #b91c1c;
 }
 
-.action-btn.view .action-icon {
+.payment-action-btn.view .payment-action-icon {
   color: #b91c1c;
 }
 
-/* Modal protection from zoom scaling */
 .customer-modal-backdrop {
   transform: scale(1) !important;
   transform-origin: center center !important;
@@ -551,12 +191,10 @@
   animation: scaleIn 0.3s ease-out;
 }
 
-/* Modal content animations */
 .payment-modal-center > div {
   animation: scaleIn 0.3s ease-out;
 }
 
-/* Animation keyframes */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -577,126 +215,14 @@
   }
 }
 
-/* Success modal animations */
 .customer-success-modal {
   animation: scaleIn 0.3s ease-out;
 }
 
-/* Protection for bill-customer-card elements inside modals to prevent over-scaling */
-.payment-modal-center .bill-customer-card {
+.customer-modal-center .bill-customer-card {
   zoom: 1 !important;
   transform: scale(1) !important;
   transform-origin: center center !important;
-}
-
-/* Moderate scaling for bill customer cards in modals - less aggressive than modal content */
-@media (max-width: 1920px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 1 !important;
-  }
-}
-
-@media (max-width: 1800px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.98 !important;
-  }
-}
-
-@media (max-width: 1700px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.95 !important;
-  }
-}
-
-@media (max-width: 1600px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.92 !important;
-  }
-}
-
-@media (max-width: 1500px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.9 !important;
-  }
-}
-
-@media (max-width: 1450px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.88 !important;
-  }
-}
-
-@media (max-width: 1400px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.86 !important;
-  }
-}
-
-@media (max-width: 1350px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.84 !important;
-  }
-}
-
-@media (max-width: 1300px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.82 !important;
-  }
-}
-
-@media (max-width: 1250px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.8 !important;
-  }
-}
-
-@media (max-width: 1200px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.78 !important;
-  }
-}
-
-@media (max-width: 1150px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.76 !important;
-  }
-}
-
-@media (max-width: 1100px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.74 !important;
-  }
-}
-
-@media (max-width: 1050px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.72 !important;
-  }
-}
-
-@media (max-width: 1000px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.7 !important;
-  }
-}
-
-@media (max-width: 950px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.68 !important;
-  }
-}
-
-@media (max-width: 900px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 0.66 !important;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .payment-modal-center .bill-customer-card {
-    zoom: 1 !important;
-  }
 }
 
 .border-button-paymentpage {
@@ -704,117 +230,313 @@
   transition: zoom 0.3s ease;
 }
 
-/* Progressive zoom scaling for payment page border buttons with aggressive scaling for high DPI displays */
+/* ===================== MEDIA QUERIES BELOW ===================== */
+
+/* Progressive zoom scaling for payment tabs with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
+  .payment-tabs-row {
+    zoom: 0.9;
+  }
+  .payment-table-card {
+    zoom: 0.9;
+  }
+  .payment-modal-center {
+    zoom: 0.9;
+  }
   .border-button-paymentpage {
     zoom: 0.9;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 1 !important;
   }
 }
 
 @media (max-width: 1800px) {
+  .payment-tabs-row {
+    zoom: 0.85;
+  }
+  .payment-table-card {
+    zoom: 0.85;
+  }
+  .payment-modal-center {
+    zoom: 0.85;
+  }
   .border-button-paymentpage {
     zoom: 0.85;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.98 !important;
   }
 }
 
 @media (max-width: 1700px) {
+  .payment-tabs-row {
+    zoom: 0.8;
+  }
+  .payment-table-card {
+    zoom: 0.8;
+  }
+  .payment-modal-center {
+    zoom: 0.8;
+  }
   .border-button-paymentpage {
     zoom: 0.8;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.95 !important;
   }
 }
 
 @media (max-width: 1600px) {
+  .payment-tabs-row {
+    zoom: 0.75;
+  }
+  .payment-table-card {
+    zoom: 0.75;
+  }
+  .payment-modal-center {
+    zoom: 0.75;
+  }
   .border-button-paymentpage {
     zoom: 0.75;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.92 !important;
   }
 }
 
 @media (max-width: 1500px) {
+  .payment-tabs-row {
+    zoom: 0.7;
+  }
+  .payment-table-card {
+    zoom: 0.7;
+  }
+  .payment-modal-center {
+    zoom: 0.7;
+  }
   .border-button-paymentpage {
     zoom: 0.7;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.9 !important;
   }
 }
 
 @media (max-width: 1450px) {
+  .payment-tabs-row {
+    zoom: 0.65;
+  }
+  .payment-table-card {
+    zoom: 0.65;
+  }
+  .payment-modal-center {
+    zoom: 0.65;
+  }
   .border-button-paymentpage {
     zoom: 0.65;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.88 !important;
   }
 }
 
 @media (max-width: 1400px) {
+  .payment-tabs-row {
+    zoom: 0.6;
+  }
+  .payment-table-card {
+    zoom: 0.6;
+  }
+  .payment-modal-center {
+    zoom: 0.6;
+  }
   .border-button-paymentpage {
     zoom: 0.6;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.86 !important;
   }
 }
 
 @media (max-width: 1350px) {
+  .payment-tabs-row {
+    zoom: 0.58;
+  }
+  .payment-table-card {
+    zoom: 0.58;
+  }
+  .payment-modal-center {
+    zoom: 0.58;
+  }
   .border-button-paymentpage {
     zoom: 0.58;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.84 !important;
   }
 }
 
 @media (max-width: 1300px) {
+  .payment-tabs-row {
+    zoom: 0.56;
+  }
+  .payment-table-card {
+    zoom: 0.56;
+  }
+  .payment-modal-center {
+    zoom: 0.56;
+  }
   .border-button-paymentpage {
     zoom: 0.56;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.82 !important;
   }
 }
 
 @media (max-width: 1250px) {
+  .payment-tabs-row {
+    zoom: 0.54;
+  }
+  .payment-table-card {
+    zoom: 0.54;
+  }
+  .payment-modal-center {
+    zoom: 0.54;
+  }
   .border-button-paymentpage {
     zoom: 0.54;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.8 !important;
   }
 }
 
 @media (max-width: 1200px) {
+  .payment-tabs-row {
+    zoom: 0.52;
+  }
+  .payment-table-card {
+    zoom: 0.52;
+  }
+  .payment-modal-center {
+    zoom: 0.52;
+  }
   .border-button-paymentpage {
     zoom: 0.52;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.78 !important;
   }
 }
 
 @media (max-width: 1150px) {
+  .payment-tabs-row {
+    zoom: 0.5;
+  }
+  .payment-table-card {
+    zoom: 0.5;
+  }
+  .payment-modal-center {
+    zoom: 0.5;
+  }
   .border-button-paymentpage {
     zoom: 0.5;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.76 !important;
   }
 }
 
 @media (max-width: 1100px) {
+  .payment-tabs-row {
+    zoom: 0.48;
+  }
+  .payment-table-card {
+    zoom: 0.48;
+  }
+  .payment-modal-center {
+    zoom: 0.48;
+  }
   .border-button-paymentpage {
     zoom: 0.48;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.74 !important;
   }
 }
 
 @media (max-width: 1050px) {
+  .payment-tabs-row {
+    zoom: 0.46;
+  }
+  .payment-table-card {
+    zoom: 0.46;
+  }
+  .payment-modal-center {
+    zoom: 0.46;
+  }
   .border-button-paymentpage {
     zoom: 0.46;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.72 !important;
   }
 }
 
 @media (max-width: 1000px) {
+  .payment-tabs-row {
+    zoom: 0.44;
+  }
+  .payment-table-card {
+    zoom: 0.9;
+  }
+  .payment-modal-center {
+    zoom: 0.9;
+  }
   .border-button-paymentpage {
     zoom: 0.44;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.7 !important;
   }
 }
 
 @media (max-width: 950px) {
+  .payment-tabs-row {
+    zoom: 0.42;
+  }
+  .payment-table-card {
+    zoom: 0.42;
+  }
+  .payment-modal-center {
+    zoom: 0.42;
+  }
   .border-button-paymentpage {
     zoom: 0.42;
   }
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.68 !important;
+  }
 }
 
 @media (max-width: 900px) {
+  .payment-tabs-row {
+    zoom: 0.4;
+  }
+  .payment-table-card {
+    zoom: 0.4;
+  }
+  .payment-modal-center {
+    zoom: 0.4;
+  }
   .border-button-paymentpage {
     zoom: 0.4;
   }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .border-button-paymentpage {
-    zoom: 1;
+  .customer-modal-center .bill-customer-card {
+    zoom: 0.66 !important;
   }
-}
-
-@media (max-width: 900px) {
   .payment-search-row {
     flex-direction: column;
     gap: 12px;
@@ -824,4 +546,56 @@
     padding: 12px 6px 12px 10px;
     font-size: 15px;
   }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .payment-tabs-row {
+    zoom: 1;
+  }
+  .payment-modal-center {
+    zoom: 1;
+  }
+  .payment-table-card {
+    zoom: 1;
+    overflow: auto;
+  }
+  .border-button-paymentpage {
+    zoom: 1;
+  }
+  .customer-modal-center .bill-customer-card {
+    zoom: 1 !important;
+  }
+  .payment-search-row{
+    margin:20px 0px;
+  }
+  .payment-status-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 5px !important;
+    padding: 2px 3px;
+    
+
+  }
+  .payment-action-btn .payment-action-icon {
+   display:none;
+  }
+  .payment-action-btn {
+  text-decoration: underline;
+    gap: 0px;
+    font-size: 12px;
+    font-weight: 600;
+    background: none !important;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+    white-space: nowrap;
+    box-shadow: none;
+  }
+  .payment-table-card{
+    border-radius:10px;
+  }
+  
 }

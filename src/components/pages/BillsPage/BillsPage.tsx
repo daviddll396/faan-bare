@@ -881,7 +881,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
               </div>
               <div className="customer-success-title">Payment Success!</div>
               <div className="customer-success-desc">
-                Your payment has been successfully done.
+                Your payment has been made successfully.
               </div>
               <div className="customer-success-actions">
                 <GradientButton onClick={() => setShowPaymentSuccess(false)}>

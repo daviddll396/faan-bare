@@ -501,15 +501,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             )}
           </div>
           <div className="booking-form-card">
-            <h2
-              style={{
-                color: "#222b45",
-                fontWeight: 500,
-                fontSize: 22,
-                marginBottom: 18,
-              }}
-            >
-              Please input all required details to add a passenger.
+            <h2 className="booking-form-title">
+              {windowWidth <= 768
+                ? selectedService.name
+                : "Please input all required details to add a passenger."}
             </h2>
             {/* Tabs */}
             <div className="booking-tabs-row">
@@ -534,246 +529,539 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             {/* Passenger Form */}
             {activeTab === "passenger" && (
               <>
-                <div className="booking-form-fields-row">
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">First Name</label>
-                    <input
-                      className="booking-form-input"
-                      name="firstName"
-                      value={bookingForm.firstName}
-                      onChange={handleBookingFormChange}
-                      placeholder="First Name"
-                    />
+                {windowWidth > 768 ? (
+                  <div className="booking-form-fields-row">
+                    <div className="booking-form-field-col">
+                      <label className="booking-form-label">First Name</label>
+                      <input
+                        className="booking-form-input"
+                        name="firstName"
+                        value={bookingForm.firstName}
+                        onChange={handleBookingFormChange}
+                        placeholder="First Name"
+                      />
+                    </div>
+                    <div className="booking-form-field-col">
+                      <label className="booking-form-label">Last Name</label>
+                      <input
+                        className="booking-form-input"
+                        name="lastName"
+                        value={bookingForm.lastName}
+                        onChange={handleBookingFormChange}
+                        placeholder="Last Name"
+                      />
+                    </div>
+                    <div className="booking-form-field-col">
+                      <label className="booking-form-label">Designation</label>
+                      <select
+                        className="booking-form-input"
+                        name="designation"
+                        value={bookingForm.designation}
+                        onChange={handleBookingFormChange}
+                      >
+                        <option value="">Select Designation</option>
+                        <option value="Mr.">Mr.</option>
+                        <option value="Mrs.">Mrs.</option>
+                        <option value="Miss">Miss</option>
+                        <option value="Dr.">Dr.</option>
+                        <option value="Prof.">Prof.</option>
+                        <option value="Chief">Chief</option>
+                        <option value="Engr.">Engr.</option>
+                      </select>
+                    </div>
+                    <div className="booking-form-field-col">
+                      <label className="booking-form-label">Gender</label>
+                      <select
+                        className="booking-form-input"
+                        name="gender"
+                        value={bookingForm.gender}
+                        onChange={handleBookingFormChange}
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div className="booking-form-field-col">
+                      <label className="booking-form-label">
+                        Mobile Number
+                      </label>
+                      <input
+                        className="booking-form-input"
+                        name="mobile"
+                        value={bookingForm.mobile}
+                        onChange={handleBookingFormChange}
+                        placeholder="Mobile Number"
+                      />
+                    </div>
+                    <div className="booking-form-field-col">
+                      <label className="booking-form-label">
+                        Special Requirement
+                      </label>
+                      <select
+                        className="booking-form-input"
+                        name="specialReq"
+                        value={bookingForm.specialReq}
+                        onChange={handleBookingFormChange}
+                      >
+                        <option value="">Select Special Requirement</option>
+                        <option value="Nil">Nil</option>
+                        <option value="Wheelchair">Wheelchair</option>
+                        <option value="Assistance">Assistance</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Last Name</label>
-                    <input
-                      className="booking-form-input"
-                      name="lastName"
-                      value={bookingForm.lastName}
-                      onChange={handleBookingFormChange}
-                      placeholder="Last Name"
-                    />
+                ) : (
+                  <div className="booking-form-fields-row-mobile">
+                    <div className="booking-form-field-col-mobile">
+                      <label className="booking-form-label">First Name</label>
+                      <input
+                        className="booking-form-input"
+                        name="firstName"
+                        value={bookingForm.firstName}
+                        onChange={handleBookingFormChange}
+                        placeholder="First Name"
+                      />
+                    </div>
+                    <div className="booking-form-field-col-mobile">
+                      <label className="booking-form-label">Last Name</label>
+                      <input
+                        className="booking-form-input"
+                        name="lastName"
+                        value={bookingForm.lastName}
+                        onChange={handleBookingFormChange}
+                        placeholder="Last Name"
+                      />
+                    </div>
+                    <div className="booking-form-field-col-mobile">
+                      <label className="booking-form-label">Designation</label>
+                      <select
+                        className="booking-form-input"
+                        name="designation"
+                        value={bookingForm.designation}
+                        onChange={handleBookingFormChange}
+                      >
+                        <option value="">Select Designation</option>
+                        <option value="Mr.">Mr.</option>
+                        <option value="Mrs.">Mrs.</option>
+                        <option value="Miss">Miss</option>
+                        <option value="Dr.">Dr.</option>
+                        <option value="Prof.">Prof.</option>
+                        <option value="Chief">Chief</option>
+                        <option value="Engr.">Engr.</option>
+                      </select>
+                    </div>
+                    <div className="booking-form-field-col-mobile">
+                      <label className="booking-form-label">Gender</label>
+                      <select
+                        className="booking-form-input"
+                        name="gender"
+                        value={bookingForm.gender}
+                        onChange={handleBookingFormChange}
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div className="booking-form-field-col-mobile">
+                      <label className="booking-form-label">
+                        Mobile Number
+                      </label>
+                      <input
+                        className="booking-form-input"
+                        name="mobile"
+                        value={bookingForm.mobile}
+                        onChange={handleBookingFormChange}
+                        placeholder="Mobile Number"
+                      />
+                    </div>
+                    <div className="booking-form-field-col-mobile">
+                      <label className="booking-form-label">
+                        Special Requirement
+                      </label>
+                      <select
+                        className="booking-form-input"
+                        name="specialReq"
+                        value={bookingForm.specialReq}
+                        onChange={handleBookingFormChange}
+                      >
+                        <option value="">Select Special Requirement</option>
+                        <option value="Nil">Nil</option>
+                        <option value="Wheelchair">Wheelchair</option>
+                        <option value="Assistance">Assistance</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Designation</label>
-                    <select
-                      className="booking-form-input"
-                      name="designation"
-                      value={bookingForm.designation}
-                      onChange={handleBookingFormChange}
-                    >
-                      <option value="">Select Designation</option>
-                      <option value="Mr.">Mr.</option>
-                      <option value="Mrs.">Mrs.</option>
-                      <option value="Miss">Miss</option>
-                      <option value="Dr.">Dr.</option>
-                      <option value="Prof.">Prof.</option>
-                      <option value="Chief">Chief</option>
-                      <option value="Engr.">Engr.</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="booking-form-fields-row">
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Gender</label>
-                    <select
-                      className="booking-form-input"
-                      name="gender"
-                      value={bookingForm.gender}
-                      onChange={handleBookingFormChange}
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
-                  </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Mobile Number</label>
-                    <input
-                      className="booking-form-input"
-                      name="mobile"
-                      value={bookingForm.mobile}
-                      onChange={handleBookingFormChange}
-                      placeholder="Mobile Number"
-                    />
-                  </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">
-                      Special Requirement
-                    </label>
-                    <select
-                      className="booking-form-input"
-                      name="specialReq"
-                      value={bookingForm.specialReq}
-                      onChange={handleBookingFormChange}
-                    >
-                      <option value="">Select Special Requirement</option>
-                      <option value="Nil">Nil</option>
-                      <option value="Wheelchair">Wheelchair</option>
-                      <option value="Assistance">Assistance</option>
-                    </select>
-                  </div>
-                </div>
+                )}
+                <button
+                  className="booking-add-passenger-btn"
+                  type="button"
+                  onClick={handleAddPassenger}
+                  style={{ marginTop: 12, marginBottom: 0 }}
+                >
+                  + Add New Passenger
+                </button>
+                <MessageToast
+                  message={bookingFormError}
+                  type="error"
+                  isVisible={!!bookingFormError}
+                  onClose={() => setBookingFormError("")}
+                />
               </>
             )}
             {/* Airport Details Form */}
             {activeTab === "airport" && (
               <>
-                <div className="booking-form-fields-row">
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Airport</label>
-                    <select
-                      className="booking-form-input"
-                      name="airport"
-                      value={bookingForm.airport}
-                      onChange={handleBookingFormChange}
-                    >
-                      <option value="">Select Airport</option>
-                      <option value="MMIA">MMIA (INTERNATIONAL)</option>
-                      <option value="ABV">ABV (ABUJA)</option>
-                    </select>
+                {windowWidth > 768 ? (
+                  <>
+                    <div className="booking-form-fields-row">
+                      <div className="booking-form-field-col">
+                        <label className="booking-form-label">Airport</label>
+                        <select
+                          className="booking-form-input"
+                          name="airport"
+                          value={bookingForm.airport}
+                          onChange={handleBookingFormChange}
+                        >
+                          <option value="">Select Airport</option>
+                          <option value="MMIA">MMIA (INTERNATIONAL)</option>
+                          <option value="ABV">ABV (ABUJA)</option>
+                        </select>
+                      </div>
+                      <div className="booking-form-field-col">
+                        <label className="booking-form-label">
+                          Travel Date
+                        </label>
+                        <input
+                          className="booking-form-input"
+                          name="travelDate"
+                          value={bookingForm.travelDate}
+                          onChange={handleBookingFormChange}
+                          placeholder="Travel Date"
+                          type="date"
+                        />
+                      </div>
+                      <div className="booking-form-field-col">
+                        <label className="booking-form-label">
+                          Flight Number
+                        </label>
+                        <input
+                          className="booking-form-input"
+                          name="flightNumber"
+                          value={bookingForm.flightNumber}
+                          onChange={handleBookingFormChange}
+                          placeholder="Flight Number"
+                        />
+                      </div>
+                      <div className="booking-form-field-col">
+                        <label className="booking-form-label">
+                          Airport Time
+                        </label>
+                        <input
+                          className="booking-form-input"
+                          name="airportTime"
+                          value={bookingForm.airportTime}
+                          onChange={handleBookingFormChange}
+                          placeholder="Airport Time"
+                          type="time"
+                        />
+                      </div>
+                      <div className="booking-form-field-col">
+                        <label className="booking-form-label">Airline</label>
+                        <select
+                          className="booking-form-input"
+                          name="airline"
+                          value={bookingForm.airline}
+                          onChange={handleBookingFormChange}
+                        >
+                          <option value="">Select Airline</option>
+                          <option value="DELTA">DELTA</option>
+                          <option value="ARIK">ARIK</option>
+                        </select>
+                      </div>
+                      <div className="booking-form-field-col">
+                        <label className="booking-form-label">
+                          Destination
+                        </label>
+                        <select
+                          className="booking-form-input"
+                          name="destination"
+                          value={bookingForm.destination}
+                          onChange={handleBookingFormChange}
+                        >
+                          <option value="">Select Destination</option>
+                          <option value="LAGOS">LAGOS</option>
+                          <option value="ABUJA">ABUJA</option>
+                        </select>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="booking-form-fields-row-mobile">
+                      <div className="booking-form-field-col-mobile">
+                        <label className="booking-form-label">Airport</label>
+                        <select
+                          className="booking-form-input"
+                          name="airport"
+                          value={bookingForm.airport}
+                          onChange={handleBookingFormChange}
+                        >
+                          <option value="">Select Airport</option>
+                          <option value="MMIA">MMIA (INTERNATIONAL)</option>
+                          <option value="ABV">ABV (ABUJA)</option>
+                        </select>
+                      </div>
+                      <div className="booking-form-field-col-mobile">
+                        <label className="booking-form-label">
+                          Travel Date
+                        </label>
+                        <input
+                          className="booking-form-input"
+                          name="travelDate"
+                          value={bookingForm.travelDate}
+                          onChange={handleBookingFormChange}
+                          placeholder="Travel Date"
+                          type="date"
+                        />
+                      </div>
+                      <div className="booking-form-field-col-mobile">
+                        <label className="booking-form-label">
+                          Flight Number
+                        </label>
+                        <input
+                          className="booking-form-input"
+                          name="flightNumber"
+                          value={bookingForm.flightNumber}
+                          onChange={handleBookingFormChange}
+                          placeholder="Flight Number"
+                        />
+                      </div>
+                      <div className="booking-form-field-col-mobile">
+                        <label className="booking-form-label">
+                          Airport Time
+                        </label>
+                        <input
+                          className="booking-form-input"
+                          name="airportTime"
+                          value={bookingForm.airportTime}
+                          onChange={handleBookingFormChange}
+                          placeholder="Airport Time"
+                          type="time"
+                        />
+                      </div>
+                      <div className="booking-form-field-col-mobile">
+                        <label className="booking-form-label">Airline</label>
+                        <select
+                          className="booking-form-input"
+                          name="airline"
+                          value={bookingForm.airline}
+                          onChange={handleBookingFormChange}
+                        >
+                          <option value="">Select Airline</option>
+                          <option value="DELTA">DELTA</option>
+                          <option value="ARIK">ARIK</option>
+                        </select>
+                      </div>
+                      <div className="booking-form-field-col-mobile">
+                        <label className="booking-form-label">
+                          Destination
+                        </label>
+                        <select
+                          className="booking-form-input"
+                          name="destination"
+                          value={bookingForm.destination}
+                          onChange={handleBookingFormChange}
+                        >
+                          <option value="">Select Destination</option>
+                          <option value="LAGOS">LAGOS</option>
+                          <option value="ABUJA">ABUJA</option>
+                        </select>
+                      </div>
+                    </div>
+                  </>
+                )}
+                <button
+                  className="booking-add-passenger-btn"
+                  type="button"
+                  onClick={handleAddPassenger}
+                  style={{ marginTop: 12, marginBottom: 0 }}
+                >
+                  + Add New Passenger
+                </button>
+                <MessageToast
+                  message={bookingFormError}
+                  type="error"
+                  isVisible={!!bookingFormError}
+                  onClose={() => setBookingFormError("")}
+                />
+              </>
+            )}
+            {/* Only show passengers table and summary card inside form card on desktop */}
+            {windowWidth > 768 && (
+              <>
+                <div className="booking-passengers-table-section">
+                  <div className="booking-passengers-table-title">
+                    PASSENGERS ADDED
                   </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Travel Date</label>
-                    <input
-                      className="booking-form-input"
-                      name="travelDate"
-                      value={bookingForm.travelDate}
-                      onChange={handleBookingFormChange}
-                      placeholder="Travel Date"
-                      type="date"
-                    />
-                  </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Flight Number</label>
-                    <input
-                      className="booking-form-input"
-                      name="flightNumber"
-                      value={bookingForm.flightNumber}
-                      onChange={handleBookingFormChange}
-                      placeholder="Flight Number"
-                    />
+                  <div className="booking-passengers-table-wrap">
+                    <table className="booking-passengers-table">
+                      <thead>
+                        <tr>
+                          <th>S/N</th>
+                          <th>NAME</th>
+                          <th>AIRPORT</th>
+                          <th>AIRLINE</th>
+                          <th>FLIGHT NO.</th>
+                          <th>TRAVEL DATE/TIME</th>
+                          <th>SPECIAL REQUIREMENTS</th>
+                          <th>ACTION</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {passengers.map((p, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}.</td>
+                            <td>
+                              {p.firstName} {p.lastName}
+                            </td>
+                            <td>{p.airport}</td>
+                            <td>{p.airline}</td>
+                            <td>{p.flightNumber}</td>
+                            <td>
+                              {p.travelDate}
+                              {p.airportTime ? ` @${p.airportTime}` : ""}
+                            </td>
+                            <td>{p.specialReq || "Nil"}</td>
+                            <td>
+                              <button
+                                className="booking-delete-btn"
+                                onClick={() => handleDeletePassenger(idx)}
+                              >
+                                <span
+                                  style={{ color: "#ef4444", fontWeight: 700 }}
+                                >
+                                  🗑 Delete
+                                </span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                <div className="booking-form-fields-row">
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Airport Time</label>
-                    <input
-                      className="booking-form-input"
-                      name="airportTime"
-                      value={bookingForm.airportTime}
-                      onChange={handleBookingFormChange}
-                      placeholder="Airport Time"
-                      type="time"
-                    />
+                <div className="booking-summary-card">
+                  <div className="booking-summary-title">SUMMARY</div>
+                  <div className="booking-summary-row">
+                    <span>SUB-TOTAL</span>
+                    <span>₦{subTotal.toLocaleString()}</span>
                   </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Airline</label>
-                    <select
-                      className="booking-form-input"
-                      name="airline"
-                      value={bookingForm.airline}
-                      onChange={handleBookingFormChange}
-                    >
-                      <option value="">Select Airline</option>
-                      <option value="DELTA">DELTA</option>
-                      <option value="ARIK">ARIK</option>
-                    </select>
+                  <div className="booking-summary-row">
+                    <span>OTHER CHARGES</span>
+                    <span>₦{otherCharges.toLocaleString()}</span>
                   </div>
-                  <div className="booking-form-field-col">
-                    <label className="booking-form-label">Destination</label>
-                    <select
-                      className="booking-form-input"
-                      name="destination"
-                      value={bookingForm.destination}
-                      onChange={handleBookingFormChange}
+                  <div className="booking-summary-row total">
+                    <span>TOTAL</span>
+                    <span>₦{total.toLocaleString()}</span>
+                  </div>
+                  <div style={{ width: "100%" }}>
+                    <GradientButton
+                      fullWidth
+                      onClick={handlePayment}
+                      disabled={passengers.length === 0}
                     >
-                      <option value="">Select Destination</option>
-                      <option value="LAGOS">LAGOS</option>
-                      <option value="ABUJA">ABUJA</option>
-                    </select>
+                      PAY
+                    </GradientButton>
                   </div>
                 </div>
               </>
             )}
-            <button
-              className="booking-add-passenger-btn"
-              type="button"
-              onClick={handleAddPassenger}
-              style={{ marginTop: 12, marginBottom: 0 }}
-            >
-              + Add New Passenger
-            </button>
-            {bookingFormError && (
-              <div className="booking-form-error">{bookingFormError}</div>
-            )}
-            {/* Passengers Table */}
-            <div className="booking-passengers-table-section">
-              <div className="booking-passengers-table-title">
-                PASSENGERS ADDED
-              </div>
-              <div className="booking-passengers-table-wrap">
-                <table className="booking-passengers-table">
-                  <thead>
-                    <tr>
-                      <th>S/N</th>
-                      <th>NAME</th>
-                      <th>AIRPORT</th>
-                      <th>AIRLINE</th>
-                      <th>FLIGHT NO.</th>
-                      <th>TRAVEL DATE/TIME</th>
-                      <th>SPECIAL REQUI.</th>
-                      <th>ACTION</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {passengers.map((p, idx) => (
-                      <tr key={idx}>
-                        <td>{idx + 1}.</td>
-                        <td>
-                          {p.firstName} {p.lastName}
-                        </td>
-                        <td>{p.airport}</td>
-                        <td>{p.airline}</td>
-                        <td>{p.flightNumber}</td>
-                        <td>
-                          {p.travelDate}
-                          {p.airportTime ? ` @${p.airportTime}` : ""}
-                        </td>
-                        <td>{p.specialReq || "Nil"}</td>
-                        <td>
-                          <button
-                            className="booking-delete-btn"
-                            onClick={() => handleDeletePassenger(idx)}
+          </div>
+          {/* On mobile, show passengers table and summary card outside the form card */}
+          {windowWidth <= 768 && (
+            <>
+              <div className="booking-passengers-table-section">
+                <div className="booking-passengers-table-title">
+                  PASSENGERS ADDED
+                </div>
+                <div className="booking-passengers-mobile-list">
+                  {passengers.map((p, idx) => (
+                    <div className="passenger-mobile-card" key={idx}>
+                      <div className="passenger-mobile-icon-wrap">
+                        <img
+                          src="/icons/passengers-details-airplane.svg"
+                          alt="Airplane"
+                          className="passenger-mobile-icon"
+                        />
+                      </div>
+                      <div className="passenger-mobile-details">
+                        <div className="passenger-mobile-title">
+                          {p.airport || "International Arrival"}
+                        </div>
+                        <div className="passenger-mobile-price">
+                          ₦{selectedService.price || "25,000"}
+                        </div>
+                        <div className="passenger-mobile-name">
+                          <span
+                            style={{
+                              color: "var(--green)",
+                              fontWeight: 500,
+                              fontSize: 12,
+                              textTransform: "none",
+                              fontStyle: "italic",
+                            }}
                           >
-                            <span style={{ color: "#ef4444", fontWeight: 700 }}>
-                              🗑 Delete
-                            </span>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            <svg
+                              style={{
+                                verticalAlign: "middle",
+                                marginRight: 3,
+                              }}
+                              width="12"
+                              height="12"
+                              fill="var(--green)"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                            </svg>
+                            {p.firstName} {p.lastName}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="passenger-mobile-actions">
+                        <button
+                          className="passenger-mobile-delete"
+                          aria-label="Delete Passenger"
+                          onClick={() => handleDeletePassenger(idx)}
+                        >
+                          <img
+                            src="/icons/passenger-delete.svg"
+                            alt="Delete"
+                            style={{ width: 20, height: 20 }}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            {/* Summary Card */}
-            <div className="booking-summary-card">
-              <div className="booking-summary-title">SUMMARY</div>
-              <div className="booking-summary-row">
-                <span>SUB-TOTAL</span>
-                <span>₦{subTotal.toLocaleString()}</span>
+              <div className="booking-summary-card">
+                <div className="booking-summary-title">SUMMARY</div>
+                <div className="booking-summary-row">
+                  <span>SUB-TOTAL</span>
+                  <span>₦{subTotal.toLocaleString()}</span>
+                </div>
+                <div className="booking-summary-row">
+                  <span>OTHER CHARGES</span>
+                  <span>₦{otherCharges.toLocaleString()}</span>
+                </div>
+                <div className="booking-summary-row total">
+                  <span>TOTAL</span>
+                  <span>₦{total.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="booking-summary-row">
-                <span>OTHER CHARGES</span>
-                <span>₦{otherCharges.toLocaleString()}</span>
-              </div>
-              <div className="booking-summary-row total">
-                <span>TOTAL</span>
-                <span>₦{total.toLocaleString()}</span>
-              </div>
-              <div style={{ width: "100%" }}>
+              <div style={{ width: "100%", marginTop: 12 }}>
                 <GradientButton
                   fullWidth
                   onClick={handlePayment}
@@ -782,71 +1070,69 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   PAY
                 </GradientButton>
               </div>
-            </div>
+            </>
+          )}
 
-            {/* Payment Success Modal Overlay */}
-            {showPaymentSuccess && (
-              <div className="customer-modal-backdrop">
-                <div className="customer-modal-center">
-                  <div className="customer-success-modal">
-                    <div className="customer-success-icon-wrap">
-                      <img
-                        src={CheckCircle}
-                        alt="success"
-                        className="customer-success-icon"
-                      />
-                    </div>
-                    <div className="customer-success-title">
-                      Payment Success!
-                    </div>
-                    <div className="customer-success-desc">
-                      Your payment has been successfully done.
-                    </div>
-                    <div className="customer-success-actions">
-                      <div style={{ width: "100%" }}>
-                        <GradientButton
-                          fullWidth
-                          onClick={() => {
-                            setShowPaymentSuccess(false);
-                            setSelectedService(null);
-                            setPassengers([]);
-                            setBookingForm({
-                              firstName: "",
-                              lastName: "",
-                              designation: "",
-                              gender: "",
-                              mobile: "",
-                              specialReq: "",
-                              airport: "",
-                              travelDate: "",
-                              flightNumber: "",
-                              airportTime: "",
-                              airline: "",
-                              destination: "",
-                            });
-                            setActiveTab("passenger");
-                          }}
-                        >
-                          BACK TO SERVICES
-                        </GradientButton>
-                      </div>
+          {/* Payment Success Modal Overlay */}
+          {showPaymentSuccess && (
+            <div className="customer-modal-backdrop">
+              <div className="customer-modal-center">
+                <div className="customer-success-modal">
+                  <div className="customer-success-icon-wrap">
+                    <img
+                      src={CheckCircle}
+                      alt="success"
+                      className="customer-success-icon"
+                    />
+                  </div>
+                  <div className="customer-success-title">Payment Success!</div>
+                  <div className="customer-success-desc">
+                    Your payment has been made successfully.
+                  </div>
+                  <div className="customer-success-actions">
+                    <div style={{ width: "100%" }}>
+                      <GradientButton
+                        fullWidth
+                        onClick={() => {
+                          setShowPaymentSuccess(false);
+                          setSelectedService(null);
+                          setPassengers([]);
+                          setBookingForm({
+                            firstName: "",
+                            lastName: "",
+                            designation: "",
+                            gender: "",
+                            mobile: "",
+                            specialReq: "",
+                            airport: "",
+                            travelDate: "",
+                            flightNumber: "",
+                            airportTime: "",
+                            airline: "",
+                            destination: "",
+                          });
+                          setActiveTab("passenger");
+                        }}
+                      >
+                        BACK TO SERVICES
+                      </GradientButton>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Payment Modal */}
-            <PaymentModal
-              isVisible={showPaymentModal}
-              onClose={() => setShowPaymentModal(false)}
-              onPaymentSubmit={handlePaymentSubmit}
-              amount={total}
-              accountNumber="0035678923"
-              bankName="Access Bank"
-              accountName="FAAN A/C"
-            />
-          </div>
+          {/* Payment Modal */}
+          <PaymentModal
+            isVisible={showPaymentModal}
+            onClose={() => setShowPaymentModal(false)}
+            onPaymentSubmit={handlePaymentSubmit}
+            amount={total}
+            accountNumber="0035678923"
+            bankName="Access Bank"
+            accountName="FAAN A/C"
+          />
         </div>
       );
     }
@@ -909,6 +1195,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               <div className="service-card-btn-wrap">
                 <GradientButton
                   fullWidth
+                  size={windowWidth <= 768 ? "tiny" : "medium"}
                   onClick={() => setSelectedService(service)}
                 >
                   BOOK SERVICE

@@ -852,7 +852,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 20px var(--mobile-x-padding);
+    padding: 0px 0px 10px 0px;
     background: var(--bg-color);
     position: sticky;
     top: 0;

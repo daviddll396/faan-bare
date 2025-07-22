@@ -940,6 +940,15 @@
   .customer-details-value {
     text-align: left;
   }
+  .customer-success-title {
+    font-size: 18px;
+  }
+  .customer-success-desc {
+  
+    font-size: 14px;
+  
+    margin-bottom: 15px;
+  }
 }
 
 @keyframes fadeIn {

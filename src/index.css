@@ -65,8 +65,9 @@ select:-webkit-autofill:active {
   --mobile-margin-top: 100px;
   --mobile-x-padding: 20px;
   --black: #070600;
+  --green: #007948;
   --border-color: #e4e4e4;
-  --page-bottom-padding-mobile:60px;
+  --page-bottom-padding-mobile: 60px;
 }
 
 @media (max-width: 480px) {

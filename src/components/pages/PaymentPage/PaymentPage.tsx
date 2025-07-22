@@ -11,6 +11,8 @@ import CheckCircle from "/icons/check-circle.svg";
 import { FiInfo, FiEye } from "react-icons/fi";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./paymentpage.css";
+import PageTitle from "../../reusables/PageTitle/PageTitle";
+import PaymentsIcon from "/icons/nav-payment-icon.svg";
 
 const tabs = ["All", "Pending", "Completed", "Cancelled"];
 
@@ -79,6 +81,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     type: "invoice" | "receipt" | "reason";
     data: PaymentItem;
   } | null>(null);
+
+  // Responsive window width
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Fetch transaction history on component mount
   React.useEffect(() => {
@@ -153,17 +163,22 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
 
   return (
     <div className="payment-page">
-      <div className="payment-tabs-row">
-        {tabs.map((tab) => (
-          <div
-            key={tab}
-            className={`payment-tab${activeTab === tab ? " active" : ""}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </div>
-        ))}
-      </div>
+      {/* Mobile PageTitle for 768px and below */}
+      {windowWidth <= 768 && <PageTitle icon={PaymentsIcon} title="Payments" />}
+      {/* Tabs row only for desktop/tablet */}
+      {windowWidth > 768 && (
+        <div className="payment-tabs-row">
+          {tabs.map((tab) => (
+            <div
+              key={tab}
+              className={`payment-tab${activeTab === tab ? " active" : ""}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </div>
+          ))}
+        </div>
+      )}
       <div className="payment-search-row">
         <SearchInput
           placeholder="Search name"
@@ -201,7 +216,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <th className="table-header-item">Service</th>
                 <th className="table-header-item">Amount</th>
                 <th className="table-header-item">Status</th>
-                <th className="table-header-item">Bill Date/Time</th>
+                <th className="table-header-item">Date</th>
                 <th className="table-header-item">Actions</th>
               </tr>
             </thead>
@@ -224,34 +239,34 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   <td className="table-data-item">
                     {p.actionType === "reason" && (
                       <button
-                        className="action-btn reason"
+                        className="payment-action-btn reason"
                         onClick={() => setModal({ type: "reason", data: p })}
                       >
-                        <FiInfo className="action-icon" />
+                        <FiInfo className="payment-action-icon" />
                         <span>View Reason</span>
                       </button>
                     )}
                     {p.actionType === "receipt" && (
                       <button
-                        className="action-btn receipt"
+                        className="payment-action-btn receipt"
                         onClick={() => setModal({ type: "receipt", data: p })}
                       >
-                        <FiEye className="action-icon" />
+                        <FiEye className="payment-action-icon" />
                         <span>View Receipt</span>
                       </button>
                     )}
                     {p.actionType === "invoice" && (
                       <button
-                        className="action-btn invoice"
+                        className="payment-action-btn invoice"
                         onClick={() => setModal({ type: "invoice", data: p })}
                       >
-                        <FiEye className="action-icon" />
+                        <FiEye className="payment-action-icon" />
                         <span>View Invoice</span>
                       </button>
                     )}
                     {p.actionType === "view" && (
-                      <button className="action-btn view">
-                        <FiEye className="action-icon" />
+                      <button className="payment-action-btn view">
+                        <FiEye className="payment-action-icon" />
                       </button>
                     )}
                   </td>
@@ -946,7 +961,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               </div>
               <div className="customer-success-title">Payment Success!</div>
               <div className="customer-success-desc">
-                Your payment has been successfully done.
+                Your payment has been made successfully.
               </div>
               <div style={{ width: "100%" }}>
                 <GradientButton
