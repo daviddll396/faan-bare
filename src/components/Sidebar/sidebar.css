@@ -300,12 +300,12 @@
   }
 
   /* Hover state for mobile */
-  .nav-item:hover {
+  /* .nav-item:hover {
     background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;
-  }
+  } */
 
-  /* Active hover state */
+  Active hover state
   .nav-item.active:hover {
     background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;

@@ -560,6 +560,9 @@
     zoom: 1;
     overflow: auto;
   }
+  .bill-customer-card{
+    zoom:1;
+  }
   .border-button-paymentpage {
     zoom: 1;
   }

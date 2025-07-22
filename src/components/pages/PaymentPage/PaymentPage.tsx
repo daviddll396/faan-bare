@@ -90,6 +90,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const isMobile = windowWidth <= 768;
+
   // Fetch transaction history on component mount
   React.useEffect(() => {
     const fetchTransactions = async () => {
@@ -163,8 +165,9 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
 
   return (
     <div className="payment-page">
+      <LoadingSpinner isVisible={isLoading} message="Loading transactions..." />
       {/* Mobile PageTitle for 768px and below */}
-      {windowWidth <= 768 && <PageTitle icon={PaymentsIcon} title="Payments" />}
+      {isMobile && <PageTitle icon={PaymentsIcon} title="Payments" />}
       {/* Tabs row only for desktop/tablet */}
       {windowWidth > 768 && (
         <div className="payment-tabs-row">
@@ -204,12 +207,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         </div>
       </div>
       <div className="payment-table-card">
-        <LoadingSpinner
-          isVisible={isLoading}
-          message="Loading transactions..."
-        />
         {!isLoading && (
-          <table className="payment-table">
+          <table className="payment-table ">
             <thead>
               <tr>
                 <th className="table-header-item">Bill No.</th>
@@ -556,8 +555,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 background: "#fff",
                 borderRadius: 16,
                 boxShadow: "0 4px 32px rgba(34, 43, 69, 0.1)",
-                padding: 36,
-                minWidth: 520,
+                padding: isMobile ? 18 : 36,
+                minWidth: isMobile ? 400 : 520,
                 maxWidth: "95vw",
                 position: "relative",
                 display: "flex",
@@ -594,12 +593,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <img
                   src={FaanLogo}
                   alt="FAAN Logo"
-                  style={{ width: 72, height: 72, borderRadius: 8 }}
+                  style={{ width: isMobile ? 48 : 72, height: isMobile ? 48 : 72, borderRadius: 8 }}
                 />
                 <div
                   style={{
-                    fontWeight: 600,
-                    fontSize: 18,
+                    fontWeight: isMobile ? 600 : 700,
+                    fontSize: isMobile ? 13 : 18,
                     color: "#070600",
                     letterSpacing: 0.2,
                     textAlign: "left",
@@ -608,7 +607,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   RECEIPT
                 </div>
               </div>
-              <div
+              {/* <div
                 style={{
                   width: "100%",
                   marginBottom: 18,
@@ -622,8 +621,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    minWidth: 140,
-                    padding: "18px 24px",
+                      minWidth: isMobile ? "100%" : 140,
+                    padding: isMobile ? "18px 12px" : "18px 24px",
                     gap: 16,
                   }}
                 >
@@ -747,9 +746,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div style={{ width: "100%", marginBottom: 18 }}>
                 <table
+                  className="no-min-width-table"
                   style={{
                     width: "100%",
                     borderCollapse: "collapse",
@@ -758,7 +758,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 >
                   <thead>
                     <tr style={{ background: "#fafafa" }}>
-                      <th className="table-header-item">ID</th>
+                      <th className="table-header-item ">ID</th>
                       <th className="table-header-item">Item Name</th>
                       <th className="table-header-item">Qty</th>
                       <th className="table-header-item">Amount</th>

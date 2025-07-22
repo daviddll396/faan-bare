@@ -761,10 +761,11 @@ table {
     font-size: 12px !important;
     padding: 5px 10px !important;
   }
-  .table-data-item:not(:first-child) {
+  table:not(.no-min-width-table) .table-data-item:not(:first-child) {
     min-width: 90px !important;
   }
-  .table-header-item:not(:first-child) {
+  table:not(.no-min-width-table) .table-header-item:not(:first-child) {
     min-width: 90px !important;
   }
+  
 }
