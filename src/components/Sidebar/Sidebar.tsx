@@ -11,14 +11,7 @@ import PaymentIcon from "../../../public/icons/nav-payment-icon.svg";
 import LogoutIcon from "../../../public/icons/nav-logout-icon.svg";
 
 // Mobile-specific icons (using Lucide React icons for better mobile experience)
-import {
-  Home,
-  Users,
-  Grid3X3,
-  UserCheck,
-  FileText,
-  CreditCard,
-} from "lucide-react";
+
 
 import HomeBottomBarIcon from "/icons/home-bottombar.svg";
 import ServicesBottomBarIcon from "/icons/services-bottombar.svg";
