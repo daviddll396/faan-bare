@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
       case "logout":
         return <LogoutPage />;
       case "profile":
-        return <ProfilePage role={user?.role} />;
+        return <ProfilePage />;
       default:
         return <DashboardPage role={user?.role} />;
     }
