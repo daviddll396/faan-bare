@@ -4,7 +4,6 @@ import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import Modal from "../../reusables/Modal/Modal";
-import FaanLogo from "/images/faan-logo.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
 import InvoiceAmountFormIcon from "/icons/invoice-amount-form-icon.svg";
