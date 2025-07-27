@@ -113,7 +113,6 @@
 .payment-status-badge.completed {
   background: #f0f9f4;
   color: #166534;
-
   border-radius: 8px;
 }
 
@@ -176,53 +175,180 @@
   color: #b91c1c;
 }
 
-.customer-modal-backdrop {
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-  animation: fadeIn 0.2s ease-out;
+/* Payment Modal Content Styles */
+.payment-invoice-modal {
+  min-width: 520px;
+  max-width: 800px;
 }
 
-.customer-modal-center {
-  transform: scale(1) !important;
-  transform-origin: center center !important;
+.payment-invoice-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-.payment-modal-center {
-  animation: scaleIn 0.3s ease-out;
+.payment-invoice-details {
+  width: 100%;
+  margin-bottom: 8px;
 }
 
-.payment-modal-center > div {
-  animation: scaleIn 0.3s ease-out;
+.payment-invoice-details-title {
+  color: #222b45;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+  text-align: left;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.payment-invoice-cards {
+  width: 100%;
+  margin-bottom: 18px;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.payment-invoice-card {
+  flex-direction: row;
+  align-items: center;
+  min-width: 140px;
+  padding: 18px 24px;
+  gap: 16px;
 }
 
-.customer-success-modal {
-  animation: scaleIn 0.3s ease-out;
+.payment-invoice-table {
+  width: 100%;
+  margin-bottom: 18px;
 }
 
-.customer-modal-center .bill-customer-card {
-  zoom: 1 !important;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
+.payment-invoice-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.payment-invoice-table thead tr {
+  background: #fafafa;
+}
+
+.payment-invoice-actions {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Receipt Modal Styles */
+.payment-receipt-modal {
+  min-width: 520px;
+  max-width: 800px;
+}
+
+.payment-receipt-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.payment-receipt-table {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.payment-receipt-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.payment-receipt-table thead tr {
+  background: #fafafa;
+}
+
+.payment-receipt-actions {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Reason Modal Styles */
+.payment-reason-modal {
+  min-width: 420px;
+  max-width: 600px;
+}
+
+.payment-reason-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.payment-reason-message {
+  width: 100%;
+  background: #fdeaea;
+  border-radius: 8px;
+  padding: 18px 20px;
+  color: #b91c1c;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.payment-reason-details {
+  width: 100%;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.payment-reason-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-reason-label {
+  color: #6c7278;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.payment-reason-value {
+  color: #070600;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.payment-reason-actions {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Success Modal Styles */
+.payment-success-modal {
+  min-width: 400px;
+  max-width: 500px;
+}
+
+.payment-success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Common Table Styles */
+.payment-total-label {
+  text-align: left;
+  font-weight: 700;
+  color: #222b45;
+  padding: 10px 8px;
+}
+
+.payment-total-value {
+  font-weight: 700;
+  color: #070600;
+  padding: 10px 8px;
 }
 
 .border-button-paymentpage {
@@ -240,14 +366,8 @@
   .payment-table-card {
     zoom: 0.9;
   }
-  .payment-modal-center {
-    zoom: 0.9;
-  }
   .border-button-paymentpage {
     zoom: 0.9;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 1 !important;
   }
 }
 
@@ -258,14 +378,8 @@
   .payment-table-card {
     zoom: 0.85;
   }
-  .payment-modal-center {
-    zoom: 0.85;
-  }
   .border-button-paymentpage {
     zoom: 0.85;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.98 !important;
   }
 }
 
@@ -276,14 +390,8 @@
   .payment-table-card {
     zoom: 0.8;
   }
-  .payment-modal-center {
-    zoom: 0.8;
-  }
   .border-button-paymentpage {
     zoom: 0.8;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.95 !important;
   }
 }
 
@@ -294,14 +402,8 @@
   .payment-table-card {
     zoom: 0.75;
   }
-  .payment-modal-center {
-    zoom: 0.75;
-  }
   .border-button-paymentpage {
     zoom: 0.75;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.92 !important;
   }
 }
 
@@ -312,14 +414,8 @@
   .payment-table-card {
     zoom: 0.7;
   }
-  .payment-modal-center {
-    zoom: 0.7;
-  }
   .border-button-paymentpage {
     zoom: 0.7;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.9 !important;
   }
 }
 
@@ -330,14 +426,8 @@
   .payment-table-card {
     zoom: 0.65;
   }
-  .payment-modal-center {
-    zoom: 0.65;
-  }
   .border-button-paymentpage {
     zoom: 0.65;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.88 !important;
   }
 }
 
@@ -348,14 +438,8 @@
   .payment-table-card {
     zoom: 0.6;
   }
-  .payment-modal-center {
-    zoom: 0.6;
-  }
   .border-button-paymentpage {
     zoom: 0.6;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.86 !important;
   }
 }
 
@@ -366,14 +450,8 @@
   .payment-table-card {
     zoom: 0.58;
   }
-  .payment-modal-center {
-    zoom: 0.58;
-  }
   .border-button-paymentpage {
     zoom: 0.58;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.84 !important;
   }
 }
 
@@ -384,14 +462,8 @@
   .payment-table-card {
     zoom: 0.56;
   }
-  .payment-modal-center {
-    zoom: 0.56;
-  }
   .border-button-paymentpage {
     zoom: 0.56;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.82 !important;
   }
 }
 
@@ -402,14 +474,8 @@
   .payment-table-card {
     zoom: 0.54;
   }
-  .payment-modal-center {
-    zoom: 0.54;
-  }
   .border-button-paymentpage {
     zoom: 0.54;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.8 !important;
   }
 }
 
@@ -420,14 +486,8 @@
   .payment-table-card {
     zoom: 0.52;
   }
-  .payment-modal-center {
-    zoom: 0.52;
-  }
   .border-button-paymentpage {
     zoom: 0.52;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.78 !important;
   }
 }
 
@@ -438,14 +498,8 @@
   .payment-table-card {
     zoom: 0.5;
   }
-  .payment-modal-center {
-    zoom: 0.5;
-  }
   .border-button-paymentpage {
     zoom: 0.5;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.76 !important;
   }
 }
 
@@ -456,14 +510,8 @@
   .payment-table-card {
     zoom: 0.48;
   }
-  .payment-modal-center {
-    zoom: 0.48;
-  }
   .border-button-paymentpage {
     zoom: 0.48;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.74 !important;
   }
 }
 
@@ -474,14 +522,8 @@
   .payment-table-card {
     zoom: 0.46;
   }
-  .payment-modal-center {
-    zoom: 0.46;
-  }
   .border-button-paymentpage {
     zoom: 0.46;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.72 !important;
   }
 }
 
@@ -492,14 +534,8 @@
   .payment-table-card {
     zoom: 0.9;
   }
-  .payment-modal-center {
-    zoom: 0.9;
-  }
   .border-button-paymentpage {
     zoom: 0.44;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.7 !important;
   }
 }
 
@@ -510,14 +546,8 @@
   .payment-table-card {
     zoom: 0.42;
   }
-  .payment-modal-center {
-    zoom: 0.42;
-  }
   .border-button-paymentpage {
     zoom: 0.42;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.68 !important;
   }
 }
 
@@ -528,14 +558,8 @@
   .payment-table-card {
     zoom: 0.4;
   }
-  .payment-modal-center {
-    zoom: 0.4;
-  }
   .border-button-paymentpage {
     zoom: 0.4;
-  }
-  .customer-modal-center .bill-customer-card {
-    zoom: 0.66 !important;
   }
   .payment-search-row {
     flex-direction: column;
@@ -553,24 +577,15 @@
   .payment-tabs-row {
     zoom: 1;
   }
-  .payment-modal-center {
-    zoom: 1;
-  }
   .payment-table-card {
     zoom: 1;
     overflow: auto;
   }
-  .bill-customer-card{
-    zoom:1;
-  }
   .border-button-paymentpage {
     zoom: 1;
   }
-  .customer-modal-center .bill-customer-card {
-    zoom: 1 !important;
-  }
-  .payment-search-row{
-    margin:20px 0px;
+  .payment-search-row {
+    margin: 20px 0px;
   }
   .payment-status-badge {
     display: inline-block;
@@ -578,14 +593,12 @@
     font-weight: 600;
     border-radius: 5px !important;
     padding: 2px 3px;
-    
-
   }
   .payment-action-btn .payment-action-icon {
-   display:none;
+    display: none;
   }
   .payment-action-btn {
-  text-decoration: underline;
+    text-decoration: underline;
     gap: 0px;
     font-size: 12px;
     font-weight: 600;
@@ -597,8 +610,39 @@
     white-space: nowrap;
     box-shadow: none;
   }
-  .payment-table-card{
-    border-radius:10px;
+  .payment-table-card {
+    border-radius: 10px;
   }
-  
+
+  /* Mobile Modal Adjustments */
+  .payment-invoice-modal,
+  .payment-receipt-modal {
+    min-width: 90vw;
+    max-width: 95vw;
+  }
+
+  .payment-reason-modal {
+    min-width: 90vw;
+    max-width: 95vw;
+  }
+
+  .payment-success-modal {
+    min-width: 90vw;
+    max-width: 95vw;
+  }
+
+  .payment-invoice-cards {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .payment-invoice-card {
+    min-width: 100%;
+    padding: 12px 16px;
+  }
+
+  .payment-reason-details {
+    flex-direction: column;
+    gap: 12px;
+  }
 }

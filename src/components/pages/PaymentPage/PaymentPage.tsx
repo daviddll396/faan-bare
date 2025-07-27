@@ -3,6 +3,7 @@ import SearchInput from "../../reusables/SearchInput/SearchInput";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
+import Modal from "../../reusables/Modal/Modal";
 import FaanLogo from "/images/faan-logo.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
@@ -13,39 +14,9 @@ import { useAuth } from "../../../contexts/AuthContext";
 import "./paymentpage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import PaymentsIcon from "/icons/nav-payment-icon.svg";
+import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 
 const tabs = ["All", "Pending", "Completed", "Cancelled"];
-
-// Add interface for invoice items
-// interface InvoiceItem {
-//   id: string;
-//   name: string;
-//   qty: number;
-//   amount: number;
-//   total: number;
-// }
-
-// Add static invoice data
-// const invoiceNumber = "INV-2024-001";
-// const invoiceCustomerId = "CUST-12345";
-// const invoiceAmount = "12,000";
-// const invoiceTotal = "12,000";
-// const invoiceItems: InvoiceItem[] = [
-//   {
-//     id: "1",
-//     name: "International Arrival Service",
-//     qty: 1,
-//     amount: 12000,
-//     total: 12000,
-//   },
-//   {
-//     id: "2",
-//     name: "VIP Lounge Access",
-//     qty: 1,
-//     amount: 12000,
-//     total: 12000,
-//   },
-// ];
 
 const statusColors = {
   CANCELLED: "cancelled",
@@ -275,98 +246,25 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           </table>
         )}
       </div>
-      {modal && modal.type === "invoice" && (
-        <div className="customer-modal-backdrop">
-          <div className="payment-modal-center">
-            <div
-              style={{
-                background: "#fff",
-                borderRadius: 16,
-                boxShadow: "0 4px 32px rgba(34, 43, 69, 0.1)",
-                padding: 36,
-                minWidth: 520,
-                maxWidth: "95vw",
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <button
-                style={{
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  background: "none",
-                  border: "none",
-                  fontSize: 24,
-                  cursor: "pointer",
-                  color: "#222",
-                }}
-                onClick={() => setModal(null)}
-                aria-label="Close"
-              >
-                ×
-              </button>
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                  marginBottom: 18,
-                  justifyContent: "flex-start",
-                }}
-              >
-                <img
-                  src={FaanLogo}
-                  alt="FAAN Logo"
-                  style={{ width: 72, height: 72, borderRadius: 8 }}
-                />
-                <div
-                  style={{
-                    fontWeight: 700,
-                    fontSize: 18,
-                    color: "#222b45",
-                    letterSpacing: 0.2,
-                    textAlign: "left",
-                  }}
-                >
-                  FEDERAL AIRPORT AUTHORITY OF NIGERIA
-                </div>
+      {windowWidth <= 768 && <SlideIndicator />}
+
+      {/* Invoice Modal */}
+      <Modal
+        isOpen={modal?.type === "invoice"}
+        onClose={() => setModal(null)}
+        showHeader={true}
+        headerTitle="FEDERAL AIRPORT AUTHORITY OF NIGERIA"
+        className="payment-invoice-modal"
+      >
+        {modal?.type === "invoice" && (
+          <div className="payment-invoice-content">
+            <div className="payment-invoice-details">
+              <div className="payment-invoice-details-title">
+                Invoice Details:
               </div>
-              <div style={{ width: "100%", marginBottom: 8 }}>
-                <div
-                  style={{
-                    color: "#222b45",
-                    fontWeight: 600,
-                    fontSize: 16,
-                    marginBottom: 8,
-                    textAlign: "left",
-                  }}
-                >
-                  Invoice Details:
                 </div>
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  marginBottom: 18,
-                  display: "flex",
-                  gap: 18,
-                  justifyContent: "center",
-                }}
-              >
-                <div
-                  className="bill-customer-card"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    minWidth: 140,
-                    padding: "18px 24px",
-                    gap: 16,
-                  }}
-                >
+            <div className="payment-invoice-cards">
+              <div className="bill-customer-card payment-invoice-card">
                   <div className="bill-customer-icon-bg">
                     <img
                       src={InvoiceFormIcon}
@@ -374,42 +272,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       className="bill-customer-icon"
                     />
                   </div>
-                  <div
-                    className="bill-customer-info-col"
-                    style={{ alignItems: "center" }}
-                  >
-                    <div
-                      className="bill-customer-label"
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 15,
-                      }}
-                    >
-                      Invoice Number
-                    </div>
-                    <div
-                      className="bill-customer-value highlight"
-                      style={{
-                        color: "#007948",
-                        fontWeight: 700,
-                        fontSize: 18,
-                      }}
-                    >
+                <div className="bill-customer-info-col">
+                  <div className="bill-customer-label">Invoice Number</div>
+                  <div className="bill-customer-value highlight">
                       {modal.data.billNo}
-                    </div>
                   </div>
                 </div>
-                <div
-                  className="bill-customer-card"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    minWidth: 140,
-                    padding: "18px 24px",
-                    gap: 16,
-                  }}
-                >
+              </div>
+              <div className="bill-customer-card payment-invoice-card">
                   <div className="bill-customer-icon-bg">
                     <img
                       src={IdFormIcon}
@@ -417,42 +287,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       className="bill-customer-icon"
                     />
                   </div>
-                  <div
-                    className="bill-customer-info-col"
-                    style={{ alignItems: "center" }}
-                  >
-                    <div
-                      className="bill-customer-label"
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 15,
-                      }}
-                    >
-                      Customer ID
-                    </div>
-                    <div
-                      className="bill-customer-value highlight"
-                      style={{
-                        color: "#009a34",
-                        fontWeight: 700,
-                        fontSize: 18,
-                      }}
-                    >
+                <div className="bill-customer-info-col">
+                  <div className="bill-customer-label">Customer ID</div>
+                  <div className="bill-customer-value highlight">
                       2012366754
-                    </div>
                   </div>
                 </div>
-                <div
-                  className="bill-customer-card"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    minWidth: 140,
-                    padding: "18px 24px",
-                    gap: 16,
-                  }}
-                >
+              </div>
+              <div className="bill-customer-card payment-invoice-card">
                   <div className="bill-customer-icon-bg">
                     <img
                       src={InvoiceAmountFormIcon}
@@ -460,43 +302,18 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       className="bill-customer-icon"
                     />
                   </div>
-                  <div
-                    className="bill-customer-info-col"
-                    style={{ alignItems: "center" }}
-                  >
-                    <div
-                      className="bill-customer-label"
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 15,
-                      }}
-                    >
-                      Invoice Amount
-                    </div>
-                    <div
-                      className="bill-customer-value highlight"
-                      style={{
-                        color: "#009a34",
-                        fontWeight: 700,
-                        fontSize: 18,
-                      }}
-                    >
+                <div className="bill-customer-info-col">
+                  <div className="bill-customer-label">Invoice Amount</div>
+                  <div className="bill-customer-value highlight">
                       {modal.data.amount}
-                    </div>
                   </div>
                 </div>
               </div>
-              <div style={{ width: "100%", marginBottom: 18 }}>
-                <table
-                  style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    fontSize: 15,
-                  }}
-                >
+            </div>
+            <div className="payment-invoice-table">
+              <table>
                   <thead>
-                    <tr style={{ background: "#fafafa" }}>
+                  <tr>
                       <th className="table-header-item">ID</th>
                       <th className="table-header-item">Item Name</th>
                       <th className="table-header-item">Qty</th>
@@ -505,7 +322,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Dynamic items based on clicked payment */}
                     <tr>
                       <td className="table-data-item">1001</td>
                       <td className="table-data-item">{modal.data.service}</td>
@@ -514,251 +330,38 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       <td className="table-data-item">{modal.data.amount}</td>
                     </tr>
                     <tr>
-                      <td
-                        colSpan={4}
-                        style={{
-                          textAlign: "left",
-                          fontWeight: 700,
-                          color: "#222b45",
-                          padding: "10px 8px",
-                        }}
-                      >
+                    <td colSpan={4} className="payment-total-label">
                         TOTAL
                       </td>
-                      <td
-                        style={{
-                          fontWeight: 700,
-                          color: "#070600",
-                          padding: "10px 8px",
-                        }}
-                      >
-                        {modal.data.amount}
-                      </td>
+                    <td className="payment-total-value">{modal.data.amount}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div style={{ marginTop: 8, width: "100%" }}>
+            <div className="payment-invoice-actions">
                 <GradientButton onClick={() => setModal(null)} fullWidth>
                   PAY
                 </GradientButton>
-              </div>
-            </div>
           </div>
         </div>
       )}
-      {modal && modal.type === "receipt" && (
-        <div className="customer-modal-backdrop">
-          <div className="payment-modal-center">
-            <div
-              style={{
-                background: "#fff",
-                borderRadius: 16,
-                boxShadow: "0 4px 32px rgba(34, 43, 69, 0.1)",
-                padding: isMobile ? 18 : 36,
-                minWidth: isMobile ? 400 : 520,
-                maxWidth: "95vw",
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <button
-                style={{
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  background: "none",
-                  border: "none",
-                  fontSize: 24,
-                  cursor: "pointer",
-                  color: "#222",
-                }}
-                onClick={() => setModal(null)}
-                aria-label="Close"
-              >
-                ×
-              </button>
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                  marginBottom: 18,
-                  justifyContent: "flex-start",
-                }}
-              >
-                <img
-                  src={FaanLogo}
-                  alt="FAAN Logo"
-                  style={{ width: isMobile ? 48 : 72, height: isMobile ? 48 : 72, borderRadius: 8 }}
-                />
-                <div
-                  style={{
-                    fontWeight: isMobile ? 600 : 700,
-                    fontSize: isMobile ? 13 : 18,
-                    color: "#070600",
-                    letterSpacing: 0.2,
-                    textAlign: "left",
-                  }}
-                >
-                  RECEIPT
-                </div>
-              </div>
-              {/* <div
-                style={{
-                  width: "100%",
-                  marginBottom: 18,
-                  display: "flex",
-                  gap: 18,
-                  justifyContent: "center",
-                }}
-              >
-                <div
-                  className="bill-customer-card"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                      minWidth: isMobile ? "100%" : 140,
-                    padding: isMobile ? "18px 12px" : "18px 24px",
-                    gap: 16,
-                  }}
-                >
-                  <div className="bill-customer-icon-bg">
-                    <img
-                      src={InvoiceFormIcon}
-                      alt="Receipt Number"
-                      className="bill-customer-icon"
-                    />
-                  </div>
-                  <div
-                    className="bill-customer-info-col"
-                    style={{ alignItems: "center" }}
-                  >
-                    <div
-                      className="bill-customer-label"
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 15,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      Receipt Number
-                    </div>
-                    <div
-                      className="bill-customer-value highlight"
-                      style={{
-                        color: "#007948",
-                        fontWeight: 700,
-                        fontSize: 18,
-                      }}
-                    >
-                      {modal.data.billNo}
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="bill-customer-card"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    minWidth: 140,
-                    padding: "18px 24px",
-                    gap: 16,
-                  }}
-                >
-                  <div className="bill-customer-icon-bg">
-                    <img
-                      src={IdFormIcon}
-                      alt="Customer ID"
-                      className="bill-customer-icon"
-                    />
-                  </div>
-                  <div
-                    className="bill-customer-info-col"
-                    style={{ alignItems: "center" }}
-                  >
-                    <div
-                      className="bill-customer-label"
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 15,
-                      }}
-                    >
-                      Customer ID
-                    </div>
-                    <div
-                      className="bill-customer-value highlight"
-                      style={{
-                        color: "#009a34",
-                        fontWeight: 700,
-                        fontSize: 18,
-                      }}
-                    >
-                      2012366754
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="bill-customer-card"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    minWidth: 140,
-                    padding: "18px 24px",
-                    gap: 16,
-                  }}
-                >
-                  <div className="bill-customer-icon-bg">
-                    <img
-                      src={InvoiceAmountFormIcon}
-                      alt="Amount Paid"
-                      className="bill-customer-icon"
-                    />
-                  </div>
-                  <div
-                    className="bill-customer-info-col"
-                    style={{ alignItems: "center" }}
-                  >
-                    <div
-                      className="bill-customer-label"
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 15,
-                      }}
-                    >
-                      Amount Paid
-                    </div>
-                    <div
-                      className="bill-customer-value highlight"
-                      style={{
-                        color: "#009a34",
-                        fontWeight: 700,
-                        fontSize: 18,
-                      }}
-                    >
-                      {modal.data.amount}
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-              <div style={{ width: "100%", marginBottom: 18 }}>
-                <table
-                  className="no-min-width-table"
-                  style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    fontSize: 15,
-                  }}
-                >
+      </Modal>
+
+      {/* Receipt Modal */}
+      <Modal
+        isOpen={modal?.type === "receipt"}
+        onClose={() => setModal(null)}
+        showHeader={true}
+        headerTitle="RECEIPT"
+        className="payment-receipt-modal"
+      >
+        {modal?.type === "receipt" && (
+          <div className="payment-receipt-content">
+            <div className="payment-receipt-table">
+              <table className="no-min-width-table">
                   <thead>
-                    <tr style={{ background: "#fafafa" }}>
-                      <th className="table-header-item ">ID</th>
+                  <tr>
+                    <th className="table-header-item">ID</th>
                       <th className="table-header-item">Item Name</th>
                       <th className="table-header-item">Qty</th>
                       <th className="table-header-item">Amount</th>
@@ -766,7 +369,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Static items, replace with dynamic if available */}
                     <tr>
                       <td className="table-data-item">1001</td>
                       <td className="table-data-item">{modal.data.service}</td>
@@ -775,183 +377,63 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       <td className="table-data-item">{modal.data.amount}</td>
                     </tr>
                     <tr>
-                      <td
-                        colSpan={4}
-                        style={{
-                          textAlign: "left",
-                          fontWeight: 700,
-                          color: "#222b45",
-                          padding: "10px 8px",
-                        }}
-                      >
+                    <td colSpan={4} className="payment-total-label">
                         TOTAL
                       </td>
-                      <td
-                        style={{
-                          fontWeight: 700,
-                          color: "#070600",
-                          padding: "10px 8px",
-                        }}
-                      >
-                        {modal.data.amount}
-                      </td>
+                    <td className="payment-total-value">{modal.data.amount}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div style={{ marginTop: 8, width: "100%" }}>
+            <div className="payment-receipt-actions">
                 <GradientButton onClick={() => setModal(null)} fullWidth>
                   CLOSE
                 </GradientButton>
-              </div>
-            </div>
           </div>
         </div>
       )}
-      {modal && modal.type === "reason" && (
-        <div className="customer-modal-backdrop">
-          <div className="payment-modal-center">
-            <div
-              style={{
-                background: "#fff",
-                borderRadius: 16,
-                boxShadow: "0 4px 32px rgba(34, 43, 69, 0.1)",
-                padding: 36,
-                minWidth: 420,
-                maxWidth: "95vw",
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <button
-                style={{
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  background: "none",
-                  border: "none",
-                  fontSize: 24,
-                  cursor: "pointer",
-                  color: "#222",
-                }}
-                onClick={() => setModal(null)}
-                aria-label="Close"
-              >
-                ×
-              </button>
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                  marginBottom: 18,
-                  justifyContent: "flex-start",
-                }}
-              >
-                <img
-                  src={FaanLogo}
-                  alt="FAAN Logo"
-                  style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: 8,
-                  }}
-                />
-                <div
-                  style={{
-                    fontWeight: 600,
-                    fontSize: 18,
-                    color: "#070600",
-                    letterSpacing: 0.2,
-                    textAlign: "left",
-                  }}
-                >
-                  CANCELLATION REASON
+      </Modal>
+
+      {/* Reason Modal */}
+      <Modal
+        isOpen={modal?.type === "reason"}
+        onClose={() => setModal(null)}
+        showHeader={true}
+        headerTitle="CANCELLATION REASON"
+        className="payment-reason-modal"
+      >
+        {modal?.type === "reason" && (
+          <div className="payment-reason-content">
+            <div className="payment-reason-message">
+              Payment failed due to insufficient funds.
                 </div>
+            <div className="payment-reason-details">
+              <div className="payment-reason-detail">
+                <div className="payment-reason-label">Bill No.</div>
+                <div className="payment-reason-value">{modal.data.billNo}</div>
               </div>
-              <div
-                style={{
-                  width: "100%",
-                  background: "#fdeaea",
-                  borderRadius: 8,
-                  padding: "18px 20px",
-                  color: "#b91c1c",
-                  fontWeight: 600,
-                  fontSize: 16,
-                  marginBottom: 24,
-                  textAlign: "center",
-                }}
-              >
-                {/* Replace with actual reason if available */}
-                Payment failed due to insufficient funds.
+              <div className="payment-reason-detail">
+                <div className="payment-reason-label">Service</div>
+                <div className="payment-reason-value">{modal.data.service}</div>
               </div>
-              <div style={{ width: "100%", marginBottom: 18 }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: 8,
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 14,
-                      }}
-                    >
-                      Bill No.
                     </div>
-                    <div
-                      style={{
-                        color: "#070600",
-                        fontWeight: 600,
-                        fontSize: 16,
-                      }}
-                    >
-                      {modal.data.billNo}
-                    </div>
-                  </div>
-                  <div>
-                    <div
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 14,
-                      }}
-                    >
-                      Service
-                    </div>
-                    <div
-                      style={{
-                        color: "#070600",
-                        fontWeight: 600,
-                        fontSize: 16,
-                      }}
-                    >
-                      {modal.data.service}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div style={{ marginTop: 8, width: "100%" }}>
+            <div className="payment-reason-actions">
                 <GradientButton onClick={() => setModal(null)} fullWidth>
                   CLOSE
                 </GradientButton>
-              </div>
-            </div>
           </div>
         </div>
       )}
-      {/* Payment Success Modal Overlay */}
-      {showPaymentSuccess && (
-        <div className="customer-modal-backdrop">
-          <div className="payment-modal-center">
-            <div className="customer-success-modal">
+      </Modal>
+
+      {/* Payment Success Modal */}
+      <Modal
+        isOpen={showPaymentSuccess}
+        onClose={() => setShowPaymentSuccess(false)}
+        showHeader={false}
+        className="payment-success-modal"
+      >
+        <div className="payment-success-content">
               <div className="customer-success-icon-wrap">
                 <img
                   src={CheckCircle}
@@ -963,7 +445,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               <div className="customer-success-desc">
                 Your payment has been made successfully.
               </div>
-              <div style={{ width: "100%" }}>
                 <GradientButton
                   onClick={() => setShowPaymentSuccess(false)}
                   fullWidth
@@ -971,10 +452,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   CLOSE
                 </GradientButton>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 };

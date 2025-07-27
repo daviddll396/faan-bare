@@ -10,8 +10,6 @@
   }
 }
 
-
-
 .page-header-bottom {
   display: flex;
   justify-content: space-between;
@@ -261,7 +259,6 @@
   .add-user-form-card {
     zoom: 1;
   }
-  
 }
 
 .add-user-title {
@@ -517,5 +514,136 @@
 @media (max-width: 768px) {
   .border-button-userspage {
     zoom: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .users-page {
+    padding: 0;
+    background: var(--bg-color);
+  }
+  .page-content {
+    padding: 0 0 24px 0;
+    gap: 18px;
+  }
+  .page-header {
+    padding: 0 12px;
+    margin-bottom: 10px;
+  }
+  .page-header-bottom {
+    flex-direction: column;
+    gap: 10px !important;
+    padding: 0 0px;
+    align-items: flex-end;
+    margin-bottom:0px !important;
+  }
+
+  .userspage-search-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+  }
+  .userspage-search-row .search-input {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .userspage-role-row {
+    width: 100%;
+    margin-top: 6px;
+  }
+  .userspage-role-row .search-input {
+    width: 100%;
+  }
+  .content-card {
+    border-radius: 10px;
+    padding: 0;
+    margin: 0 0 12px 0;
+    box-shadow: none;
+    background: #fff;
+    overflow-x: auto;
+  }
+  .table-container {
+    overflow-x: auto;
+    padding: 0;
+    margin: 0;
+  }
+  table {
+    min-width: 700px;
+    font-size: 12px;
+  }
+
+  .table-data-item,
+  .table-data-item-role {
+    font-size: 12px;
+    padding: 8px 8px;
+    white-space: nowrap;
+  }
+  .role-badge-table {
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 6px;
+  }
+
+  .action-btn-table {
+    font-size: 11px;
+    padding: 4px 7px;
+    border-radius: 5px;
+    gap: 3px;
+  }
+  .add-user-form-card {
+    width: 100%;
+    padding: 18px 15px;
+    border-radius: 10px;
+    margin-top: 0px;
+  }
+  .add-user-title {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+  .add-user-helper {
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+  .user-form-grid {
+    gap: 14px;
+  }
+  .form-row-pair {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .form-row {
+    gap: 5px;
+  }
+  .user-form-grid input,
+  .user-form-grid select {
+    font-size: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  .user-form-grid label {
+    font-size: 12px;
+  }
+  .form-actions {
+    margin-top: 18px;
+  }
+  .save-btn-full {
+    font-size: 12px;
+    padding: 12px 0;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+
+
+  .userspage-actions-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 8px;
+    width: 100%;
+    margin-top: 0px;
+  }
+  .user-form-grid {
+    gap: 10px !important;
   }
 }

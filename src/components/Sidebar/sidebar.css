@@ -363,6 +363,10 @@
   .nav-item.active .mobile-icon svg {
     stroke: white;
   }
+  .nav-item:hover {
+    
+    color: #979797;
+  }
 
   /* Add safe area padding for devices with home indicators */
   @supports (padding-bottom: env(safe-area-inset-bottom)) {

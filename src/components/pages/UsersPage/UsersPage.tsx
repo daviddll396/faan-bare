@@ -11,6 +11,17 @@ import "./userspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 
+// Add User type for local state
+interface LocalUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  status: string;
+  dateModified: string;
+}
+
 interface UsersPageProps {
   role?: string;
 }
@@ -18,7 +29,7 @@ interface UsersPageProps {
 const UsersPage: React.FC<UsersPageProps> = () => {
   const { showLoading, hideLoading } = useLoading();
 
-  const initialUsers = [
+  const initialUsers: LocalUser[] = [
     {
       id: 1,
       firstName: "Obi",
@@ -94,8 +105,8 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   ];
 
   // User management state
-  const [allUsers, setAllUsers] = React.useState(initialUsers);
-  const [editingUser, setEditingUser] = React.useState<any>(null);
+  const [allUsers, setAllUsers] = React.useState<LocalUser[]>(initialUsers);
+  const [editingUser, setEditingUser] = React.useState<LocalUser | null>(null);
 
   // Search state
   const [searchName, setSearchName] = React.useState("");
@@ -110,7 +121,9 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   // Confirmation modal state
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
     React.useState(false);
-  const [userToDelete, setUserToDelete] = React.useState<any>(null);
+  const [userToDelete, setUserToDelete] = React.useState<LocalUser | null>(
+    null
+  );
 
   // Form state
   const [formData, setFormData] = React.useState({
@@ -238,7 +251,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   };
 
   // Handle edit action
-  const handleEdit = (user: any) => {
+  const handleEdit = (user: LocalUser) => {
     setEditingUser(user);
     setFormData({
       firstName: user.firstName,
@@ -253,7 +266,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   };
 
   // Handle delete action - show confirmation modal
-  const handleDelete = (user: any) => {
+  const handleDelete = (user: LocalUser) => {
     setUserToDelete(user);
     setShowDeleteConfirmation(true);
   };
@@ -301,6 +314,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
           {!showAddUserForm ? (
             <PageTitle icon={UsersIcon} title="Users" />
           ) : (
+            window.innerWidth > 768 ? (
             <PageTitle
               icon={UsersIcon}
               title="Users"
@@ -312,49 +326,93 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                 if (idx === 0) setShowAddUserForm(false);
               }}
             />
+            ) : (
+              <PageTitle
+                icon={UsersIcon}
+                title="Add New User"
+              />
+            )
           )}
         </div>
 
         {!showAddUserForm ? (
           <>
             <div className="page-header-bottom">
-              <div style={{ display: "flex", gap: 24 }}>
-                <SearchInput
-                  placeholder="Search name"
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
-                />
-                <SearchInput
-                  placeholder="Email address"
-                  value={searchEmail}
-                  onChange={(e) => setSearchEmail(e.target.value)}
-                />
-                <SearchInput
-                  placeholder="Role"
-                  withDropdown
-                  options={["Admin", "Officer"]}
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                />
-              </div>
-              <div style={{ display: "flex", gap: 12 }}>
-                <BorderButton
-                  text="Search"
-                  onClick={handleSearch}
-                  className="border-button-userspage"
-                />
-                <BorderButton
-                  text="Clear"
-                  onClick={handleClearSearch}
-                  className="border-button-userspage"
-                />
-                <BorderButton
-                  text="Add New User"
-                  icon={AddIcon}
-                  onClick={handleAddNewUser}
-                  className="border-button-userspage"
-                />
-              </div>
+              {/* Responsive search layout */}
+              {window.innerWidth <= 768 ? (
+                <>
+                  <div className="userspage-search-row">
+                    <SearchInput
+                      placeholder="Search name"
+                      value={searchName}
+                      onChange={(e) => setSearchName(e.target.value)}
+                    />
+                    <SearchInput
+                      placeholder="Email address"
+                      value={searchEmail}
+                      onChange={(e) => setSearchEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="userspage-actions-row">
+                    <BorderButton
+                      text="Search"
+                      onClick={handleSearch}
+                      className="border-button-userspage"
+                    />
+                    <BorderButton
+                      text="Clear"
+                      onClick={handleClearSearch}
+                      className="border-button-userspage"
+                    />
+                    <BorderButton
+                      text="Add New User"
+                      icon={AddIcon}
+                      onClick={handleAddNewUser}
+                      className="border-button-userspage"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{ display: "flex", gap: 24 }}>
+                    <SearchInput
+                      placeholder="Search name"
+                      value={searchName}
+                      onChange={(e) => setSearchName(e.target.value)}
+                    />
+                    <SearchInput
+                      placeholder="Email address"
+                      value={searchEmail}
+                      onChange={(e) => setSearchEmail(e.target.value)}
+                    />
+                    <SearchInput
+                      placeholder="Role"
+                      withDropdown
+                      options={["Admin", "Officer"]}
+                      value={selectedRole}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                    />
+                  </div>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <BorderButton
+                      text="Search"
+                      onClick={handleSearch}
+                      className="border-button-userspage"
+                    />
+                    <BorderButton
+                      text="Clear"
+                      onClick={handleClearSearch}
+                      className="border-button-userspage"
+                    />
+                    <BorderButton
+                      text="Add New User"
+                      icon={AddIcon}
+                      onClick={handleAddNewUser}
+                      className="border-button-userspage"
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="content-card">

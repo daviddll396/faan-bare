@@ -220,7 +220,7 @@ table {
 
 .table-header-item {
   text-align: left;
-  padding: 30px 20px 10px 20px;
+  padding: 30px 10px 10px 10px;
   font-size: 14px;
   font-weight: 600;
   color: #070600;
@@ -231,44 +231,44 @@ table {
 }
 
 .table-header-item:first-child {
-  padding-left: 150px;
+  padding-left: 180px;
 }
 
 .table-header-item:last-child {
-  padding-right: 150px;
+  padding-right: 180px;
 }
 
 .table-data-item:first-child {
-  padding-left: 150px;
+  padding-left: 180px;
 }
 
 .table-data-item:last-child {
-  padding-right: 150px;
+  padding-right: 180px;
 }
 
 /* Remove extra padding for tables inside modals */
-.customer-modal-backdrop .table-header-item:first-child,
-.payment-modal-center .table-header-item:first-child {
+.modal-backdrop .table-header-item:first-child,
+.modal-container .table-header-item:first-child {
   padding-left: 20px;
 }
 
-.customer-modal-backdrop .table-header-item:last-child,
-.payment-modal-center .table-header-item:last-child {
+.modal-backdrop .table-header-item:last-child,
+.modal-container .table-header-item:last-child {
   padding-right: 20px;
 }
 
-.customer-modal-backdrop .table-data-item:first-child,
-.payment-modal-center .table-data-item:first-child {
+.modal-backdrop .table-data-item:first-child,
+.modal-container .table-data-item:first-child {
   padding-left: 20px;
 }
 
-.customer-modal-backdrop .table-data-item:last-child,
-.payment-modal-center .table-data-item:last-child {
+.modal-backdrop .table-data-item:last-child,
+.modal-container .table-data-item:last-child {
   padding-right: 20px;
 }
 
 .table-data-item {
-  padding: 10px 20px;
+  padding: 10px;
   border-bottom: 1px solid #f1f5f9;
   font-size: 16px;
   color: #898989;
@@ -723,11 +723,83 @@ table {
     gap: 17px;
   }
 }
+.select-dropdown-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+}
+
+.select-dropdown-wrapper select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #fafafa;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 17px;
+  font-family: inherit;
+  color: #070600;
+  font-weight: 500;
+  outline: none;
+  transition: border 0.2s;
+  cursor: pointer;
+}
+
+.select-dropdown-wrapper select:focus {
+  border: 1.5px solid #007948;
+}
+
+.select-chevron {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.2s;
+}
+
+.select-dropdown-wrapper select option {
+  background: #fff;
+  color: #070600;
+  font-size: 17px;
+  font-family: inherit;
+  padding: 12px 16px;
+}
+
+/* Remove extra padding for tables inside the new Modal component */
+.modal-container .table-header-item:first-child,
+.modal-backdrop .table-header-item:first-child {
+  padding-left: 80px !important;
+}
+
+.modal-container .table-header-item:last-child,
+.modal-backdrop .table-header-item:last-child {
+  padding-right: 80px !important;
+}
+
+.modal-container .table-data-item:first-child,
+.modal-backdrop .table-data-item:first-child {
+  padding-left: 80px !important;
+}
+
+.modal-container .table-data-item:last-child,
+.modal-backdrop .table-data-item:last-child {
+  padding-right: 80px !important;
+}
+
+.max-td-width-mobile {
+  max-width: 200px !important;
+  white-space: wrap;
+}
 
 /* Reset to standard mobile gap */
 @media (max-width: 768px) {
   .page-content {
-    gap: 24px;
+    gap: 15px;
   }
   /* .sidebar {
     width: 240px;
@@ -754,18 +826,120 @@ table {
   }
   .table-header-item {
     font-size: 12px !important;
-    padding: 10px 10px !important;
-
+    padding: 8px 8px !important;
   }
   .table-data-item {
     font-size: 12px !important;
-    padding: 5px 10px !important;
+    padding: 4px 8px !important;
   }
   table:not(.no-min-width-table) .table-data-item:not(:first-child) {
-    min-width: 90px !important;
+    min-width: 0px !important;
   }
   table:not(.no-min-width-table) .table-header-item:not(:first-child) {
-    min-width: 90px !important;
+    min-width: 0px !important;
   }
-  
+  th,
+  td {
+    max-width: 120px !important;
+    flex-wrap: wrap !important;
+    white-space: wrap !important;
+    overflow: hidden !important;
+  }
+  th {
+    white-space: nowrap !important;
+    flex-wrap: wrap !important;
+    overflow: hidden !important;
+  }
+
+  .role-badge-table {
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    padding: 6px 11px;
+    font-size: 12px;
+    color: #898989;
+  }
+  .status-badge-table {
+    font-size: 12px;
+    padding: 0px 0px;
+    border-radius: 6px;
+    font-weight: 600 !important;
+  }
+  .action-btn-table {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 8px;
+    transition: color 0.15s;
+  }
+  .table-data-item-role {
+    padding: 5px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 16px;
+    color: #898989;
+  }
+
+  .select-dropdown-wrapper {
+    position: relative;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .select-dropdown-wrapper select {
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .select-chevron {
+    right: 12px;
+
+    width: 12px;
+    height: 12px;
+  }
+
+  .select-dropdown-wrapper select option {
+    background: #fff;
+    color: #070600;
+    font-size: 17px;
+    font-family: inherit;
+    padding: 10px 12px;
+  }
+  .max-td-width-mobile {
+    max-width: 150px !important;
+    white-space: wrap;
+  }
+  .table-container {
+    overflow-x: auto;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  /* Remove extra padding for tables inside the new Modal component */
+  .modal-container .table-header-item:first-child,
+  .modal-backdrop .table-header-item:first-child {
+    padding-left: 30px !important;
+  }
+
+  .modal-container .table-header-item:last-child,
+  .modal-backdrop .table-header-item:last-child {
+    padding-right: 30px !important;
+  }
+
+  .modal-container .table-data-item:first-child,
+  .modal-backdrop .table-data-item:first-child {
+    padding-left: 30px !important;
+  }
+
+  .modal-container .table-data-item:last-child,
+  .modal-backdrop .table-data-item:last-child {
+    padding-right: 30px !important;
+  }
 }

@@ -271,29 +271,15 @@
   }
 }
 
-.fund-wallet-modal {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
-  padding: 36px 32px 32px 32px;
-  min-width: 340px;
-  max-width: 95vw;
-  position: relative;
+/* Fund Wallet Content Styles */
+.fund-wallet-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: scaleIn 0.3s ease-out;
+  min-width: 100%;
+  max-width: 100%;
 }
-.fund-wallet-close-btn {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #222;
-}
+
 .fund-wallet-title {
   font-weight: 700;
   font-size: 22px;
@@ -302,29 +288,34 @@
   text-align: left;
   width: 100%;
 }
+
 .fund-wallet-divider {
   width: 100%;
   height: 1px;
   background: #e4e4e4;
   margin-bottom: 22px;
 }
+
 .fund-wallet-form {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
+
 .fund-wallet-label {
   color: #969696;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
 }
+
 .fund-wallet-input-wrapper {
   position: relative;
   width: 100%;
   margin-bottom: 8px;
 }
+
 .fund-wallet-currency {
   position: absolute;
   left: 18px;
@@ -335,6 +326,7 @@
   font-weight: 600;
   pointer-events: none;
 }
+
 .fund-wallet-input {
   width: 100%;
   border: 2px solid #007948;
@@ -348,6 +340,7 @@
   font-weight: 600;
   box-sizing: border-box;
 }
+
 .fund-wallet-input:focus {
   border: 2px solid #15976c;
 }
@@ -392,19 +385,15 @@
   background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
 }
 
-.fund-wallet-success-modal {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
-  padding: 36px 32px 32px 32px;
-  min-width: 340px;
-  max-width: 95vw;
-  position: relative;
+/* Fund Wallet Success Content */
+.fund-wallet-success-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: scaleIn 0.3s ease-out;
+  min-width: 340px;
+  max-width: 95vw;
 }
+
 .fund-wallet-success-icon-wrap {
   width: 96px;
   height: 96px;
@@ -413,10 +402,12 @@
   justify-content: center;
   margin-bottom: 24px;
 }
+
 .fund-wallet-success-icon {
   width: 100%;
   height: 100%;
 }
+
 .fund-wallet-success-title {
   font-size: 28px;
   font-weight: 800;
@@ -425,6 +416,7 @@
   margin-bottom: 10px;
   margin-top: 0;
 }
+
 .fund-wallet-success-desc {
   color: #969696;
   font-size: 18px;
@@ -432,243 +424,15 @@
   margin-bottom: 32px;
   text-align: center;
 }
-.fund-wallet-success-modal .fund-wallet-submit-btn {
+
+/* All Transactions Modal */
+.all-transactions-modal {
+  min-width: 640px;
+  max-width: 800px;
+}
+
+.all-transactions-table-container {
   width: 100%;
-  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  border: none;
-  border-radius: 10px;
-  padding: 16px 0;
-  cursor: pointer;
-  letter-spacing: 1px;
-  margin-top: 8px;
-  transition: background 0.2s;
-}
-.fund-wallet-success-modal .fund-wallet-submit-btn:hover {
-  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
-}
-
-/* Dashboard Page Modal Zoom Scaling */
-.bill-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.all-transactions-modal-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-  animation: scaleIn 0.3s ease-out;
-}
-
-.all-transactions-modal-center > div {
-  animation: scaleIn 0.3s ease-out;
-}
-
-/* Apply zoom scaling to modal content instead of centering container */
-.all-transactions-modal-center > div {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
-/* Progressive zoom scaling for dashboard page modal content with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .all-transactions-modal-center > div,
-  .all-transactions-table-container {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .all-transactions-modal-center > div,
-  .all-transactions-table-container {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1700px) {
-  .all-transactions-modal-center > div,
-  .all-transactions-table-container {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1600px) {
-  .all-transactions-modal-center > div,
-  .all-transactions-table-container {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1500px) {
-  .all-transactions-modal-center > div,
-  .all-transactions-table-container {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1450px) {
-  .all-transactions-modal-center > div,
-  .all-transactions-table-container {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1400px) {
-  .all-transactions-modal-center > div {
-    zoom: 1;
-  }
-  .all-transactions-table-container {
-    zoom: 1.3;
-  }
-}
-
-@media (max-width: 1350px) {
-  .all-transactions-modal-center > div {
-    zoom: 1;
-  }
-  .all-transactions-table-container {
-    zoom: 1.3;
-  }
-}
-
-@media (max-width: 1300px) {
-  .all-transactions-modal-center > div {
-    zoom: 1;
-  }
-  .all-transactions-table-container {
-    zoom: 1.2;
-  }
-}
-
-@media (max-width: 1250px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.9;
-  }
-  .all-transactions-table-container {
-    zoom: 1.2;
-  }
-}
-
-@media (max-width: 1200px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.9;
-  }
-  .all-transactions-table-container {
-    zoom: 1.4;
-  }
-}
-
-@media (max-width: 1150px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.9;
-  }
-  .all-transactions-table-container {
-    zoom: 1.3;
-  }
-}
-
-@media (max-width: 1100px) {
-  .all-transactions-modal-center > div {
-    zoom: 1;
-  }
-  .all-transactions-table-container {
-    zoom: 1.3;
-  }
-}
-
-@media (max-width: 1050px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1000px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.8;
-  }
-  .all-transactions-table-container {
-    zoom: 1.6;
-  }
-}
-
-@media (max-width: 950px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.8;
-  }
-  .all-transactions-table-container {
-    zoom: 1.5;
-  }
-}
-
-@media (max-width: 900px) {
-  .all-transactions-modal-center > div {
-    zoom: 0.8;
-  }
-  .all-transactions-table-container {
-    zoom: 1.6;
-  }
-}
-
-/* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
-  .all-transactions-modal-center > div {
-    zoom: 1;
-  }
-
-  .all-transactions-table-container {
-    zoom: 1;
-  }
-}
-
-/* Modal animations */
-.bill-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.all-transactions-modal-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-  animation: scaleIn 0.3s ease-out;
-}
-
-.all-transactions-modal-center > div {
-  animation: scaleIn 0.3s ease-out;
-}
-
-/* Fund wallet modal animations */
-.fund-wallet-modal {
-  animation: scaleIn 0.3s ease-out;
-}
-
-.fund-wallet-success-modal {
-  animation: scaleIn 0.3s ease-out;
 }
 
 /* Animation keyframes */
@@ -692,7 +456,7 @@
   }
 }
 
-/* Reset zoom for mobile devices to use standard responsive behavior */
+/* Mobile Responsive */
 @media (max-width: 768px) {
   .mobile-only {
     display: block;
@@ -702,22 +466,14 @@
     display: none;
   }
 
-  /* Hide desktop modal backdrop on mobile */
-  .bill-modal-backdrop {
-    display: none;
-  }
-
   .wallet-card {
     zoom: 1;
   }
 
-  /* Fund Wallet Modal Mobile Responsive */
-  .fund-wallet-modal {
-    zoom: 1;
-    min-width: 90vw;
-    max-width: 95vw;
-    padding: 24px 20px 20px 20px;
-    border-radius: 12px;
+  /* Fund Wallet Content Mobile Responsive */
+  .fund-wallet-content {
+    min-width: 100%;
+    max-width: 100%;
   }
 
   .fund-wallet-title {
@@ -756,13 +512,10 @@
     margin-top: 6px;
   }
 
-  /* Fund Wallet Success Modal Mobile Responsive */
-  .fund-wallet-success-modal {
-    zoom: 1;
-    min-width: 90vw;
-    max-width: 95vw;
-    padding: 24px 20px 20px 20px;
-    border-radius: 12px;
+  /* Fund Wallet Success Content Mobile Responsive */
+  .fund-wallet-success-content {
+    min-width: 100%;
+    max-width: 100%;
   }
 
   .fund-wallet-success-icon-wrap {
@@ -781,29 +534,27 @@
     margin-bottom: 24px;
   }
 
-  .fund-wallet-success-modal .fund-wallet-submit-btn {
-    font-size: 16px;
-    padding: 14px 0;
-    border-radius: 8px;
-    margin-top: 6px;
-  }
-
   .dashboard-bottom-grid {
     display: flex;
     flex-direction: column;
   }
+
   .dashboard-page-content {
     width: 100%;
   }
+
   .wallet-card {
     padding: 18px 21px;
   }
+
   .wallet-icon {
     display: none;
   }
+
   .wallet-label {
     font-size: 13px;
   }
+
   .wallet-balance {
     font-size: 35px;
     line-height: 36px;
@@ -822,95 +573,14 @@
     justify-content: center;
     align-self: center;
   }
+
   .wallet-card {
     border-radius: 10px;
   }
 
-  /* Mobile Transactions Modal Backdrop */
-  .mobile-transactions-modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--bg-color);
-    z-index: 1000;
-    animation: slideInUp 0.3s ease-out;
-  }
-
-  /* Mobile Transactions Modal Content */
-  .mobile-transactions-modal-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-color);
-  }
-
-  /* Mobile Transactions Modal Header */
-  .mobile-transactions-modal-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0px 0px 10px 0px;
-    background: var(--bg-color);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  /* Mobile Back Button */
-  .mobile-transactions-back-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--black);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 8px;
-    transition: background-color 0.2s;
-  }
-
-  .mobile-transactions-back-btn:hover {
-    background-color: #f8f9fa;
-  }
-
-  .mobile-transactions-back-btn:active {
-    transform: scale(0.95);
-  }
-
-  /* Mobile Modal Title */
-  .mobile-transactions-modal-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--black);
-    margin: 0;
-    flex: 1;
-  }
-
-  /* Mobile Modal Body */
-  .mobile-transactions-modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-  }
-
-  /* Ensure the transactions table in mobile modal has proper styling */
-  .mobile-transactions-modal-body .transactions-table {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .mobile-transactions-modal-body .table-header {
-    margin-bottom: 12px;
-  }
-
-  .mobile-transactions-modal-body .table-title h3 {
-    font-size: 16px;
-    font-weight: 600;
+  /* All Transactions Modal Mobile */
+  .all-transactions-modal {
+    min-width: 90vw;
+    max-width: 95vw;
   }
 }

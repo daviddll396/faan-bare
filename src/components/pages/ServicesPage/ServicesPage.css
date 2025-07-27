@@ -187,13 +187,13 @@
   flex-direction: column;
 }
 
-.select-dropdown-wrapper {
+.services-select-dropdown-wrapper {
   position: relative;
   width: 100%;
   z-index: 10;
 }
 
-.select-dropdown-wrapper select {
+.services-select-dropdown-wrapper select {
   width: 100%;
   appearance: none;
   -webkit-appearance: none;
@@ -211,11 +211,11 @@
   cursor: pointer;
 }
 
-.select-dropdown-wrapper select:focus {
+.services-select-dropdown-wrapper select:focus {
   border: 1.5px solid #007948;
 }
 
-.select-chevron {
+.services-select-chevron {
   position: absolute;
   right: 18px;
   top: 50%;
@@ -226,7 +226,7 @@
   transition: transform 0.2s;
 }
 
-.select-dropdown-wrapper select option {
+.services-select-dropdown-wrapper select option {
   background: #fff;
   color: #070600;
   font-size: 17px;
@@ -705,56 +705,15 @@ select.booking-form-input {
 /* CUSTOMER MODAL COMPONENTS */
 /* ======================================== */
 
-.customer-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100% !important;
-  height: 100% !important;
-  background: rgba(34, 43, 69, 0.32);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-}
+/* Service Payment Success Modal */
 
-.customer-modal-center {
-  width: 100% !important;
-  height: 100% !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-}
-
-/* Apply better scaling to modal content */
-.customer-modal-center > div {
-  zoom: 1 !important;
-  transform: scale(1) !important;
-  transform-origin: center center !important;
-  transition: zoom 0.3s ease;
-}
-
-/* Customer Success Modal Styling */
-.customer-success-modal {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
-  padding: 36px 32px 32px 32px;
-  min-width: 340px;
-  max-width: 95vw;
-  position: relative;
+.service-payment-success-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  text-align: center;
+  padding: 0px;
 }
 
 .customer-success-icon-wrap {
@@ -895,9 +854,6 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.9;
   }
-  .customer-modal-center > div {
-    zoom: 1 !important;
-  }
 }
 
 @media (max-width: 1800px) {
@@ -925,9 +881,6 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.85;
   }
-  .customer-modal-center > div {
-    zoom: 1.2 !important;
-  }
 }
 
 @media (max-width: 1700px) {
@@ -943,7 +896,7 @@ select.booking-form-input {
   .services-page .content-card {
     zoom: 0.75;
   }
-.services-page .add-service-form-card {
+  .services-page .add-service-form-card {
     zoom: 0.75;
   }
   .border-button-userspage {
@@ -954,9 +907,6 @@ select.booking-form-input {
   }
   .services-action-buttons-row {
     zoom: 0.8;
-  }
-  .customer-modal-center > div {
-    zoom: 1.3 !important;
   }
 }
 
@@ -985,9 +935,6 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.75;
   }
-  .customer-modal-center > div {
-    zoom: 1.3 !important;
-  }
 }
 
 @media (max-width: 1500px) {
@@ -1014,9 +961,6 @@ select.booking-form-input {
   }
   .services-action-buttons-row {
     zoom: 0.7;
-  }
-  .customer-modal-center > div {
-    zoom: 1.4 !important;
   }
 }
 
@@ -1045,9 +989,6 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.65;
   }
-  .customer-modal-center > div {
-    zoom: 1.4 !important;
-  }
 }
 
 @media (max-width: 1400px) {
@@ -1074,9 +1015,6 @@ select.booking-form-input {
   }
   .services-action-buttons-row {
     zoom: 0.6;
-  }
-  .customer-modal-center > div {
-    zoom: 1.45 !important;
   }
 }
 
@@ -1105,9 +1043,6 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.58;
   }
-  .customer-modal-center > div {
-    zoom: 1.5 !important;
-  }
 }
 
 @media (max-width: 1300px) {
@@ -1135,9 +1070,6 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.56;
   }
-  .customer-modal-center > div {
-    zoom: 2.2 !important;
-  }
 }
 
 @media (max-width: 1250px) {
@@ -1164,9 +1096,6 @@ select.booking-form-input {
   }
   .services-action-buttons-row {
     zoom: 0.54;
-  }
-  .customer-modal-center > div {
-    zoom: 2.2 !important;
   }
 }
 
@@ -1285,7 +1214,7 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 0.46;
   }
-.customer-modal-center > div {
+  .customer-modal-center > div {
     zoom: 2.5 !important;
   }
 }
@@ -1385,7 +1314,7 @@ select.booking-form-input {
 }
 
 /* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
+@media (max-width: 842px) {
   .services-customer-grid {
     zoom: 1;
   }
@@ -1401,13 +1330,13 @@ select.booking-form-input {
     box-shadow: none;
     border: none;
     max-width: 100%;
-  width: 100%;
+    width: 100%;
   }
   .booking-summary-title {
     font-size: 16px;
     font-weight: 600;
     color: #070600;
-  margin-bottom: 10px;
+    margin-bottom: 10px;
     letter-spacing: 0.01em;
     text-align: left;
   }
@@ -1416,7 +1345,7 @@ select.booking-form-input {
     justify-content: space-between;
     align-items: center;
     font-size: 15px;
-  font-weight: 400;
+    font-weight: 400;
     color: #898989;
     margin-bottom: 6px;
     padding: 0;
@@ -1428,7 +1357,7 @@ select.booking-form-input {
   }
   .booking-summary-row.total {
     font-weight: 600;
-  background: none;
+    background: none;
     padding: 0;
     border-radius: 0;
     font-size: 15px;
@@ -1445,7 +1374,9 @@ select.booking-form-input {
   }
   .services-page .add-service-form-card {
     zoom: 1;
+    margin-bottom: var(--page-bottom-padding-mobile);
   }
+
   .border-button-userspage {
     zoom: 1;
   }
@@ -1455,8 +1386,13 @@ select.booking-form-input {
   .services-action-buttons-row {
     zoom: 1;
   }
-  .customer-modal-center > div {
-    zoom: 1 !important;
+  .service-payment-success-modal {
+    min-width: 90vw;
+    max-width: 95vw;
+  }
+
+  .service-payment-success-content {
+    padding: 0px;
   }
   .services-customer-header {
     justify-content: space-between;
@@ -1464,6 +1400,7 @@ select.booking-form-input {
   .services-customer-page {
     padding: 0px;
     padding-bottom: var(--page-bottom-padding-mobile);
+    overflow-x: hidden;
   }
   .services-customer-header {
     margin: 20px 0px;
@@ -1723,5 +1660,124 @@ select.booking-form-input {
   }
   .passenger-mobile-delete:hover {
     background: #ffeaea;
+  }
+  .services-page .page-header-bottom {
+    align-items: end;
+  }
+
+  .service-index-circle {
+    min-width: 28px;
+    min-height: 28px;
+    max-width: 28px;
+    max-height: 28px;
+    border-radius: 50%;
+    border: 2px solid #007948;
+    color: #007948;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Mobile Responsive Styles for Add Service Form */
+  .add-service-form-card {
+    width: 100%;
+    padding: 20px 18px 18px 18px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    box-shadow: none;
+    border-radius: 15px;
+    border: none;
+    background: #fff;
+  }
+
+  .add-user-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .add-user-helper {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .user-form-list {
+    gap: 20px;
+  }
+
+  .service-form-row {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .service-field-group {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .service-field-group.service-name-group {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .service-field-group.currency-group {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .service-field-group.price-group {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .service-field-group label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .service-field-group input,
+  .service-field-group select {
+    font-size: 13px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .services-select-dropdown-wrapper select {
+    font-size: 13px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .services-select-chevron {
+    right: 12px;
+    width: 15px;
+    height: 15px;
+  }
+
+  .add-more-items-btn {
+    width: 100%;
+    height: 45px;
+    font-size: 13px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+
+  .form-actions .gradient-button {
+    font-size: 16px;
+    padding: 14px 0;
+    border-radius: 8px;
+  }
+
+  .form-row-full {
+    width: 100%;
   }
 }

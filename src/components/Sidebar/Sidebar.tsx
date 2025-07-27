@@ -9,9 +9,9 @@ import CustomerIcon from "../../../public/icons/nav-customer-icon.svg";
 import BillIcon from "../../../public/icons/nav-bill-icon.svg";
 import PaymentIcon from "../../../public/icons/nav-payment-icon.svg";
 import LogoutIcon from "../../../public/icons/nav-logout-icon.svg";
+import { Users, UserCheck, FileText } from "lucide-react";
 
 // Mobile-specific icons (using Lucide React icons for better mobile experience)
-
 
 import HomeBottomBarIcon from "/icons/home-bottombar.svg";
 import ServicesBottomBarIcon from "/icons/services-bottombar.svg";
@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       icon: () => <img src={UserIcon} alt="Users" width={20} height={20} />,
-      mobileIcon: null, // No mobile icon for users
+      mobileIcon: () => <Users size={20} />,
       label: "Users",
       mobileLabel: "Users",
       page: "users" as PageType,
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: () => (
         <img src={CustomerIcon} alt="Customers" width={20} height={20} />
       ),
-      mobileIcon: null, // No mobile icon for customers
+      mobileIcon: () => <UserCheck size={20} />,
       label: "Customers",
       mobileLabel: "Customers",
       page: "customers" as PageType,
@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       icon: () => <img src={BillIcon} alt="Bills" width={20} height={20} />,
-      mobileIcon: null, // No mobile icon for bills
+      mobileIcon: () => <FileText size={20} />,
       label: "Bills",
       mobileLabel: "Bills",
       page: "bills" as PageType,
@@ -135,7 +135,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       mobileLabel: "Profile",
       page: "profile" as PageType,
       showForCustomer: true,
-      showForAdmin: false,
+      showForAdmin: true,
       mobileOnly: true,
     },
   ];
@@ -143,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   // Filter menu items based on role and windowWidth for Profile
   const filteredMenuItems = menuItems.filter((item) => {
     if (item.page === "profile") {
-      return userRole === "Customer" && windowWidth <= 768;
+      return windowWidth <= 768; // Show profile for both Customer and Admin on mobile
     }
     if (userRole === "Customer")
       return item.showForCustomer && (!item.mobileOnly || windowWidth <= 768);
@@ -179,10 +179,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <item.mobileIcon />
                 </div>
               )}
-              {/* Desktop Label */}
-              <span className="desktop-label">{item.label}</span>
-              {/* Mobile Label */}
-              <span className="mobile-label">{item.mobileLabel}</span>
+              {/* Only show labels on mobile for customers, not for admin */}
+              {!(windowWidth <= 768 && userRole !== "Customer") && (
+                <>
+                  <span className="desktop-label">{item.label}</span>
+                  <span className="mobile-label">{item.mobileLabel}</span>
+                </>
+              )}
             </div>
           ))}
       </nav>

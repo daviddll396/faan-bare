@@ -5,7 +5,6 @@ import AddIcon from "../../../../public/icons/add-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
-import CurrencyDropdown from "../../reusables/CurrencyDropdown/CurrencyDropdown";
 import ChevronDown from "../../../../public/icons/chevron-down.svg";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import ServicesIcon from "/icons/nav-product-icon.svg";
@@ -14,7 +13,8 @@ import { Edit, Trash2 } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
-import PaymentModal from "../../reusables/PaymentModal/PaymentModal";
+import Modal from "../../reusables/Modal/Modal";
+import SlideIndicator from "../../reusables/SlideIndicator";
 
 interface ServicesPageProps {
   role?: string;
@@ -140,6 +140,13 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const [bookingFormError, setBookingFormError] = React.useState("");
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
   const [showPaymentModal, setShowPaymentModal] = React.useState(false);
+  const [paymentMethod, setPaymentMethod] = React.useState<"card" | "transfer">(
+    "transfer"
+  );
+  const [cardNumber, setCardNumber] = React.useState("");
+  const [expirationDate, setExpirationDate] = React.useState("");
+  const [cvv, setCvv] = React.useState("");
+  const [saveCard, setSaveCard] = React.useState(false);
 
   // Add search state for admin view
   const [searchName, setSearchName] = useState("");
@@ -1073,66 +1080,504 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             </>
           )}
 
-          {/* Payment Success Modal Overlay */}
-          {showPaymentSuccess && (
-            <div className="customer-modal-backdrop">
-              <div className="customer-modal-center">
-                <div className="customer-success-modal">
-                  <div className="customer-success-icon-wrap">
-                    <img
-                      src={CheckCircle}
-                      alt="success"
-                      className="customer-success-icon"
-                    />
-                  </div>
-                  <div className="customer-success-title">Payment Success!</div>
-                  <div className="customer-success-desc">
-                    Your payment has been made successfully.
-                  </div>
-                  <div className="customer-success-actions">
-                    <div style={{ width: "100%" }}>
-                      <GradientButton
-                        fullWidth
-                        onClick={() => {
-                          setShowPaymentSuccess(false);
-                          setSelectedService(null);
-                          setPassengers([]);
-                          setBookingForm({
-                            firstName: "",
-                            lastName: "",
-                            designation: "",
-                            gender: "",
-                            mobile: "",
-                            specialReq: "",
-                            airport: "",
-                            travelDate: "",
-                            flightNumber: "",
-                            airportTime: "",
-                            airline: "",
-                            destination: "",
-                          });
-                          setActiveTab("passenger");
-                        }}
-                      >
-                        BACK TO SERVICES
-                      </GradientButton>
-                    </div>
-                  </div>
+          {/* Payment Success Modal */}
+          <Modal
+            isOpen={showPaymentSuccess}
+            onClose={() => {
+              setShowPaymentSuccess(false);
+              setSelectedService(null);
+              setPassengers([]);
+              setBookingForm({
+                firstName: "",
+                lastName: "",
+                designation: "",
+                gender: "",
+                mobile: "",
+                specialReq: "",
+                airport: "",
+                travelDate: "",
+                flightNumber: "",
+                airportTime: "",
+                airline: "",
+                destination: "",
+              });
+              setActiveTab("passenger");
+            }}
+            showHeader={false}
+            className="service-payment-success-modal"
+          >
+            <div className="service-payment-success-content">
+              <div className="customer-success-icon-wrap">
+                <img
+                  src={CheckCircle}
+                  alt="success"
+                  className="customer-success-icon"
+                />
+              </div>
+              <div className="customer-success-title">Payment Success!</div>
+              <div className="customer-success-desc">
+                Your payment has been made successfully.
+              </div>
+              <div className="customer-success-actions">
+                <div style={{ width: "100%" }}>
+                  <GradientButton
+                    fullWidth
+                    onClick={() => {
+                      setShowPaymentSuccess(false);
+                      setSelectedService(null);
+                      setPassengers([]);
+                      setBookingForm({
+                        firstName: "",
+                        lastName: "",
+                        designation: "",
+                        gender: "",
+                        mobile: "",
+                        specialReq: "",
+                        airport: "",
+                        travelDate: "",
+                        flightNumber: "",
+                        airportTime: "",
+                        airline: "",
+                        destination: "",
+                      });
+                      setActiveTab("passenger");
+                    }}
+                  >
+                    BACK TO SERVICES
+                  </GradientButton>
                 </div>
               </div>
             </div>
-          )}
+          </Modal>
 
           {/* Payment Modal */}
-          <PaymentModal
-            isVisible={showPaymentModal}
-            onClose={() => setShowPaymentModal(false)}
-            onPaymentSubmit={handlePaymentSubmit}
-            amount={total}
-            accountNumber="0035678923"
-            bankName="Access Bank"
-            accountName="FAAN A/C"
-          />
+          <Modal
+            isOpen={showPaymentModal}
+            onClose={() => {
+              setShowPaymentModal(false);
+              setPaymentMethod("transfer");
+              setCardNumber("");
+              setExpirationDate("");
+              setCvv("");
+              setSaveCard(false);
+            }}
+            showHeader={true}
+            headerTitle="FEDERAL AIRPORT AUTHORITY OF NIGERIA"
+            className="service-payment-modal"
+          >
+            <div className="service-payment-modal-content">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handlePaymentSubmit();
+                }}
+                style={{ width: "100%" }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    background: "#0079480D",
+                    borderRadius: 12,
+                    padding: "14px",
+                    marginBottom: 24,
+                  }}
+                >
+                  <div style={{ marginBottom: 10 }}>
+                    <span
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 14,
+                      }}
+                    >
+                      Amount
+                    </span>
+                    <span
+                      style={{
+                        color: "var(--black)",
+                        fontWeight: 600,
+                        fontSize: 16,
+                        float: "right",
+                      }}
+                    >
+                      ₦{total.toLocaleString()}
+                    </span>
+                  </div>
+                  <div style={{ marginBottom: 12 }}>
+                    <span
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 14,
+                      }}
+                    >
+                      Account Number
+                    </span>
+                    <span
+                      style={{
+                        color: "var(--black)",
+                        fontWeight: 600,
+                        fontSize: 16,
+                        float: "right",
+                      }}
+                    >
+                      0035678923
+                    </span>
+                  </div>
+                  <div style={{ marginBottom: 12 }}>
+                    <span
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 14,
+                      }}
+                    >
+                      Bank
+                    </span>
+                    <span
+                      style={{
+                        color: "var(--black)",
+                        fontWeight: 600,
+                        fontSize: 16,
+                        float: "right",
+                      }}
+                    >
+                      Access Bank
+                    </span>
+                  </div>
+                  <div>
+                    <span
+                      style={{
+                        color: "#6c7278",
+                        fontWeight: 500,
+                        fontSize: 14,
+                      }}
+                    >
+                      Name
+                    </span>
+                    <span
+                      style={{
+                        color: "var(--black)",
+                        fontWeight: 600,
+                        fontSize: 16,
+                        float: "right",
+                      }}
+                    >
+                      FAAN A/C
+                    </span>
+                  </div>
+                </div>
+                <div style={{ width: "100%", marginBottom: 24 }}>
+                  <div
+                    style={{
+                      color: "var(--black)",
+                      fontWeight: 600,
+                      fontSize: 16,
+                      marginBottom: 12,
+                    }}
+                  >
+                    Pay With:
+                  </div>
+                  <div style={{ display: "flex", gap: 24 }}>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="card"
+                        checked={paymentMethod === "card"}
+                        onChange={() => setPaymentMethod("card")}
+                        style={{ display: "none" }}
+                      />
+                      <div
+                        style={{
+                          width: 18,
+                          height: 18,
+                          border: `2px solid ${
+                            paymentMethod === "card" ? "#007948" : "#d1d5db"
+                          }`,
+                          borderRadius: "50%",
+                          position: "relative",
+                          background:
+                            paymentMethod === "card"
+                              ? "#007948"
+                              : "transparent",
+                        }}
+                      >
+                        {paymentMethod === "card" && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: 6,
+                              height: 6,
+                              background: "white",
+                              borderRadius: "50%",
+                            }}
+                          />
+                        )}
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "var(--black)",
+                        }}
+                      >
+                        Card
+                      </span>
+                    </label>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="transfer"
+                        checked={paymentMethod === "transfer"}
+                        onChange={() => setPaymentMethod("transfer")}
+                        style={{ display: "none" }}
+                      />
+                      <div
+                        style={{
+                          width: 18,
+                          height: 18,
+                          border: `2px solid ${
+                            paymentMethod === "transfer" ? "#007948" : "#d1d5db"
+                          }`,
+                          borderRadius: "50%",
+                          position: "relative",
+                          background:
+                            paymentMethod === "transfer"
+                              ? "#007948"
+                              : "transparent",
+                        }}
+                      >
+                        {paymentMethod === "transfer" && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: 6,
+                              height: 6,
+                              background: "white",
+                              borderRadius: "50%",
+                            }}
+                          />
+                        )}
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "var(--black)",
+                        }}
+                      >
+                        Transfer
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                {/* Card Details */}
+                {paymentMethod === "card" && (
+                  <div style={{ width: "100%", marginBottom: 24 }}>
+                    <div style={{ marginBottom: 16 }}>
+                      <label
+                        style={{
+                          display: "block",
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: "var(--black)",
+                          marginBottom: 6,
+                        }}
+                      >
+                        Card Number
+                      </label>
+                      <input
+                        type="text"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
+                        placeholder="Enter card number"
+                        maxLength={16}
+                        style={{
+                          width: "100%",
+                          padding: "12px 16px",
+                          border: "1.5px solid #e4e4e7",
+                          borderRadius: 8,
+                          fontSize: 14,
+                          fontWeight: 500,
+                          background: "#fff",
+                          color: "#18181b",
+                          outline: "none",
+                        }}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: 16,
+                        marginBottom: 12,
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: "var(--black)",
+                            marginBottom: 6,
+                          }}
+                        >
+                          Expiration Date
+                        </label>
+                        <input
+                          type="text"
+                          value={expirationDate}
+                          onChange={(e) => setExpirationDate(e.target.value)}
+                          placeholder="MM/YY"
+                          maxLength={5}
+                          style={{
+                            width: "100%",
+                            padding: "12px 16px",
+                            border: "1.5px solid #e4e4e7",
+                            borderRadius: 8,
+                            fontSize: 14,
+                            fontWeight: 500,
+                            background: "#fff",
+                            color: "#18181b",
+                            outline: "none",
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            display: "block",
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: "var(--black)",
+                            marginBottom: 6,
+                          }}
+                        >
+                          CVV
+                        </label>
+                        <input
+                          type="text"
+                          value={cvv}
+                          onChange={(e) => setCvv(e.target.value)}
+                          placeholder="123"
+                          maxLength={4}
+                          style={{
+                            width: "100%",
+                            padding: "12px 16px",
+                            border: "1.5px solid #e4e4e7",
+                            borderRadius: 8,
+                            fontSize: 14,
+                            fontWeight: 500,
+                            background: "#fff",
+                            color: "#18181b",
+                            outline: "none",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={saveCard}
+                        onChange={(e) => setSaveCard(e.target.checked)}
+                        style={{ display: "none" }}
+                      />
+                      <div
+                        style={{
+                          width: 16,
+                          height: 16,
+                          border: `2px solid ${
+                            saveCard ? "#007948" : "#d1d5db"
+                          }`,
+                          borderRadius: 4,
+                          position: "relative",
+                          background: saveCard ? "#007948" : "transparent",
+                        }}
+                      >
+                        {saveCard && (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              color: "white",
+                              fontSize: 10,
+                              fontWeight: "bold",
+                            }}
+                          >
+                            ✓
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "var(--black)",
+                        }}
+                      >
+                        Save card details
+                      </span>
+                    </label>
+                  </div>
+                )}
+                <GradientButton type="submit" fullWidth size="large">
+                  PAY
+                </GradientButton>
+                <p
+                  style={{
+                    fontSize: 12,
+                    color: "#acacac",
+                    textAlign: "center",
+                    lineHeight: 1.5,
+                    marginTop: "15px",
+                  }}
+                >
+                  Your personal data will be used to process your order, support
+                  your experience throughout this website, and for other
+                  purposes described in our{" "}
+                  <a
+                    href="#"
+                    style={{ color: "#007948", textDecoration: "underline" }}
+                  >
+                    privacy policy
+                  </a>
+                  .
+                </p>
+              </form>
+            </div>
+          </Modal>
         </div>
       );
     }
@@ -1213,23 +1658,37 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       <div className="page-content">
         {!showAddServiceForm ? (
           <>
+            {windowWidth <= 768 && (
+              <PageTitle title="Services" icon={ServicesIcon} />
+            )}
+
             <div className="page-header-bottom">
-              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: windowWidth <= 768 ? "100%" : "auto",
+                  gap: 12,
+                  justifyContent: "space-between",
+                }}
+              >
                 <SearchInput
                   placeholder="Search name"
                   value={searchName}
                   onChange={(e) => setSearchName(e.target.value)}
                 />
-                <BorderButton
-                  text="Search"
-                  onClick={handleSearch}
-                  className="border-button-servicespage"
-                />
-                <BorderButton
-                  text="Clear"
-                  onClick={handleClearSearch}
-                  className="border-button-servicespage"
-                />
+                <div style={{ display: "flex", gap: 12 }}>
+                  <BorderButton
+                    text="Search"
+                    onClick={handleSearch}
+                    className="border-button-servicespage"
+                  />
+                  <BorderButton
+                    text="Clear"
+                    onClick={handleClearSearch}
+                    className="border-button-servicespage"
+                  />
+                </div>
               </div>
               <div>
                 <BorderButton
@@ -1257,13 +1716,15 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     {filteredServices.map((product) => (
                       <tr key={product.id}>
                         <td className="table-data-item">{product.id}</td>
-                        <td className="table-data-item">{product.name}</td>
+                        <td className="table-data-item max-td-width-mobile">
+                          {product.name}
+                        </td>
                         <td className="table-data-item">₦{product.price}</td>
                         <td className="table-data-item last-modified-cell">
-                          <span className="last-modified-name">
+                          {/* <span className="table-data-item last-modified-name max-td-width-mobile">
                             {product.name}:
-                          </span>
-                          <br />
+                          </span> */}
+                          {/* <br /> */}
                           <span className="last-modified-date">
                             12-08-2024 / 11:32pm
                           </span>
@@ -1282,97 +1743,110 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 </table>
               </div>
             </div>
+            {windowWidth <= 768 && <SlideIndicator />}
           </>
         ) : (
-          <div className="add-service-form-card">
-            <h2 className="add-user-title">Add New Service</h2>
-            <p className="add-user-helper">
-              Please input all required details to add a new service.
-            </p>
-            <form
-              className="user-form-list"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setShowAddServiceForm(false);
-              }}
-            >
-              {services.map((service, idx) => (
-                <div className="service-form-row" key={idx}>
-                  <div className="service-index-circle">{idx + 1}.</div>
-                  <div className="service-field-group service-name-group">
-                    <label>Service Name:</label>
-                    <div
-                      className={`select-dropdown-wrapper${
-                        serviceNameSelectOpen === idx ? " open" : ""
-                      }`}
-                    >
-                      <select
-                        value={service.serviceName}
-                        onFocus={() => setServiceNameSelectOpen(idx)}
-                        onBlur={() => setServiceNameSelectOpen(null)}
-                        onChange={(e) => {
-                          handleServiceChange(
-                            idx,
-                            "serviceName",
-                            e.target.value
-                          );
-                          setServiceNameSelectOpen(null);
-                        }}
+          <>
+            {windowWidth <= 768 && (
+              <PageTitle title="Add New Service" icon={AddIcon} />
+            )}
+            <div className="add-service-form-card">
+              <h2 className="add-user-title">Add New Service</h2>
+              <p className="add-user-helper">
+                Please input all required details to add a new service.
+              </p>
+              <form
+                className="user-form-list"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setShowAddServiceForm(false);
+                }}
+              >
+                {services.map((service, idx) => (
+                  <div className="service-form-row" key={idx}>
+                    <div className="service-index-circle">{idx + 1}.</div>
+                    <div className="service-field-group service-name-group">
+                      <label>Service Name:</label>
+                      <div
+                        className={`services-select-dropdown-wrapper${
+                          serviceNameSelectOpen === idx ? " open" : ""
+                        }`}
                       >
-                        <option value="">Select service</option>
-                        {serviceNames.map((name) => (
-                          <option key={name} value={name}>
-                            {name}
-                          </option>
-                        ))}
-                      </select>
-                      <img
-                        src={ChevronDown}
-                        alt="dropdown"
-                        className="select-chevron"
+                        <select
+                          value={service.serviceName}
+                          onFocus={() => setServiceNameSelectOpen(idx)}
+                          onBlur={() => setServiceNameSelectOpen(null)}
+                          onChange={(e) => {
+                            handleServiceChange(
+                              idx,
+                              "serviceName",
+                              e.target.value
+                            );
+                            setServiceNameSelectOpen(null);
+                          }}
+                        >
+                          <option value="">Select service</option>
+                          {serviceNames.map((name) => (
+                            <option key={name} value={name}>
+                              {name}
+                            </option>
+                          ))}
+                        </select>
+                        <img
+                          src={ChevronDown}
+                          alt="dropdown"
+                          className="services-select-chevron"
+                        />
+                      </div>
+                    </div>
+                    <div className="service-field-group currency-group">
+                      <label>Currency:</label>
+                      <div className="services-select-dropdown-wrapper">
+                        <select
+                          value={service.currency}
+                          onChange={(e) =>
+                            handleServiceChange(idx, "currency", e.target.value)
+                          }
+                        >
+                          <option value="NGR">NGR</option>
+                        </select>
+                        <img
+                          src={ChevronDown}
+                          alt="dropdown"
+                          className="services-select-chevron"
+                        />
+                      </div>
+                    </div>
+                    <div className="service-field-group price-group">
+                      <label>Price:</label>
+                      <input
+                        type="text"
+                        value={formatNumberWithCommas(service.price)}
+                        onChange={(e) =>
+                          handleServiceChange(idx, "price", e.target.value)
+                        }
+                        placeholder=""
                       />
                     </div>
                   </div>
-                  <div className="service-field-group currency-group">
-                    <label>Currency:</label>
-                    <CurrencyDropdown
-                      label=""
-                      value={service.currency}
-                      options={["NGR"]}
-                      onChange={(val) =>
-                        handleServiceChange(idx, "currency", val)
-                      }
-                    />
-                  </div>
-                  <div className="service-field-group price-group">
-                    <label>Price:</label>
-                    <input
-                      type="text"
-                      value={formatNumberWithCommas(service.price)}
-                      onChange={(e) =>
-                        handleServiceChange(idx, "price", e.target.value)
-                      }
-                      placeholder=""
-                    />
-                  </div>
+                ))}
+                <div className="form-row form-row-full">
+                  <button
+                    type="button"
+                    className="add-more-items-btn"
+                    onClick={addMoreService}
+                  >
+                    + Add New Service
+                  </button>
                 </div>
-              ))}
-              <div className="form-row form-row-full">
-                <button
-                  type="button"
-                  className="add-more-items-btn"
-                  onClick={addMoreService}
-                >
-                  + Add New Service
-                </button>
-              </div>
-              <div className="form-actions">
-                <GradientButton type="submit" fullWidth>
-                  SAVE ITEM(S)
-                </GradientButton>
-              </div>
-            </form>
-          </div>
+                <div className="form-actions">
+                  <GradientButton type="submit" fullWidth>
+                    SAVE ITEM(S)
+                  </GradientButton>
+                </div>
+              </form>
+            </div>
+          </>
         )}
       </div>
     </div>

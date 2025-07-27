@@ -49,6 +49,7 @@ const Dashboard: React.FC = () => {
           "bills",
           "payment",
           "logout",
+          "profile",
         ];
 
   React.useEffect(() => {
@@ -129,7 +130,7 @@ const Dashboard: React.FC = () => {
         {/* Show header only on dashboard page when screen width is 768px and below */}
         {(activePage === "dashboard" && windowWidth <= 768) ||
         windowWidth > 768 ? (
-          <Header pageTitle={getPageTitle(activePage)} />
+        <Header pageTitle={getPageTitle(activePage)} />
         ) : null}
         <div className="dashboard-content">{renderPageContent()}</div>
       </div>

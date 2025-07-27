@@ -252,7 +252,7 @@
   font-size: 13px;
   font-family: inherit;
   background: #fff;
-  color: #222b45;
+  color: var(--black);
   outline: none;
   transition: border 0.2s;
 }
@@ -723,5 +723,10 @@
     height: 90px;
     
   }
-
+.form-row label{
+  font-size:12px;
+}
+.form-row{
+  gap:5px;
+}
 }

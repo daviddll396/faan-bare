@@ -6,6 +6,7 @@ interface BorderButtonProps {
   icon?: string;
   onClick?: () => void;
   className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
 const BorderButton: React.FC<BorderButtonProps> = ({
@@ -13,9 +14,14 @@ const BorderButton: React.FC<BorderButtonProps> = ({
   icon,
   onClick,
   className = "",
+  type = "button",
 }) => {
   return (
-    <button className={`border-button ${className}`} onClick={onClick}>
+    <button
+      type={type}
+      className={`border-button ${className}`}
+      onClick={onClick}
+    >
       {icon && <img src={icon} alt={text} className="button-icon" />}
       {text}
     </button>

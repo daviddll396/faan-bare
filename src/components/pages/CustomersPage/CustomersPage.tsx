@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Eye } from "lucide-react";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
-import FaanLogo from "../../../../public/images/faan-logo.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { useLoading } from "../../../contexts/LoadingContext";
 import "./customerspage.css";
+import PageTitle from "../../reusables/PageTitle/PageTitle";
+import CustomersIcon from "/icons/nav-customer-icon.svg";
+import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
+import Modal from "../../reusables/Modal/Modal";
 
 const sampleFetchedCustomers = [
   {
@@ -33,6 +36,12 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
   const { showLoading, hideLoading } = useLoading();
   const [activeTab, setActiveTab] = useState("create");
   const [fetched, setFetched] = useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // State for create new customer form
   const [form, setForm] = useState({
@@ -70,12 +79,6 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     setSelectedCustomer(null);
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleCloseCustomerDetails();
-    }
-  };
-
   const handleCreateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -91,6 +94,9 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
 
   return (
     <div className="customers-page-bg">
+      {windowWidth <= 768 && (
+        <PageTitle icon={CustomersIcon} title="Customers" />
+      )}
       <div className="customer-tabs">
         <button
           className={`customer-tab${activeTab === "create" ? " active" : ""}`}
@@ -133,50 +139,55 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 <input type="date" />
               </div>
             </div>
-            <GradientButton type="submit" fullWidth>
-              FETCH
-            </GradientButton>
+            <div className="customer-success-btn-container">
+              <GradientButton type="submit" fullWidth>
+                FETCH
+              </GradientButton>
+            </div>
           </form>
         </div>
       )}
       {activeTab === "fetch" && fetched && (
-        <div className="content-card">
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th className="table-header-item">S/N</th>
-                  <th className="table-header-item">First Name</th>
-                  <th className="table-header-item">Last Name</th>
-                  <th className="table-header-item">ID No.</th>
-                  <th className="table-header-item">Phone No.</th>
-                  <th className="table-header-item">Email</th>
-                  <th className="table-header-item">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sampleFetchedCustomers.map((user, idx) => (
-                  <tr key={user.id}>
-                    <td className="table-data-item">{idx + 1}.</td>
-                    <td className="table-data-item">{user.firstName}</td>
-                    <td className="table-data-item">{user.lastName}</td>
-                    <td className="table-data-item">{user.idNo}</td>
-                    <td className="table-data-item">{user.phone}</td>
-                    <td className="table-data-item">{user.email}</td>
-                    <td className="table-data-item">
-                      <button
-                        className="view-more-btn"
-                        onClick={() => handleViewMore(user)}
-                      >
-                        <Eye size={20} /> View More
-                      </button>
-                    </td>
+        <>
+          <div className="content-card">
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th className="table-header-item">S/N</th>
+                    <th className="table-header-item">First Name</th>
+                    <th className="table-header-item">Last Name</th>
+                    <th className="table-header-item">ID No.</th>
+                    <th className="table-header-item">Phone No.</th>
+                    <th className="table-header-item">Email</th>
+                    <th className="table-header-item">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sampleFetchedCustomers.map((user, idx) => (
+                    <tr key={user.id}>
+                      <td className="table-data-item">{idx + 1}.</td>
+                      <td className="table-data-item">{user.firstName}</td>
+                      <td className="table-data-item">{user.lastName}</td>
+                      <td className="table-data-item">{user.idNo}</td>
+                      <td className="table-data-item">{user.phone}</td>
+                      <td className="table-data-item">{user.email}</td>
+                      <td className="table-data-item">
+                        <button
+                          className="view-more-btn"
+                          onClick={() => handleViewMore(user)}
+                        >
+                          <Eye size={20} /> View More
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+          {windowWidth <= 768 && <SlideIndicator />}
+        </>
       )}
       {activeTab === "create" && (
         <div className="customer-card">
@@ -263,57 +274,55 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
               </GradientButton>
             </div>
           </form>
-          {/* Success Modal Overlay */}
-          {showSuccess && (
-            <div className="customer-modal-backdrop">
-              <div className="customer-modal-center">
-                <div className="customer-success-modal">
-                  <div className="customer-success-icon-wrap">
-                    <img
-                      src={CheckCircle}
-                      alt="success"
-                      className="customer-success-icon"
-                    />
-                  </div>
-                  <div className="customer-success-title">
-                    New Customer
-                    <br />
-                    Successfully Created!
-                  </div>
-                  <div className="customer-success-desc">
-                    You can proceed to create a bill for the customer.
-                  </div>
-                  <div className="customer-success-actions">
-                    <GradientButton variant="primary" size="medium">
-                      CREATE BILL
-                    </GradientButton>
-                    <GradientButton
-                      variant="close"
-                      size="medium"
-                      onClick={() => setShowSuccess(false)}
-                    >
-                      CLOSE
-                    </GradientButton>
-                  </div>
-                </div>
+          {/* Success Modal */}
+          <Modal
+            isOpen={showSuccess}
+            onClose={() => setShowSuccess(false)}
+            showHeader={false}
+            className="customer-success-modal"
+          >
+            <div className="customer-success-content">
+              <div className="customer-success-icon-wrap">
+                <img
+                  src={CheckCircle}
+                  alt="success"
+                  className="customer-success-icon"
+                />
+              </div>
+              <div className="customer-success-title">
+                New Customer
+                <br />
+                Successfully Created!
+              </div>
+              <div className="customer-success-desc">
+                You can proceed to create a bill for the customer.
+              </div>
+              <div className="customer-success-actions">
+                <GradientButton variant="primary" size="medium">
+                  CREATE BILL
+                </GradientButton>
+                <GradientButton
+                  variant="close"
+                  size="medium"
+                  onClick={() => setShowSuccess(false)}
+                >
+                  CLOSE
+                </GradientButton>
               </div>
             </div>
-          )}
+          </Modal>
         </div>
       )}
-      {showCustomerDetails && selectedCustomer && (
-        <div className="customer-details-modal" onClick={handleBackdropClick}>
+      {/* Customer Details Modal */}
+      <Modal
+        isOpen={showCustomerDetails}
+        onClose={handleCloseCustomerDetails}
+        showHeader={true}
+        headerTitle="FEDERAL AIRPORT AUTHORITY OF NIGERIA"
+        className="customer-details-modal"
+      >
+        {selectedCustomer && (
           <div className="customer-details-content">
-            <div className="customer-details-header">
-              <img
-                src={FaanLogo}
-                alt="FAAN Logo"
-                className="customer-details-logo"
-              />
-              <div className="customer-details-org-name">
-                FEDERAL AIRPORT AUTHORITY OF NIGERIA
-              </div>
-            </div>
             <h2 className="customer-details-title">Customer Details</h2>
             <div className="customer-details-info">
               <div className="customer-details-item">
@@ -357,8 +366,8 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
               </GradientButton>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   );
 };
