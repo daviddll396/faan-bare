@@ -257,8 +257,8 @@
     background: none;
     border: none;
     padding: 0 0px;
-    margin-top: 20px;
-    padding-bottom: var(--page-bottom-padding-mobile);
+    margin-top: 0px;
+   
   }
 
   .table-header {
@@ -285,6 +285,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    max-height:400px;
+    overflow:auto;
   }
 
   /* Individual Transaction Card */
@@ -345,4 +347,7 @@
     color: #007948;
     flex-shrink: 0;
   }
+
+  
+
 }

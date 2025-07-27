@@ -10,6 +10,7 @@ import ConfirmationModal from "../../reusables/ConfirmationModal/ConfirmationMod
 import "./userspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
+import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 
 // Add User type for local state
 interface LocalUser {
@@ -117,6 +118,13 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   // UI state
   const [showAddUserForm, setShowAddUserForm] = React.useState(false);
   const [roleSelectFocused, setRoleSelectFocused] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Confirmation modal state
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
@@ -313,8 +321,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
         <div className="page-header">
           {!showAddUserForm ? (
             <PageTitle icon={UsersIcon} title="Users" />
-          ) : (
-            window.innerWidth > 768 ? (
+          ) : window.innerWidth > 768 ? (
             <PageTitle
               icon={UsersIcon}
               title="Users"
@@ -326,12 +333,8 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                 if (idx === 0) setShowAddUserForm(false);
               }}
             />
-            ) : (
-              <PageTitle
-                icon={UsersIcon}
-                title="Add New User"
-              />
-            )
+          ) : (
+            <PageTitle icon={UsersIcon} title="Add New User" />
           )}
         </div>
 
@@ -468,6 +471,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                 </table>
               </div>
             </div>
+            {windowWidth <= 768 && <SlideIndicator />}
           </>
         ) : (
           <div className="add-user-form-card">

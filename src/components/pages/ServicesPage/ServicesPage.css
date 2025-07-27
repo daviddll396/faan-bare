@@ -1374,7 +1374,7 @@ select.booking-form-input {
   }
   .services-page .add-service-form-card {
     zoom: 1;
-    margin-bottom: var(--page-bottom-padding-mobile);
+   
   }
 
   .border-button-userspage {
@@ -1399,7 +1399,7 @@ select.booking-form-input {
   }
   .services-customer-page {
     padding: 0px;
-    padding-bottom: var(--page-bottom-padding-mobile);
+    
     overflow-x: hidden;
   }
   .services-customer-header {
@@ -1416,7 +1416,7 @@ select.booking-form-input {
   .services-customer-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding-bottom: var(--page-bottom-padding-mobile);
+    
   }
   .service-card-img-wrap {
     height: 100px;

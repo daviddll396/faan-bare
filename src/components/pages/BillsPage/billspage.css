@@ -1051,6 +1051,7 @@
     align-items: stretch;
     gap: 0;
     width: 100%;
+    
   }
   .bill-search-card {
     border-radius: 10px;
@@ -1104,7 +1105,7 @@
     width: 100%;
     max-width: 100%;
     border-width: 1px;
-    margin-bottom: var(--page-bottom-padding-mobile);
+   
   }
   .add-user-title {
     font-size: 16px;
@@ -1128,6 +1129,7 @@
   .bill-results-wrapper {
     gap: 10px;
     width: 100%;
+    
   }
   .bill-customer-details-row {
     gap: 10px;

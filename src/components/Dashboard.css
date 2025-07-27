@@ -800,6 +800,7 @@ table {
 @media (max-width: 768px) {
   .page-content {
     gap: 15px;
+    padding-bottom:var(--page-bottom-padding-mobile);
   }
   /* .sidebar {
     width: 240px;

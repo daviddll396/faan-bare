@@ -815,7 +815,7 @@
   .customers-page-bg {
     padding: 0;
     background: var(--bg-color);
-    padding-bottom: var(--page-bottom-padding-mobile);
+   
   }
   .customer-tabs {
     margin-bottom: 18px;
