@@ -24,8 +24,12 @@ export type PageType =
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const [activePage, setActivePage] = useState<PageType>("dashboard");
-  const [prevPage, setPrevPage] = useState<PageType>("dashboard");
+  const [activePage, setActivePage] = useState<PageType>(
+    user?.role === "Guest" ? "services" : "dashboard"
+  );
+  const [prevPage, setPrevPage] = useState<PageType>(
+    user?.role === "Guest" ? "services" : "dashboard"
+  );
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -41,6 +45,8 @@ const Dashboard: React.FC = () => {
   const allowedPages: PageType[] =
     user?.role === "Customer"
       ? ["dashboard", "services", "payment", "logout", "profile"]
+      : user?.role === "Guest"
+      ? ["services", "logout"]
       : [
           "dashboard",
           "users",
@@ -81,6 +87,10 @@ const Dashboard: React.FC = () => {
 
   const renderPageContent = () => {
     if (!allowedPages.includes(activePage)) {
+      // For guest users, redirect to services if they try to access dashboard
+      if (user?.role === "Guest" && activePage === "dashboard") {
+        return <ServicesPage role={user?.role} />;
+      }
       return <DashboardPage role={user?.role} />;
     }
     switch (activePage) {
@@ -130,7 +140,7 @@ const Dashboard: React.FC = () => {
         {/* Show header only on dashboard page when screen width is 768px and below */}
         {(activePage === "dashboard" && windowWidth <= 768) ||
         windowWidth > 768 ? (
-        <Header pageTitle={getPageTitle(activePage)} />
+          <Header pageTitle={getPageTitle(activePage)} />
         ) : null}
         <div className="dashboard-content">{renderPageContent()}</div>
       </div>

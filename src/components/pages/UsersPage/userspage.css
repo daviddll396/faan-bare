@@ -31,103 +31,103 @@
 /* Progressive zoom scaling for content card with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .content-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1800px) {
   .content-card {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1700px) {
   .content-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1600px) {
   .content-card {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1500px) {
   .content-card {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1450px) {
   .content-card {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1400px) {
   .content-card {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1350px) {
   .content-card {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1300px) {
   .content-card {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1250px) {
   .content-card {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1200px) {
   .content-card {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1150px) {
   .content-card {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1100px) {
   .content-card {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1050px) {
   .content-card {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 1000px) {
   .content-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 950px) {
   .content-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 900px) {
   .content-card {
-    zoom: 0.38;
+    zoom: 0.58;
   }
 }
 
@@ -154,103 +154,103 @@
 /* Progressive zoom scaling for add user form card with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .add-user-form-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1800px) {
   .add-user-form-card {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1700px) {
   .add-user-form-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1600px) {
   .add-user-form-card {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1500px) {
   .add-user-form-card {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1450px) {
   .add-user-form-card {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1400px) {
   .add-user-form-card {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1350px) {
   .add-user-form-card {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1300px) {
   .add-user-form-card {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1250px) {
   .add-user-form-card {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1200px) {
   .add-user-form-card {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1150px) {
   .add-user-form-card {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1100px) {
   .add-user-form-card {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1050px) {
   .add-user-form-card {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 1000px) {
   .add-user-form-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 950px) {
   .add-user-form-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 900px) {
   .add-user-form-card {
-    zoom: 0.38;
+    zoom: 0.58;
   }
 }
 
@@ -410,103 +410,103 @@
 /* Progressive zoom scaling for border button with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .border-button-userspage {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1800px) {
   .border-button-userspage {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1700px) {
   .border-button-userspage {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1600px) {
   .border-button-userspage {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1500px) {
   .border-button-userspage {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1450px) {
   .border-button-userspage {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1400px) {
   .border-button-userspage {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1350px) {
   .border-button-userspage {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1300px) {
   .border-button-userspage {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1250px) {
   .border-button-userspage {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1200px) {
   .border-button-userspage {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1150px) {
   .border-button-userspage {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1100px) {
   .border-button-userspage {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1050px) {
   .border-button-userspage {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 1000px) {
   .border-button-userspage {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 950px) {
   .border-button-userspage {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 900px) {
   .border-button-userspage {
-    zoom: 0.38;
+    zoom: 0.58;
   }
 }
 
@@ -535,7 +535,7 @@
     gap: 10px !important;
     padding: 0 0px;
     align-items: flex-end;
-    margin-bottom:0px !important;
+    margin-bottom: 0px !important;
   }
 
   .userspage-search-row {
@@ -562,7 +562,6 @@
     box-shadow: none;
     background: #fff;
     overflow-x: auto;
-    
   }
   .table-container {
     overflow-x: auto;
@@ -597,7 +596,6 @@
     padding: 18px 15px;
     border-radius: 10px;
     margin-top: 0px;
-    
   }
   .add-user-title {
     font-size: 16px;
@@ -635,7 +633,6 @@
     border-radius: 8px;
     margin-top: 10px;
   }
-
 
   .userspage-actions-row {
     display: flex;

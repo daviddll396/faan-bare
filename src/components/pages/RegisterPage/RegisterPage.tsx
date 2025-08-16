@@ -8,6 +8,27 @@ import CryptoJS from "crypto-js";
 import { Eye, EyeOff } from "lucide-react";
 import "./RegisterPage.css";
 
+// API Base URL - configure for different environments
+const getApiBaseUrl = (): string => {
+  // Detect if we're in production by checking the hostname
+  const isProduction =
+    window.location.hostname.includes("vercel.app") ||
+    window.location.hostname.includes("netlify.app") ||
+    !window.location.hostname.includes("localhost");
+
+  if (isProduction) {
+    // In production (Vercel), use the proxy path
+    return "";
+  }
+  // Local development - use the direct API server
+  return "http://197.253.19.78:9091";
+};
+
+const API_BASE_URL = getApiBaseUrl();
+const API_ENDPOINTS = {
+  REGISTER: `${API_BASE_URL}/auth/faan/register`,
+};
+
 // AES encryption function (CBC with PKCS5 padding)
 const encryptAESCBC = (
   plaintext: string,
@@ -129,9 +150,9 @@ const serviceTypeOptions = [
 ];
 
 const initialIndividualForm = {
-    firstName: "",
-    lastName: "",
-    email: "",
+  firstName: "",
+  lastName: "",
+  email: "",
   phoneNumber: "",
   meansOfId: "NIN",
   idNumber: "",
@@ -150,15 +171,15 @@ const initialCorporateForm = {
   registrationNumber: "",
   email: "",
   phoneNumber: "",
-    password: "",
-    confirmPassword: "",
+  password: "",
+  confirmPassword: "",
 };
 
 const initialGovernmentForm = {
   officeName: "",
   address: "",
   email: "",
-    phoneNumber: "",
+  phoneNumber: "",
   password: "",
   confirmPassword: "",
   officeType: "State",
@@ -173,7 +194,7 @@ const initialFamilyForm = {
   phoneNumber: "",
   meansOfId: "NIN",
   idNumber: "",
-    address: "",
+  address: "",
   gender: "Male",
   isStudent: "No",
   dob: "",
@@ -211,7 +232,7 @@ const RegisterPage: React.FC = () => {
   const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes
 
   const [step, setStep] = useState<
-    "role" | "form" | "credentials" | "documents"
+    "role" | "form" | "credentials" | "documents" | "indemnity"
   >("role");
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [individualForm, setIndividualForm] = useState(initialIndividualForm);
@@ -354,7 +375,28 @@ const RegisterPage: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setIndividualForm((prev) => ({ ...prev, [name]: value }));
+
+    // Clear the error for this field
     setFormErrors((prev) => ({ ...prev, [name]: "" }));
+
+    // Real-time validation for DOB field
+    if (name === "dob" && value) {
+      const birthDate = new Date(value);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+
+      if (age < 18) {
+        setFormErrors((prev) => ({
+          ...prev,
+          dob: "You must be at least 18 years old",
+        }));
+      } else if (age > 120) {
+        setFormErrors((prev) => ({
+          ...prev,
+          dob: "Please enter a valid date of birth",
+        }));
+      }
+    }
   };
 
   const validateIndividualForm = () => {
@@ -416,85 +458,50 @@ const RegisterPage: React.FC = () => {
     const errors = validateCredentials();
     setCredentialsErrors(errors);
     if (Object.keys(errors).length > 0) return;
-    setIsSubmitting(true);
 
-    // Build the request body as specified
-    const requestBody = {
-      firstName: individualForm.firstName,
-      lastName: individualForm.lastName,
-      email: individualForm.email,
+    // Prepare customer data for indemnity form based on selected role
+    let customerData: any = {
+      email: "", // Will be set based on role
       password: password,
-      nin: individualForm.idNumber,
-      phoneNumber: individualForm.phoneNumber,
-      dob: individualForm.dob,
-      address: individualForm.address,
-      customerType: "INDIVIDUAL",
-      cacNumber: null,
+      customerType: selectedRole,
     };
-    console.log("Register request body:", requestBody);
 
-    try {
-      // Encrypt the body
-      const body = JSON.stringify(requestBody);
-      const encryptedPayload = encryptAESCBC(body, secretKey, ivKey);
-
-      // Make the API call
-      const response = await fetch("/auth/faan/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Client-Auth": "Basic dGVzdDp0ZXN0",
-          "X-Source": "web",
-        },
-        body: encryptedPayload,
-      });
-
-      // Get the raw response text (encrypted)
-      const rawResponseText = await response.text();
-      let decryptedResponse;
-      try {
-        decryptedResponse = decryptAESCBC(rawResponseText, secretKey, ivKey);
-      } catch {
-        console.log(
-          "Failed to decrypt response. Encrypted text:",
-          rawResponseText
-        );
-        showToast("Failed to process server response", "error");
-        return;
-      }
-
-      // Parse the decrypted JSON
-      let responseData;
-      try {
-        responseData = JSON.parse(decryptedResponse);
-      } catch {
-        console.log("Failed to parse decrypted response:", decryptedResponse);
-        showToast("Invalid server response format", "error");
-        return;
-      }
-
-      // Check if registration was successful
-      if (
-        responseData.status === true &&
-        (responseData.statusCode === 200 || responseData.statusCode === 201)
-      ) {
-        showToast(
-          "Registration successful! Redirecting to login...",
-          "success"
-        );
-        setTimeout(() => {
-          navigate("/login");
-        }, 3500);
-      } else {
-        const errorMessage = responseData.message || "Registration failed";
-          showToast(errorMessage, "error");
-      }
-    } catch (err: unknown) {
-      console.error("Registration error:", err);
-      showToast("An error occurred during registration", "error");
-    } finally {
-      setIsSubmitting(false);
+    if (selectedRole === "INDIVIDUAL") {
+      customerData = {
+        firstName: individualForm.firstName,
+        lastName: individualForm.lastName,
+        email: individualForm.email,
+        phoneNumber: individualForm.phoneNumber,
+        address: individualForm.address,
+        customerType: "INDIVIDUAL",
+        password: password,
+        nin: individualForm.idNumber,
+        dob: individualForm.dob,
+        cacNumber: null,
+      };
+    } else if (selectedRole === "FAMILY") {
+      customerData = {
+        firstName: familyForm.firstName,
+        lastName: familyForm.lastName,
+        email: familyForm.email,
+        phoneNumber: familyForm.phoneNumber,
+        address: familyForm.address,
+        customerType: "FAMILY",
+        password: password,
+        nin: familyForm.idNumber,
+        dob: familyForm.dob,
+        gender: familyForm.gender,
+        isStudent: familyForm.isStudent,
+        meansOfId: familyForm.meansOfId,
+        cacNumber: null,
+      };
     }
+
+    // Store data in sessionStorage for indemnity form
+    sessionStorage.setItem("registrationData", JSON.stringify(customerData));
+
+    // Navigate to indemnity form
+    navigate("/indemnity-form", { state: { customerData } });
   };
 
   const handleCorporateChange = (
@@ -636,14 +643,32 @@ const RegisterPage: React.FC = () => {
 
   const handleCompleteRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      showToast("Corporate registration complete!", "success");
-      setStep("role");
-      setCorporateForm(initialCorporateForm);
-      setUploadedFiles([]);
-    }, 1800);
+
+    // Prepare customer data for indemnity form
+    const customerData = {
+      firstName: corporateForm.businessName, // Use business name as first name
+      lastName: "", // Corporate doesn't have last name
+      email: corporateForm.email,
+      phoneNumber: corporateForm.phoneNumber,
+      address: corporateForm.registeredAddress,
+      customerType: "CORPORATE",
+      // Store additional data for later registration
+      password: corporateForm.password,
+      businessName: corporateForm.businessName,
+      natureOfBusiness: corporateForm.natureOfBusiness,
+      serviceType: corporateForm.serviceType,
+      yearOfIncorporation: corporateForm.yearOfIncorporation,
+      registrationNumber: corporateForm.registrationNumber,
+      cacNumber: corporateForm.registrationNumber,
+      nin: "", // Corporate doesn't have NIN
+      dob: "", // Corporate doesn't have DOB
+    };
+
+    // Store data in sessionStorage for indemnity form
+    sessionStorage.setItem("registrationData", JSON.stringify(customerData));
+
+    // Navigate to indemnity form
+    navigate("/indemnity-form", { state: { customerData } });
   };
 
   const handleGovernmentChange = (
@@ -693,7 +718,31 @@ const RegisterPage: React.FC = () => {
     const errors = validateGovernmentForm();
     setGovernmentFormErrors(errors);
     if (Object.keys(errors).length > 0) return;
-    setStep("credentials");
+
+    // Prepare customer data for indemnity form
+    const customerData = {
+      firstName: governmentForm.officeName, // Use office name as first name
+      lastName: "", // Government doesn't have last name
+      email: governmentForm.email,
+      phoneNumber: governmentForm.phoneNumber,
+      address: governmentForm.address,
+      customerType: "GOVERNMENT",
+      // Store additional data for later registration
+      password: governmentForm.password,
+      officeName: governmentForm.officeName,
+      officeType: governmentForm.officeType,
+      state: governmentForm.state,
+      serviceType: governmentForm.serviceType,
+      cacNumber: null, // Government doesn't have CAC
+      nin: "", // Government doesn't have NIN
+      dob: "", // Government doesn't have DOB
+    };
+
+    // Store data in sessionStorage for indemnity form
+    sessionStorage.setItem("registrationData", JSON.stringify(customerData));
+
+    // Navigate to indemnity form
+    navigate("/indemnity-form", { state: { customerData } });
   };
 
   const handleFamilyChange = (
@@ -701,7 +750,28 @@ const RegisterPage: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFamilyForm((prev) => ({ ...prev, [name]: value }));
+
+    // Clear the error for this field
     setFamilyFormErrors((prev) => ({ ...prev, [name]: "" }));
+
+    // Real-time validation for DOB field
+    if (name === "dob" && value) {
+      const birthDate = new Date(value);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+
+      if (age < 18) {
+        setFamilyFormErrors((prev) => ({
+          ...prev,
+          dob: "You must be at least 18 years old",
+        }));
+      } else if (age > 120) {
+        setFamilyFormErrors((prev) => ({
+          ...prev,
+          dob: "Please enter a valid date of birth",
+        }));
+      }
+    }
   };
 
   const validateFamilyForm = () => {
@@ -760,7 +830,7 @@ const RegisterPage: React.FC = () => {
       </div>
       <div className="auth-form-side">
         {step === "role" ? (
-          <div className="register-role-select-card">
+          <div className="auth-form-modern">
             <h2 className="auth-form-title-modern">Create an account</h2>
             <div
               className="auth-form-subtitle-modern"
@@ -771,9 +841,7 @@ const RegisterPage: React.FC = () => {
                 Log In
               </Link>
             </div>
-            <div
-            className="auth-form-subtitle-modern select-role-text"
-            >
+            <div className="auth-form-subtitle-modern select-role-text">
               Select a role to register:
             </div>
             <div className="register-role-options-grid">
@@ -808,7 +876,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "INDIVIDUAL" && step === "form" ? (
           <form
             key="individual-form"
-            className="register-individual-form-card long-register-form"
+            className="auth-form-modern long-register-form"
             onSubmit={handleIndividualSubmit}
             autoComplete="off"
           >
@@ -855,43 +923,43 @@ const RegisterPage: React.FC = () => {
               </span>
             </div>
             <div className="register-individual-grid">
-            <div className="form-row-modern">
+              <div className="form-row-modern">
                 <label>First Name</label>
-              <input
+                <input
                   className="form-input-modern"
-                name="firstName"
+                  name="firstName"
                   value={individualForm.firstName}
                   onChange={handleIndividualChange}
                   placeholder="First Name"
                   autoComplete="off"
                 />
                 {formErrors.firstName && (
-                <span className="validation-error">
+                  <span className="validation-error">
                     {formErrors.firstName}
-                </span>
-              )}
-            </div>
-            <div className="form-row-modern">
+                  </span>
+                )}
+              </div>
+              <div className="form-row-modern">
                 <label>Last Name</label>
-              <input
+                <input
                   className="form-input-modern"
-                name="lastName"
+                  name="lastName"
                   value={individualForm.lastName}
                   onChange={handleIndividualChange}
                   placeholder="Last Name"
                   autoComplete="off"
                 />
                 {formErrors.lastName && (
-                <span className="validation-error">
+                  <span className="validation-error">
                     {formErrors.lastName}
-                </span>
-              )}
-            </div>
+                  </span>
+                )}
+              </div>
               <div className="form-row-modern">
                 <label>Email</label>
-            <input
+                <input
                   className="form-input-modern"
-              name="email"
+                  name="email"
                   value={individualForm.email}
                   onChange={handleIndividualChange}
                   placeholder="Email"
@@ -899,25 +967,25 @@ const RegisterPage: React.FC = () => {
                 />
                 {formErrors.email && (
                   <span className="validation-error">{formErrors.email}</span>
-            )}
-          </div>
-            <div className="form-row-modern">
+                )}
+              </div>
+              <div className="form-row-modern">
                 <label>Phone Number</label>
-              <input
+                <input
                   className="form-input-modern"
-                name="phoneNumber"
+                  name="phoneNumber"
                   value={individualForm.phoneNumber}
                   onChange={handleIndividualChange}
                   placeholder="Phone Number"
                   autoComplete="off"
                 />
                 {formErrors.phoneNumber && (
-                <span className="validation-error">
+                  <span className="validation-error">
                     {formErrors.phoneNumber}
-                </span>
-              )}
-            </div>
-            <div className="form-row-modern">
+                  </span>
+                )}
+              </div>
+              <div className="form-row-modern">
                 <label>Means of Identification</label>
                 <select
                   className="form-input-modern"
@@ -934,7 +1002,7 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="form-row-modern">
                 <label>Identification Number</label>
-              <input
+                <input
                   className="form-input-modern"
                   name="idNumber"
                   value={individualForm.idNumber}
@@ -946,8 +1014,8 @@ const RegisterPage: React.FC = () => {
                   <span className="validation-error">
                     {formErrors.idNumber}
                   </span>
-              )}
-            </div>
+                )}
+              </div>
               <div className="form-row-modern">
                 <label>Address</label>
                 <input
@@ -961,8 +1029,8 @@ const RegisterPage: React.FC = () => {
                 {formErrors.address && (
                   <span className="validation-error">{formErrors.address}</span>
                 )}
-          </div>
-            <div className="form-row-modern">
+              </div>
+              <div className="form-row-modern">
                 <label>Gender</label>
                 <select
                   className="form-input-modern"
@@ -1002,9 +1070,9 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="form-row-modern">
                 <label>Date of Birth</label>
-              <input
+                <input
                   className="form-input-modern"
-                name="dob"
+                  name="dob"
                   type="date"
                   value={individualForm.dob}
                   onChange={handleIndividualChange}
@@ -1012,8 +1080,8 @@ const RegisterPage: React.FC = () => {
                 />
                 {formErrors.dob && (
                   <span className="validation-error">{formErrors.dob}</span>
-              )}
-            </div>
+                )}
+              </div>
             </div>
             <GradientButton
               type="submit"
@@ -1027,7 +1095,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "INDIVIDUAL" && step === "credentials" ? (
           <form
             key="individual-credentials"
-            className="register-individual-form-card"
+            className="auth-form-modern"
             onSubmit={handleCredentialsSubmit}
             autoComplete="off"
           >
@@ -1090,7 +1158,7 @@ const RegisterPage: React.FC = () => {
                   style={{ background: "#f7f7f7", color: "#b0b0b0" }}
                 />
               </div>
-            <div className="form-row-modern">
+              <div className="form-row-modern">
                 <label>Password</label>
                 <div className="password-input-container">
                   <input
@@ -1190,7 +1258,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "CORPORATE" && step === "form" ? (
           <form
             key="corporate-form"
-            className="register-individual-form-card long-register-form"
+            className="auth-form-modern long-register-form"
             onSubmit={handleCorporateSubmit}
             autoComplete="off"
           >
@@ -1257,8 +1325,8 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="form-row-modern">
                 <label>Nature of Business</label>
-              <select
-                className="form-input-modern"
+                <select
+                  className="form-input-modern"
                   name="natureOfBusiness"
                   value={corporateForm.natureOfBusiness}
                   onChange={handleCorporateChange}
@@ -1268,13 +1336,13 @@ const RegisterPage: React.FC = () => {
                       {opt.label}
                     </option>
                   ))}
-              </select>
+                </select>
                 {corporateFormErrors.natureOfBusiness && (
                   <span className="validation-error">
                     {corporateFormErrors.natureOfBusiness}
                   </span>
                 )}
-            </div>
+              </div>
               <div className="form-row-modern">
                 <label>Service Type</label>
                 <select
@@ -1294,10 +1362,10 @@ const RegisterPage: React.FC = () => {
                     {corporateFormErrors.serviceType}
                   </span>
                 )}
-          </div>
+              </div>
               <div className="form-row-modern">
                 <label>Year of Incorporation</label>
-            <input
+                <input
                   className="form-input-modern"
                   name="yearOfIncorporation"
                   value={corporateForm.yearOfIncorporation}
@@ -1306,14 +1374,14 @@ const RegisterPage: React.FC = () => {
                   autoComplete="off"
                 />
                 {corporateFormErrors.yearOfIncorporation && (
-              <span className="validation-error">
+                  <span className="validation-error">
                     {corporateFormErrors.yearOfIncorporation}
-              </span>
-            )}
-          </div>
+                  </span>
+                )}
+              </div>
               <div className="form-row-modern">
                 <label>Registered Address</label>
-            <input
+                <input
                   className="form-input-modern"
                   name="registeredAddress"
                   value={corporateForm.registeredAddress}
@@ -1322,14 +1390,14 @@ const RegisterPage: React.FC = () => {
                   autoComplete="off"
                 />
                 {corporateFormErrors.registeredAddress && (
-              <span className="validation-error">
+                  <span className="validation-error">
                     {corporateFormErrors.registeredAddress}
-              </span>
-            )}
-          </div>
-            <div className="form-row-modern">
+                  </span>
+                )}
+              </div>
+              <div className="form-row-modern">
                 <label>Registration Number</label>
-              <input
+                <input
                   className="form-input-modern"
                   name="registrationNumber"
                   value={corporateForm.registrationNumber}
@@ -1380,7 +1448,7 @@ const RegisterPage: React.FC = () => {
                 <div className="password-input-container">
                   <input
                     className="form-input-modern"
-                name="password"
+                    name="password"
                     type={showCorporatePassword ? "text" : "password"}
                     value={corporateForm.password}
                     onChange={(e) => {
@@ -1419,17 +1487,17 @@ const RegisterPage: React.FC = () => {
                   </button>
                 </div>
                 {corporateFormErrors.password && (
-                <span className="validation-error">
+                  <span className="validation-error">
                     {corporateFormErrors.password}
-                </span>
-              )}
-            </div>
-            <div className="form-row-modern">
+                  </span>
+                )}
+              </div>
+              <div className="form-row-modern">
                 <label>Confirm Password</label>
                 <div className="password-input-container">
-              <input
+                  <input
                     className="form-input-modern"
-                name="confirmPassword"
+                    name="confirmPassword"
                     type={showCorporateConfirmPassword ? "text" : "password"}
                     value={corporateForm.confirmPassword}
                     onChange={(e) => {
@@ -1469,12 +1537,12 @@ const RegisterPage: React.FC = () => {
                   </button>
                 </div>
                 {corporateFormErrors.confirmPassword && (
-                <span className="validation-error">
+                  <span className="validation-error">
                     {corporateFormErrors.confirmPassword}
-                </span>
-              )}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
             <GradientButton
               type="submit"
               fullWidth
@@ -1487,7 +1555,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "CORPORATE" && step === "documents" ? (
           <form
             key="corporate-documents"
-            className="register-individual-form-card"
+            className="auth-form-modern"
             onSubmit={handleCompleteRegistration}
             autoComplete="off"
             style={{ maxWidth: 700 }}
@@ -1548,9 +1616,7 @@ const RegisterPage: React.FC = () => {
                 marginTop: 8,
               }}
             >
-              <div
-               className="register-file-upload-text"
-              >
+              <div className="register-file-upload-text">
                 Upload your CAC Certificate and other support documents
               </div>
               <div
@@ -1584,9 +1650,7 @@ const RegisterPage: React.FC = () => {
                     />
                   </svg>
                 </div>
-                <div
-                  className="register-file-upload-text"
-                >
+                <div className="register-file-upload-text">
                   Choose a File or drag & drop it here
                 </div>
                 <div
@@ -1606,7 +1670,7 @@ const RegisterPage: React.FC = () => {
                   style={{ display: "none" }}
                   onChange={handleFileInput}
                 />
-          <button
+                <button
                   type="button"
                   style={{
                     marginTop: 8,
@@ -1749,7 +1813,7 @@ const RegisterPage: React.FC = () => {
               )}
             </div>
             <GradientButton
-            type="submit"
+              type="submit"
               fullWidth
               disabled={uploadedFiles.length === 0 || isSubmitting}
               loading={isSubmitting}
@@ -1760,7 +1824,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "GOVERNMENT" && step === "form" ? (
           <form
             key="government-form"
-            className="register-individual-form-card long-register-form"
+            className="auth-form-modern long-register-form"
             onSubmit={handleGovernmentSubmit}
             autoComplete="off"
           >
@@ -1912,7 +1976,7 @@ const RegisterPage: React.FC = () => {
                     ) : (
                       <Eye size={18} />
                     )}
-          </button>
+                  </button>
                 </div>
                 {governmentFormErrors.password && (
                   <span className="validation-error">
@@ -2046,7 +2110,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "GOVERNMENT" && step === "credentials" ? (
           <form
             key="government-credentials"
-            className="register-individual-form-card"
+            className="auth-form-modern"
             onSubmit={handleCredentialsSubmit}
             autoComplete="off"
           >
@@ -2056,11 +2120,11 @@ const RegisterPage: React.FC = () => {
               className="auth-form-subtitle-modern"
               style={{ marginBottom: 4 }}
             >
-            Already have an account?{" "}
+              Already have an account?{" "}
               <Link to="/login" className="register-login-link">
                 Log In
-            </Link>
-          </div>
+              </Link>
+            </div>
             <div className="register-progress-row">
               <span
                 className="register-progress-individual clickable"
@@ -2217,11 +2281,11 @@ const RegisterPage: React.FC = () => {
             >
               CREATE ACCOUNT
             </GradientButton>
-        </form>
+          </form>
         ) : selectedRole === "FAMILY" && step === "form" ? (
           <form
             key="family-form"
-            className="register-individual-form-card long-register-form"
+            className="auth-form-modern long-register-form"
             onSubmit={(e) => {
               e.preventDefault();
               const errors = validateFamilyForm();
@@ -2241,7 +2305,7 @@ const RegisterPage: React.FC = () => {
               <Link to="/login" className="register-login-link">
                 Log In
               </Link>
-      </div>
+            </div>
             <div className="register-progress-row">
               <span
                 className="register-progress-individual clickable"
@@ -2454,7 +2518,7 @@ const RegisterPage: React.FC = () => {
         ) : selectedRole === "FAMILY" && step === "credentials" ? (
           <form
             key="family-credentials"
-            className="register-individual-form-card"
+            className="auth-form-modern"
             onSubmit={handleCredentialsSubmit}
             autoComplete="off"
           >

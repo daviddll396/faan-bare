@@ -3,9 +3,6 @@
 /* ======================================== */
 
 /* Services Page Admin View Components with Zoom Scaling */
-.services-page {
-  /* Remove zoom scaling from page container */
-}
 
 /* Services Page Entrance Animations */
 @keyframes slideInUp {
@@ -89,6 +86,21 @@
   animation: slideInUp 0.4s ease-out both;
   position: relative;
   z-index: 1;
+  flex-wrap: wrap;
+}
+
+.service-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+
+.service-row-top {
+  display: grid;
+  grid-template-columns: 1.6fr 0.6fr 0.5fr;
+  gap: 12px;
+  align-items: end;
 }
 
 /* Staggered animation for service form rows */
@@ -152,6 +164,26 @@
   margin: 0px;
 }
 
+.service-field-group.description-group {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .service-row-top {
+    grid-template-columns: 1fr 0.5fr 0.5fr;
+  }
+}
+
+@media (max-width: 842px) {
+  .service-row-top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
 .service-field-group label {
   color: #6c7278;
   font-size: 16px;
@@ -160,7 +192,8 @@
 }
 
 .service-field-group input,
-.service-field-group select {
+.service-field-group select,
+.service-field-group textarea {
   border: 1.5px solid #d9d9d9;
   border-radius: 12px;
   padding: 16px;
@@ -176,8 +209,15 @@
   background: #fff;
 }
 
+.service-field-group textarea {
+  background: #fff;
+  min-height: 90px;
+  resize: vertical;
+}
+
 .service-field-group input:focus,
-.service-field-group select:focus {
+.service-field-group select:focus,
+.service-field-group textarea:focus {
   border: 1.5px solid #007948;
 }
 
@@ -549,6 +589,12 @@
 
 .booking-passengers-table-wrap {
   overflow-x: auto;
+}
+
+.booking-passengers-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 
 .booking-passengers-table {
@@ -1316,6 +1362,7 @@ select.booking-form-input {
 /* Reset zoom for mobile devices to use standard responsive behavior */
 @media (max-width: 842px) {
   .services-customer-grid {
+    padding-bottom: var(--page-bottom-padding-mobile);
     zoom: 1;
   }
   .booking-form-card {
@@ -1374,7 +1421,6 @@ select.booking-form-input {
   }
   .services-page .add-service-form-card {
     zoom: 1;
-   
   }
 
   .border-button-userspage {
@@ -1399,7 +1445,7 @@ select.booking-form-input {
   }
   .services-customer-page {
     padding: 0px;
-    
+
     overflow-x: hidden;
   }
   .services-customer-header {
@@ -1416,7 +1462,6 @@ select.booking-form-input {
   .services-customer-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    
   }
   .service-card-img-wrap {
     height: 100px;

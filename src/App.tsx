@@ -5,6 +5,9 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LoadingProvider, useLoading } from "./contexts/LoadingContext";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
+import OneTimeOnboardingPage from "./components/pages/OneTimeOnboardingPage/OneTimeOnboardingPage";
+import OneTimeOtpPage from "./components/pages/OneTimeOtpPage/OneTimeOtpPage";
+import IndemnityFormPage from "./components/pages/IndemnityFormPage/IndemnityFormPage";
 import Preloader from "./components/reusables/Preloader";
 import LoadingSpinner from "./components/reusables/LoadingSpinner/LoadingSpinner";
 import ForgotPasswordPage from "./components/pages/ForgotPasswordPage/ForgotPasswordPage";
@@ -27,6 +30,9 @@ const AppContent: React.FC = () => {
           path="/register"
           element={isAuthenticated ? <Navigate to="/" /> : <RegisterPage />}
         />
+        <Route path="/one-time" element={<OneTimeOnboardingPage />} />
+        <Route path="/one-time-otp" element={<OneTimeOtpPage />} />
+        <Route path="/indemnity-form" element={<IndemnityFormPage />} />
         <Route
           path="/forgot-password"
           element={

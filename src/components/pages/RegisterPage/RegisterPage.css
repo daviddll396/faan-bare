@@ -443,6 +443,7 @@ select.form-input-modern::-ms-expand {
 
 .register-badge-individual {
   display: inline-block;
+  width: fit-content;
   background: #0079481a;
   color: #007948;
   font-size: 14px;
@@ -607,8 +608,6 @@ select.form-input-modern:focus {
     zoom: 1;
   }
 }
-
-
 
 @media (max-width: 1700px) {
   .register-individual-form-card,

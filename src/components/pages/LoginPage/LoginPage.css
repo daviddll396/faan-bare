@@ -50,8 +50,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  zoom: 1.08;
-  transition: zoom 0.3s ease;
+  /* Removed zoom-based scaling for uniform sizing */
 }
 
 .login-header {
@@ -134,13 +133,7 @@
   width: 100%;
 }
 
-.form-row-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 7px;
-  animation: slideInUp 0.4s ease-out both;
-}
+/* form-row-modern base/animation lives in auth-common.css */
 
 /* Staggered animation for form rows */
 .form-row-modern:nth-child(4) {
@@ -170,20 +163,7 @@
   animation: slideInUp 0.4s ease-out 0.4s both;
 }
 
-.form-input-modern {
-  border: 1.5px solid #e4e4e7;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  background: #fff;
-  color: #18181b;
-  outline: none;
-  transition: border 0.2s;
-}
-.form-input-modern:focus {
-  border-color: #007948;
-}
+/* form-input-modern styles centralized in auth-common.css */
 
 .login-btn-modern {
   width: 100%;
@@ -229,54 +209,13 @@
   color: #6c7278;
 }
 
-.auth-form-title-modern {
-  font-size: 26px;
-  font-weight: 500;
-  color: #18181b;
-  margin-bottom: 4px;
-  letter-spacing: -0.5px;
-  font-family: "Poppins", sans-serif;
-}
+/* auth-form title/subtitle centralized in auth-common.css */
 
-.auth-form-subtitle-modern {
-  color: #969696;
-  font-size: 15px;
-  font-weight: 400;
-  margin-bottom: 19px;
-  font-family: "Poppins", sans-serif;
-}
+/* duplicate removed: form-row-modern */
 
-.form-row-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 7px;
-}
+/* duplicate removed: form-row-remember */
 
-.form-row-remember {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 0;
-  width: 100%;
-}
-
-.form-input-modern {
-  border: 1.5px solid #e4e4e7;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  background: #fff;
-  color: #18181b;
-  outline: none;
-  transition: border 0.2s;
-}
-.form-input-modern:focus {
-  border-color: #007948;
-}
+/* duplicate removed: form-input-modern */
 
 .forgot-link {
   color: #007948;
@@ -308,14 +247,7 @@
   border-radius: 4px;
 }
 
-.form-row-modern label {
-  font-size: 12px;
-  color: #898989;
-  font-weight: 500;
-  margin-bottom: 1px;
-  margin-left: 2px;
-  text-align: left;
-}
+/* duplicate removed: labels, using auth-common.css */
 
 .auth-form-modern,
 .form-input-modern,
@@ -405,115 +337,7 @@
 /* MEDIA QUERIES - RESPONSIVE DESIGN */
 /* ======================================== */
 
-/* Desktop Zoom Scaling */
-@media (max-width: 1920px) {
-  .login-card {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .login-card {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1700px) {
-  .login-card {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1600px) {
-  .login-card {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1500px) {
-  .login-card {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1450px) {
-  .login-card {
-    zoom: 0.75;
-  }
-}
-
-@media (max-width: 1400px) {
-  .login-card {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1350px) {
-  .login-card {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1300px) {
-  .login-card {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1250px) {
-  .login-card {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 1200px) {
-  .login-card {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 1150px) {
-  .login-card {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 1100px) {
-  .login-card {
-    zoom: 0.58;
-  }
-}
-
-@media (max-width: 1050px) {
-  .login-card {
-    zoom: 0.56;
-  }
-}
-
-@media (max-width: 1000px) {
-  .login-card {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 950px) {
-  .login-card {
-    zoom: 0.52;
-  }
-}
-
-@media (max-width: 900px) {
-  .login-card {
-    zoom: 0.5;
-  }
-}
-
-/* Tablet and Mobile Breakpoints */
-@media (max-width: 768px) {
-  .login-card {
-    zoom: 1;
-  }
-}
+/* Removed zoom-based media queries for uniform sizing */
 
 /* Mobile Responsive Design */
 @media (max-width: 480px) {
@@ -544,5 +368,64 @@
 
   .form-input-modern {
     padding: 14px 16px;
+  }
+}
+
+/* One-Time Service Option */
+.one-time-service-option {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.divider {
+  position: relative;
+  margin: 24px 0;
+  margin-top: 0px;
+  text-align: center;
+}
+
+.divider span {
+  padding: 0 16px;
+  color: #898989;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.one-time-text {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.one-time-link {
+  color: #007948;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.one-time-link:hover {
+  color: #005a3a;
+  text-decoration: underline;
+}
+
+/* Mobile responsive for one-time option */
+@media (max-width: 768px) {
+  .one-time-service-option {
+    margin-top: 0px;
+  }
+
+  .divider {
+    margin: 10px 0;
+  }
+
+  .one-time-text {
+    font-size: 12px;
+  }
+
+  .one-time-link {
+    font-size: 12px;
+    padding: 0px 0px;
   }
 }

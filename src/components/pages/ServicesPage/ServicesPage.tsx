@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useLoading } from "../../../contexts/LoadingContext";
 import AddIcon from "../../../../public/icons/add-icon.svg";
@@ -16,6 +16,9 @@ import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
 import SlideIndicator from "../../reusables/SlideIndicator";
 
+// Dev-only guard to prevent duplicate fetches in React 18 StrictMode
+let hasFetchedTariffs = false;
+
 interface ServicesPageProps {
   role?: string;
 }
@@ -31,6 +34,7 @@ const initialService = {
   serviceName: "",
   currency: "NGR",
   price: "",
+  description: "",
 };
 
 const customerServices = [
@@ -112,6 +116,15 @@ interface BookingPassenger {
 const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const { getAllTariffs, makePayment, refreshUserDetails } = useAuth();
   const { showLoading, hideLoading } = useLoading();
+  const getAllTariffsRef = useRef(getAllTariffs);
+  const showLoadingRef = useRef(showLoading);
+  const hideLoadingRef = useRef(hideLoading);
+
+  useEffect(() => {
+    getAllTariffsRef.current = getAllTariffs;
+    showLoadingRef.current = showLoading;
+    hideLoadingRef.current = hideLoading;
+  }, [getAllTariffs, showLoading, hideLoading]);
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [services, setServices] = useState([{ ...initialService }]);
   const [serviceNameSelectOpen, setServiceNameSelectOpen] = useState<
@@ -199,11 +212,15 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
   // Add useEffect to fetch tariffs when component mounts
   useEffect(() => {
+    // Guard to prevent duplicate calls in development StrictMode
+    if (hasFetchedTariffs) return;
+    hasFetchedTariffs = true;
+
     const fetchTariffs = async () => {
       console.log("🎯 ServicesPage: Attempting to fetch all tariffs...");
-      showLoading("Loading services...");
+      showLoadingRef.current("Loading services...");
       try {
-        const tariffsData = await getAllTariffs();
+        const tariffsData = await getAllTariffsRef.current();
         console.log("🎯 ServicesPage: Received tariffs data:", tariffsData);
 
         if (tariffsData && tariffsData.status && tariffsData.data) {
@@ -271,12 +288,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           showToast("Error loading services, using default services", "error");
         }, 500);
       } finally {
-        hideLoading();
+        hideLoadingRef.current();
       }
     };
 
     fetchTariffs();
-  }, [getAllTariffs]);
+  }, []);
 
   // Helper to format number with commas
   function formatNumberWithCommas(value: string) {
@@ -385,7 +402,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (role === "Customer") {
+  if (role === "Customer" || role === "Guest") {
     // Booking form view
     if (selectedService) {
       // Calculate summary values based on selected service and passenger count
@@ -958,6 +975,14 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       </tbody>
                     </table>
                   </div>
+                  {passengers.length > 0 && (
+                    <div className="booking-passengers-actions">
+                      <BorderButton
+                        text="Generate Remita"
+                        onClick={handlePayment}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="booking-summary-card">
                   <div className="booking-summary-title">SUMMARY</div>
@@ -1052,6 +1077,14 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   ))}
                 </div>
+                {passengers.length > 0 && (
+                  <div className="booking-passengers-actions">
+                    <BorderButton
+                      text="Generate Remita"
+                      onClick={handlePayment}
+                    />
+                  </div>
+                )}
               </div>
               <div className="booking-summary-card">
                 <div className="booking-summary-title">SUMMARY</div>
@@ -1765,68 +1798,91 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 {services.map((service, idx) => (
                   <div className="service-form-row" key={idx}>
                     <div className="service-index-circle">{idx + 1}.</div>
-                    <div className="service-field-group service-name-group">
-                      <label>Service Name:</label>
-                      <div
-                        className={`services-select-dropdown-wrapper${
-                          serviceNameSelectOpen === idx ? " open" : ""
-                        }`}
-                      >
-                        <select
-                          value={service.serviceName}
-                          onFocus={() => setServiceNameSelectOpen(idx)}
-                          onBlur={() => setServiceNameSelectOpen(null)}
-                          onChange={(e) => {
+                    <div className="service-form-body">
+                      <div className="service-row-top">
+                        <div className="service-field-group service-name-group">
+                          <label>Service Name:</label>
+                          <div
+                            className={`services-select-dropdown-wrapper${
+                              serviceNameSelectOpen === idx ? " open" : ""
+                            }`}
+                          >
+                            <select
+                              value={service.serviceName}
+                              onFocus={() => setServiceNameSelectOpen(idx)}
+                              onBlur={() => setServiceNameSelectOpen(null)}
+                              onChange={(e) => {
+                                handleServiceChange(
+                                  idx,
+                                  "serviceName",
+                                  e.target.value
+                                );
+                                setServiceNameSelectOpen(null);
+                              }}
+                            >
+                              <option value="">Select service</option>
+                              {serviceNames.map((name) => (
+                                <option key={name} value={name}>
+                                  {name}
+                                </option>
+                              ))}
+                            </select>
+                            <img
+                              src={ChevronDown}
+                              alt="dropdown"
+                              className="services-select-chevron"
+                            />
+                          </div>
+                        </div>
+                        <div className="service-field-group currency-group">
+                          <label>Currency:</label>
+                          <div className="services-select-dropdown-wrapper">
+                            <select
+                              value={service.currency}
+                              onChange={(e) =>
+                                handleServiceChange(
+                                  idx,
+                                  "currency",
+                                  e.target.value
+                                )
+                              }
+                            >
+                              <option value="NGR">NGR</option>
+                            </select>
+                            <img
+                              src={ChevronDown}
+                              alt="dropdown"
+                              className="services-select-chevron"
+                            />
+                          </div>
+                        </div>
+                        <div className="service-field-group price-group">
+                          <label>Price:</label>
+                          <input
+                            type="text"
+                            value={formatNumberWithCommas(service.price)}
+                            onChange={(e) =>
+                              handleServiceChange(idx, "price", e.target.value)
+                            }
+                            placeholder=""
+                          />
+                        </div>
+                      </div>
+                      <div className="service-field-group description-group">
+                        <label>Description:</label>
+                        <textarea
+                          value={service.description}
+                          onChange={(e) =>
                             handleServiceChange(
                               idx,
-                              "serviceName",
+                              "description",
                               e.target.value
-                            );
-                            setServiceNameSelectOpen(null);
-                          }}
-                        >
-                          <option value="">Select service</option>
-                          {serviceNames.map((name) => (
-                            <option key={name} value={name}>
-                              {name}
-                            </option>
-                          ))}
-                        </select>
-                        <img
-                          src={ChevronDown}
-                          alt="dropdown"
-                          className="services-select-chevron"
-                        />
-                      </div>
-                    </div>
-                    <div className="service-field-group currency-group">
-                      <label>Currency:</label>
-                      <div className="services-select-dropdown-wrapper">
-                        <select
-                          value={service.currency}
-                          onChange={(e) =>
-                            handleServiceChange(idx, "currency", e.target.value)
+                            )
                           }
-                        >
-                          <option value="NGR">NGR</option>
-                        </select>
-                        <img
-                          src={ChevronDown}
-                          alt="dropdown"
-                          className="services-select-chevron"
+                          placeholder="Enter service description"
+                          rows={3}
                         />
                       </div>
-                    </div>
-                    <div className="service-field-group price-group">
-                      <label>Price:</label>
-                      <input
-                        type="text"
-                        value={formatNumberWithCommas(service.price)}
-                        onChange={(e) =>
-                          handleServiceChange(idx, "price", e.target.value)
-                        }
-                        placeholder=""
-                      />
                     </div>
                   </div>
                 ))}

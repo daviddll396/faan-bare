@@ -361,205 +361,205 @@
 /* Progressive zoom scaling for payment tabs with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .payment-tabs-row {
-    zoom: 0.9;
+    zoom: 1.1;
   }
   .payment-table-card {
-    zoom: 0.9;
+    zoom: 1.1;
   }
   .border-button-paymentpage {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .payment-tabs-row {
-    zoom: 0.85;
+    zoom: 1.05;
   }
   .payment-table-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
   .border-button-paymentpage {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .payment-tabs-row {
-    zoom: 0.8;
+    zoom: 1;
   }
   .payment-table-card {
-    zoom: 0.8;
+    zoom: 1;
   }
   .border-button-paymentpage {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .payment-tabs-row {
-    zoom: 0.75;
+    zoom: 0.95;
   }
   .payment-table-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
   .border-button-paymentpage {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .payment-tabs-row {
-    zoom: 0.7;
-  }
-  .payment-table-card {
-    zoom: 0.7;
-  }
-  .border-button-paymentpage {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1450px) {
-  .payment-tabs-row {
-    zoom: 0.65;
-  }
-  .payment-table-card {
-    zoom: 0.65;
-  }
-  .border-button-paymentpage {
-    zoom: 0.65;
-  }
-}
-
-@media (max-width: 1400px) {
-  .payment-tabs-row {
-    zoom: 0.6;
-  }
-  .payment-table-card {
-    zoom: 0.6;
-  }
-  .border-button-paymentpage {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 1350px) {
-  .payment-tabs-row {
-    zoom: 0.58;
-  }
-  .payment-table-card {
-    zoom: 0.58;
-  }
-  .border-button-paymentpage {
-    zoom: 0.58;
-  }
-}
-
-@media (max-width: 1300px) {
-  .payment-tabs-row {
-    zoom: 0.56;
-  }
-  .payment-table-card {
-    zoom: 0.56;
-  }
-  .border-button-paymentpage {
-    zoom: 0.56;
-  }
-}
-
-@media (max-width: 1250px) {
-  .payment-tabs-row {
-    zoom: 0.54;
-  }
-  .payment-table-card {
-    zoom: 0.54;
-  }
-  .border-button-paymentpage {
-    zoom: 0.54;
-  }
-}
-
-@media (max-width: 1200px) {
-  .payment-tabs-row {
-    zoom: 0.52;
-  }
-  .payment-table-card {
-    zoom: 0.52;
-  }
-  .border-button-paymentpage {
-    zoom: 0.52;
-  }
-}
-
-@media (max-width: 1150px) {
-  .payment-tabs-row {
-    zoom: 0.5;
-  }
-  .payment-table-card {
-    zoom: 0.5;
-  }
-  .border-button-paymentpage {
-    zoom: 0.5;
-  }
-}
-
-@media (max-width: 1100px) {
-  .payment-tabs-row {
-    zoom: 0.48;
-  }
-  .payment-table-card {
-    zoom: 0.48;
-  }
-  .border-button-paymentpage {
-    zoom: 0.48;
-  }
-}
-
-@media (max-width: 1050px) {
-  .payment-tabs-row {
-    zoom: 0.46;
-  }
-  .payment-table-card {
-    zoom: 0.46;
-  }
-  .border-button-paymentpage {
-    zoom: 0.46;
-  }
-}
-
-@media (max-width: 1000px) {
-  .payment-tabs-row {
-    zoom: 0.44;
+    zoom: 0.9;
   }
   .payment-table-card {
     zoom: 0.9;
   }
   .border-button-paymentpage {
-    zoom: 0.44;
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1450px) {
+  .payment-tabs-row {
+    zoom: 0.85;
+  }
+  .payment-table-card {
+    zoom: 0.85;
+  }
+  .border-button-paymentpage {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1400px) {
+  .payment-tabs-row {
+    zoom: 0.8;
+  }
+  .payment-table-card {
+    zoom: 0.8;
+  }
+  .border-button-paymentpage {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1350px) {
+  .payment-tabs-row {
+    zoom: 0.78;
+  }
+  .payment-table-card {
+    zoom: 0.78;
+  }
+  .border-button-paymentpage {
+    zoom: 0.78;
+  }
+}
+
+@media (max-width: 1300px) {
+  .payment-tabs-row {
+    zoom: 0.76;
+  }
+  .payment-table-card {
+    zoom: 0.76;
+  }
+  .border-button-paymentpage {
+    zoom: 0.76;
+  }
+}
+
+@media (max-width: 1250px) {
+  .payment-tabs-row {
+    zoom: 0.74;
+  }
+  .payment-table-card {
+    zoom: 0.74;
+  }
+  .border-button-paymentpage {
+    zoom: 0.74;
+  }
+}
+
+@media (max-width: 1200px) {
+  .payment-tabs-row {
+    zoom: 0.72;
+  }
+  .payment-table-card {
+    zoom: 0.72;
+  }
+  .border-button-paymentpage {
+    zoom: 0.72;
+  }
+}
+
+@media (max-width: 1150px) {
+  .payment-tabs-row {
+    zoom: 0.7;
+  }
+  .payment-table-card {
+    zoom: 0.7;
+  }
+  .border-button-paymentpage {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1100px) {
+  .payment-tabs-row {
+    zoom: 0.68;
+  }
+  .payment-table-card {
+    zoom: 0.68;
+  }
+  .border-button-paymentpage {
+    zoom: 0.68;
+  }
+}
+
+@media (max-width: 1050px) {
+  .payment-tabs-row {
+    zoom: 0.66;
+  }
+  .payment-table-card {
+    zoom: 0.66;
+  }
+  .border-button-paymentpage {
+    zoom: 0.66;
+  }
+}
+
+@media (max-width: 1000px) {
+  .payment-tabs-row {
+    zoom: 0.64;
+  }
+  .payment-table-card {
+    zoom: 1.1;
+  }
+  .border-button-paymentpage {
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .payment-tabs-row {
-    zoom: 0.42;
+    zoom: 0.62;
   }
   .payment-table-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
   .border-button-paymentpage {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .payment-tabs-row {
-    zoom: 0.4;
+    zoom: 0.6;
   }
   .payment-table-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
   .border-button-paymentpage {
-    zoom: 0.4;
+    zoom: 0.6;
   }
   .payment-search-row {
     flex-direction: column;

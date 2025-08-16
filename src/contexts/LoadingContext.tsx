@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import type { ReactNode } from "react";
 
 interface LoadingContextType {
@@ -20,21 +26,19 @@ export const LoadingProvider: React.FC<LoadingProviderProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Loading...");
 
-  const showLoading = (message: string = "Loading...") => {
+  const showLoading = useCallback((message: string = "Loading...") => {
     setLoadingMessage(message);
     setIsLoading(true);
-  };
+  }, []);
 
-  const hideLoading = () => {
+  const hideLoading = useCallback(() => {
     setIsLoading(false);
-  };
+  }, []);
 
-  const value: LoadingContextType = {
-    isLoading,
-    loadingMessage,
-    showLoading,
-    hideLoading,
-  };
+  const value: LoadingContextType = useMemo(
+    () => ({ isLoading, loadingMessage, showLoading, hideLoading }),
+    [isLoading, loadingMessage, showLoading, hideLoading]
+  );
 
   return (
     <LoadingContext.Provider value={value}>{children}</LoadingContext.Provider>

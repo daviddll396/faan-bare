@@ -1,0 +1,89 @@
+/* Import existing auth styles */
+@import url("../LoginPage/LoginPage.css");
+
+/* OTP specific styles */
+.otp-input-container {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.otp-input {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #007948;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.otp-input:focus {
+  border-color: #007948;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 121, 72, 0.1);
+}
+
+.otp-input.error {
+  border-color: #ef4444;
+}
+
+.otp-input:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Resend OTP styles */
+.resend-otp-container {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.resend-otp-text {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.resend-otp-button {
+  background: none;
+  border: none;
+  color: #007948;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.resend-otp-button:hover:not(:disabled) {
+  color: #005a3a;
+}
+
+.resend-otp-button:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .otp-input-container {
+    gap: 8px;
+  }
+
+  .otp-input {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  .one-time-form {
+    padding: 24px 20px;
+  }
+}

@@ -145,6 +145,9 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (item.page === "profile") {
       return windowWidth <= 768; // Show profile for both Customer and Admin on mobile
     }
+    if (userRole === "Guest") {
+      return item.page === "services"; // Guest users only see services
+    }
     if (userRole === "Customer")
       return item.showForCustomer && (!item.mobileOnly || windowWidth <= 768);
     return item.showForAdmin && (!item.mobileOnly || windowWidth <= 768);

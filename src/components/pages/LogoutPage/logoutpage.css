@@ -37,103 +37,103 @@
 /* Progressive zoom scaling for logout modal */
 @media (max-width: 1920px) {
   .logout-modal {
-    zoom: 0.9 !important;
+    zoom: 1.1 !important;
   }
 }
 
 @media (max-width: 1800px) {
   .logout-modal {
-    zoom: 0.85 !important;
+    zoom: 1.05 !important;
   }
 }
 
 @media (max-width: 1700px) {
   .logout-modal {
-    zoom: 0.8 !important;
+    zoom: 1 !important;
   }
 }
 
 @media (max-width: 1600px) {
   .logout-modal {
-    zoom: 0.76 !important;
+    zoom: 0.96 !important;
   }
 }
 
 @media (max-width: 1500px) {
   .logout-modal {
-    zoom: 0.72 !important;
+    zoom: 0.92 !important;
   }
 }
 
 @media (max-width: 1450px) {
   .logout-modal {
-    zoom: 0.7 !important;
+    zoom: 0.9 !important;
   }
 }
 
 @media (max-width: 1400px) {
   .logout-modal {
-    zoom: 0.68 !important;
+    zoom: 0.88 !important;
   }
 }
 
 @media (max-width: 1350px) {
   .logout-modal {
-    zoom: 0.66 !important;
+    zoom: 0.86 !important;
   }
 }
 
 @media (max-width: 1300px) {
   .logout-modal {
-    zoom: 0.64 !important;
+    zoom: 0.84 !important;
   }
 }
 
 @media (max-width: 1250px) {
   .logout-modal {
-    zoom: 0.62 !important;
+    zoom: 0.82 !important;
   }
 }
 
 @media (max-width: 1200px) {
   .logout-modal {
-    zoom: 0.6 !important;
+    zoom: 0.8 !important;
   }
 }
 
 @media (max-width: 1150px) {
   .logout-modal {
-    zoom: 0.56 !important;
+    zoom: 0.76 !important;
   }
 }
 
 @media (max-width: 1100px) {
   .logout-modal {
-    zoom: 0.52 !important;
+    zoom: 0.72 !important;
   }
 }
 
 @media (max-width: 1050px) {
   .logout-modal {
-    zoom: 0.48 !important;
+    zoom: 0.68 !important;
   }
 }
 
 @media (max-width: 1000px) {
   .logout-modal {
-    zoom: 0.44 !important;
+    zoom: 0.64 !important;
   }
 }
 
 @media (max-width: 950px) {
   .logout-modal {
-    zoom: 0.42 !important;
+    zoom: 0.62 !important;
   }
 }
 
 @media (max-width: 900px) {
   .logout-modal {
-    zoom: 0.4 !important;
+    zoom: 0.6 !important;
   }
 }
 

@@ -3,6 +3,8 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import CryptoJS from "crypto-js";
@@ -35,8 +37,8 @@ const API_ENDPOINTS = {
 };
 
 const ENCRYPTION_CONFIG = {
-  SECRET_KEY: "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/", // 32 bytes (AES-256)
-  IV_KEY: "RVFU9+dRKhYkiCZI", // 16 bytes
+  SECRET_KEY: "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/",
+  IV_KEY: "RVFU9+dRKhYkiCZI",
 };
 
 const REQUEST_HEADERS = {
@@ -103,12 +105,20 @@ interface TransactionHistoryItem {
   id: number;
 }
 
+interface GuestFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  setGuestUser: (formData: GuestFormData) => void;
   fundWallet: (amount: number) => Promise<boolean>;
   getAllTariffs: () => Promise<TariffsResponse | null>;
   makePayment: (reference: string, tariffId: number) => Promise<boolean>;
@@ -175,6 +185,10 @@ const MOCK_CUSTOMER_CREDENTIALS = {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const tariffsCacheRef = useRef<TariffsResponse | null>(null);
+  const tariffsInFlightRef = useRef<Promise<TariffsResponse | null> | null>(
+    null
+  );
 
   // Check for existing auth on mount
   useEffect(() => {
@@ -457,9 +471,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (data.status && data.statusCode === HTTP_STATUS.OK) {
+        // Shape the login response to a typed object to include userType
+        interface LoginResponse {
+          status: boolean;
+          statusCode: number;
+          message: string;
+          data: {
+            token: string;
+            customerId: string;
+            userType?: "ADMIN" | "CUSTOMER" | "GUEST" | string;
+          };
+        }
+        const loginResp = data as LoginResponse;
+        const userTypeRaw = loginResp.data.userType;
+        const normalizedRole: string =
+          userTypeRaw === "ADMIN"
+            ? "Admin"
+            : userTypeRaw === "CUSTOMER"
+            ? "Customer"
+            : userTypeRaw === "GUEST"
+            ? "Guest"
+            : "Customer";
+
         // Log the token and customerId we received
         console.log("Login successful! Token received:", data.data.token);
         console.log("Customer ID received:", data.data.customerId);
+        console.log("User Type received:", userTypeRaw);
         console.log("Token type:", typeof data.data.token);
         console.log("Token length:", data.data.token?.length);
 
@@ -472,14 +509,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log("Fetching user details...");
         console.log("Using token:", data.data.token);
         console.log("For customer ID:", data.data.customerId);
-        const userDetails = await fetchUserDetails(data.data.token);
+        const userDetails = await fetchUserDetails(loginResp.data.token);
         console.log("=== CUSTOMER DETAILS FETCH COMPLETED ===");
 
         if (userDetails) {
           // Use the real user details from the API and add customerId
           const completeUserData: User = {
             ...userDetails,
-            customerId: data.data.customerId,
+            customerId: loginResp.data.customerId,
+            // Override role using accountType from login response
+            role: normalizedRole,
           };
           setUser(completeUserData);
           localStorage.setItem(
@@ -491,14 +530,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Fallback to basic user object if user details fetch fails
           console.log("User details fetch failed, using fallback user data");
           const fallbackUserData: User = {
-            id: data.data.customerId || Date.now().toString(),
-            customerId: data.data.customerId,
+            id: loginResp.data.customerId || Date.now().toString(),
+            customerId: loginResp.data.customerId,
             firstName: email.split("@")[0],
             lastName: "",
             name: email.split("@")[0],
             email: email,
             phoneNumber: "",
-            role: "Customer",
+            role: normalizedRole,
             transactionStats: {
               total: 0,
               completed: 0,
@@ -631,87 +670,101 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const getAllTariffs = async (): Promise<TariffsResponse | null> => {
-    try {
-      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-      if (!token) {
-        console.error("No token found for fetching tariffs");
-        return null;
+  const getAllTariffs =
+    useCallback(async (): Promise<TariffsResponse | null> => {
+      // Return cached result if available
+      if (tariffsCacheRef.current) {
+        return tariffsCacheRef.current;
+      }
+      // If a request is already in flight, await it
+      if (tariffsInFlightRef.current) {
+        return tariffsInFlightRef.current;
       }
 
-      console.log("🚀 === STARTING GET ALL TARIFFS REQUEST ===");
-      console.log("📍 Request URL:", API_ENDPOINTS.GET_ALL_TARIFFS);
-      console.log("🔑 Using token:", token);
-      console.log("⏰ Request timestamp:", new Date().toISOString());
-
-      const response = await fetch(API_ENDPOINTS.GET_ALL_TARIFFS, {
-        method: "GET",
-        headers: {
-          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log("📥 Get all tariffs response status:", response.status);
-      console.log(
-        "📥 Get all tariffs response status text:",
-        response.statusText
-      );
-      console.log("📥 Response timestamp:", new Date().toISOString());
-      console.log("🔧 Get all tariffs request headers:", {
-        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-        Authorization: `Bearer ${token}`,
-      });
-
-      if (!response.ok) {
-        console.error(
-          "❌ Failed to fetch tariffs:",
-          response.status,
-          response.statusText
-        );
-        const errorText = await response.text();
-        console.error("❌ Error response body:", errorText);
-        return null;
-      }
-
-      const responseText = await response.text();
-      console.log("📄 Raw get all tariffs response:", responseText);
-      console.log("📏 Response length:", responseText.length);
-
-      // Check if response has content
-      if (!responseText || responseText.trim() === "") {
-        console.log("⚠️ Empty get all tariffs response");
-        return null;
-      }
-
-      // Parse the JSON response directly (no decryption needed for this endpoint)
-      let data: TariffsResponse;
       try {
-        data = JSON.parse(responseText);
-        console.log("✅ Parsed get all tariffs data:", data);
-        console.log("✅ Data structure:", typeof data);
-        if (data && typeof data === "object") {
-          console.log("✅ Data keys:", Object.keys(data));
-          if (data.data) {
-            console.log("✅ Data.data type:", typeof data.data);
-            console.log("✅ Data.data content:", data.data);
-          }
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          console.error("No token found for fetching tariffs");
+          return null;
         }
+
+        console.log("🚀 === STARTING GET ALL TARIFFS REQUEST ===");
+        console.log("📍 Request URL:", API_ENDPOINTS.GET_ALL_TARIFFS);
+        console.log("🔑 Using token:", token);
+        console.log("⏰ Request timestamp:", new Date().toISOString());
+
+        const requestPromise = fetch(API_ENDPOINTS.GET_ALL_TARIFFS, {
+          method: "GET",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        tariffsInFlightRef.current = requestPromise.then(async (response) => {
+          console.log("📥 Get all tariffs response status:", response.status);
+          console.log(
+            "📥 Get all tariffs response status text:",
+            response.statusText
+          );
+          console.log("📥 Response timestamp:", new Date().toISOString());
+          console.log("🔧 Get all tariffs request headers:", {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          });
+
+          if (!response.ok) {
+            console.error(
+              "❌ Failed to fetch tariffs:",
+              response.status,
+              response.statusText
+            );
+            const errorText = await response.text();
+            console.error("❌ Error response body:", errorText);
+            return null;
+          }
+
+          const responseText = await response.text();
+          console.log("📄 Raw get all tariffs response:", responseText);
+          console.log("📏 Response length:", responseText.length);
+
+          if (!responseText || responseText.trim() === "") {
+            console.log("⚠️ Empty get all tariffs response");
+            return null;
+          }
+
+          let data: TariffsResponse;
+          try {
+            data = JSON.parse(responseText);
+            console.log("✅ Parsed get all tariffs data:", data);
+          } catch (error) {
+            console.error("❌ Failed to parse get all tariffs JSON:", error);
+            console.error(
+              "❌ Raw response that failed to parse:",
+              responseText
+            );
+            return null;
+          }
+
+          return data;
+        });
+
+        const data = await tariffsInFlightRef.current;
+        // Cache the successful result
+        if (data && data.status && Array.isArray(data.data)) {
+          tariffsCacheRef.current = data;
+        }
+        // Clear in-flight reference
+        tariffsInFlightRef.current = null;
+        console.log("🎉 === GET ALL TARIFFS COMPLETED SUCCESSFULLY ===");
+        return data;
       } catch (error) {
-        console.error("❌ Failed to parse get all tariffs JSON:", error);
-        console.error("❌ Raw response that failed to parse:", responseText);
+        console.error("💥 Get all tariffs error:", error);
+        tariffsInFlightRef.current = null;
         return null;
       }
-
-      console.log("🎉 === GET ALL TARIFFS COMPLETED SUCCESSFULLY ===");
-      return data;
-    } catch (error) {
-      console.error("💥 Get all tariffs error:", error);
-      return null;
-    }
-  };
+    }, []);
 
   const makePayment = async (
     reference: string,
@@ -963,12 +1016,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const setGuestUser = (formData: GuestFormData) => {
+    const guestUser: User = {
+      id: `guest-${Date.now()}`,
+      customerId: `GUEST-${Date.now()}`,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      role: "Guest",
+      walletBalance: 0,
+      transactionStats: {
+        total: 0,
+        completed: 0,
+        pending: 0,
+        cancelled: 0,
+      },
+    };
+
+    setUser(guestUser);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(guestUser));
+    localStorage.setItem(STORAGE_KEYS.TOKEN, `guest-token-${Date.now()}`);
+    console.log("Guest user created:", guestUser);
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
     isLoading,
     login,
     logout,
+    setGuestUser,
     fundWallet,
     getAllTariffs,
     makePayment,

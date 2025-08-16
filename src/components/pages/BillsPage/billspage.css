@@ -459,103 +459,103 @@
 /* Zoom scaling for bill search card */
 @media (max-width: 1920px) {
   .bill-search-card {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .bill-search-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .bill-search-card {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .bill-search-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .bill-search-card {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1450px) {
   .bill-search-card {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .bill-search-card {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1350px) {
   .bill-search-card {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1300px) {
   .bill-search-card {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1250px) {
   .bill-search-card {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1200px) {
   .bill-search-card {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1150px) {
   .bill-search-card {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1100px) {
   .bill-search-card {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1050px) {
   .bill-search-card {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1000px) {
   .bill-search-card {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .bill-search-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .bill-search-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
@@ -670,103 +670,103 @@
 /* Progressive zoom scaling for bill results title */
 @media (max-width: 1920px) {
   .bill-results-title {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .bill-results-title {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .bill-results-title {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .bill-results-title {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .bill-results-title {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1450px) {
   .bill-results-title {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .bill-results-title {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1350px) {
   .bill-results-title {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1300px) {
   .bill-results-title {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1250px) {
   .bill-results-title {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1200px) {
   .bill-results-title {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1150px) {
   .bill-results-title {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1100px) {
   .bill-results-title {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1050px) {
   .bill-results-title {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1000px) {
   .bill-results-title {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .bill-results-title {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .bill-results-title {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
@@ -779,103 +779,103 @@
 /* Zoom scaling for bill results table card */
 @media (max-width: 1920px) {
   .bill-results-table-card {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .bill-results-table-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .bill-results-table-card {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .bill-results-table-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .bill-results-table-card {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1450px) {
   .bill-results-table-card {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .bill-results-table-card {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1350px) {
   .bill-results-table-card {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1300px) {
   .bill-results-table-card {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1250px) {
   .bill-results-table-card {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1200px) {
   .bill-results-table-card {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1150px) {
   .bill-results-table-card {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1100px) {
   .bill-results-table-card {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1050px) {
   .bill-results-table-card {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1000px) {
   .bill-results-table-card {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .bill-results-table-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .bill-results-table-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
@@ -888,103 +888,103 @@
 /* Progressive zoom scaling for bill creation form */
 @media (max-width: 1920px) {
   .add-service-form-bill {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .add-service-form-bill {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .add-service-form-bill {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .add-service-form-bill {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .add-service-form-bill {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1450px) {
   .add-service-form-bill {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .add-service-form-bill {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1350px) {
   .add-service-form-bill {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1300px) {
   .add-service-form-bill {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1250px) {
   .add-service-form-bill {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1200px) {
   .add-service-form-bill {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1150px) {
   .add-service-form-bill {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1100px) {
   .add-service-form-bill {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1050px) {
   .add-service-form-bill {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1000px) {
   .add-service-form-bill {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .add-service-form-bill {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .add-service-form-bill {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
@@ -997,37 +997,37 @@
 /* Zoom scaling for customer modal center */
 @media (max-width: 1920px) {
   .customer-modal-center {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1400px) {
   .customer-modal-center {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1300px) {
   .customer-modal-center {
-    zoom: 0.45;
+    zoom: 0.65;
   }
 }
 
 @media (max-width: 1150px) {
   .customer-modal-center {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 1100px) {
   .customer-modal-center {
-    zoom: 0.35;
+    zoom: 0.55;
   }
 }
 
 @media (max-width: 1050px) {
   .customer-modal-center {
-    zoom: 0.3;
+    zoom: 0.5;
   }
 }
 
@@ -1051,7 +1051,6 @@
     align-items: stretch;
     gap: 0;
     width: 100%;
-    
   }
   .bill-search-card {
     border-radius: 10px;
@@ -1105,7 +1104,6 @@
     width: 100%;
     max-width: 100%;
     border-width: 1px;
-   
   }
   .add-user-title {
     font-size: 16px;
@@ -1129,7 +1127,6 @@
   .bill-results-wrapper {
     gap: 10px;
     width: 100%;
-    
   }
   .bill-customer-details-row {
     gap: 10px;

@@ -12,103 +12,103 @@
 /* Zoom scaling for customer tabs */
 @media (max-width: 1920px) {
   .customer-tabs {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .customer-tabs {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .customer-tabs {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .customer-tabs {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .customer-tabs {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1450px) {
   .customer-tabs {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .customer-tabs {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1350px) {
   .customer-tabs {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1300px) {
   .customer-tabs {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1250px) {
   .customer-tabs {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1200px) {
   .customer-tabs {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1150px) {
   .customer-tabs {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1100px) {
   .customer-tabs {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1050px) {
   .customer-tabs {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1000px) {
   .customer-tabs {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .customer-tabs {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .customer-tabs {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
@@ -159,103 +159,103 @@
 /* Zoom scaling for customer card */
 @media (max-width: 1920px) {
   .customer-card {
-    zoom: 0.9;
+    zoom: 1.1;
   }
 }
 
 @media (max-width: 1800px) {
   .customer-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1700px) {
   .customer-card {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1600px) {
   .customer-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1500px) {
   .customer-card {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1450px) {
   .customer-card {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .customer-card {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1350px) {
   .customer-card {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1300px) {
   .customer-card {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1250px) {
   .customer-card {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1200px) {
   .customer-card {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1150px) {
   .customer-card {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1100px) {
   .customer-card {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1050px) {
   .customer-card {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1000px) {
   .customer-card {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 950px) {
   .customer-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 900px) {
   .customer-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
@@ -815,7 +815,6 @@
   .customers-page-bg {
     padding: 0;
     background: var(--bg-color);
-   
   }
   .customer-tabs {
     margin-bottom: 18px;

@@ -50,103 +50,103 @@
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .wallet-card {
-    zoom: 0.85;
+    zoom: 1.05;
   }
 }
 
 @media (max-width: 1800px) {
   .wallet-card {
-    zoom: 0.8;
+    zoom: 1;
   }
 }
 
 @media (max-width: 1700px) {
   .wallet-card {
-    zoom: 0.75;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1600px) {
   .wallet-card {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1500px) {
   .wallet-card {
-    zoom: 0.65;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1450px) {
   .wallet-card {
-    zoom: 0.6;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1400px) {
   .wallet-card {
-    zoom: 0.58;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1350px) {
   .wallet-card {
-    zoom: 0.56;
+    zoom: 0.76;
   }
 }
 
 @media (max-width: 1300px) {
   .wallet-card {
-    zoom: 0.54;
+    zoom: 0.74;
   }
 }
 
 @media (max-width: 1250px) {
   .wallet-card {
-    zoom: 0.52;
+    zoom: 0.72;
   }
 }
 
 @media (max-width: 1200px) {
   .wallet-card {
-    zoom: 0.5;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1150px) {
   .wallet-card {
-    zoom: 0.48;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1100px) {
   .wallet-card {
-    zoom: 0.46;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1050px) {
   .wallet-card {
-    zoom: 0.44;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 1000px) {
   .wallet-card {
-    zoom: 0.42;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 950px) {
   .wallet-card {
-    zoom: 0.4;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 900px) {
   .wallet-card {
-    zoom: 0.38;
+    zoom: 0.58;
   }
 }
 
@@ -537,6 +537,7 @@
   .dashboard-bottom-grid {
     display: flex;
     flex-direction: column;
+    padding-bottom: var(--page-bottom-padding-mobile);
   }
 
   .dashboard-page-content {

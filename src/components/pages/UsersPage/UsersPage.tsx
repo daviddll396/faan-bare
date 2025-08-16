@@ -4,7 +4,6 @@ import AddIcon from "../../../../public/icons/add-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import UsersIcon from "../../../../public/icons/users-icon.svg";
-import ChevronDown from "../../../../public/icons/chevron-down.svg";
 import { useLoading } from "../../../contexts/LoadingContext";
 import ConfirmationModal from "../../reusables/ConfirmationModal/ConfirmationModal";
 import "./userspage.css";
@@ -117,7 +116,6 @@ const UsersPage: React.FC<UsersPageProps> = () => {
 
   // UI state
   const [showAddUserForm, setShowAddUserForm] = React.useState(false);
-  const [roleSelectFocused, setRoleSelectFocused] = React.useState(false);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -543,30 +541,17 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                   />
                 </div>
               </div>
-              <div className="form-row ">
+              <div className="form-row">
                 <label>Role</label>
-                <div
-                  className={`select-dropdown-wrapper${
-                    roleSelectFocused ? " open" : ""
-                  }`}
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
                 >
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    onFocus={() => setRoleSelectFocused(true)}
-                    onBlur={() => setRoleSelectFocused(false)}
-                  >
-                    <option value="">Select role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Officer">Officer</option>
-                  </select>
-                  <img
-                    src={ChevronDown}
-                    alt="dropdown"
-                    className="select-chevron"
-                  />
-                </div>
+                  <option value="">Select role</option>
+                  <option value="Admin">Admin</option>
+                  <option value="Officer">Officer</option>
+                </select>
               </div>
               <div className="form-actions">
                 <GradientButton type="submit" fullWidth>
