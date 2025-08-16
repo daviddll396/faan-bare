@@ -4,62 +4,62 @@ import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/onboarding-image.svg";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 import { Eye, EyeOff } from "lucide-react";
 import "./RegisterPage.css";
 
 // API Base URL - configure for different environments
-const getApiBaseUrl = (): string => {
-  // Detect if we're in production by checking the hostname
-  const isProduction =
-    window.location.hostname.includes("vercel.app") ||
-    window.location.hostname.includes("netlify.app") ||
-    !window.location.hostname.includes("localhost");
+// const getApiBaseUrl = (): string => {
+//   // Detect if we're in production by checking the hostname
+//   const isProduction =
+//     window.location.hostname.includes("vercel.app") ||
+//     window.location.hostname.includes("netlify.app") ||
+//     !window.location.hostname.includes("localhost");
 
-  if (isProduction) {
-    // In production (Vercel), use the proxy path
-    return "";
-  }
-  // Local development - use the direct API server
-  return "http://197.253.19.78:9091";
-};
+//   if (isProduction) {
+//     // In production (Vercel), use the proxy path
+//     return "";
+//   }
+//   // Local development - use the direct API server
+//   return "http://197.253.19.78:9091";
+// };
 
-const API_BASE_URL = getApiBaseUrl();
-const API_ENDPOINTS = {
-  REGISTER: `${API_BASE_URL}/auth/faan/register`,
-};
+// const API_BASE_URL = getApiBaseUrl();
+// const API_ENDPOINTS = {
+//   REGISTER: `${API_BASE_URL}/auth/faan/register`,
+// };
 
 // AES encryption function (CBC with PKCS5 padding)
-const encryptAESCBC = (
-  plaintext: string,
-  secret: string,
-  iv: string
-): string => {
-  const key = CryptoJS.enc.Utf8.parse(secret);
-  const ivBytes = CryptoJS.enc.Utf8.parse(iv);
-  const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-    iv: ivBytes,
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC,
-  });
-  return encrypted.toString(); // base64-encoded
-};
+// const encryptAESCBC = (
+//   plaintext: string,
+//   secret: string,
+//   iv: string
+// ): string => {
+//   const key = CryptoJS.enc.Utf8.parse(secret);
+//   const ivBytes = CryptoJS.enc.Utf8.parse(iv);
+//   const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
+//     iv: ivBytes,
+//     padding: CryptoJS.pad.Pkcs7,
+//     mode: CryptoJS.mode.CBC,
+//   });
+//   return encrypted.toString(); // base64-encoded
+// };
 
 // AES decryption function (CBC with PKCS5 padding)
-const decryptAESCBC = (
-  encryptedText: string,
-  secret: string,
-  iv: string
-): string => {
-  const key = CryptoJS.enc.Utf8.parse(secret);
-  const ivBytes = CryptoJS.enc.Utf8.parse(iv);
-  const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
-    iv: ivBytes,
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC,
-  });
-  return decrypted.toString(CryptoJS.enc.Utf8);
-};
+// const decryptAESCBC = (
+//   encryptedText: string,
+//   secret: string,
+//   iv: string
+// ): string => {
+//   const key = CryptoJS.enc.Utf8.parse(secret);
+//   const ivBytes = CryptoJS.enc.Utf8.parse(iv);
+//   const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
+//     iv: ivBytes,
+//     padding: CryptoJS.pad.Pkcs7,
+//     mode: CryptoJS.mode.CBC,
+//   });
+//   return decrypted.toString(CryptoJS.enc.Utf8);
+// };
 
 const roleOptions = [
   { label: "Individual", value: "INDIVIDUAL" },
@@ -228,8 +228,8 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Configuration for encryption
-  const secretKey = "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/"; // 32 bytes (AES-256)
-  const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes
+  // const secretKey = "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/"; // 32 bytes (AES-256)
+  // const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes
 
   const [step, setStep] = useState<
     "role" | "form" | "credentials" | "documents" | "indemnity"
@@ -362,13 +362,13 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({
-      message,
-      type,
-      isVisible: true,
-    });
-  };
+  // const showToast = (message: string, type: "success" | "error") => {
+  //   setToast({
+  //     message,
+  //     type,
+  //     isVisible: true,
+  //   });
+  // };
 
   const handleIndividualChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
