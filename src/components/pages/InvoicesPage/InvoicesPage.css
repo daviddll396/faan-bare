@@ -299,8 +299,8 @@
 }
 
 .available-services {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
   padding-right: 10px;
   padding-left: 10px;
@@ -308,16 +308,24 @@
 
 .service-option {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px 16px 16px;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 16px;
   border: 1px solid #e4e4e4;
-  border-radius: 8px;
-  background: #fafafa;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  min-height: 160px;
 }
 
 .service-info {
   flex: 1;
+}
+
+.service-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .service-name {
@@ -635,7 +643,15 @@
   .invoice-card {
     padding: 16px;
   }
+  /* Reserve space at bottom on mobile when pending to accommodate timer */
+  .invoice-card.pending {
+    padding-bottom: 40px;
+    position: relative;
+  }
 
+  .invoice-expiry-warning {
+    bottom: 10px;
+  }
   .invoice-header {
     flex-direction: column;
     align-items: flex-start;
@@ -650,7 +666,10 @@
   .service-option {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 0px;
+  }
+  .service-actions {
+    align-self: flex-end;
   }
 
   .selected-service {
@@ -968,6 +987,126 @@
   transition: zoom 0.3s ease;
 }
 
+/* Thermal receipt styling for InvoicesPage (reuse styles similar to Services) */
+.invoice-receipt-modal {
+  min-width: 520px;
+  max-width: 720px;
+}
+
+.receipt-paper {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  color: #111827;
+}
+.receipt-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 16px;
+  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
+      top / 16px 16px repeat-x,
+    linear-gradient(#e5e7eb, #e5e7eb);
+}
+.receipt-head {
+  text-align: center;
+  margin: 8px 0;
+}
+.receipt-brand {
+  font-weight: 700;
+  color: #374151;
+  font-size: 14px;
+}
+.receipt-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.receipt-sub {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.receipt-meta {
+  border: 1px dashed #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px 0;
+}
+.receipt-meta .meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px dashed #e5e7eb;
+}
+.receipt-meta .meta-row:last-child {
+  border-bottom: none;
+}
+.receipt-meta .meta-row span:first-child {
+  color: #6b7280;
+  font-size: 12px;
+}
+.mono,
+.monospace {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
+}
+.receipt-items {
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+.receipt-items .thead,
+.receipt-items .row,
+.receipt-items .total {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 12px;
+  padding: 10px 0;
+}
+.receipt-items .thead {
+  color: #6b7280;
+  font-size: 12px;
+}
+.receipt-items .row {
+  border-top: 1px dashed #e5e7eb;
+}
+.receipt-items .right {
+  text-align: right;
+}
+.receipt-items .total {
+  border-top: 2px solid #e5e7eb;
+  font-weight: 800;
+}
+.receipt-foot {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 12px;
+  text-align: center;
+}
+.receipt-download {
+  margin-top: 12px;
+}
+
+/* Create Invoice Subpage - default zoom */
+.create-invoice-subpage,
+.services-selection,
+.available-services,
+.selected-services,
+.service-option {
+  zoom: 1;
+  transition: zoom 0.3s ease;
+}
+
 /* Border button zoom scaling is handled by the BorderButton component CSS */
 
 /* Border button zoom scaling for invoices page buttons */
@@ -1002,6 +1141,13 @@
   .invoice-card {
     zoom: 0.98;
   }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
+    zoom: 0.98;
+  }
   .border-button-invoicespage {
     zoom: 0.93;
   }
@@ -1026,6 +1172,13 @@
     zoom: 0.96;
   }
   .invoice-card {
+    zoom: 0.96;
+  }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
     zoom: 0.96;
   }
   .border-button-invoicespage {
@@ -1054,6 +1207,13 @@
   .invoice-card {
     zoom: 0.94;
   }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
+    zoom: 0.94;
+  }
   .border-button-invoicespage {
     zoom: 0.78;
   }
@@ -1078,6 +1238,13 @@
     zoom: 0.92;
   }
   .invoice-card {
+    zoom: 0.92;
+  }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
     zoom: 0.92;
   }
   .border-button-invoicespage {
@@ -1106,6 +1273,13 @@
   .invoice-card {
     zoom: 0.9;
   }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
+    zoom: 0.9;
+  }
   .border-button-invoicespage {
     zoom: 0.58;
   }
@@ -1130,6 +1304,13 @@
     zoom: 0.88;
   }
   .invoice-card {
+    zoom: 0.88;
+  }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
     zoom: 0.88;
   }
   .border-button-invoicespage {
@@ -1157,6 +1338,13 @@
     zoom: 1;
   }
   .invoice-card {
+    zoom: 1;
+  }
+  .create-invoice-subpage,
+  .services-selection,
+  .available-services,
+  .selected-services,
+  .service-option {
     zoom: 1;
   }
   .border-button-invoicespage {

@@ -59,6 +59,7 @@ const STORAGE_KEYS = {
 
 const HTTP_STATUS = {
   OK: 200,
+  CREATED: 201,
   UNAUTHORIZED: 401,
 };
 
@@ -1135,7 +1136,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
 
-      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+      if (
+        data.status &&
+        (data.statusCode === HTTP_STATUS.OK ||
+          data.statusCode === HTTP_STATUS.CREATED)
+      ) {
         console.log("🎉 === GENERATE INVOICE COMPLETED SUCCESSFULLY ===");
         return data as GenerateInvoiceResponse;
       } else {

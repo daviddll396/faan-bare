@@ -1,9 +1,9 @@
 .message-toast {
   position: fixed;
-  bottom: 5%;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%) translateY(100%);
-  z-index: 9999;
+  z-index: 2147483647; /* ensure above all */
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 14px;

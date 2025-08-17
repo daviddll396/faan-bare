@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import "./MessageToast.css";
 
 export interface MessageToastProps {
@@ -117,7 +118,7 @@ const MessageToast: React.FC<MessageToastProps> = ({
     return null;
   }
 
-  return (
+  const toastNode = (
     <div
       className={`message-toast message-toast-${type} ${
         isAnimatingIn ? "message-toast-in" : ""
@@ -126,6 +127,8 @@ const MessageToast: React.FC<MessageToastProps> = ({
       {message}
     </div>
   );
+
+  return createPortal(toastNode, document.body);
 };
 
 export default MessageToast;

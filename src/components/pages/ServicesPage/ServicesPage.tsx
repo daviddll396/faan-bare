@@ -11,6 +11,7 @@ import ServicesIcon from "/icons/nav-product-icon.svg";
 import "./ServicesPage.css";
 import { Edit, Trash2 } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
+import { FiUserPlus } from "react-icons/fi";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
@@ -44,8 +45,7 @@ interface RemitaPaymentHandler {
   showPaymentWidget: () => void;
 }
 
-// Dev-only guard to prevent duplicate fetches in React 18 StrictMode
-let hasFetchedTariffs = false;
+// Guard to prevent duplicate fetches within a single mount (React 18 StrictMode)
 
 interface ServicesPageProps {
   role?: string;
@@ -153,6 +153,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     refreshUserDetails,
     generateInvoice,
     createTariff,
+    makePayment,
     user,
   } = useAuth();
   const { showLoading, hideLoading } = useLoading();
@@ -187,12 +188,51 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     airline: "",
     destination: "",
   });
+  // Airline and destination options for booking form
+  const airlineOptions = [
+    "DELTA",
+    "ARIK",
+    "AIR PEACE",
+    "DANA AIR",
+    "IBOM AIR",
+    "AZMAN AIR",
+    "MAX AIR",
+    "ETHIOPIAN AIRLINES",
+    "TURKISH AIRLINES",
+    "KLM",
+    "AIR FRANCE",
+  ];
+  const destinationOptions = [
+    "LAGOS",
+    "ABUJA",
+    "PORT HARCOURT",
+    "KANO",
+    "KADUNA",
+    "JOS",
+    "YOLA",
+    "LONDON",
+    "DUBAI",
+    "DOHA",
+    "JOHANNESBURG",
+    "ACCRA",
+  ];
   const [passengers, setPassengers] = React.useState<BookingPassenger[]>([]);
   const [fieldErrors, setFieldErrors] = React.useState<{
     [key: string]: boolean;
   }>({});
   const [generatedRRR, setGeneratedRRR] = React.useState<string>("");
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
+  const [showReceiptModal, setShowReceiptModal] = React.useState(false);
+  const [lastOrderId, setLastOrderId] = React.useState<string>("");
+  const [receiptData, setReceiptData] = React.useState<{
+    invoiceNumber: string;
+    rrr: string;
+    transactionId: number;
+    amount: number;
+    serviceName: string;
+    customerId: string;
+    paymentDate: string;
+  } | null>(null);
 
   // Add search state for admin view
   const [searchName, setSearchName] = useState("");
@@ -270,9 +310,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
   // Add useEffect to fetch tariffs when component mounts
   useEffect(() => {
-    // Guard to prevent duplicate calls in development StrictMode
-    if (hasFetchedTariffs) return;
-    hasFetchedTariffs = true;
+    // Per-mount ref guard (avoids double-invoke within a single mount in StrictMode)
+    const fetchedRef = { current: false } as { current: boolean };
 
     const fetchTariffs = async () => {
       console.log("🎯 ServicesPage: Attempting to fetch all tariffs...");
@@ -371,7 +410,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       }
     };
 
+    if (!fetchedRef.current) {
+      fetchedRef.current = true;
     fetchTariffs();
+    }
   }, []);
 
   // Add useEffect to check if Remita script is loaded
@@ -709,18 +751,40 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               // Show success toast
               showToast("Payment successful!", "success");
 
-              // Set payment success state to show modal
-              console.log("🎭 Setting showPaymentSuccess to true");
-              setShowPaymentSuccess(true);
-              isPaymentSuccessful = true; // Set payment successful flag
+              // Call make payment endpoint to record success
+              (async () => {
+                try {
+                  const result = await makePayment(
+                    generatedRRR,
+                    selectedService.id
+                  );
+                  if (!result?.success) {
+                    console.warn(
+                      "⚠️ makePayment did not confirm success:",
+                      result
+                    );
+                  }
+                } catch (err) {
+              console.error(
+                    "💥 Error calling makePayment after Remita:",
+                    err
+                  );
+                }
+              })();
 
-              // Log modal state change
-              setTimeout(() => {
-                console.log(
-                  "🎭 Modal state after setState:",
-                  showPaymentSuccess
-                );
-              }, 100);
+              // Prepare receipt data and show receipt modal
+              const paymentInfo = {
+                invoiceNumber: lastOrderId || `INV-${Date.now()}`,
+                rrr: generatedRRR,
+                transactionId,
+                amount: total,
+                serviceName: selectedService.name,
+                customerId: user?.customerId || "GUEST",
+                paymentDate: new Date().toLocaleString(),
+              };
+              setReceiptData(paymentInfo);
+              setShowReceiptModal(true);
+              isPaymentSuccessful = true; // Set payment successful flag
 
               // Refresh user details after successful payment
               refreshUserDetails();
@@ -796,42 +860,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             console.log("🎉 === RRR GENERATED SUCCESSFULLY ===");
             console.log("📄 Response data:", response.data);
             console.log("🔢 RRR:", response.data.rrr);
-            console.log("📋 Order ID:", response.data.orderId);
             console.log("👤 Customer ID:", response.data.customerId);
-            console.log("💰 Tariff ID:", response.data.tariffId);
             console.log("✅ Status:", response.status);
             console.log("📊 Status Code:", response.statusCode);
             console.log("💬 Message:", response.message);
 
             // Store the generated RRR
             setGeneratedRRR(response.data.rrr);
+            setLastOrderId(orderId);
 
-            hideLoading();
+          hideLoading();
             showToast(
               `RRR generated successfully: ${response.data.rrr}`,
               "success"
             );
           } else {
-            console.log("⚠️ API failed, generating mock RRR");
-            // Generate mock RRR if API fails
-            const mockRRR = `140${Math.floor(Math.random() * 1000000000)
-              .toString()
-              .padStart(9, "0")}`;
-            setGeneratedRRR(mockRRR);
-
             hideLoading();
-            showToast(`Mock RRR generated: ${mockRRR}`, "success");
+            showToast("Failed to generate RRR. Please try again.", "error");
           }
         } catch (error) {
-          console.error("💥 RRR generation error, generating mock RRR:", error);
-          // Generate mock RRR if there's an error
-          const mockRRR = `140${Math.floor(Math.random() * 1000000000)
-            .toString()
-            .padStart(9, "0")}`;
-          setGeneratedRRR(mockRRR);
-
+          console.error("💥 RRR generation error:", error);
           hideLoading();
-          showToast(`Mock RRR generated: ${mockRRR}`, "success");
+          showToast("Error generating RRR. Please try again.", "error");
         }
       };
 
@@ -1182,8 +1232,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           onChange={handleBookingFormChange}
                         >
                           <option value=""></option>
-                          <option value="DELTA">DELTA</option>
-                          <option value="ARIK">ARIK</option>
+                          {airlineOptions.map((al) => (
+                            <option key={al} value={al}>
+                              {al}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="booking-form-field-col">
@@ -1199,8 +1252,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           onChange={handleBookingFormChange}
                         >
                           <option value=""></option>
-                          <option value="LAGOS">LAGOS</option>
-                          <option value="ABUJA">ABUJA</option>
+                          {destinationOptions.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -1279,8 +1335,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           onChange={handleBookingFormChange}
                         >
                           <option value=""></option>
-                          <option value="DELTA">DELTA</option>
-                          <option value="ARIK">ARIK</option>
+                          {airlineOptions.map((al) => (
+                            <option key={al} value={al}>
+                              {al}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="booking-form-field-col-mobile">
@@ -1296,8 +1355,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           onChange={handleBookingFormChange}
                         >
                           <option value=""></option>
-                          <option value="LAGOS">LAGOS</option>
-                          <option value="ABUJA">ABUJA</option>
+                          {destinationOptions.map((d) => (
+                            <option key={d} value={d}>
+                              {d}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -1335,7 +1397,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {passengers.map((p, idx) => (
+                        {passengers.length === 0 ? (
+                          <tr>
+                            <td
+                              className="table-data-item"
+                              colSpan={8}
+                              style={{ textAlign: "center", color: "#6c6c6c" }}
+                            >
+                              <span
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 8,
+                                }}
+                              >
+                                <FiUserPlus size={18} />
+                                No passengers yet. Please add a passenger to
+                                continue.
+                              </span>
+                            </td>
+                          </tr>
+                        ) : (
+                          passengers.map((p, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}.</td>
                             <td>
@@ -1348,26 +1431,30 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               {p.travelDate}
                               {p.airportTime ? ` @${p.airportTime}` : ""}
                             </td>
-                            <td>{p.specialReq || "none"}</td>
+                              <td>{p.specialReq || "none"}</td>
                             <td>
                               <button
                                 className="booking-delete-btn"
                                 onClick={() => handleDeletePassenger(idx)}
                               >
-                                <img
-                                  src="/icons/delete-passenger.svg"
-                                  alt="Delete"
-                                  style={{ width: 20, height: 20 }}
-                                />
+                                  <img
+                                    src="/icons/delete-passenger.svg"
+                                    alt="Delete"
+                                    style={{ width: 20, height: 20 }}
+                                  />
                                 <span
-                                  style={{ color: "#BC2600", fontWeight: 700 }}
+                                    style={{
+                                      color: "#BC2600",
+                                      fontWeight: 700,
+                                    }}
                                 >
-                                  Delete
+                                    Delete
                                 </span>
                               </button>
                             </td>
                           </tr>
-                        ))}
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -1652,6 +1739,150 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               </div>
             </div>
           </Modal>
+
+          {/* Receipt Modal */}
+          <Modal
+            isOpen={showReceiptModal}
+            onClose={() => {
+              setShowReceiptModal(false);
+              setSelectedService(null);
+              setPassengers([]);
+              setGeneratedRRR("");
+              setReceiptData(null);
+              setActiveTab("passenger");
+            }}
+            showHeader={true}
+            headerTitle="PAYMENT RECEIPT"
+            className="service-receipt-modal"
+          >
+            {receiptData && (
+              <div className="receipt-paper">
+                <div className="receipt-head">
+                  <div className="receipt-brand">
+                    Federal Airports Authority of Nigeria
+                  </div>
+                  <div className="receipt-title">PAYMENT RECEIPT</div>
+                  <div className="receipt-sub">Thank you for your payment.</div>
+                  </div>
+                <div className="receipt-meta">
+                  <div className="meta-row">
+                    <span>Invoice Number</span>
+                    <span className="mono">{receiptData.invoiceNumber}</span>
+                  </div>
+                  <div className="meta-row">
+                    <span>RRR</span>
+                    <span className="mono">{receiptData.rrr}</span>
+                  </div>
+                  <div className="meta-row">
+                    <span>Transaction ID</span>
+                    <span className="mono">{receiptData.transactionId}</span>
+                </div>
+                  <div className="meta-row">
+                    <span>Payment Date</span>
+                    <span>{receiptData.paymentDate}</span>
+                  </div>
+                      </div>
+                <div className="receipt-items">
+                  <div className="thead">
+                    <span>Item</span>
+                    <span className="right">Amount</span>
+                  </div>
+                  <div className="row">
+                    <span>{receiptData.serviceName}</span>
+                    <span className="right mono">
+                      ₦{receiptData.amount.toLocaleString()}
+                      </span>
+                      </div>
+                  <div className="total">
+                    <span>Total</span>
+                    <span className="right mono">
+                      ₦{receiptData.amount.toLocaleString()}
+                      </span>
+                  </div>
+                </div>
+                <div className="receipt-foot">
+                  Customer ID: {receiptData.customerId}
+                    </div>
+                <div className="receipt-download">
+                  <GradientButton
+                    fullWidth
+                    onClick={() => {
+                      if (!receiptData) return;
+                      const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
+                        receiptData.invoiceNumber
+                      }</title>
+                      <style>
+                        @page { margin: 10mm; }
+                        body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#111827}
+                        .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#111827}
+                        .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
+                        .receipt-head{text-align:center;margin:8px 0}
+                        .receipt-brand{font-weight:700;color:#374151;font-size:14px}
+                        .receipt-title{font-size:16px;font-weight:800;color:#111827;letter-spacing:0.06em;margin-top:2px}
+                        .receipt-sub{font-size:12px;color:#6b7280;margin-top:2px}
+                        .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
+                        .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
+                        .receipt-meta .meta-row:last-child{border-bottom:none}
+                        .receipt-meta .meta-row span:first-child{color:#6b7280;font-size:12px}
+                        .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
+                        .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
+                        .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
+                        .receipt-items .thead{color:#6b7280;font-size:12px}
+                        .receipt-items .row{border-top:1px dashed #e5e7eb}
+                        .right{text-align:right}
+                        .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}
+                        .receipt-foot{margin-top:10px;color:#6b7280;font-size:12px;text-align:center}
+                      </style>
+                      </head><body>
+                        <div class='receipt-paper'>
+                          <div class='receipt-head'>
+                            <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
+                            <div class='receipt-title'>PAYMENT RECEIPT</div>
+                            <div class='receipt-sub'>Thank you for your payment.</div>
+                      </div>
+                          <div class='receipt-meta'>
+                            <div class='meta-row'><span>Invoice Number</span><span class='mono'>${
+                              receiptData.invoiceNumber
+                            }</span></div>
+                            <div class='meta-row'><span>RRR</span><span class='mono'>${
+                              receiptData.rrr
+                            }</span></div>
+                            <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
+                              receiptData.transactionId
+                            }</span></div>
+                            <div class='meta-row'><span>Payment Date</span><span>${
+                              receiptData.paymentDate
+                            }</span></div>
+                      </div>
+                          <div class='receipt-items'>
+                            <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
+                            <div class='row'><span>${
+                              receiptData.serviceName
+                            }</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
+                            <div class='total'><span>Total</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
+                    </div>
+                          <div class='receipt-foot'>Customer ID: ${
+                            receiptData.customerId
+                          }</div>
+                      </div>
+                        <script>
+                          window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
+                        </script>
+                      </body></html>`;
+                      const win = window.open("", "_blank");
+                      if (win) {
+                        win.document.open();
+                        win.document.write(html);
+                        win.document.close();
+                      }
+                    }}
+                  >
+                    Download PDF
+                </GradientButton>
+            </div>
+              </div>
+            )}
+          </Modal>
         </div>
       );
     }
@@ -1792,12 +2023,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 </span>,
                 `₦${service.price}`,
                 <div key={`a-${service.id}`}>
-                  <button className="action-btn-table edit">
-                    <Edit size={16} /> Edit
-                  </button>
-                  <button className="action-btn-table delete">
-                    <Trash2 size={16} /> Delete
-                  </button>
+                          <button className="action-btn-table edit">
+                            <Edit size={16} /> Edit
+                          </button>
+                          <button className="action-btn-table delete">
+                            <Trash2 size={16} /> Delete
+                          </button>
                 </div>,
               ])}
               className="services-admin-table"
@@ -1825,13 +2056,13 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           <label>Service Name:</label>
                           <input
                             type="text"
-                            value={service.serviceName}
-                            onChange={(e) => {
-                              handleServiceChange(
-                                idx,
-                                "serviceName",
-                                e.target.value
-                              );
+                              value={service.serviceName}
+                              onChange={(e) => {
+                                handleServiceChange(
+                                  idx,
+                                  "serviceName",
+                                  e.target.value
+                                );
                             }}
                             placeholder="Enter service name"
                             className="service-name-input"

@@ -52,10 +52,16 @@
   .wallet-card {
     zoom: 1.05;
   }
+  .all-transactions-header {
+    zoom: 1;
+  }
 }
 
 @media (max-width: 1800px) {
   .wallet-card {
+    zoom: 1;
+  }
+  .all-transactions-header {
     zoom: 1;
   }
 }
@@ -64,10 +70,16 @@
   .wallet-card {
     zoom: 0.95;
   }
+  .all-transactions-header {
+    zoom: 0.95;
+  }
 }
 
 @media (max-width: 1600px) {
   .wallet-card {
+    zoom: 0.9;
+  }
+  .all-transactions-header {
     zoom: 0.9;
   }
 }
@@ -76,10 +88,16 @@
   .wallet-card {
     zoom: 0.85;
   }
+  .all-transactions-header {
+    zoom: 0.85;
+  }
 }
 
 @media (max-width: 1450px) {
   .wallet-card {
+    zoom: 0.8;
+  }
+  .all-transactions-header {
     zoom: 0.8;
   }
 }
@@ -88,10 +106,16 @@
   .wallet-card {
     zoom: 0.78;
   }
+  .all-transactions-header {
+    zoom: 0.78;
+  }
 }
 
 @media (max-width: 1350px) {
   .wallet-card {
+    zoom: 0.76;
+  }
+  .all-transactions-header {
     zoom: 0.76;
   }
 }
@@ -100,10 +124,16 @@
   .wallet-card {
     zoom: 0.74;
   }
+  .all-transactions-header {
+    zoom: 0.74;
+  }
 }
 
 @media (max-width: 1250px) {
   .wallet-card {
+    zoom: 0.72;
+  }
+  .all-transactions-header {
     zoom: 0.72;
   }
 }
@@ -112,10 +142,16 @@
   .wallet-card {
     zoom: 0.7;
   }
+  .all-transactions-header {
+    zoom: 0.7;
+  }
 }
 
 @media (max-width: 1150px) {
   .wallet-card {
+    zoom: 0.68;
+  }
+  .all-transactions-header {
     zoom: 0.68;
   }
 }
@@ -124,10 +160,16 @@
   .wallet-card {
     zoom: 0.66;
   }
+  .all-transactions-header {
+    zoom: 0.66;
+  }
 }
 
 @media (max-width: 1050px) {
   .wallet-card {
+    zoom: 0.64;
+  }
+  .all-transactions-header {
     zoom: 0.64;
   }
 }
@@ -136,16 +178,25 @@
   .wallet-card {
     zoom: 0.62;
   }
+  .all-transactions-header {
+    zoom: 0.62;
+  }
 }
 
 @media (max-width: 950px) {
   .wallet-card {
     zoom: 0.6;
   }
+  .all-transactions-header {
+    zoom: 0.6;
+  }
 }
 
 @media (max-width: 900px) {
   .wallet-card {
+    zoom: 0.58;
+  }
+  .all-transactions-header {
     zoom: 0.58;
   }
 }
@@ -596,9 +647,11 @@
   display: flex;
   align-items: flex-end;
   gap: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   padding: 14px 0;
   border-bottom: 1px solid #e4e4e4;
+  zoom: 1;
+  transition: zoom 0.3s ease;
 }
 
 .back-to-dashboard-btn {

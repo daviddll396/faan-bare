@@ -92,11 +92,19 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
 
   // State for modals
-  const [showCreateInvoiceModal, setShowCreateInvoiceModal] = useState(false);
+  // deprecated modal (removed)
+  // const [showCreateInvoiceModal, setShowCreateInvoiceModal] = useState(false);
+  const [showCreateInvoicePage, setShowCreateInvoicePage] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showViewDetailsModal, setShowViewDetailsModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [viewingInvoice, setViewingInvoice] = useState<Invoice | null>(null);
+  // Scroll control after generating invoice (returning to list)
+  const shouldScrollToTopAfterGenerateRef = React.useRef(false);
+  // Bottom sentinel for create-invoice subpage scrolling
+  const createInvoiceBottomRef = React.useRef<HTMLDivElement | null>(null);
+  // Top sentinel for scrolling precisely to top
+  const invoicesTopRef = React.useRef<HTMLDivElement | null>(null);
 
   // State for payment method
   const [paymentMethod, setPaymentMethod] = useState<"wallet" | "remita">(
@@ -117,6 +125,33 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     isVisible: false,
   });
 
+  // Receipt modal state for invoice payments
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [receiptData, setReceiptData] = useState<{
+    invoiceNumber: string;
+    transactionId: number;
+    amount: number;
+    paymentDate: string;
+    items: { name: string; amount: number; quantity: number }[];
+    customerId?: string;
+  } | null>(null);
+
+  const openInvoiceReceipt = (invoice: Invoice, txId: number) => {
+    setReceiptData({
+      invoiceNumber: invoice.invoiceNumber,
+      transactionId: txId,
+      amount: invoice.totalAmount,
+      paymentDate: new Date().toLocaleString(),
+      items: invoice.services.map((s) => ({
+        name: s.name,
+        amount: s.amount,
+        quantity: s.quantity,
+      })),
+      customerId: user?.customerId,
+    });
+    setShowReceiptModal(true);
+  };
+
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
       message,
@@ -124,6 +159,11 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       isVisible: true,
     });
   };
+
+  // Stable toast close handler to prevent timer resets on frequent re-renders
+  const handleToastClose = React.useCallback(() => {
+    setToast((prev) => ({ ...prev, isVisible: false }));
+  }, []);
 
   // Fetch available services (tariffs) on component mount
   useEffect(() => {
@@ -294,6 +334,22 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       // Add new service
       setSelectedServices([...selectedServices, { ...service, quantity: 1 }]);
     }
+
+    // Scroll to bottom to show the newly added selection section
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const bottomEl = createInvoiceBottomRef.current;
+        if (bottomEl) {
+          bottomEl.scrollIntoView({ behavior: "smooth", block: "end" });
+        } else {
+          const maxScroll = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+          );
+          window.scrollTo({ top: maxScroll, behavior: "smooth" });
+        }
+      }, 200);
+    });
   };
 
   // Handle service quantity change
@@ -340,9 +396,30 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
     setInvoices([newInvoice, ...invoices]);
     setSelectedServices([]);
-    setShowCreateInvoiceModal(false);
+    setShowCreateInvoicePage(false);
     showToast("Invoice generated successfully!", "success");
+    // Flag to scroll to top after the list re-renders
+    shouldScrollToTopAfterGenerateRef.current = true;
   };
+
+  // After returning to the list, scroll to the top
+  React.useEffect(() => {
+    if (!showCreateInvoicePage && shouldScrollToTopAfterGenerateRef.current) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const topEl = invoicesTopRef.current;
+          if (topEl) {
+            topEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            const scrollingElement =
+              document.scrollingElement || document.documentElement;
+            scrollingElement.scrollTo({ top: 0, behavior: "smooth" });
+          }
+          shouldScrollToTopAfterGenerateRef.current = false;
+        }, 200);
+      });
+    }
+  }, [showCreateInvoicePage, invoices]);
 
   // Handle payment
   const handlePayment = (invoice: Invoice) => {
@@ -432,6 +509,9 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           );
 
           setShowPaymentModal(false);
+          // Build receipt before clearing selection
+          const txId = Math.floor(Math.random() * 1101233);
+          openInvoiceReceipt(selectedInvoice, txId);
           setSelectedInvoice(null);
           showToast("Wallet payment processed successfully!", "success");
           refreshUserDetails(); // Refresh user details after successful wallet payment
@@ -523,6 +603,9 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
           // Refresh user details to update wallet balance and transaction history
           refreshUserDetails();
+
+          // Show receipt modal
+          openInvoiceReceipt(invoice, transactionId);
         },
         onError: (response) => {
           console.error("❌ === REMITA PAYMENT FAILED ===");
@@ -597,124 +680,48 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
         message={toast.message}
         type={toast.type}
         isVisible={toast.isVisible}
-        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+        onClose={handleToastClose}
+        duration={2500}
       />
 
-      <div className="page-header">
+      <div ref={invoicesTopRef} className="page-header">
         <PageTitle icon="/icons/nav-bill-icon.svg" title="Invoices" />
       </div>
-
-      <div className="page-actions">
-        <SearchInput
-          placeholder="Search invoices..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <BorderButton
-          text="Create New Invoice"
-          onClick={() => setShowCreateInvoiceModal(true)}
-          className="border-button-invoicespage"
-        />
-      </div>
-
-      {/* Invoices List */}
-      <div className="invoices-container">
-        {filteredInvoices.length === 0 ? (
-          <div className="no-invoices">
-            <p>No invoices found. Create your first invoice to get started.</p>
+      {!showCreateInvoicePage && (
+        <div className="page-actions">
+          <SearchInput
+            placeholder="Search invoices..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <BorderButton
+            text="Create New Invoice"
+            onClick={() => setShowCreateInvoicePage(true)}
+            className="border-button-invoicespage"
+          />
+        </div>
+      )}
+      {showCreateInvoicePage && (
+        <div className="create-invoice-subpage">
+          <div
+            className="all-transactions-header"
+            style={{ justifyContent: "space-between", alignItems: "center" }}
+          >
+            {" "}
+            <BorderButton
+              text="Back to Invoices"
+              onClick={() => {
+                setShowCreateInvoicePage(false);
+                setSelectedServices([]);
+              }}
+              className="back-to-dashboard-btn"
+            />{" "}
+            <h2 className="all-transactions-title">Create New Invoice</h2>
           </div>
-        ) : (
-          <div className="invoices-grid">
-            {filteredInvoices.map((invoice) => (
-              <div key={invoice.id} className="invoice-card">
-                <div className="invoice-content-area">
-                  <div className="invoice-header">
-                    <div className="invoice-number">
-                      {invoice.invoiceNumber}
-                    </div>
-                    <div className={`invoice-status ${invoice.status}`}>
-                      {invoice.status.toUpperCase()}
-                    </div>
-                  </div>
 
-                  {/* Show expiration warning for pending invoices */}
-                  {invoice.status === "pending" && (
-                    <div className="invoice-expiry-warning">
-                      {isInvoiceExpiringSoon(invoice) ? (
-                        <div className="expiry-warning urgent">
-                          ⚠️ Expires in: {getTimeUntilExpiry(invoice)}
-                        </div>
-                      ) : (
-                        <div className="expiry-info">
-                          ⏰ Expires in: {getTimeUntilExpiry(invoice)}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="invoice-details">
-                    <div className="customer-info">
-                      <strong>Customer:</strong> {invoice.customerName}
-                    </div>
-                    <div className="invoice-date">
-                      <strong>Created:</strong>{" "}
-                      {invoice.createdAt.toLocaleDateString()}
-                    </div>
-                    <div className="invoice-due">
-                      <strong>Due:</strong>{" "}
-                      {invoice.dueDate.toLocaleDateString()}
-                    </div>
-                  </div>
-
-                  <div className="invoice-services">
-                    <strong>Services:</strong>
-                    {invoice.services.map((service, index) => (
-                      <div key={index} className="service-item">
-                        {service.name} x{service.quantity} - ₦
-                        {service.amount.toLocaleString()}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="invoice-total">
-                    <strong>Total:</strong> ₦
-                    {invoice.totalAmount.toLocaleString()}
-                  </div>
-                </div>
-
-                <div className="invoice-actions">
-                  {invoice.status === "pending" && (
-                    <GradientButton
-                      onClick={() => handlePayment(invoice)}
-                      size="small"
-                    >
-                      Pay Now
-                    </GradientButton>
-                  )}
-                  <button
-                    className="view-details-btn"
-                    onClick={() => handleViewDetails(invoice)}
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Create Invoice Modal */}
-      <Modal
-        isOpen={showCreateInvoiceModal}
-        onClose={() => setShowCreateInvoiceModal(false)}
-        className="create-invoice-modal"
-      >
-        <div className="modal-content">
-          <h2 className="create-invoice-title">Create New Invoice</h2>
           <div className="services-selection">
             <p className="services-selection-subtitle">
-              Select Services to add to invoice
+              Select Services to add to invoice.
             </p>
             <div className="available-services">
               {availableServices.map((service) => (
@@ -729,11 +736,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                     </div>
                   </div>
                   <div className="service-actions">
-                    <BorderButton
-                      text="Add to Invoice"
+                    <GradientButton
+                      size={window.innerWidth <= 768 ? "tiny" : "small"}
                       onClick={() => handleServiceSelection(service)}
-                      className="border-button-invoicespage"
-                    />
+                    >
+                      Add to Invoice
+                    </GradientButton>
                   </div>
                 </div>
               ))}
@@ -786,8 +794,105 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               </div>
             </div>
           )}
+          {/* Bottom sentinel to ensure scroll reaches absolute bottom */}
+          <div ref={createInvoiceBottomRef} style={{ height: 1 }} />
         </div>
-      </Modal>
+      )}
+
+      {!showCreateInvoicePage && (
+        <div className="invoices-container">
+          {filteredInvoices.length === 0 ? (
+            <div className="no-invoices">
+              <p>
+                No invoices found. Create your first invoice to get started.
+              </p>
+            </div>
+          ) : (
+            <div className="invoices-grid">
+              {filteredInvoices.map((invoice) => (
+                <div
+                  key={invoice.id}
+                  className={`invoice-card ${
+                    invoice.status === "pending" ? "pending" : ""
+                  }`}
+                >
+                  <div className="invoice-content-area">
+                    <div className="invoice-header">
+                      <div className="invoice-number">
+                        {invoice.invoiceNumber}
+                      </div>
+                      <div className={`invoice-status ${invoice.status}`}>
+                        {invoice.status.toUpperCase()}
+                      </div>
+                    </div>
+
+                    {/* Show expiration warning for pending invoices */}
+                    {invoice.status === "pending" && (
+                      <div className="invoice-expiry-warning">
+                        {isInvoiceExpiringSoon(invoice) ? (
+                          <div className="expiry-warning urgent">
+                            ⚠️ Expires in: {getTimeUntilExpiry(invoice)}
+                          </div>
+                        ) : (
+                          <div className="expiry-info">
+                            ⏰ Expires in: {getTimeUntilExpiry(invoice)}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="invoice-details">
+                      <div className="customer-info">
+                        <strong>Customer:</strong> {invoice.customerName}
+                      </div>
+                      <div className="invoice-date">
+                        <strong>Created:</strong>{" "}
+                        {invoice.createdAt.toLocaleDateString()}
+                      </div>
+                      <div className="invoice-due">
+                        <strong>Due:</strong>{" "}
+                        {invoice.dueDate.toLocaleDateString()}
+                      </div>
+                    </div>
+
+                    <div className="invoice-services">
+                      <strong>Services:</strong>
+                      {invoice.services.map((service, index) => (
+                        <div key={index} className="service-item">
+                          {service.name} x{service.quantity} - ₦
+                          {service.amount.toLocaleString()}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="invoice-total">
+                      <strong>Total:</strong> ₦
+                      {invoice.totalAmount.toLocaleString()}
+                    </div>
+                  </div>
+
+                  <div className="invoice-actions">
+                    {invoice.status === "pending" && (
+                      <GradientButton
+                        onClick={() => handlePayment(invoice)}
+                        size="small"
+                      >
+                        Pay Now
+                      </GradientButton>
+                    )}
+                    <button
+                      className="view-details-btn"
+                      onClick={() => handleViewDetails(invoice)}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Payment Modal */}
       <Modal
@@ -861,6 +966,147 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
         </div>
       </Modal>
 
+      {/* Receipt Modal */}
+      <Modal
+        isOpen={showReceiptModal}
+        onClose={() => setShowReceiptModal(false)}
+        showHeader={true}
+        headerTitle="PAYMENT RECEIPT"
+        className="invoice-receipt-modal"
+      >
+        {receiptData && (
+          <div className="receipt-paper">
+            <div className="receipt-head">
+              <div className="receipt-brand">
+                Federal Airports Authority of Nigeria
+              </div>
+              <div className="receipt-title">PAYMENT RECEIPT</div>
+              <div className="receipt-sub">Thank you for your payment.</div>
+            </div>
+            <div className="receipt-meta">
+              <div className="meta-row">
+                <span>Invoice Number</span>
+                <span className="mono">{receiptData.invoiceNumber}</span>
+              </div>
+              <div className="meta-row">
+                <span>Transaction ID</span>
+                <span className="mono">{receiptData.transactionId}</span>
+              </div>
+              <div className="meta-row">
+                <span>Payment Date</span>
+                <span>{receiptData.paymentDate}</span>
+              </div>
+            </div>
+            <div className="receipt-items">
+              <div className="thead">
+                <span>Item</span>
+                <span className="right">Amount</span>
+              </div>
+              {receiptData.items.map((it, idx) => (
+                <div key={idx} className="row">
+                  <span>
+                    {it.name} x{it.quantity}
+                  </span>
+                  <span className="right mono">
+                    ₦{(it.amount * it.quantity).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+              <div className="total">
+                <span>Total</span>
+                <span className="right mono">
+                  ₦{receiptData.amount.toLocaleString()}
+                </span>
+              </div>
+            </div>
+            {receiptData.customerId && (
+              <div className="receipt-foot">
+                Customer ID: {receiptData.customerId}
+              </div>
+            )}
+            <div className="receipt-download">
+              <GradientButton
+                fullWidth
+                onClick={() => {
+                  const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
+                    receiptData.invoiceNumber
+                  }</title>
+                  <style>
+                    @page { margin: 10mm; }
+                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#111827}
+                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#111827}
+                    .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
+                    .receipt-head{text-align:center;margin:8px 0}
+                    .receipt-brand{font-weight:700;color:#374151;font-size:14px}
+                    .receipt-title{font-size:16px;font-weight:800;color:#111827;letter-spacing:0.06em;margin-top:2px}
+                    .receipt-sub{font-size:12px;color:#6b7280;margin-top:2px}
+                    .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
+                    .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
+                    .receipt-meta .meta-row:last-child{border-bottom:none}
+                    .receipt-meta .meta-row span:first-child{color:#6b7280;font-size:12px}
+                    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
+                    .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
+                    .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
+                    .receipt-items .thead{color:#6b7280;font-size:12px}
+                    .receipt-items .row{border-top:1px dashed #e5e7eb}
+                    .right{text-align:right}
+                    .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}
+                    .receipt-foot{margin-top:10px;color:#6b7280;font-size:12px;text-align:center}
+                  </style>
+                  </head><body>
+                    <div class='receipt-paper'>
+                      <div class='receipt-head'>
+                        <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
+                        <div class='receipt-title'>PAYMENT RECEIPT</div>
+                        <div class='receipt-sub'>Thank you for your payment.</div>
+                      </div>
+                      <div class='receipt-meta'>
+                        <div class='meta-row'><span>Invoice Number</span><span class='mono'>${
+                          receiptData.invoiceNumber
+                        }</span></div>
+                        <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
+                          receiptData.transactionId
+                        }</span></div>
+                        <div class='meta-row'><span>Payment Date</span><span>${
+                          receiptData.paymentDate
+                        }</span></div>
+                      </div>
+                      <div class='receipt-items'>
+                        <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
+                        ${receiptData.items
+                          .map(
+                            (it) =>
+                              `<div class='row'><span>${it.name} x${
+                                it.quantity
+                              }</span><span class='right mono'>₦${(
+                                it.amount * it.quantity
+                              ).toLocaleString()}</span></div>`
+                          )
+                          .join("")}
+                        <div class='total'><span>Total</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
+                      </div>
+                      <div class='receipt-foot'>Customer ID: ${
+                        user?.customerId || ""
+                      }</div>
+                    </div>
+                    <script>
+                      window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
+                    </script>
+                  </body></html>`;
+                  const win = window.open("", "_blank");
+                  if (win) {
+                    win.document.open();
+                    win.document.write(html);
+                    win.document.close();
+                  }
+                }}
+              >
+                Download PDF
+              </GradientButton>
+            </div>
+          </div>
+        )}
+      </Modal>
       {/* View Details Modal */}
       <Modal
         isOpen={showViewDetailsModal}

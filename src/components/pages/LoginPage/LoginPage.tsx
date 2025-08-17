@@ -146,7 +146,12 @@ const LoginPage: React.FC = () => {
             Don't have an account?{" "}
             <Link to="/register" className="auth-form-link-modern">
               Sign Up
+            </Link>{" "}
+            or use
+            <Link to="/one-time" className="auth-form-link-modern">
+              One-Time Service
             </Link>
+            .
           </p>
           <p className="auth-form-subtitle-modern mobile-only">
             Enter your email and password details to log in
@@ -222,7 +227,7 @@ const LoginPage: React.FC = () => {
             </Link>
           </p>
 
-          <div className="one-time-service-option">
+          {/* <div className="one-time-service-option">
             <div className="divider">
               <span>or</span>
             </div>
@@ -232,7 +237,7 @@ const LoginPage: React.FC = () => {
                 use one-time service
               </Link>
             </p>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
