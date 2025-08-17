@@ -106,7 +106,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     }
   };
 
-  const handleViewMore = (customer: (typeof sampleFetchedCustomers)[0]) => {
+  const handleViewMore = (customer: (typeof fetchedCustomers)[number]) => {
     setSelectedCustomer(customer);
     setShowCustomerDetails(true);
   };

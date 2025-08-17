@@ -245,7 +245,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 ]
               : ["Bill No.", "Service", "Amount", "Status", "Date", "Actions"]
           }
-          data={filteredPayments.map((p, idx) => {
+          data={filteredPayments.map((p) => {
             const baseData = [
               p.billNo,
               p.service,

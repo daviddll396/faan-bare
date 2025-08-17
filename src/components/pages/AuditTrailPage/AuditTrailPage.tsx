@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
 import { useLoading } from "../../../contexts/LoadingContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
@@ -24,14 +23,13 @@ interface AuditTrailPageProps {
 }
 
 const AuditTrailPage: React.FC<AuditTrailPageProps> = () => {
-  const { user } = useAuth();
   const { showLoading, hideLoading } = useLoading();
 
   // State for audit logs
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>([]);
   const [filteredLogs, setFilteredLogs] = useState<AuditLogItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  // Local loading is handled via LoadingContext; keep minimal local flag only if needed
 
   // State for toast messages
   const [toast, setToast] = useState<{
@@ -55,7 +53,6 @@ const AuditTrailPage: React.FC<AuditTrailPageProps> = () => {
   // Mock audit logs data (replace with actual API call)
   useEffect(() => {
     const fetchAuditLogs = async () => {
-      setIsLoading(true);
       showLoading("Loading audit logs...");
 
       try {
@@ -173,7 +170,6 @@ const AuditTrailPage: React.FC<AuditTrailPageProps> = () => {
         console.error("Error fetching audit logs:", error);
         showToast("Failed to load audit logs", "error");
       } finally {
-        setIsLoading(false);
         hideLoading();
       }
     };
