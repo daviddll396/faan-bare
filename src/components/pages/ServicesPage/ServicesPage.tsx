@@ -412,7 +412,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
     if (!fetchedRef.current) {
       fetchedRef.current = true;
-    fetchTariffs();
+      fetchTariffs();
     }
   }, []);
 
@@ -765,7 +765,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     );
                   }
                 } catch (err) {
-              console.error(
+                  console.error(
                     "💥 Error calling makePayment after Remita:",
                     err
                   );
@@ -869,7 +869,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             setGeneratedRRR(response.data.rrr);
             setLastOrderId(orderId);
 
-          hideLoading();
+            hideLoading();
             showToast(
               `RRR generated successfully: ${response.data.rrr}`,
               "success"
@@ -1419,40 +1419,40 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           </tr>
                         ) : (
                           passengers.map((p, idx) => (
-                          <tr key={idx}>
-                            <td>{idx + 1}.</td>
-                            <td>
-                              {p.firstName} {p.lastName}
-                            </td>
-                            <td>{p.airport}</td>
-                            <td>{p.airline}</td>
-                            <td>{p.flightNumber}</td>
-                            <td>
-                              {p.travelDate}
-                              {p.airportTime ? ` @${p.airportTime}` : ""}
-                            </td>
+                            <tr key={idx}>
+                              <td>{idx + 1}.</td>
+                              <td>
+                                {p.firstName} {p.lastName}
+                              </td>
+                              <td>{p.airport}</td>
+                              <td>{p.airline}</td>
+                              <td>{p.flightNumber}</td>
+                              <td>
+                                {p.travelDate}
+                                {p.airportTime ? ` @${p.airportTime}` : ""}
+                              </td>
                               <td>{p.specialReq || "none"}</td>
-                            <td>
-                              <button
-                                className="booking-delete-btn"
-                                onClick={() => handleDeletePassenger(idx)}
-                              >
+                              <td>
+                                <button
+                                  className="booking-delete-btn"
+                                  onClick={() => handleDeletePassenger(idx)}
+                                >
                                   <img
                                     src="/icons/delete-passenger.svg"
                                     alt="Delete"
                                     style={{ width: 20, height: 20 }}
                                   />
-                                <span
+                                  <span
                                     style={{
                                       color: "#BC2600",
                                       fontWeight: 700,
                                     }}
-                                >
+                                  >
                                     Delete
-                                </span>
-                              </button>
-                            </td>
-                          </tr>
+                                  </span>
+                                </button>
+                              </td>
+                            </tr>
                           ))
                         )}
                       </tbody>
@@ -1763,7 +1763,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   </div>
                   <div className="receipt-title">PAYMENT RECEIPT</div>
                   <div className="receipt-sub">Thank you for your payment.</div>
-                  </div>
+                </div>
                 <div className="receipt-meta">
                   <div className="meta-row">
                     <span>Invoice Number</span>
@@ -1776,12 +1776,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <div className="meta-row">
                     <span>Transaction ID</span>
                     <span className="mono">{receiptData.transactionId}</span>
-                </div>
+                  </div>
                   <div className="meta-row">
                     <span>Payment Date</span>
                     <span>{receiptData.paymentDate}</span>
                   </div>
-                      </div>
+                </div>
                 <div className="receipt-items">
                   <div className="thead">
                     <span>Item</span>
@@ -1791,18 +1791,18 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <span>{receiptData.serviceName}</span>
                     <span className="right mono">
                       ₦{receiptData.amount.toLocaleString()}
-                      </span>
-                      </div>
+                    </span>
+                  </div>
                   <div className="total">
                     <span>Total</span>
                     <span className="right mono">
                       ₦{receiptData.amount.toLocaleString()}
-                      </span>
+                    </span>
                   </div>
                 </div>
                 <div className="receipt-foot">
                   Customer ID: {receiptData.customerId}
-                    </div>
+                </div>
                 <div className="receipt-download">
                   <GradientButton
                     fullWidth
@@ -1878,8 +1878,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     }}
                   >
                     Download PDF
-                </GradientButton>
-            </div>
+                  </GradientButton>
+                </div>
               </div>
             )}
           </Modal>
@@ -2023,12 +2023,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 </span>,
                 `₦${service.price}`,
                 <div key={`a-${service.id}`}>
-                          <button className="action-btn-table edit">
-                            <Edit size={16} /> Edit
-                          </button>
-                          <button className="action-btn-table delete">
-                            <Trash2 size={16} /> Delete
-                          </button>
+                  <button className="action-btn-table edit">
+                    <Edit size={16} /> Edit
+                  </button>
+                  <button className="action-btn-table delete">
+                    <Trash2 size={16} /> Delete
+                  </button>
                 </div>,
               ])}
               className="services-admin-table"
@@ -2056,13 +2056,13 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           <label>Service Name:</label>
                           <input
                             type="text"
-                              value={service.serviceName}
-                              onChange={(e) => {
-                                handleServiceChange(
-                                  idx,
-                                  "serviceName",
-                                  e.target.value
-                                );
+                            value={service.serviceName}
+                            onChange={(e) => {
+                              handleServiceChange(
+                                idx,
+                                "serviceName",
+                                e.target.value
+                              );
                             }}
                             placeholder="Enter service name"
                             className="service-name-input"

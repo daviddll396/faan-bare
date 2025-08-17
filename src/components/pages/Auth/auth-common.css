@@ -421,10 +421,16 @@
   .auth-form-side {
     zoom: 0.97;
   }
+  .auth-form-modern {
+    zoom: 0.9;
+  }
 }
 @media (max-width: 1600px) {
   .auth-form-side {
     zoom: 0.94;
+  }
+  .auth-form-modern {
+    zoom: 0.8;
   }
 }
 @media (max-width: 1500px) {
@@ -541,6 +547,9 @@
 
   .auth-logo {
     width: 60px;
+  }
+  .auth-form-modern {
+    zoom: 1;
   }
 
   /* Hide the illustration side on mobile */

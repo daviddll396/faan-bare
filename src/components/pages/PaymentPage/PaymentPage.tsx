@@ -415,76 +415,104 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         className="payment-receipt-modal"
       >
         {modal?.type === "receipt" && (
-          <div className="payment-receipt-content">
-            {/* Receipt Header */}
-            <div className="receipt-header">
-              <div className="receipt-success-icon">
-                <svg
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                    stroke="#10B981"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+          <div className="receipt-paper">
+            <div className="receipt-head">
+              <div className="receipt-brand">
+                Federal Airports Authority of Nigeria
               </div>
-              <div className="receipt-title">Payment Successful!</div>
-              <div className="receipt-subtitle">
-                Your transaction has been completed successfully
+              <div className="receipt-title">PAYMENT RECEIPT</div>
+              <div className="receipt-sub">Thank you for your payment.</div>
+            </div>
+            <div className="receipt-meta">
+              <div className="meta-row">
+                <span>Transaction ID</span>
+                <span className="mono">{modal.data.billNo}</span>
+              </div>
+              <div className="meta-row">
+                <span>Payment Date</span>
+                <span>{new Date().toLocaleString()}</span>
               </div>
             </div>
-
-            {/* Receipt Details */}
-            <div className="receipt-details">
-              <div className="receipt-detail-row">
-                <div className="receipt-detail-label">Transaction ID</div>
-                <div className="receipt-detail-value">{modal.data.billNo}</div>
+            <div className="receipt-items">
+              <div className="thead">
+                <span>Item</span>
+                <span className="right">Amount</span>
               </div>
-              <div className="receipt-detail-row">
-                <div className="receipt-detail-label">Service</div>
-                <div className="receipt-detail-value">{modal.data.service}</div>
+              <div className="row">
+                <span>{modal.data.service}</span>
+                <span className="right mono">{modal.data.amount}</span>
               </div>
-              <div className="receipt-detail-row">
-                <div className="receipt-detail-label">Amount Paid</div>
-                <div className="receipt-detail-value highlight">
-                  {modal.data.amount}
-                </div>
-              </div>
-              <div className="receipt-detail-row">
-                <div className="receipt-detail-label">Payment Date</div>
-                <div className="receipt-detail-value">
-                  {new Date().toLocaleDateString()}
-                </div>
+              <div className="total">
+                <span>Total</span>
+                <span className="right mono">{modal.data.amount}</span>
               </div>
             </div>
-
-            {/* Receipt Summary */}
-            <div className="receipt-summary">
-              <div className="receipt-summary-title">Transaction Summary</div>
-              <div className="receipt-summary-item">
-                <span>Service Cost</span>
-                <span>{modal.data.amount}</span>
-              </div>
-              <div className="receipt-summary-item">
-                <span>Processing Fee</span>
-                <span>₦0.00</span>
-              </div>
-              <div className="receipt-summary-item total">
-                <span>Total Amount</span>
-                <span>{modal.data.amount}</span>
-              </div>
-            </div>
-
-            <div className="payment-receipt-actions">
-              <GradientButton onClick={() => setModal(null)} fullWidth>
-                CLOSE RECEIPT
+            <div className="receipt-download" style={{ marginTop: 12 }}>
+              <GradientButton
+                fullWidth
+                onClick={() => {
+                  const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
+                    modal.data.billNo
+                  }</title>
+                  <style>
+                    @page { margin: 10mm; }
+                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#111827}
+                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#111827}
+                    .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
+                    .receipt-head{text-align:center;margin:8px 0}
+                    .receipt-brand{font-weight:700;color:#374151;font-size:14px}
+                    .receipt-title{font-size:16px;font-weight:800;color:#111827;letter-spacing:0.06em;margin-top:2px}
+                    .receipt-sub{font-size:12px;color:#6b7280;margin-top:2px}
+                    .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
+                    .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
+                    .receipt-meta .meta-row:last-child{border-bottom:none}
+                    .receipt-meta .meta-row span:first-child{color:#6b7280;font-size:12px}
+                    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
+                    .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
+                    .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
+                    .receipt-items .thead{color:#6b7280;font-size:12px}
+                    .receipt-items .row{border-top:1px dashed #e5e7eb}
+                    .right{text-align:right}
+                    .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}
+                  </style>
+                  </head><body>
+                    <div class='receipt-paper'>
+                      <div class='receipt-head'>
+                        <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
+                        <div class='receipt-title'>PAYMENT RECEIPT</div>
+                        <div class='receipt-sub'>Thank you for your payment.</div>
+                      </div>
+                      <div class='receipt-meta'>
+                        <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
+                          modal.data.billNo
+                        }</span></div>
+                        <div class='meta-row'><span>Payment Date</span><span>${new Date().toLocaleString()}</span></div>
+                      </div>
+                      <div class='receipt-items'>
+                        <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
+                        <div class='row'><span>${
+                          modal.data.service
+                        }</span><span class='right mono'>${
+                    modal.data.amount
+                  }</span></div>
+                        <div class='total'><span>Total</span><span class='right mono'>${
+                          modal.data.amount
+                        }</span></div>
+                      </div>
+                    </div>
+                    <script>
+                      window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
+                    </script>
+                  </body></html>`;
+                  const win = window.open("", "_blank");
+                  if (win) {
+                    win.document.open();
+                    win.document.write(html);
+                    win.document.close();
+                  }
+                }}
+              >
+                Download PDF
               </GradientButton>
             </div>
           </div>

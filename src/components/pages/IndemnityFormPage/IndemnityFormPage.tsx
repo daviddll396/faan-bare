@@ -4,9 +4,9 @@ import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import FaanLogo from "/images/faan-logo.svg";
-import OnboardingImage from "/images/onboarding-image.svg";
 import CryptoJS from "crypto-js";
 import "./IndemnityFormPage.css";
+import OnboardingImage from "/images/onboarding-image.svg";
 
 // API Base URL - configure for different environments
 const getApiBaseUrl = (): string => {
@@ -112,94 +112,16 @@ const IndemnityFormPage: React.FC = () => {
     });
   };
 
-  const generateIndemnityDocument = (): string => {
-    if (!customerData) return "";
-
-    const currentDate = new Date().toLocaleDateString();
-    const customerName = `${customerData.firstName} ${customerData.lastName}`;
-    const customerType = customerData.customerType;
-
-    return `
-INDEMNITY AGREEMENT
-
-Date: ${currentDate}
-
-This Indemnity Agreement ("Agreement") is entered into between:
-
-Federal Airports Authority of Nigeria (FAAN)
-[FAAN Address]
-(hereinafter referred to as "FAAN")
-
-AND
-
-${customerName}
-${customerData.address}
-Email: ${customerData.email}
-Phone: ${customerData.phoneNumber}
-Customer Type: ${customerType}
-(hereinafter referred to as "Customer")
-
-WHEREAS:
-1. The Customer wishes to access and utilize airport services provided by FAAN;
-2. FAAN requires an indemnity agreement as a condition for providing such services;
-3. Both parties wish to establish their respective rights and obligations;
-
-NOW THEREFORE, the parties agree as follows:
-
-1. INDEMNIFICATION
-The Customer hereby agrees to indemnify, defend, and hold harmless FAAN, its officers, directors, employees, agents, and representatives from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to:
-   a) The Customer's use of FAAN services;
-   b) Any breach of this Agreement by the Customer;
-   c) Any negligent or intentional acts or omissions by the Customer;
-   d) Any violation of applicable laws or regulations by the Customer.
-
-2. LIMITATION OF LIABILITY
-FAAN's liability shall be limited to the extent permitted by applicable law. FAAN shall not be liable for any indirect, incidental, special, consequential, or punitive damages.
-
-3. COMPLIANCE WITH LAWS
-The Customer agrees to comply with all applicable laws, regulations, and FAAN policies while using FAAN services.
-
-4. TERMINATION
-This Agreement may be terminated by either party with written notice. The indemnification obligations shall survive termination.
-
-5. GOVERNING LAW
-This Agreement shall be governed by and construed in accordance with the laws of Nigeria.
-
-6. ENTIRE AGREEMENT
-This Agreement constitutes the entire understanding between the parties regarding the subject matter hereof.
-
-IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
-
-FAAN Representative: _________________
-Date: ${currentDate}
-
-Customer: ${customerName}
-Date: ${currentDate}
-Signature: _________________
-
-Customer Details:
-- Full Name: ${customerName}
-- Email: ${customerData.email}
-- Phone: ${customerData.phoneNumber}
-- Address: ${customerData.address}
-- Customer Type: ${customerType}
-- Agreement Date: ${currentDate}
-    `.trim();
-  };
-
   const downloadIndemnityDocument = () => {
-    const documentContent = generateIndemnityDocument();
-    const blob = new Blob([documentContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `indemnity-agreement-${customerData?.firstName}-${
+    // Create a link to download the actual FAAN indemnity form
+    const link = document.createElement("a");
+    link.href = "/FAAN_FORM"; // Path to the Word document in public folder
+    link.download = `FAAN_Indemnity_Form_${customerData?.firstName}_${
       customerData?.lastName
-    }-${new Date().toISOString().split("T")[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    }_${new Date().toISOString().split("T")[0]}.docx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleAccept = async () => {
@@ -218,7 +140,7 @@ Customer Details:
       const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes
 
       // Build the request body for registration
-      const requestBody: any = {
+      const requestBody: Record<string, string | boolean | null> = {
         firstName: customerData!.firstName,
         lastName: customerData!.lastName,
         email: customerData!.email,
@@ -363,26 +285,7 @@ Customer Details:
 
   if (!customerData) {
     return (
-      <div className="auth-split-screen">
-        <div className="auth-illustration-side">
-          <div className="auth-outer-container">
-            <div className="auth-inner-container">
-              <img
-                src={OnboardingImage}
-                alt="Airport operations"
-                className="auth-background-image"
-              />
-              <div className="auth-image-overlay">
-                <img src={FaanLogo} alt="FAAN Logo" className="auth-logo" />
-                <div className="auth-image-text">
-                  Seamless access to airport operations, services, and staff
-                  resources{" "}
-                  <span className="highlight">anytime, anywhere.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="auth-split-screen indemnity-full">
         <div className="auth-form-side">
           <div className="auth-form-modern">
             <h2 className="auth-form-title-modern">Loading...</h2>
@@ -428,40 +331,77 @@ Customer Details:
             registration
           </p>
 
-          <div className="customer-details-section">
-            <h3>Customer Details</h3>
-            <div className="customer-details-grid">
-              <div className="detail-item">
-                <span className="detail-label">Full Name:</span>
-                <span className="detail-value">
-                  {customerData.firstName} {customerData.lastName}
-                </span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Email:</span>
-                <span className="detail-value">{customerData.email}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Phone:</span>
-                <span className="detail-value">{customerData.phoneNumber}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Address:</span>
-                <span className="detail-value">{customerData.address}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Customer Type:</span>
-                <span className="detail-value">
-                  {customerData.customerType}
-                </span>
-              </div>
-            </div>
-          </div>
-
           <div className="indemnity-document-section">
             {/* <h3>Indemnity Agreement</h3> */}
             <div className="document-preview">
-              <pre>{generateIndemnityDocument()}</pre>
+              {customerData && (
+                <div className="indemnity-paper">
+                  <div className="indemnity-letterhead">
+                    <div className="indemnity-logo-wrap">
+                      <img
+                        src={FaanLogo}
+                        alt="FAAN"
+                        className="indemnity-logo"
+                      />
+                    </div>
+                    <div className="indemnity-org">
+                      <div className="org-name">
+                        FEDERAL AIRPORTS AUTHORITY OF NIGERIA
+                      </div>
+                      <div className="org-address">
+                        Corporate Headquarters Murtala Mohammed Int'l Airport,
+                        Domestic Wing, Lagos, Nigeria
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-code">FORM: AC-AWS001L</div>
+                  <div className="indemnity-title">INDEMNITY</div>
+
+                  <div className="indemnity-body">
+                    <p>
+                      Pursuant to Part 4.2.1.7 Federal Airports Regulations 2xxx
+                      (Nig CARs),
+                    </p>
+                    <p>
+                      I/We{" "}
+                      <span className="inline-blank">{`${customerData.firstName} ${customerData.lastName}`}</span>
+                      <span>do hereby</span> unconditionally undertake to defend
+                      the Federal Airports Authority of Nigeria (FAAN) or any of
+                      its
+                      <span className="linkish"> Directors</span> or Officers
+                      against any suit or action howsoever arising out of the
+                      registration or deregistration of the protocol services.
+                    </p>
+                    <p>
+                      I/We further covenant and agree to hold the FAAN, its
+                      <span className="linkish"> Directors</span> or Officers
+                      harmless against any claim, demands and charges by
+                      <span className="inline-blank">
+                        {" "}
+                        {`${customerData.firstName} ${customerData.lastName}`}{" "}
+                      </span>
+                      or any third persons for damages arising out of the
+                      registration or deregistration of services.
+                    </p>
+                    <p className="given-this">
+                      Given this{" "}
+                      <span className="inline-blank small">
+                        {new Date().getDate()}
+                      </span>{" "}
+                      day of
+                      <span className="inline-blank small">
+                        {" "}
+                        {new Date().toLocaleString("default", {
+                          month: "long",
+                        })}{" "}
+                      </span>
+                      <span className="inline-blank small">
+                        {new Date().getFullYear()}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -484,7 +424,7 @@ Customer Details:
                 disabled={isLoading}
                 fullWidth
               >
-                Accept & Download
+                Accept & Download Form
               </GradientButton>
             </div>
           </div>

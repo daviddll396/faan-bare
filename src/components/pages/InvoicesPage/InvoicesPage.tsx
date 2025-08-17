@@ -429,6 +429,14 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
   // Handle view details
   const handleViewDetails = (invoice: Invoice) => {
+    const statusUpper = String(invoice.status || "").toUpperCase();
+    if (statusUpper === "PAID" || statusUpper === "PPAID") {
+      const txId =
+        Number(String(invoice.invoiceNumber).replace(/\D/g, "")) ||
+        Math.floor(Math.random() * 1101233);
+      openInvoiceReceipt(invoice, txId);
+      return;
+    }
     setViewingInvoice(invoice);
     setShowViewDetailsModal(true);
   };
