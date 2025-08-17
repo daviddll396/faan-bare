@@ -3,6 +3,7 @@ import SearchInput from "../../reusables/SearchInput/SearchInput";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
+import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
@@ -29,6 +30,7 @@ interface PaymentItem {
   amount: string;
   status: string;
   date: string;
+  customerName?: string;
   action: string;
   actionType: string;
 }
@@ -38,7 +40,7 @@ interface PaymentPageProps {
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = () => {
-  const { getTransactionHistory } = useAuth();
+  const { getTransactionHistory, getAdminTransactionHistory, user } = useAuth();
   const [activeTab, setActiveTab] = useState("All");
   const [searchName, setSearchName] = useState("");
   const [searchBillNo, setSearchBillNo] = useState("");
@@ -67,37 +69,64 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     const fetchTransactions = async () => {
       setIsLoading(true);
       try {
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setMonth(endDate.getMonth() - 6);
-        const format = (d: Date) => d.toISOString().slice(0, 10);
+        let transactions;
 
-        const transactions = await getTransactionHistory(
-          format(startDate),
-          format(endDate)
-        );
+        // Use admin transaction history for admin users, regular history for customers
+        if (user?.role === "Admin") {
+          console.log(
+            "🔐 Admin user detected, fetching admin transaction history"
+          );
+          transactions = await getAdminTransactionHistory();
+        } else {
+          console.log(
+            "👤 Customer user detected, fetching regular transaction history"
+          );
+          const endDate = new Date();
+          const startDate = new Date();
+          startDate.setMonth(endDate.getMonth() - 6);
+          const format = (d: Date) => d.toISOString().slice(0, 10);
+
+          transactions = await getTransactionHistory(
+            format(startDate),
+            format(endDate)
+          );
+        }
 
         if (transactions) {
+          console.log("📄 Raw transaction data from API:", transactions);
+
           // Map API response to PaymentItem format
-          const mappedPayments: PaymentItem[] = transactions.map((txn) => ({
-            billNo: txn.id.toString(),
-            service: txn.tariffName,
-            amount: `₦${txn.amount.toLocaleString()}`,
-            status: txn.status,
-            date: new Date(txn.createdAt).toLocaleString(),
-            action:
-              txn.status === "COMPLETED"
-                ? "View Receipt"
-                : txn.status === "PENDING"
-                ? "View Invoice"
-                : "View Reason",
-            actionType:
-              txn.status === "COMPLETED"
-                ? "receipt"
-                : txn.status === "PENDING"
-                ? "invoice"
-                : "reason",
-          }));
+          const mappedPayments: PaymentItem[] = transactions.map((txn: any) => {
+            const paymentItem = {
+              billNo: txn.id.toString(),
+              service: txn.tariffName || txn.service || "Unknown Service",
+              amount: `₦${txn.amount?.toLocaleString() || "0"}`,
+              status: txn.status || "PENDING",
+              date: new Date(txn.createdAt).toLocaleDateString(),
+              customerName:
+                txn.customerName || txn.customerId || "Unknown Customer",
+              action:
+                txn.status === "COMPLETED"
+                  ? "View Receipt"
+                  : txn.status === "PENDING"
+                  ? "View Invoice"
+                  : "View Reason",
+              actionType:
+                txn.status === "COMPLETED"
+                  ? "receipt"
+                  : txn.status === "PENDING"
+                  ? "invoice"
+                  : "reason",
+            };
+
+            console.log(`🔍 Mapped transaction ${txn.id}:`, {
+              original: txn,
+              mapped: paymentItem,
+            });
+
+            return paymentItem;
+          });
+          console.log("✅ Final mapped payments:", mappedPayments);
           setPayments(mappedPayments);
         }
       } catch (error) {
@@ -108,9 +137,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     };
 
     fetchTransactions();
-  }, [getTransactionHistory]);
+  }, [getTransactionHistory, getAdminTransactionHistory, user?.role]);
 
   const handleSearch = () => {
+    console.log("Search triggered:", { searchName, searchBillNo });
     setAppliedSearchName(searchName);
     setAppliedSearchBillNo(searchBillNo);
   };
@@ -130,7 +160,31 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       p.service.toLowerCase().includes(appliedSearchName.toLowerCase());
     const matchesBillNo =
       !appliedSearchBillNo || p.billNo.includes(appliedSearchBillNo);
+
+    // Debug logging
+    if (appliedSearchName || appliedSearchBillNo) {
+      console.log("Search debug:", {
+        payment: p,
+        searchName: appliedSearchName,
+        searchBillNo: appliedSearchBillNo,
+        matchesTab,
+        matchesName,
+        matchesBillNo,
+        result: matchesTab && matchesName && matchesBillNo,
+      });
+    }
+
     return matchesTab && matchesName && matchesBillNo;
+  });
+
+  // Debug logging for search state
+  console.log("Search state:", {
+    searchName,
+    searchBillNo,
+    appliedSearchName,
+    appliedSearchBillNo,
+    totalPayments: payments.length,
+    filteredPayments: filteredPayments.length,
   });
 
   return (
@@ -176,75 +230,81 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           />
         </div>
       </div>
-      <div className="payment-table-card">
-        {!isLoading && (
-          <table className="payment-table ">
-            <thead>
-              <tr>
-                <th className="table-header-item">Bill No.</th>
-                <th className="table-header-item">Service</th>
-                <th className="table-header-item">Amount</th>
-                <th className="table-header-item">Status</th>
-                <th className="table-header-item">Date</th>
-                <th className="table-header-item">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPayments.map((p, idx) => (
-                <tr key={idx} className={idx % 2 === 1 ? "alt-row" : ""}>
-                  <td className="table-data-item">{p.billNo}</td>
-                  <td className="table-data-item">{p.service}</td>
-                  <td className="table-data-item">{p.amount}</td>
-                  <td className="table-data-item">
-                    <span
-                      className={`payment-status-badge ${
-                        statusColors[p.status as keyof typeof statusColors]
-                      }`}
-                    >
-                      {p.status}
-                    </span>
-                  </td>
-                  <td className="table-data-item">{p.date}</td>
-                  <td className="table-data-item">
-                    {p.actionType === "reason" && (
-                      <button
-                        className="payment-action-btn reason"
-                        onClick={() => setModal({ type: "reason", data: p })}
-                      >
-                        <FiInfo className="payment-action-icon" />
-                        <span>View Reason</span>
-                      </button>
-                    )}
-                    {p.actionType === "receipt" && (
-                      <button
-                        className="payment-action-btn receipt"
-                        onClick={() => setModal({ type: "receipt", data: p })}
-                      >
-                        <FiEye className="payment-action-icon" />
-                        <span>View Receipt</span>
-                      </button>
-                    )}
-                    {p.actionType === "invoice" && (
-                      <button
-                        className="payment-action-btn invoice"
-                        onClick={() => setModal({ type: "invoice", data: p })}
-                      >
-                        <FiEye className="payment-action-icon" />
-                        <span>View Invoice</span>
-                      </button>
-                    )}
-                    {p.actionType === "view" && (
-                      <button className="payment-action-btn view">
-                        <FiEye className="payment-action-icon" />
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {!isLoading && (
+        <DataTable
+          headers={
+            user?.role === "Admin"
+              ? [
+                  "Bill No.",
+                  "Customer ID",
+                  "Service",
+                  "Amount",
+                  "Status",
+                  "Date",
+                  "Actions",
+                ]
+              : ["Bill No.", "Service", "Amount", "Status", "Date", "Actions"]
+          }
+          data={filteredPayments.map((p, idx) => {
+            const baseData = [
+              p.billNo,
+              p.service,
+              p.amount,
+              <span
+                key="status"
+                className={`payment-status-badge ${
+                  statusColors[p.status as keyof typeof statusColors]
+                }`}
+              >
+                {p.status}
+              </span>,
+              p.date,
+              <div key="actions">
+                {p.actionType === "reason" && (
+                  <button
+                    className="payment-action-btn reason"
+                    onClick={() => setModal({ type: "reason", data: p })}
+                  >
+                    <FiInfo className="payment-action-icon" />
+                    <span>View Reason</span>
+                  </button>
+                )}
+                {p.actionType === "receipt" && (
+                  <button
+                    className="payment-action-btn receipt"
+                    onClick={() => setModal({ type: "receipt", data: p })}
+                  >
+                    <FiEye className="payment-action-icon" />
+                    <span>View Receipt</span>
+                  </button>
+                )}
+                {p.actionType === "invoice" && (
+                  <button
+                    className="payment-action-btn invoice"
+                    onClick={() => setModal({ type: "invoice", data: p })}
+                  >
+                    <FiEye className="payment-action-icon" />
+                    <span>View Invoice</span>
+                  </button>
+                )}
+                {p.actionType === "view" && (
+                  <button className="payment-action-btn view">
+                    <FiEye className="payment-action-icon" />
+                  </button>
+                )}
+              </div>,
+            ];
+
+            // Insert customer name after bill no for admin users
+            if (user?.role === "Admin") {
+              baseData.splice(1, 0, p.customerName || "Unknown Customer");
+            }
+
+            return baseData;
+          })}
+          className="payment-table"
+        />
+      )}
       {windowWidth <= 768 && <SlideIndicator />}
 
       {/* Invoice Modal */}
@@ -261,89 +321,89 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               <div className="payment-invoice-details-title">
                 Invoice Details:
               </div>
-                </div>
+            </div>
             <div className="payment-invoice-cards">
               <div className="bill-customer-card payment-invoice-card">
-                  <div className="bill-customer-icon-bg">
-                    <img
-                      src={InvoiceFormIcon}
-                      alt="Invoice Number"
-                      className="bill-customer-icon"
-                    />
-                  </div>
+                <div className="bill-customer-icon-bg">
+                  <img
+                    src={InvoiceFormIcon}
+                    alt="Invoice Number"
+                    className="bill-customer-icon"
+                  />
+                </div>
                 <div className="bill-customer-info-col">
                   <div className="bill-customer-label">Invoice Number</div>
                   <div className="bill-customer-value highlight">
-                      {modal.data.billNo}
+                    {modal.data.billNo}
                   </div>
                 </div>
               </div>
               <div className="bill-customer-card payment-invoice-card">
-                  <div className="bill-customer-icon-bg">
-                    <img
-                      src={IdFormIcon}
-                      alt="Customer ID"
-                      className="bill-customer-icon"
-                    />
-                  </div>
+                <div className="bill-customer-icon-bg">
+                  <img
+                    src={IdFormIcon}
+                    alt="Customer ID"
+                    className="bill-customer-icon"
+                  />
+                </div>
                 <div className="bill-customer-info-col">
                   <div className="bill-customer-label">Customer ID</div>
                   <div className="bill-customer-value highlight">
-                      2012366754
+                    2012366754
                   </div>
                 </div>
               </div>
               <div className="bill-customer-card payment-invoice-card">
-                  <div className="bill-customer-icon-bg">
-                    <img
-                      src={InvoiceAmountFormIcon}
-                      alt="Invoice Amount"
-                      className="bill-customer-icon"
-                    />
-                  </div>
+                <div className="bill-customer-icon-bg">
+                  <img
+                    src={InvoiceAmountFormIcon}
+                    alt="Invoice Amount"
+                    className="bill-customer-icon"
+                  />
+                </div>
                 <div className="bill-customer-info-col">
                   <div className="bill-customer-label">Invoice Amount</div>
                   <div className="bill-customer-value highlight">
-                      {modal.data.amount}
+                    {modal.data.amount}
                   </div>
                 </div>
               </div>
             </div>
             <div className="payment-invoice-table">
               <table>
-                  <thead>
+                <thead>
                   <tr>
-                      <th className="table-header-item">ID</th>
-                      <th className="table-header-item">Item Name</th>
-                      <th className="table-header-item">Qty</th>
-                      <th className="table-header-item">Amount</th>
-                      <th className="table-header-item">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="table-data-item">1001</td>
-                      <td className="table-data-item">{modal.data.service}</td>
-                      <td className="table-data-item">1</td>
-                      <td className="table-data-item">{modal.data.amount}</td>
-                      <td className="table-data-item">{modal.data.amount}</td>
-                    </tr>
-                    <tr>
+                    <th className="table-header-item">ID</th>
+                    <th className="table-header-item">Item Name</th>
+                    <th className="table-header-item">Qty</th>
+                    <th className="table-header-item">Amount</th>
+                    <th className="table-header-item">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="table-data-item">1001</td>
+                    <td className="table-data-item">{modal.data.service}</td>
+                    <td className="table-data-item">1</td>
+                    <td className="table-data-item">{modal.data.amount}</td>
+                    <td className="table-data-item">{modal.data.amount}</td>
+                  </tr>
+                  <tr>
                     <td colSpan={4} className="payment-total-label">
-                        TOTAL
-                      </td>
+                      TOTAL
+                    </td>
                     <td className="payment-total-value">{modal.data.amount}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div className="payment-invoice-actions">
-                <GradientButton onClick={() => setModal(null)} fullWidth>
-                  PAY
-                </GradientButton>
+              <GradientButton onClick={() => setModal(null)} fullWidth>
+                PAY
+              </GradientButton>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </Modal>
 
       {/* Receipt Modal */}
@@ -351,46 +411,84 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         isOpen={modal?.type === "receipt"}
         onClose={() => setModal(null)}
         showHeader={true}
-        headerTitle="RECEIPT"
+        headerTitle="PAYMENT RECEIPT"
         className="payment-receipt-modal"
       >
         {modal?.type === "receipt" && (
           <div className="payment-receipt-content">
-            <div className="payment-receipt-table">
-              <table className="no-min-width-table">
-                  <thead>
-                  <tr>
-                    <th className="table-header-item">ID</th>
-                      <th className="table-header-item">Item Name</th>
-                      <th className="table-header-item">Qty</th>
-                      <th className="table-header-item">Amount</th>
-                      <th className="table-header-item">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="table-data-item">1001</td>
-                      <td className="table-data-item">{modal.data.service}</td>
-                      <td className="table-data-item">1</td>
-                      <td className="table-data-item">{modal.data.amount}</td>
-                      <td className="table-data-item">{modal.data.amount}</td>
-                    </tr>
-                    <tr>
-                    <td colSpan={4} className="payment-total-label">
-                        TOTAL
-                      </td>
-                    <td className="payment-total-value">{modal.data.amount}</td>
-                    </tr>
-                  </tbody>
-                </table>
+            {/* Receipt Header */}
+            <div className="receipt-header">
+              <div className="receipt-success-icon">
+                <svg
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                    stroke="#10B981"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
+              <div className="receipt-title">Payment Successful!</div>
+              <div className="receipt-subtitle">
+                Your transaction has been completed successfully
+              </div>
+            </div>
+
+            {/* Receipt Details */}
+            <div className="receipt-details">
+              <div className="receipt-detail-row">
+                <div className="receipt-detail-label">Transaction ID</div>
+                <div className="receipt-detail-value">{modal.data.billNo}</div>
+              </div>
+              <div className="receipt-detail-row">
+                <div className="receipt-detail-label">Service</div>
+                <div className="receipt-detail-value">{modal.data.service}</div>
+              </div>
+              <div className="receipt-detail-row">
+                <div className="receipt-detail-label">Amount Paid</div>
+                <div className="receipt-detail-value highlight">
+                  {modal.data.amount}
+                </div>
+              </div>
+              <div className="receipt-detail-row">
+                <div className="receipt-detail-label">Payment Date</div>
+                <div className="receipt-detail-value">
+                  {new Date().toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+
+            {/* Receipt Summary */}
+            <div className="receipt-summary">
+              <div className="receipt-summary-title">Transaction Summary</div>
+              <div className="receipt-summary-item">
+                <span>Service Cost</span>
+                <span>{modal.data.amount}</span>
+              </div>
+              <div className="receipt-summary-item">
+                <span>Processing Fee</span>
+                <span>₦0.00</span>
+              </div>
+              <div className="receipt-summary-item total">
+                <span>Total Amount</span>
+                <span>{modal.data.amount}</span>
+              </div>
+            </div>
+
             <div className="payment-receipt-actions">
-                <GradientButton onClick={() => setModal(null)} fullWidth>
-                  CLOSE
-                </GradientButton>
+              <GradientButton onClick={() => setModal(null)} fullWidth>
+                CLOSE RECEIPT
+              </GradientButton>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </Modal>
 
       {/* Reason Modal */}
@@ -405,7 +503,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           <div className="payment-reason-content">
             <div className="payment-reason-message">
               Payment failed due to insufficient funds.
-                </div>
+            </div>
             <div className="payment-reason-details">
               <div className="payment-reason-detail">
                 <div className="payment-reason-label">Bill No.</div>
@@ -415,14 +513,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <div className="payment-reason-label">Service</div>
                 <div className="payment-reason-value">{modal.data.service}</div>
               </div>
-                    </div>
+            </div>
             <div className="payment-reason-actions">
-                <GradientButton onClick={() => setModal(null)} fullWidth>
-                  CLOSE
-                </GradientButton>
+              <GradientButton onClick={() => setModal(null)} fullWidth>
+                CLOSE
+              </GradientButton>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </Modal>
 
       {/* Payment Success Modal */}
@@ -433,24 +531,24 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         className="payment-success-modal"
       >
         <div className="payment-success-content">
-              <div className="customer-success-icon-wrap">
-                <img
-                  src={CheckCircle}
-                  alt="success"
-                  className="customer-success-icon"
-                />
-              </div>
-              <div className="customer-success-title">Payment Success!</div>
-              <div className="customer-success-desc">
-                Your payment has been made successfully.
-              </div>
-                <GradientButton
-                  onClick={() => setShowPaymentSuccess(false)}
-                  fullWidth
-                >
-                  CLOSE
-                </GradientButton>
-              </div>
+          <div className="customer-success-icon-wrap">
+            <img
+              src={CheckCircle}
+              alt="success"
+              className="customer-success-icon"
+            />
+          </div>
+          <div className="customer-success-title">Payment Success!</div>
+          <div className="customer-success-desc">
+            Your payment has been made successfully.
+          </div>
+          <GradientButton
+            onClick={() => setShowPaymentSuccess(false)}
+            fullWidth
+          >
+            CLOSE
+          </GradientButton>
+        </div>
       </Modal>
     </div>
   );

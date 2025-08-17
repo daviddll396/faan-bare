@@ -10,6 +10,7 @@ import "./userspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
+import DataTable from "../../reusables/DataTable/DataTable";
 
 // Add User type for local state
 interface LocalUser {
@@ -416,59 +417,49 @@ const UsersPage: React.FC<UsersPageProps> = () => {
               )}
             </div>
 
-            <div className="content-card">
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="table-header-item">S/N</th>
-                      <th className="table-header-item">First Name</th>
-                      <th className="table-header-item">Last Name</th>
-                      <th className="table-header-item">Email</th>
-                      <th className="table-header-item">Role</th>
-                      <th className="table-header-item">Status</th>
-                      <th className="table-header-item">Date Modified</th>
-                      <th className="table-header-item">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map((user, idx) => (
-                      <tr key={user.id}>
-                        <td className="table-data-item">{idx + 1}.</td>
-                        <td className="table-data-item">{user.firstName}</td>
-                        <td className="table-data-item">{user.lastName}</td>
-                        <td className="table-data-item">{user.email}</td>
-                        <td className="table-data-item-role">
-                          <span className="role-badge-table">{user.role}</span>
-                        </td>
-                        <td className="table-data-item">
-                          <span
-                            className={`status-badge-table ${user.status.toLowerCase()}`}
-                          >
-                            {user.status}
-                          </span>
-                        </td>
-                        <td className="table-data-item">{user.dateModified}</td>
-                        <td className="table-data-item">
-                          <button
-                            className="action-btn-table edit"
-                            onClick={() => handleEdit(user)}
-                          >
-                            <Edit size={16} /> Edit
-                          </button>
-                          <button
-                            className="action-btn-table delete"
-                            onClick={() => handleDelete(user)}
-                          >
-                            <Trash2 size={16} /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <DataTable
+              headers={[
+                "S/N",
+                "First Name",
+                "Last Name",
+                "Email",
+                "Role",
+                "Status",
+                "Date Modified",
+                "Actions",
+              ]}
+              data={filteredUsers.map((user, idx) => [
+                `${idx + 1}.`,
+                user.firstName,
+                user.lastName,
+                user.email,
+                <span key={`r-${user.id}`} className="role-badge-table">
+                  {user.role}
+                </span>,
+                <span
+                  key={`s-${user.id}`}
+                  className={`status-badge-table ${user.status.toLowerCase()}`}
+                >
+                  {user.status}
+                </span>,
+                user.dateModified,
+                <div key={`a-${user.id}`}>
+                  <button
+                    className="action-btn-table edit"
+                    onClick={() => handleEdit(user)}
+                  >
+                    <Edit size={16} /> Edit
+                  </button>
+                  <button
+                    className="action-btn-table delete"
+                    onClick={() => handleDelete(user)}
+                  >
+                    <Trash2 size={16} /> Delete
+                  </button>
+                </div>,
+              ])}
+              className="users-admin-table"
+            />
             {windowWidth <= 768 && <SlideIndicator />}
           </>
         ) : (

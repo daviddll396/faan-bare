@@ -34,6 +34,11 @@ const API_ENDPOINTS = {
   FUND_WALLET: `${API_BASE_URL}/api/faan/transactions/fund-wallet`,
   GET_ALL_TARIFFS: `${API_BASE_URL}/api/faan/transactions/tariffs`,
   MAKE_PAYMENT: `${API_BASE_URL}/api/faan/transactions/make-payment`,
+  GENERATE_INVOICE: `${API_BASE_URL}/api/faan/transactions/generate-invoice`,
+  CREATE_TARIFF: `${API_BASE_URL}/api/faan/transactions/create-tariff`,
+  ADMIN_TRANSACTION_HISTORY: `${API_BASE_URL}/api/faan/transactions/history-admin`,
+  ADMIN_DASHBOARD_STATS: `${API_BASE_URL}/api/faan/transactions/stat`,
+  CUSTOMER_SEARCH: `${API_BASE_URL}/api/faan/customers/search`,
 };
 
 const ENCRYPTION_CONFIG = {
@@ -105,6 +110,87 @@ interface TransactionHistoryItem {
   id: number;
 }
 
+interface AdminTransactionHistoryItem {
+  id: number;
+  customerId: string;
+  tariffId: number;
+  tariffName: string;
+  amount: number;
+  status: string;
+  createdAt: string;
+  paymentMethod?: string;
+  reference?: string;
+}
+
+interface GenerateInvoiceRequest {
+  orderId: string;
+  tariffId: number;
+  customerId: string;
+  description: string;
+}
+
+interface GenerateInvoiceResponse {
+  status: boolean;
+  statusCode: number;
+  data: {
+    orderId: string;
+    customerId: string;
+    rrr: string;
+    tariffId: number;
+  };
+  message: string;
+}
+
+interface CreateTariffRequest {
+  name: string;
+  amount: number;
+  description: string;
+}
+
+interface CreateTariffResponse {
+  status: boolean;
+  statusCode: number;
+  data: {
+    id: number;
+    name: string;
+    amount: number;
+    description: string;
+  };
+  message: string;
+}
+
+interface AdminDashboardStats {
+  status: boolean;
+  statusCode: number;
+  data: {
+    customerProfile: unknown | null;
+    walletBalance: number | null;
+    transactionStats: {
+      total: number; // Total bookings/bills
+      completed: number; // Completed/successful payments
+      pending: number; // Pending payments
+      cancelled: number; // Failed/cancelled payments
+    };
+  };
+  message: string;
+}
+
+interface CustomerSearchResponse {
+  status: boolean;
+  statusCode: number;
+  data: Array<{
+    id: number;
+    firstName: string;
+    lastName: string;
+    idNo: string;
+    phone: string;
+    email: string;
+    address?: string;
+    nin?: string;
+  }>;
+  message: string;
+}
+
 interface GuestFormData {
   firstName: string;
   lastName: string;
@@ -121,12 +207,30 @@ interface AuthContextType {
   setGuestUser: (formData: GuestFormData) => void;
   fundWallet: (amount: number) => Promise<boolean>;
   getAllTariffs: () => Promise<TariffsResponse | null>;
-  makePayment: (reference: string, tariffId: number) => Promise<boolean>;
+  makePayment: (
+    reference: string,
+    tariffId: number
+  ) => Promise<{ success: boolean; message?: string }>;
+  generateInvoice: (
+    request: GenerateInvoiceRequest
+  ) => Promise<GenerateInvoiceResponse | null>;
+  createTariff: (
+    request: CreateTariffRequest
+  ) => Promise<CreateTariffResponse | null>;
   refreshUserDetails: () => Promise<boolean>;
   getTransactionHistory: (
     startDate: string,
     endDate: string
   ) => Promise<TransactionHistoryItem[] | null>;
+  getAdminTransactionHistory: () => Promise<
+    AdminTransactionHistoryItem[] | null
+  >;
+  getAdminDashboardStats: () => Promise<AdminDashboardStats | null>;
+  searchCustomers: (
+    nin?: string,
+    firstName?: string,
+    lastName?: string
+  ) => Promise<CustomerSearchResponse | null>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -173,8 +277,8 @@ interface AuthProviderProps {
 
 // Mock credentials
 const MOCK_ADMIN_CREDENTIALS = {
-  email: "admin@faan.gov.ng",
-  password: "password123",
+  email: "sadmin@faan.gov.ng",
+  password: "spassword123",
 };
 
 const MOCK_CUSTOMER_CREDENTIALS = {
@@ -766,15 +870,90 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     }, []);
 
+  const createTariff = useCallback(
+    async (
+      request: CreateTariffRequest
+    ): Promise<CreateTariffResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          console.error("No token found for creating tariff");
+          return null;
+        }
+
+        console.log("🚀 === STARTING CREATE TARIFF REQUEST ===");
+        console.log("📍 Request URL:", API_ENDPOINTS.CREATE_TARIFF);
+        console.log("📋 Request payload:", request);
+        console.log("🔑 Using token:", token);
+        console.log("⏰ Request timestamp:", new Date().toISOString());
+
+        const response = await fetch(API_ENDPOINTS.CREATE_TARIFF, {
+          method: "POST",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(request),
+        });
+
+        console.log("📥 Create tariff response status:", response.status);
+        console.log(
+          "📥 Create tariff response status text:",
+          response.statusText
+        );
+
+        if (!response.ok) {
+          console.error(
+            "❌ Failed to create tariff:",
+            response.status,
+            response.statusText
+          );
+          const errorText = await response.text();
+          console.error("❌ Error response body:", errorText);
+          return null;
+        }
+
+        const responseText = await response.text();
+        console.log("📄 Raw create tariff response:", responseText);
+
+        if (!responseText || responseText.trim() === "") {
+          console.log("⚠️ Empty create tariff response");
+          return null;
+        }
+
+        let data: CreateTariffResponse;
+        try {
+          data = JSON.parse(responseText);
+          console.log("✅ Parsed create tariff data:", data);
+        } catch (error) {
+          console.error("❌ Failed to parse create tariff JSON:", error);
+          console.error("❌ Raw response that failed to parse:", responseText);
+          return null;
+        }
+
+        // Clear tariffs cache to force refresh on next getAllTariffs call
+        tariffsCacheRef.current = null;
+
+        console.log("🎉 === CREATE TARIFF COMPLETED SUCCESSFULLY ===");
+        return data;
+      } catch (error) {
+        console.error("💥 Create tariff error:", error);
+        return null;
+      }
+    },
+    []
+  );
+
   const makePayment = async (
     reference: string,
     tariffId: number
-  ): Promise<boolean> => {
+  ): Promise<{ success: boolean; message?: string }> => {
     try {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       if (!token) {
         console.error("No token found for making payment");
-        return false;
+        return { success: false, message: "Authentication token not found" };
       }
 
       console.log("🚀 === STARTING MAKE PAYMENT REQUEST ===");
@@ -818,7 +997,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         );
         const errorText = await response.text();
         console.error("❌ Error response body:", errorText);
-        return false;
+        return {
+          success: false,
+          message: `HTTP ${response.status}: ${response.statusText}`,
+        };
       }
 
       const responseText = await response.text();
@@ -828,7 +1010,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Check if response has content
       if (!responseText || responseText.trim() === "") {
         console.log("⚠️ Empty make payment response");
-        return false;
+        return { success: false, message: "Empty response from server" };
       }
 
       // Parse the JSON response
@@ -847,19 +1029,122 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (error) {
         console.error("❌ Failed to parse make payment JSON:", error);
         console.error("❌ Raw response that failed to parse:", responseText);
-        return false;
+        return {
+          success: false,
+          message: "Invalid response format from server",
+        };
       }
 
       if (data.status && data.statusCode === HTTP_STATUS.OK) {
         console.log("🎉 === MAKE PAYMENT COMPLETED SUCCESSFULLY ===");
-        return true;
+        return { success: true };
       } else {
         console.error("❌ Payment failed:", data.message);
-        return false;
+        return { success: false, message: data.message || "Payment failed" };
       }
     } catch (error) {
       console.error("💥 Make payment error:", error);
-      return false;
+      return { success: false, message: "Network error occurred" };
+    }
+  };
+
+  const generateInvoice = async (
+    request: GenerateInvoiceRequest
+  ): Promise<GenerateInvoiceResponse | null> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for generating invoice");
+        return null;
+      }
+
+      console.log("🚀 === STARTING GENERATE INVOICE REQUEST ===");
+      console.log("📍 Request URL:", API_ENDPOINTS.GENERATE_INVOICE);
+      console.log("🔑 Using token:", token);
+      console.log("📋 Invoice request:", request);
+      console.log("⏰ Request timestamp:", new Date().toISOString());
+
+      const requestBody = {
+        orderId: request.orderId,
+        tariffId: request.tariffId,
+        customerId: request.customerId,
+        description: request.description,
+      };
+
+      console.log("📤 Request body:", requestBody);
+
+      const response = await fetch(API_ENDPOINTS.GENERATE_INVOICE, {
+        method: "POST",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("📥 Generate invoice response status:", response.status);
+      console.log(
+        "📥 Generate invoice response status text:",
+        response.statusText
+      );
+      console.log("📥 Response timestamp:", new Date().toISOString());
+      console.log("🔧 Generate invoice request headers:", {
+        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+        Authorization: `Bearer ${token}`,
+      });
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to generate invoice:",
+          response.status,
+          response.statusText
+        );
+        const errorText = await response.text();
+        console.error("❌ Error response body:", errorText);
+        return null;
+      }
+
+      const responseText = await response.text();
+      console.log("📄 Raw generate invoice response:", responseText);
+      console.log("📏 Response length:", responseText.length);
+
+      // Check if response has content
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty generate invoice response");
+        return null;
+      }
+
+      // Parse the JSON response
+      let data;
+      try {
+        data = JSON.parse(responseText);
+        console.log("✅ Parsed generate invoice data:", data);
+        console.log("✅ Data structure:", typeof data);
+        if (data && typeof data === "object") {
+          console.log("✅ Data keys:", Object.keys(data));
+          if (data.data) {
+            console.log("✅ Data.data type:", typeof data.data);
+            console.log("✅ Data.data content:", data.data);
+          }
+        }
+      } catch (error) {
+        console.error("❌ Failed to parse generate invoice JSON:", error);
+        console.error("❌ Raw response that failed to parse:", responseText);
+        return null;
+      }
+
+      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+        console.log("🎉 === GENERATE INVOICE COMPLETED SUCCESSFULLY ===");
+        return data as GenerateInvoiceResponse;
+      } else {
+        console.error("❌ Invoice generation failed:", data.message);
+        return null;
+      }
+    } catch (error) {
+      console.error("💥 Generate invoice error:", error);
+      return null;
     }
   };
 
@@ -1016,6 +1301,220 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const getAdminTransactionHistory = async (): Promise<
+    AdminTransactionHistoryItem[] | null
+  > => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for fetching admin transaction history");
+        return null;
+      }
+
+      console.log("🚀 === FETCHING ADMIN TRANSACTION HISTORY ===");
+      console.log("📍 Request URL:", API_ENDPOINTS.ADMIN_TRANSACTION_HISTORY);
+
+      const response = await fetch(API_ENDPOINTS.ADMIN_TRANSACTION_HISTORY, {
+        method: "GET",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to fetch admin transaction history:",
+          response.status,
+          response.statusText
+        );
+        return null;
+      }
+
+      const responseText = await response.text();
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty response from admin transaction history API");
+        return null;
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (error) {
+        console.error(
+          "💥 Failed to parse admin transaction history JSON:",
+          error
+        );
+        return null;
+      }
+
+      console.log("📄 Admin transaction history response:", data);
+
+      if (Array.isArray(data)) {
+        console.log("✅ Admin transaction history data (direct array):", data);
+        return data as AdminTransactionHistoryItem[];
+      } else if (Array.isArray(data.data)) {
+        console.log(
+          "✅ Admin transaction history data (nested array):",
+          data.data
+        );
+        return data.data as AdminTransactionHistoryItem[];
+      } else {
+        console.log(
+          "⚠️ Admin transaction history data structure not recognized:",
+          data
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("💥 Error fetching admin transaction history:", error);
+      return null;
+    }
+  };
+
+  const getAdminDashboardStats =
+    async (): Promise<AdminDashboardStats | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          console.error("No token found for fetching admin dashboard stats");
+          return null;
+        }
+
+        console.log("🚀 === FETCHING ADMIN DASHBOARD STATS ===");
+        console.log("📍 Request URL:", API_ENDPOINTS.ADMIN_DASHBOARD_STATS);
+
+        const response = await fetch(API_ENDPOINTS.ADMIN_DASHBOARD_STATS, {
+          method: "GET",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          console.error(
+            "❌ Failed to fetch admin dashboard stats:",
+            response.status,
+            response.statusText
+          );
+          return null;
+        }
+
+        const responseText = await response.text();
+        if (!responseText || responseText.trim() === "") {
+          console.log("⚠️ Empty response from admin dashboard stats API");
+          return null;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (error) {
+          console.error(
+            "💥 Failed to parse admin dashboard stats JSON:",
+            error
+          );
+          return null;
+        }
+
+        console.log("📄 === ADMIN DASHBOARD STATS RESPONSE ===");
+        console.log("📊 Raw API Response:", data);
+        console.log("🔍 Response Type:", typeof data);
+        console.log("📋 Response Keys:", Object.keys(data || {}));
+
+        if (data && typeof data === "object" && data.status !== undefined) {
+          console.log("✅ Admin dashboard stats data structure:", data);
+          return data as AdminDashboardStats;
+        } else {
+          console.log(
+            "⚠️ Admin dashboard stats data structure not recognized:",
+            data
+          );
+          return null;
+        }
+      } catch (error) {
+        console.error("💥 Error fetching admin dashboard stats:", error);
+        return null;
+      }
+    };
+
+  const searchCustomers = async (
+    nin?: string,
+    firstName?: string,
+    lastName?: string
+  ): Promise<CustomerSearchResponse | null> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for customer search");
+        return null;
+      }
+
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (nin) params.append("nin", nin);
+      if (firstName) params.append("firstName", firstName);
+      if (lastName) params.append("lastName", lastName);
+
+      const searchUrl = `${API_ENDPOINTS.CUSTOMER_SEARCH}?${params.toString()}`;
+
+      console.log("🚀 === SEARCHING CUSTOMERS ===");
+      console.log("📍 Request URL:", searchUrl);
+      console.log("🔍 Search Parameters:", { nin, firstName, lastName });
+
+      const response = await fetch(searchUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to search customers:",
+          response.status,
+          response.statusText
+        );
+        return null;
+      }
+
+      const responseText = await response.text();
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty response from customer search API");
+        return null;
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (error) {
+        console.error("💥 Failed to parse customer search JSON:", error);
+        return null;
+      }
+
+      console.log("📄 === CUSTOMER SEARCH RESPONSE ===");
+      console.log("📊 Raw API Response:", data);
+      console.log("🔍 Response Type:", typeof data);
+      console.log("📋 Response Keys:", Object.keys(data || {}));
+
+      if (data && typeof data === "object" && data.status !== undefined) {
+        console.log("✅ Customer search data structure:", data);
+        return data as CustomerSearchResponse;
+      } else {
+        console.log("⚠️ Customer search data structure not recognized:", data);
+        return null;
+      }
+    } catch (error) {
+      console.error("💥 Error searching customers:", error);
+      return null;
+    }
+  };
+
   const setGuestUser = (formData: GuestFormData) => {
     const guestUser: User = {
       id: `guest-${Date.now()}`,
@@ -1051,8 +1550,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     fundWallet,
     getAllTariffs,
     makePayment,
+    generateInvoice,
+    createTariff,
     refreshUserDetails,
     getTransactionHistory,
+    getAdminTransactionHistory,
+    getAdminDashboardStats,
+    searchCustomers,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

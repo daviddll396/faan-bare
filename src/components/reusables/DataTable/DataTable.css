@@ -1,0 +1,362 @@
+/* DataTable Styles - Exact copy from PaymentPage table */
+.data-table-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e4e4e4;
+  padding: 0 0 0 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding-bottom: 10px;
+  animation: slideInUp 0.4s ease-out 0.4s both;
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.data-table .alt-row {
+  background: var(--bg-color);
+}
+
+/* Pagination Controls - Outer container for better mobile experience */
+.data-table-pagination-outer {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e4e4e4;
+  padding: 20px;
+  margin-top: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  display: none; /* Hidden by default on desktop */
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Default pagination (desktop) - inside table container */
+.data-table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px 0 20px;
+  border-top: 1px solid #e4e4e4;
+  margin-top: 16px;
+}
+
+.pagination-info {
+  color: #6c7278;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-btn {
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  color: #070600;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background: #f8f9fa;
+  border-color: #007948;
+  color: #007948;
+}
+
+.pagination-btn.disabled {
+  background: #f8f9fa;
+  color: #c1c1c1;
+  cursor: not-allowed;
+  border-color: #e4e4e4;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pagination-page {
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  color: #070600;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 32px;
+  text-align: center;
+  font-family: inherit;
+}
+
+.pagination-page:hover:not(.ellipsis):not(.active) {
+  background: #f8f9fa;
+  border-color: #007948;
+  color: #007948;
+}
+
+.pagination-page.active {
+  background: #007948;
+  border-color: #007948;
+  color: #fff;
+  cursor: default;
+}
+
+.pagination-page.ellipsis {
+  background: #f8f9fa;
+  color: #6c7278;
+  cursor: default;
+  border-color: #e4e4e4;
+  min-width: 28px;
+}
+
+.pagination-page.ellipsis:hover {
+  background: #f8f9fa;
+  border-color: #e4e4e4;
+  color: #6c7278;
+}
+
+/* Progressive zoom scaling for data table with appropriate sizing for high DPI displays */
+@media (max-width: 1920px) {
+  .data-table-card {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1800px) {
+  .data-table-card {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1700px) {
+  .data-table-card {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .data-table-card {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1500px) {
+  .data-table-card {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1450px) {
+  .data-table-card {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1400px) {
+  .data-table-card {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 1350px) {
+  .data-table-card {
+    zoom: 0.58;
+  }
+}
+
+@media (max-width: 1300px) {
+  .data-table-card {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 1250px) {
+  .data-table-card {
+    zoom: 0.54;
+  }
+}
+
+@media (max-width: 1200px) {
+  .data-table-card {
+    zoom: 0.52;
+  }
+}
+
+@media (max-width: 1150px) {
+  .data-table-card {
+    zoom: 0.5;
+  }
+}
+
+@media (max-width: 1100px) {
+  .data-table-card {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 1050px) {
+  .data-table-card {
+    zoom: 0.46;
+  }
+}
+
+@media (max-width: 1000px) {
+  .data-table-card {
+    zoom: 0.44;
+  }
+}
+
+@media (max-width: 950px) {
+  .data-table-card {
+    zoom: 0.42;
+  }
+}
+
+@media (max-width: 900px) {
+  .data-table-card {
+    zoom: 0.4;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 12px 6px 12px 10px;
+    font-size: 15px;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .data-table-card {
+    zoom: 1;
+    overflow: auto;
+  }
+  .data-table-card {
+    border-radius: 10px;
+  }
+
+  /* Hide default pagination on mobile */
+  .data-table-pagination {
+    display: none;
+  }
+
+  /* Mobile pagination adjustments */
+  .data-table-pagination-outer {
+    display: flex; /* Show on mobile */
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    padding: 10px;
+    margin-top: 12px;
+  }
+
+  /* Hide pagination info text on mobile */
+  .pagination-info {
+    display: none;
+  }
+
+  .pagination-controls {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pagination-page {
+    min-width: 28px;
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+
+  .pagination-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  /* Mobile no-data adjustments */
+  .data-table-no-data {
+    padding: 40px 16px;
+    min-height: 150px;
+  }
+
+  .no-data-icon .desktop-icon {
+    display: none;
+  }
+
+  .no-data-icon .mobile-icon {
+    display: block;
+  }
+
+  .no-data-title {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .no-data-message {
+    font-size: 13px;
+  }
+}
+
+/* No Data Indicator */
+.data-table-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  min-height: 200px;
+}
+
+.no-data-icon {
+  margin-bottom: 16px;
+  color: #007948;
+  opacity: 0.8;
+}
+
+.no-data-icon .mobile-icon {
+  display: none;
+}
+
+.no-data-icon .desktop-icon {
+  display: block;
+}
+
+.no-data-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6c7278;
+  margin-bottom: 8px;
+}
+
+.no-data-message {
+  font-size: 14px;
+  color: #898989;
+  line-height: 1.5;
+}
+
+/* Animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

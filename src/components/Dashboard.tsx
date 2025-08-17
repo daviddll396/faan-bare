@@ -9,6 +9,9 @@ import BillsPage from "./pages/BillsPage/BillsPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import LogoutPage from "./pages/LogoutPage/LogoutPage";
 import ProfilePage from "./pages/ProfilePage";
+import InvoicesPage from "./pages/InvoicesPage";
+import ReportsPage from "./pages/ReportsPage/ReportsPage";
+import AuditTrailPage from "./pages/AuditTrailPage/AuditTrailPage";
 import { useAuth } from "../contexts/AuthContext";
 import "./Dashboard.css";
 
@@ -18,6 +21,9 @@ export type PageType =
   | "services"
   | "customers"
   | "bills"
+  | "audit-trail"
+  | "reports"
+  | "invoices"
   | "payment"
   | "logout"
   | "profile";
@@ -44,7 +50,7 @@ const Dashboard: React.FC = () => {
   // Define allowed pages based on role
   const allowedPages: PageType[] =
     user?.role === "Customer"
-      ? ["dashboard", "services", "payment", "logout", "profile"]
+      ? ["dashboard", "services", "invoices", "payment", "logout", "profile"]
       : user?.role === "Guest"
       ? ["services", "logout"]
       : [
@@ -53,6 +59,8 @@ const Dashboard: React.FC = () => {
           "services",
           "customers",
           "bills",
+          "audit-trail",
+          "reports",
           "payment",
           "logout",
           "profile",
@@ -78,6 +86,9 @@ const Dashboard: React.FC = () => {
       services: "Services",
       customers: "Customers",
       bills: "Bills",
+      "audit-trail": "Audit Trail",
+      reports: "Reports",
+      invoices: "Invoices",
       payment: "Payment",
       logout: "Log Out",
       profile: "Profile",
@@ -104,6 +115,12 @@ const Dashboard: React.FC = () => {
         return <CustomersPage role={user?.role} />;
       case "bills":
         return <BillsPage role={user?.role} />;
+      case "audit-trail":
+        return <AuditTrailPage role={user?.role} />;
+      case "reports":
+        return <ReportsPage role={user?.role} />;
+      case "invoices":
+        return <InvoicesPage role={user?.role} />;
       case "payment":
         return <PaymentPage role={user?.role} />;
       case "logout":

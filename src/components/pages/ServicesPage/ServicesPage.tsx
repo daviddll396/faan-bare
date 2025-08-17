@@ -15,6 +15,34 @@ import CheckCircle from "../../../../public/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
 import SlideIndicator from "../../reusables/SlideIndicator";
+import DataTable from "../../reusables/DataTable/DataTable";
+
+// Remita Payment Engine types
+declare global {
+  interface Window {
+    RmPaymentEngine: {
+      init: (config: RemitaPaymentConfig) => RemitaPaymentHandler;
+    };
+  }
+}
+
+interface RemitaPaymentConfig {
+  key: string;
+  customerId: string;
+  transactionId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  amount: number;
+  narration: string;
+  onSuccess: (response: Record<string, unknown>) => void;
+  onError: (response: Record<string, unknown>) => void;
+  onClose: () => void;
+}
+
+interface RemitaPaymentHandler {
+  showPaymentWidget: () => void;
+}
 
 // Dev-only guard to prevent duplicate fetches in React 18 StrictMode
 let hasFetchedTariffs = false;
@@ -22,13 +50,6 @@ let hasFetchedTariffs = false;
 interface ServicesPageProps {
   role?: string;
 }
-
-const serviceNames = [
-  "International Departure",
-  "International Arrival",
-  "Domestic Departure",
-  "Domestic Arrival",
-];
 
 const initialService = {
   serviceName: "",
@@ -98,6 +119,15 @@ const customerServices = [
 
 type CustomerService = (typeof customerServices)[number];
 
+interface AdminService {
+  id: number;
+  name: string;
+  price: string;
+  amount: number;
+  description: string;
+  lastModified: string;
+}
+
 interface BookingPassenger {
   firstName: string;
   lastName: string;
@@ -114,7 +144,17 @@ interface BookingPassenger {
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
-  const { getAllTariffs, makePayment, refreshUserDetails } = useAuth();
+  // Remita Payment Configuration
+  const REMITA_PUBLIC_KEY =
+    "QzAwMDAyNzEyNTl8MTEwNjE4NjF8OWZjOWYwNmMyZDk3MDRhYWM3YThiOThlNTNjZTE3ZjYxOTY5NDdmZWE1YzU3NDc0ZjE2ZDZjNTg1YWYxNWY3NWM4ZjMzNzZhNjNhZWZlOWQwNmJhNTFkMjIxYTRiMjYzZDkzNGQ3NTUxNDIxYWNlOGY4ZWEyODY3ZjlhNGUwYTY="; // Replace with your actual public key
+
+  const {
+    getAllTariffs,
+    refreshUserDetails,
+    generateInvoice,
+    createTariff,
+    user,
+  } = useAuth();
   const { showLoading, hideLoading } = useLoading();
   const getAllTariffsRef = useRef(getAllTariffs);
   const showLoadingRef = useRef(showLoading);
@@ -127,9 +167,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   }, [getAllTariffs, showLoading, hideLoading]);
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [services, setServices] = useState([{ ...initialService }]);
-  const [serviceNameSelectOpen, setServiceNameSelectOpen] = useState<
-    number | null
-  >(null);
+
   const [selectedService, setSelectedService] =
     useState<CustomerService | null>(null);
   const [activeTab, setActiveTab] = React.useState<"passenger" | "airport">(
@@ -150,21 +188,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     destination: "",
   });
   const [passengers, setPassengers] = React.useState<BookingPassenger[]>([]);
-  const [bookingFormError, setBookingFormError] = React.useState("");
+  const [fieldErrors, setFieldErrors] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+  const [generatedRRR, setGeneratedRRR] = React.useState<string>("");
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
-  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
-  const [paymentMethod, setPaymentMethod] = React.useState<"card" | "transfer">(
-    "transfer"
-  );
-  const [cardNumber, setCardNumber] = React.useState("");
-  const [expirationDate, setExpirationDate] = React.useState("");
-  const [cvv, setCvv] = React.useState("");
-  const [saveCard, setSaveCard] = React.useState(false);
 
   // Add search state for admin view
   const [searchName, setSearchName] = useState("");
-  const [filteredServices, setFilteredServices] = useState(customerServices);
-  const [allServices] = useState(customerServices); // Rename for clarity
+  const [filteredServices, setFilteredServices] = useState<AdminService[]>([]);
+  const [allServices, setAllServices] = useState<AdminService[]>([]); // Admin services from API
 
   // Customer search state
   const [customerSearchName, setCustomerSearchName] = useState("");
@@ -207,7 +240,32 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       "Port Harcourt Domestic Service": "/images/ph-domestic.svg",
     };
 
-    return imageMap[tariffName] || "/images/default-service.svg";
+    // If we have a mapped image, use it
+    if (imageMap[tariffName]) {
+      return imageMap[tariffName];
+    }
+
+    // If no mapped image, return a random image from our available images
+    const availableImages = [
+      "/images/intl-arrival.svg",
+      "/images/intl-departure.svg",
+      "/images/vip-lounge.svg",
+      "/images/abj-intl.svg",
+      "/images/one-year.svg",
+      "/images/add-one-unit.svg",
+      "/images/ph-protocol.svg",
+      "/images/ph-domestic.svg",
+    ];
+
+    // Generate a consistent random image based on the tariff name
+    // This ensures the same service always gets the same random image
+    const hash = tariffName.split("").reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    const randomIndex = Math.abs(hash) % availableImages.length;
+    return availableImages[randomIndex];
   };
 
   // Add useEffect to fetch tariffs when component mounts
@@ -250,10 +308,31 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               })
             );
             setCustomerFilteredServices(convertedServices);
+
+            // Also update admin services table with API data
+            const adminServices = tariffsData.data.map(
+              (tariff: {
+                id: number;
+                name: string;
+                description: string;
+                amount: number;
+              }) => ({
+                id: tariff.id,
+                name: tariff.name,
+                price: tariff.amount.toLocaleString(),
+                amount: tariff.amount,
+                description: tariff.description || "No description available",
+                lastModified: "12-08-2024 / 11:32pm", // Default value for now
+              })
+            );
+            setFilteredServices(adminServices);
+            setAllServices(adminServices);
+
             console.log(
               "🎯 ServicesPage: Converted services:",
               convertedServices
             );
+            console.log("🎯 ServicesPage: Admin services:", adminServices);
             setTimeout(() => {
               showToast(
                 `${tariffsData.data.length} services loaded successfully`,
@@ -295,50 +374,202 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     fetchTariffs();
   }, []);
 
-  // Helper to format number with commas
-  function formatNumberWithCommas(value: string) {
-    const num = value.replace(/,/g, "");
-    if (!num) return "";
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
+  // Add useEffect to check if Remita script is loaded
+  useEffect(() => {
+    const checkRemitaScript = () => {
+      if (typeof window.RmPaymentEngine !== "undefined") {
+        console.log("✅ Remita Payment Engine loaded successfully");
+      } else {
+        console.warn("⚠️ Remita Payment Engine not yet loaded");
+        // Check again after a short delay
+        setTimeout(checkRemitaScript, 1000);
+      }
+    };
+
+    checkRemitaScript();
+  }, []);
+
+  // Monitor payment success modal state changes
+  useEffect(() => {
+    console.log("🎭 Payment Success Modal State Changed:", showPaymentSuccess);
+  }, [showPaymentSuccess]);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleServiceChange = (
     idx: number,
     field: keyof typeof initialService,
     value: string
   ) => {
-    const updated = [...services];
-    if (field === "price") {
-      // Only allow numbers
-      const raw = value.replace(/[^\d]/g, "");
-      updated[idx][field] = raw;
-    } else {
-      updated[idx][field] = value;
-    }
-    setServices(updated);
+    setServices(
+      services.map((service, i) =>
+        i === idx ? { ...service, [field]: value } : service
+      )
+    );
   };
 
   const addMoreService = () => {
     setServices([...services, { ...initialService }]);
   };
 
-  // Helper to check if all fields are filled
-  const allFieldsFilled = Object.values(bookingForm).every(
-    (v) => v && v !== ""
-  );
-
   const handleBookingFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setBookingForm({ ...bookingForm, [e.target.name]: e.target.value });
-    if (bookingFormError) setBookingFormError("");
+    // Clear field error when user starts typing/selecting
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors((prev) => ({ ...prev, [e.target.name]: false }));
+    }
+  };
+
+  const handleCreateServices = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate that all services have required fields
+    const validServices = services.filter(
+      (service) => service.serviceName && service.price && service.description
+    );
+
+    if (validServices.length === 0) {
+      showToast(
+        "Please fill in all required fields for at least one service",
+        "error"
+      );
+      return;
+    }
+
+    showLoading("Creating services...");
+
+    try {
+      let successCount = 0;
+      let errorCount = 0;
+
+      // Create each service
+      for (const service of validServices) {
+        try {
+          const request = {
+            name: service.serviceName,
+            amount: parseFloat(service.price),
+            description: service.description,
+          };
+
+          console.log("🚀 Creating service:", request);
+          const response = await createTariff(request);
+
+          if (response && response.status) {
+            console.log("✅ Service created successfully:", response.data);
+            successCount++;
+          } else {
+            console.error("❌ Failed to create service:", response);
+            errorCount++;
+          }
+        } catch (error) {
+          console.error("💥 Error creating service:", error);
+          errorCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        showToast(
+          `Successfully created ${successCount} service(s)${
+            errorCount > 0 ? `, ${errorCount} failed` : ""
+          }`,
+          "success"
+        );
+
+        // Refresh the services list
+        await getAllTariffs();
+
+        // Also refresh admin services table
+        const refreshedTariffsData = await getAllTariffs();
+        if (
+          refreshedTariffsData &&
+          refreshedTariffsData.status &&
+          refreshedTariffsData.data
+        ) {
+          const refreshedAdminServices = refreshedTariffsData.data.map(
+            (tariff: {
+              id: number;
+              name: string;
+              description: string;
+              amount: number;
+            }) => ({
+              id: tariff.id,
+              name: tariff.name,
+              price: tariff.amount.toLocaleString(),
+              amount: tariff.amount,
+              description: tariff.description || "No description available",
+              lastModified: "12-08-2024 / 11:32pm",
+            })
+          );
+          setFilteredServices(refreshedAdminServices);
+          setAllServices(refreshedAdminServices);
+        }
+
+        // Reset form and close modal
+        setServices([{ ...initialService }]);
+        setShowAddServiceForm(false);
+      } else {
+        showToast("Failed to create any services. Please try again.", "error");
+      }
+    } catch (error) {
+      console.error("💥 Error in handleCreateServices:", error);
+      showToast("An error occurred while creating services", "error");
+    } finally {
+      hideLoading();
+    }
   };
 
   const handleAddPassenger = () => {
-    if (!allFieldsFilled) {
-      setBookingFormError("Please fill in all required fields.");
+    // Check each required field and set field errors
+    const newFieldErrors: { [key: string]: boolean } = {};
+
+    if (!bookingForm.firstName.trim()) {
+      newFieldErrors.firstName = true;
+    }
+    if (!bookingForm.lastName.trim()) {
+      newFieldErrors.lastName = true;
+    }
+    if (!bookingForm.designation) {
+      newFieldErrors.designation = true;
+    }
+    if (!bookingForm.gender) {
+      newFieldErrors.gender = true;
+    }
+    if (!bookingForm.mobile.trim()) {
+      newFieldErrors.mobile = true;
+    }
+    if (!bookingForm.specialReq) {
+      newFieldErrors.specialReq = true;
+    }
+    if (!bookingForm.airport) {
+      newFieldErrors.airport = true;
+    }
+    if (!bookingForm.travelDate) {
+      newFieldErrors.travelDate = true;
+    }
+    if (!bookingForm.flightNumber.trim()) {
+      newFieldErrors.flightNumber = true;
+    }
+    if (!bookingForm.airportTime) {
+      newFieldErrors.airportTime = true;
+    }
+    if (!bookingForm.airline) {
+      newFieldErrors.airline = true;
+    }
+    if (!bookingForm.destination) {
+      newFieldErrors.destination = true;
+    }
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
       return;
     }
+
     setPassengers([...passengers, { ...bookingForm }]);
     setBookingForm({
       firstName: "",
@@ -354,7 +585,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       airline: "",
       destination: "",
     });
-    setBookingFormError("");
+    setFieldErrors({});
+    setGeneratedRRR(""); // Clear RRR when adding new passenger
   };
   const handleDeletePassenger = (idx: number) => {
     setPassengers(passengers.filter((_, i) => i !== idx));
@@ -412,7 +644,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       const otherCharges = 500; // Fixed charge
       const total = subTotal + otherCharges;
 
-      // Function to show payment modal
+      // Function to process Remita payment
       const handlePayment = () => {
         if (!selectedService?.id) {
           showToast("No service selected for payment", "error");
@@ -424,71 +656,182 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           return;
         }
 
-        setShowPaymentModal(true);
-      };
+        if (!generatedRRR) {
+          showToast("Please generate RRR first", "error");
+          return;
+        }
 
-      // Function to process payment after modal submission
-      const handlePaymentSubmit = async () => {
-        setShowPaymentModal(false);
-        showLoading("Processing payment...");
+        // Check if Remita script is loaded
+        if (typeof window.RmPaymentEngine === "undefined") {
+          console.error("❌ Remita Payment Engine not loaded");
+          showToast(
+            "Payment engine not available. Please refresh the page.",
+            "error"
+          );
+          return;
+        }
 
         try {
-          // Generate payment reference
-          const reference = `NM-${Date.now()}-${
-            selectedService.id
-          }-${Math.random().toString(36).substring(2, 8)}`;
+          // Reset payment success flag for new payment
+          let isPaymentSuccessful = false;
 
-          console.log("🎯 ServicesPage: Starting payment process");
-          console.log("🎯 Payment reference:", reference);
-          console.log("🎯 Tariff ID:", selectedService.id);
-          console.log("🎯 Total amount:", total);
-          console.log("🎯 Passenger count:", passengers.length);
+          // Get user details for payment
+          const firstName =
+            passengers[0]?.firstName || user?.firstName || "Guest";
+          const lastName = passengers[0]?.lastName || user?.lastName || "User";
+          const email = user?.email || "guest@example.com";
 
-          const paymentSuccess = await makePayment(
-            reference,
-            selectedService.id
-          );
+          // Generate unique transaction ID
+          const transactionId = Math.floor(Math.random() * 1101233);
 
-          if (paymentSuccess) {
-            hideLoading();
-            setShowPaymentSuccess(true);
+          console.log("🚀 === STARTING REMITA PAYMENT ===");
+          console.log("💰 Amount:", total);
+          console.log("🔢 RRR:", generatedRRR);
+          console.log("🔢 Transaction ID:", transactionId);
 
-            // Refresh user details to get updated wallet balance and transaction stats
-            console.log(
-              "🔄 ServicesPage: Refreshing user details after successful payment"
-            );
-            try {
-              await refreshUserDetails();
-              console.log(
-                "✅ ServicesPage: User details refreshed successfully"
-              );
-            } catch (error) {
-              console.error(
-                "❌ ServicesPage: Failed to refresh user details:",
-                error
-              );
-            }
+          // Initialize Remita payment engine
+          const paymentEngine = window.RmPaymentEngine.init({
+            key: REMITA_PUBLIC_KEY,
+            transactionId: transactionId,
+            customerId: user?.customerId || "GUEST",
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            amount: total,
+            narration: `Payment for ${selectedService.name} - ${passengers.length} passenger(s)`,
+            onSuccess: (response) => {
+              console.log("🎉 === REMITA PAYMENT SUCCESSFUL ===");
+              console.log("📄 Payment response:", response);
+              console.log("🔢 Transaction ID:", transactionId);
+              console.log("💰 Amount:", total);
+              console.log("🔢 RRR:", generatedRRR);
 
-            setTimeout(() => {
+              // Show success toast
               showToast("Payment successful!", "success");
-            }, 500);
-            console.log("🎯 ServicesPage: Payment completed successfully");
-          } else {
-            hideLoading();
-            setTimeout(() => {
+
+              // Set payment success state to show modal
+              console.log("🎭 Setting showPaymentSuccess to true");
+              setShowPaymentSuccess(true);
+              isPaymentSuccessful = true; // Set payment successful flag
+
+              // Log modal state change
+              setTimeout(() => {
+                console.log(
+                  "🎭 Modal state after setState:",
+                  showPaymentSuccess
+                );
+              }, 100);
+
+              // Refresh user details after successful payment
+              refreshUserDetails();
+            },
+            onError: (response) => {
+              console.error("❌ === REMITA PAYMENT FAILED ===");
+              console.error("📄 Error response:", response);
+              console.error("🔢 Transaction ID:", transactionId);
+
               showToast("Payment failed. Please try again.", "error");
-            }, 500);
-            console.log("🎯 ServicesPage: Payment failed");
+            },
+            onClose: () => {
+              console.log("🚪 === REMITA PAYMENT CLOSED ===");
+              console.log("🔢 Transaction ID:", transactionId);
+              console.log("✅ Payment was successful:", isPaymentSuccessful);
+
+              // Only show "Payment was cancelled" if it wasn't successful
+              if (!isPaymentSuccessful) {
+                showToast("Payment was cancelled", "error");
+              } else {
+                console.log(
+                  "🎉 Payment was successful, not showing cancelled message"
+                );
+              }
+            },
+          });
+
+          // Show the payment widget
+          paymentEngine.showPaymentWidget();
+        } catch (error) {
+          console.error("💥 Payment initialization error:", error);
+          showToast("Failed to initialize payment", "error");
+        }
+      };
+
+      // Function to generate RRR (Remita Retrieval Reference)
+      const handleGenerateRRR = async () => {
+        if (!selectedService?.id) {
+          showToast("No service selected for RRR generation", "error");
+          return;
+        }
+
+        if (passengers.length === 0) {
+          showToast("Please add at least one passenger", "error");
+          return;
+        }
+
+        showLoading("Generating RRR...");
+
+        try {
+          // Generate a unique order ID
+          const orderId = `ORDER-${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 8)}`;
+
+          // Get customer ID from user context
+          const customerId = user?.customerId || "FN904439"; // Fallback to default if user not available
+
+          const invoiceRequest = {
+            orderId: orderId,
+            tariffId: selectedService.id,
+            customerId: customerId,
+            description: "Payment for Airport Tariff",
+          };
+
+          console.log("🚀 === STARTING RRR GENERATION ===");
+          console.log("📋 Invoice request:", invoiceRequest);
+          console.log("⏰ Request timestamp:", new Date().toISOString());
+
+          const response = await generateInvoice(invoiceRequest);
+
+          if (response && response.status) {
+            console.log("🎉 === RRR GENERATED SUCCESSFULLY ===");
+            console.log("📄 Response data:", response.data);
+            console.log("🔢 RRR:", response.data.rrr);
+            console.log("📋 Order ID:", response.data.orderId);
+            console.log("👤 Customer ID:", response.data.customerId);
+            console.log("💰 Tariff ID:", response.data.tariffId);
+            console.log("✅ Status:", response.status);
+            console.log("📊 Status Code:", response.statusCode);
+            console.log("💬 Message:", response.message);
+
+            // Store the generated RRR
+            setGeneratedRRR(response.data.rrr);
+
+            hideLoading();
+            showToast(
+              `RRR generated successfully: ${response.data.rrr}`,
+              "success"
+            );
+          } else {
+            console.log("⚠️ API failed, generating mock RRR");
+            // Generate mock RRR if API fails
+            const mockRRR = `140${Math.floor(Math.random() * 1000000000)
+              .toString()
+              .padStart(9, "0")}`;
+            setGeneratedRRR(mockRRR);
+
+            hideLoading();
+            showToast(`Mock RRR generated: ${mockRRR}`, "success");
           }
         } catch (error) {
-          console.error("🎯 ServicesPage: Payment error:", error);
+          console.error("💥 RRR generation error, generating mock RRR:", error);
+          // Generate mock RRR if there's an error
+          const mockRRR = `140${Math.floor(Math.random() * 1000000000)
+            .toString()
+            .padStart(9, "0")}`;
+          setGeneratedRRR(mockRRR);
+
           hideLoading();
-          setTimeout(() => {
-            showToast(
-              "An error occurred during payment. Please try again.",
-              "error"
-            );
-          }, 500);
+          showToast(`Mock RRR generated: ${mockRRR}`, "success");
         }
       };
 
@@ -556,34 +899,44 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 {windowWidth > 768 ? (
                   <div className="booking-form-fields-row">
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label">First Name</label>
+                      <label className="booking-form-label required">
+                        First Name
+                      </label>
                       <input
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.firstName ? "error" : ""
+                        }`}
                         name="firstName"
                         value={bookingForm.firstName}
                         onChange={handleBookingFormChange}
-                        placeholder="First Name"
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label">Last Name</label>
+                      <label className="booking-form-label required">
+                        Last Name
+                      </label>
                       <input
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.lastName ? "error" : ""
+                        }`}
                         name="lastName"
                         value={bookingForm.lastName}
                         onChange={handleBookingFormChange}
-                        placeholder="Last Name"
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label">Designation</label>
+                      <label className="booking-form-label required">
+                        Designation
+                      </label>
                       <select
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.designation ? "error" : ""
+                        }`}
                         name="designation"
                         value={bookingForm.designation}
                         onChange={handleBookingFormChange}
                       >
-                        <option value="">Select Designation</option>
+                        <option value=""></option>
                         <option value="Mr.">Mr.</option>
                         <option value="Mrs.">Mrs.</option>
                         <option value="Miss">Miss</option>
@@ -594,78 +947,95 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       </select>
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label">Gender</label>
+                      <label className="booking-form-label required">
+                        Gender
+                      </label>
                       <select
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.gender ? "error" : ""
+                        }`}
                         name="gender"
                         value={bookingForm.gender}
                         onChange={handleBookingFormChange}
                       >
-                        <option value="">Select Gender</option>
+                        <option value=""></option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </select>
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label">
+                      <label className="booking-form-label required">
                         Mobile Number
                       </label>
                       <input
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.mobile ? "error" : ""
+                        }`}
                         name="mobile"
                         value={bookingForm.mobile}
                         onChange={handleBookingFormChange}
-                        placeholder="Mobile Number"
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label">
+                      <label className="booking-form-label required">
                         Special Requirement
                       </label>
                       <select
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.specialReq ? "error" : ""
+                        }`}
                         name="specialReq"
                         value={bookingForm.specialReq}
                         onChange={handleBookingFormChange}
                       >
-                        <option value="">Select Special Requirement</option>
-                        <option value="Nil">Nil</option>
-                        <option value="Wheelchair">Wheelchair</option>
-                        <option value="Assistance">Assistance</option>
+                        <option value=""></option>
+                        <option value="none">none</option>
+                        <option value="wheelchair">wheelchair</option>
+                        <option value="assistance">assistance</option>
                       </select>
                     </div>
                   </div>
                 ) : (
                   <div className="booking-form-fields-row-mobile">
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label">First Name</label>
+                      <label className="booking-form-label required">
+                        First Name
+                      </label>
                       <input
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.firstName ? "error" : ""
+                        }`}
                         name="firstName"
                         value={bookingForm.firstName}
                         onChange={handleBookingFormChange}
-                        placeholder="First Name"
                       />
                     </div>
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label">Last Name</label>
+                      <label className="booking-form-label required">
+                        Last Name
+                      </label>
                       <input
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.lastName ? "error" : ""
+                        }`}
                         name="lastName"
                         value={bookingForm.lastName}
                         onChange={handleBookingFormChange}
-                        placeholder="Last Name"
                       />
                     </div>
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label">Designation</label>
+                      <label className="booking-form-label required">
+                        Designation
+                      </label>
                       <select
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.designation ? "error" : ""
+                        }`}
                         name="designation"
                         value={bookingForm.designation}
                         onChange={handleBookingFormChange}
                       >
-                        <option value="">Select Designation</option>
+                        <option value=""></option>
                         <option value="Mr.">Mr.</option>
                         <option value="Mrs.">Mrs.</option>
                         <option value="Miss">Miss</option>
@@ -676,44 +1046,51 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       </select>
                     </div>
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label">Gender</label>
+                      <label className="booking-form-label required">
+                        Gender
+                      </label>
                       <select
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.gender ? "error" : ""
+                        }`}
                         name="gender"
                         value={bookingForm.gender}
                         onChange={handleBookingFormChange}
                       >
-                        <option value="">Select Gender</option>
+                        <option value=""></option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </select>
                     </div>
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label">
+                      <label className="booking-form-label required">
                         Mobile Number
                       </label>
                       <input
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.mobile ? "error" : ""
+                        }`}
                         name="mobile"
                         value={bookingForm.mobile}
                         onChange={handleBookingFormChange}
-                        placeholder="Mobile Number"
                       />
                     </div>
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label">
+                      <label className="booking-form-label required">
                         Special Requirement
                       </label>
                       <select
-                        className="booking-form-input"
+                        className={`booking-form-input ${
+                          fieldErrors.specialReq ? "error" : ""
+                        }`}
                         name="specialReq"
                         value={bookingForm.specialReq}
                         onChange={handleBookingFormChange}
                       >
-                        <option value="">Select Special Requirement</option>
-                        <option value="Nil">Nil</option>
-                        <option value="Wheelchair">Wheelchair</option>
-                        <option value="Assistance">Assistance</option>
+                        <option value=""></option>
+                        <option value="none">none</option>
+                        <option value="wheelchair">wheelchair</option>
+                        <option value="assistance">assistance</option>
                       </select>
                     </div>
                   </div>
@@ -726,12 +1103,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 >
                   + Add New Passenger
                 </button>
-                <MessageToast
-                  message={bookingFormError}
-                  type="error"
-                  isVisible={!!bookingFormError}
-                  onClose={() => setBookingFormError("")}
-                />
               </>
             )}
             {/* Airport Details Form */}
@@ -741,80 +1112,93 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <>
                     <div className="booking-form-fields-row">
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label">Airport</label>
+                        <label className="booking-form-label required">
+                          Airport
+                        </label>
                         <select
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.airport ? "error" : ""
+                          }`}
                           name="airport"
                           value={bookingForm.airport}
                           onChange={handleBookingFormChange}
                         >
-                          <option value="">Select Airport</option>
+                          <option value=""></option>
                           <option value="MMIA">MMIA (INTERNATIONAL)</option>
                           <option value="ABV">ABV (ABUJA)</option>
                         </select>
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Travel Date
                         </label>
                         <input
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.travelDate ? "error" : ""
+                          }`}
                           name="travelDate"
                           value={bookingForm.travelDate}
                           onChange={handleBookingFormChange}
-                          placeholder="Travel Date"
                           type="date"
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Flight Number
                         </label>
                         <input
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.flightNumber ? "error" : ""
+                          }`}
                           name="flightNumber"
                           value={bookingForm.flightNumber}
                           onChange={handleBookingFormChange}
-                          placeholder="Flight Number"
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Airport Time
                         </label>
                         <input
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.airportTime ? "error" : ""
+                          }`}
                           name="airportTime"
                           value={bookingForm.airportTime}
                           onChange={handleBookingFormChange}
-                          placeholder="Airport Time"
                           type="time"
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label">Airline</label>
+                        <label className="booking-form-label required">
+                          Airline
+                        </label>
                         <select
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.airline ? "error" : ""
+                          }`}
                           name="airline"
                           value={bookingForm.airline}
                           onChange={handleBookingFormChange}
                         >
-                          <option value="">Select Airline</option>
+                          <option value=""></option>
                           <option value="DELTA">DELTA</option>
                           <option value="ARIK">ARIK</option>
                         </select>
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Destination
                         </label>
                         <select
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.destination ? "error" : ""
+                          }`}
                           name="destination"
                           value={bookingForm.destination}
                           onChange={handleBookingFormChange}
                         >
-                          <option value="">Select Destination</option>
+                          <option value=""></option>
                           <option value="LAGOS">LAGOS</option>
                           <option value="ABUJA">ABUJA</option>
                         </select>
@@ -825,80 +1209,93 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <>
                     <div className="booking-form-fields-row-mobile">
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label">Airport</label>
+                        <label className="booking-form-label required">
+                          Airport
+                        </label>
                         <select
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.airport ? "error" : ""
+                          }`}
                           name="airport"
                           value={bookingForm.airport}
                           onChange={handleBookingFormChange}
                         >
-                          <option value="">Select Airport</option>
+                          <option value=""></option>
                           <option value="MMIA">MMIA (INTERNATIONAL)</option>
                           <option value="ABV">ABV (ABUJA)</option>
                         </select>
                       </div>
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Travel Date
                         </label>
                         <input
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.travelDate ? "error" : ""
+                          }`}
                           name="travelDate"
                           value={bookingForm.travelDate}
                           onChange={handleBookingFormChange}
-                          placeholder="Travel Date"
                           type="date"
                         />
                       </div>
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Flight Number
                         </label>
                         <input
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.flightNumber ? "error" : ""
+                          }`}
                           name="flightNumber"
                           value={bookingForm.flightNumber}
                           onChange={handleBookingFormChange}
-                          placeholder="Flight Number"
                         />
                       </div>
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Airport Time
                         </label>
                         <input
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.airportTime ? "error" : ""
+                          }`}
                           name="airportTime"
                           value={bookingForm.airportTime}
                           onChange={handleBookingFormChange}
-                          placeholder="Airport Time"
                           type="time"
                         />
                       </div>
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label">Airline</label>
+                        <label className="booking-form-label required">
+                          Airline
+                        </label>
                         <select
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.airline ? "error" : ""
+                          }`}
                           name="airline"
                           value={bookingForm.airline}
                           onChange={handleBookingFormChange}
                         >
-                          <option value="">Select Airline</option>
+                          <option value=""></option>
                           <option value="DELTA">DELTA</option>
                           <option value="ARIK">ARIK</option>
                         </select>
                       </div>
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label">
+                        <label className="booking-form-label required">
                           Destination
                         </label>
                         <select
-                          className="booking-form-input"
+                          className={`booking-form-input ${
+                            fieldErrors.destination ? "error" : ""
+                          }`}
                           name="destination"
                           value={bookingForm.destination}
                           onChange={handleBookingFormChange}
                         >
-                          <option value="">Select Destination</option>
+                          <option value=""></option>
                           <option value="LAGOS">LAGOS</option>
                           <option value="ABUJA">ABUJA</option>
                         </select>
@@ -914,12 +1311,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 >
                   + Add New Passenger
                 </button>
-                <MessageToast
-                  message={bookingFormError}
-                  type="error"
-                  isVisible={!!bookingFormError}
-                  onClose={() => setBookingFormError("")}
-                />
               </>
             )}
             {/* Only show passengers table and summary card inside form card on desktop */}
@@ -957,16 +1348,21 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               {p.travelDate}
                               {p.airportTime ? ` @${p.airportTime}` : ""}
                             </td>
-                            <td>{p.specialReq || "Nil"}</td>
+                            <td>{p.specialReq || "none"}</td>
                             <td>
                               <button
                                 className="booking-delete-btn"
                                 onClick={() => handleDeletePassenger(idx)}
                               >
+                                <img
+                                  src="/icons/delete-passenger.svg"
+                                  alt="Delete"
+                                  style={{ width: 20, height: 20 }}
+                                />
                                 <span
-                                  style={{ color: "#ef4444", fontWeight: 700 }}
+                                  style={{ color: "#BC2600", fontWeight: 700 }}
                                 >
-                                  🗑 Delete
+                                  Delete
                                 </span>
                               </button>
                             </td>
@@ -978,8 +1374,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   {passengers.length > 0 && (
                     <div className="booking-passengers-actions">
                       <BorderButton
-                        text="Generate Remita"
-                        onClick={handlePayment}
+                        text="Generate RRR"
+                        onClick={handleGenerateRRR}
                       />
                     </div>
                   )}
@@ -994,6 +1390,29 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <span>OTHER CHARGES</span>
                     <span>₦{otherCharges.toLocaleString()}</span>
                   </div>
+                  {generatedRRR && (
+                    <div
+                      className="booking-summary-row"
+                      style={{
+                        background: "#f0fdf4",
+                        padding: "12px 10px",
+                        borderRadius: "6px",
+                      }}
+                    >
+                      <span style={{ color: "#007948", fontWeight: "600" }}>
+                        RRR:
+                      </span>
+                      <span
+                        style={{
+                          color: "#007948",
+                          fontWeight: "700",
+                          fontFamily: "monospace",
+                        }}
+                      >
+                        {generatedRRR}
+                      </span>
+                    </div>
+                  )}
                   <div className="booking-summary-row total">
                     <span>TOTAL</span>
                     <span>₦{total.toLocaleString()}</span>
@@ -1002,10 +1421,23 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <GradientButton
                       fullWidth
                       onClick={handlePayment}
-                      disabled={passengers.length === 0}
+                      disabled={passengers.length === 0 || !generatedRRR}
                     >
                       PAY
                     </GradientButton>
+                    {!generatedRRR && passengers.length > 0 && (
+                      <div
+                        style={{
+                          textAlign: "center",
+                          marginTop: "8px",
+                          fontSize: "12px",
+                          color: "#6b7280",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        Generate RRR first to enable payment
+                      </div>
+                    )}
                   </div>
                 </div>
               </>
@@ -1068,7 +1500,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           onClick={() => handleDeletePassenger(idx)}
                         >
                           <img
-                            src="/icons/passenger-delete.svg"
+                            src="/icons/delete-passenger.svg"
                             alt="Delete"
                             style={{ width: 20, height: 20 }}
                           />
@@ -1080,8 +1512,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 {passengers.length > 0 && (
                   <div className="booking-passengers-actions">
                     <BorderButton
-                      text="Generate Remita"
-                      onClick={handlePayment}
+                      text="Generate RRR"
+                      onClick={handleGenerateRRR}
                     />
                   </div>
                 )}
@@ -1096,6 +1528,29 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <span>OTHER CHARGES</span>
                   <span>₦{otherCharges.toLocaleString()}</span>
                 </div>
+                {generatedRRR && (
+                  <div
+                    className="booking-summary-row"
+                    style={{
+                      background: "#f0fdf4",
+                      padding: "12px 10px",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    <span style={{ color: "#007948", fontWeight: "600" }}>
+                      RRR:
+                    </span>
+                    <span
+                      style={{
+                        color: "#007948",
+                        fontWeight: "700",
+                        fontFamily: "monospace",
+                      }}
+                    >
+                      {generatedRRR}
+                    </span>
+                  </div>
+                )}
                 <div className="booking-summary-row total">
                   <span>TOTAL</span>
                   <span>₦{total.toLocaleString()}</span>
@@ -1105,10 +1560,23 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 <GradientButton
                   fullWidth
                   onClick={handlePayment}
-                  disabled={passengers.length === 0}
+                  disabled={passengers.length === 0 || !generatedRRR}
                 >
                   PAY
                 </GradientButton>
+                {!generatedRRR && passengers.length > 0 && (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginTop: "8px",
+                      fontSize: "12px",
+                      color: "#6b7280",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    Generate RRR first to enable payment
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -1120,6 +1588,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               setShowPaymentSuccess(false);
               setSelectedService(null);
               setPassengers([]);
+              setGeneratedRRR(""); // Clear RRR when closing payment success
               setBookingForm({
                 firstName: "",
                 lastName: "",
@@ -1159,6 +1628,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       setShowPaymentSuccess(false);
                       setSelectedService(null);
                       setPassengers([]);
+                      setGeneratedRRR(""); // Clear RRR when closing payment success
                       setBookingForm({
                         firstName: "",
                         lastName: "",
@@ -1180,435 +1650,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   </GradientButton>
                 </div>
               </div>
-            </div>
-          </Modal>
-
-          {/* Payment Modal */}
-          <Modal
-            isOpen={showPaymentModal}
-            onClose={() => {
-              setShowPaymentModal(false);
-              setPaymentMethod("transfer");
-              setCardNumber("");
-              setExpirationDate("");
-              setCvv("");
-              setSaveCard(false);
-            }}
-            showHeader={true}
-            headerTitle="FEDERAL AIRPORT AUTHORITY OF NIGERIA"
-            className="service-payment-modal"
-          >
-            <div className="service-payment-modal-content">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handlePaymentSubmit();
-                }}
-                style={{ width: "100%" }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    background: "#0079480D",
-                    borderRadius: 12,
-                    padding: "14px",
-                    marginBottom: 24,
-                  }}
-                >
-                  <div style={{ marginBottom: 10 }}>
-                    <span
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 14,
-                      }}
-                    >
-                      Amount
-                    </span>
-                    <span
-                      style={{
-                        color: "var(--black)",
-                        fontWeight: 600,
-                        fontSize: 16,
-                        float: "right",
-                      }}
-                    >
-                      ₦{total.toLocaleString()}
-                    </span>
-                  </div>
-                  <div style={{ marginBottom: 12 }}>
-                    <span
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 14,
-                      }}
-                    >
-                      Account Number
-                    </span>
-                    <span
-                      style={{
-                        color: "var(--black)",
-                        fontWeight: 600,
-                        fontSize: 16,
-                        float: "right",
-                      }}
-                    >
-                      0035678923
-                    </span>
-                  </div>
-                  <div style={{ marginBottom: 12 }}>
-                    <span
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 14,
-                      }}
-                    >
-                      Bank
-                    </span>
-                    <span
-                      style={{
-                        color: "var(--black)",
-                        fontWeight: 600,
-                        fontSize: 16,
-                        float: "right",
-                      }}
-                    >
-                      Access Bank
-                    </span>
-                  </div>
-                  <div>
-                    <span
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: 14,
-                      }}
-                    >
-                      Name
-                    </span>
-                    <span
-                      style={{
-                        color: "var(--black)",
-                        fontWeight: 600,
-                        fontSize: 16,
-                        float: "right",
-                      }}
-                    >
-                      FAAN A/C
-                    </span>
-                  </div>
-                </div>
-                <div style={{ width: "100%", marginBottom: 24 }}>
-                  <div
-                    style={{
-                      color: "var(--black)",
-                      fontWeight: 600,
-                      fontSize: 16,
-                      marginBottom: 12,
-                    }}
-                  >
-                    Pay With:
-                  </div>
-                  <div style={{ display: "flex", gap: 24 }}>
-                    <label
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="card"
-                        checked={paymentMethod === "card"}
-                        onChange={() => setPaymentMethod("card")}
-                        style={{ display: "none" }}
-                      />
-                      <div
-                        style={{
-                          width: 18,
-                          height: 18,
-                          border: `2px solid ${
-                            paymentMethod === "card" ? "#007948" : "#d1d5db"
-                          }`,
-                          borderRadius: "50%",
-                          position: "relative",
-                          background:
-                            paymentMethod === "card"
-                              ? "#007948"
-                              : "transparent",
-                        }}
-                      >
-                        {paymentMethod === "card" && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              width: 6,
-                              height: 6,
-                              background: "white",
-                              borderRadius: "50%",
-                            }}
-                          />
-                        )}
-                      </div>
-                      <span
-                        style={{
-                          fontSize: 14,
-                          fontWeight: 500,
-                          color: "var(--black)",
-                        }}
-                      >
-                        Card
-                      </span>
-                    </label>
-                    <label
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="transfer"
-                        checked={paymentMethod === "transfer"}
-                        onChange={() => setPaymentMethod("transfer")}
-                        style={{ display: "none" }}
-                      />
-                      <div
-                        style={{
-                          width: 18,
-                          height: 18,
-                          border: `2px solid ${
-                            paymentMethod === "transfer" ? "#007948" : "#d1d5db"
-                          }`,
-                          borderRadius: "50%",
-                          position: "relative",
-                          background:
-                            paymentMethod === "transfer"
-                              ? "#007948"
-                              : "transparent",
-                        }}
-                      >
-                        {paymentMethod === "transfer" && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              width: 6,
-                              height: 6,
-                              background: "white",
-                              borderRadius: "50%",
-                            }}
-                          />
-                        )}
-                      </div>
-                      <span
-                        style={{
-                          fontSize: 14,
-                          fontWeight: 500,
-                          color: "var(--black)",
-                        }}
-                      >
-                        Transfer
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                {/* Card Details */}
-                {paymentMethod === "card" && (
-                  <div style={{ width: "100%", marginBottom: 24 }}>
-                    <div style={{ marginBottom: 16 }}>
-                      <label
-                        style={{
-                          display: "block",
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: "var(--black)",
-                          marginBottom: 6,
-                        }}
-                      >
-                        Card Number
-                      </label>
-                      <input
-                        type="text"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
-                        placeholder="Enter card number"
-                        maxLength={16}
-                        style={{
-                          width: "100%",
-                          padding: "12px 16px",
-                          border: "1.5px solid #e4e4e7",
-                          borderRadius: 8,
-                          fontSize: 14,
-                          fontWeight: 500,
-                          background: "#fff",
-                          color: "#18181b",
-                          outline: "none",
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: 16,
-                        marginBottom: 12,
-                      }}
-                    >
-                      <div>
-                        <label
-                          style={{
-                            display: "block",
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: "var(--black)",
-                            marginBottom: 6,
-                          }}
-                        >
-                          Expiration Date
-                        </label>
-                        <input
-                          type="text"
-                          value={expirationDate}
-                          onChange={(e) => setExpirationDate(e.target.value)}
-                          placeholder="MM/YY"
-                          maxLength={5}
-                          style={{
-                            width: "100%",
-                            padding: "12px 16px",
-                            border: "1.5px solid #e4e4e7",
-                            borderRadius: 8,
-                            fontSize: 14,
-                            fontWeight: 500,
-                            background: "#fff",
-                            color: "#18181b",
-                            outline: "none",
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label
-                          style={{
-                            display: "block",
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: "var(--black)",
-                            marginBottom: 6,
-                          }}
-                        >
-                          CVV
-                        </label>
-                        <input
-                          type="text"
-                          value={cvv}
-                          onChange={(e) => setCvv(e.target.value)}
-                          placeholder="123"
-                          maxLength={4}
-                          style={{
-                            width: "100%",
-                            padding: "12px 16px",
-                            border: "1.5px solid #e4e4e7",
-                            borderRadius: 8,
-                            fontSize: 14,
-                            fontWeight: 500,
-                            background: "#fff",
-                            color: "#18181b",
-                            outline: "none",
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <label
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={saveCard}
-                        onChange={(e) => setSaveCard(e.target.checked)}
-                        style={{ display: "none" }}
-                      />
-                      <div
-                        style={{
-                          width: 16,
-                          height: 16,
-                          border: `2px solid ${
-                            saveCard ? "#007948" : "#d1d5db"
-                          }`,
-                          borderRadius: 4,
-                          position: "relative",
-                          background: saveCard ? "#007948" : "transparent",
-                        }}
-                      >
-                        {saveCard && (
-                          <span
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              color: "white",
-                              fontSize: 10,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            ✓
-                          </span>
-                        )}
-                      </div>
-                      <span
-                        style={{
-                          fontSize: 14,
-                          fontWeight: 500,
-                          color: "var(--black)",
-                        }}
-                      >
-                        Save card details
-                      </span>
-                    </label>
-                  </div>
-                )}
-                <GradientButton type="submit" fullWidth size="large">
-                  PAY
-                </GradientButton>
-                <p
-                  style={{
-                    fontSize: 12,
-                    color: "#acacac",
-                    textAlign: "center",
-                    lineHeight: 1.5,
-                    marginTop: "15px",
-                  }}
-                >
-                  Your personal data will be used to process your order, support
-                  your experience throughout this website, and for other
-                  purposes described in our{" "}
-                  <a
-                    href="#"
-                    style={{ color: "#007948", textDecoration: "underline" }}
-                  >
-                    privacy policy
-                  </a>
-                  .
-                </p>
-              </form>
             </div>
           </Modal>
         </div>
@@ -1733,49 +1774,35 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               </div>
             </div>
 
-            <div className="content-card">
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="table-header-item">ID</th>
-                      <th className="table-header-item">Service Name</th>
-                      <th className="table-header-item">Price</th>
-                      <th className="table-header-item">Last Modified By</th>
-                      <th className="table-header-item">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredServices.map((product) => (
-                      <tr key={product.id}>
-                        <td className="table-data-item">{product.id}</td>
-                        <td className="table-data-item max-td-width-mobile">
-                          {product.name}
-                        </td>
-                        <td className="table-data-item">₦{product.price}</td>
-                        <td className="table-data-item last-modified-cell">
-                          {/* <span className="table-data-item last-modified-name max-td-width-mobile">
-                            {product.name}:
-                          </span> */}
-                          {/* <br /> */}
-                          <span className="last-modified-date">
-                            12-08-2024 / 11:32pm
-                          </span>
-                        </td>
-                        <td className="table-data-item">
-                          <button className="action-btn-table edit">
-                            <Edit size={16} /> Edit
-                          </button>
-                          <button className="action-btn-table delete">
-                            <Trash2 size={16} /> Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <DataTable
+              headers={[
+                "ID",
+                "Service Name",
+                "Description",
+                "Price",
+                "Actions",
+              ]}
+              data={filteredServices.map((service) => [
+                service.id,
+                <span key={`n-${service.id}`} className="max-td-width-mobile">
+                  {service.name}
+                </span>,
+                <span key={`d-${service.id}`} className="max-td-width-mobile">
+                  {service.description}
+                </span>,
+                `₦${service.price}`,
+                <div key={`a-${service.id}`}>
+                  <button className="action-btn-table edit">
+                    <Edit size={16} /> Edit
+                  </button>
+                  <button className="action-btn-table delete">
+                    <Trash2 size={16} /> Delete
+                  </button>
+                </div>,
+              ])}
+              className="services-admin-table"
+            />
+
             {windowWidth <= 768 && <SlideIndicator />}
           </>
         ) : (
@@ -1788,13 +1815,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               <p className="add-user-helper">
                 Please input all required details to add a new service.
               </p>
-              <form
-                className="user-form-list"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setShowAddServiceForm(false);
-                }}
-              >
+              <form className="user-form-list" onSubmit={handleCreateServices}>
                 {services.map((service, idx) => (
                   <div className="service-form-row" key={idx}>
                     <div className="service-index-circle">{idx + 1}.</div>
@@ -1802,37 +1823,19 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       <div className="service-row-top">
                         <div className="service-field-group service-name-group">
                           <label>Service Name:</label>
-                          <div
-                            className={`services-select-dropdown-wrapper${
-                              serviceNameSelectOpen === idx ? " open" : ""
-                            }`}
-                          >
-                            <select
-                              value={service.serviceName}
-                              onFocus={() => setServiceNameSelectOpen(idx)}
-                              onBlur={() => setServiceNameSelectOpen(null)}
-                              onChange={(e) => {
-                                handleServiceChange(
-                                  idx,
-                                  "serviceName",
-                                  e.target.value
-                                );
-                                setServiceNameSelectOpen(null);
-                              }}
-                            >
-                              <option value="">Select service</option>
-                              {serviceNames.map((name) => (
-                                <option key={name} value={name}>
-                                  {name}
-                                </option>
-                              ))}
-                            </select>
-                            <img
-                              src={ChevronDown}
-                              alt="dropdown"
-                              className="services-select-chevron"
-                            />
-                          </div>
+                          <input
+                            type="text"
+                            value={service.serviceName}
+                            onChange={(e) => {
+                              handleServiceChange(
+                                idx,
+                                "serviceName",
+                                e.target.value
+                              );
+                            }}
+                            placeholder="Enter service name"
+                            className="service-name-input"
+                          />
                         </div>
                         <div className="service-field-group currency-group">
                           <label>Currency:</label>
@@ -1860,11 +1863,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           <label>Price:</label>
                           <input
                             type="text"
-                            value={formatNumberWithCommas(service.price)}
+                            value={service.price}
                             onChange={(e) =>
                               handleServiceChange(idx, "price", e.target.value)
                             }
-                            placeholder=""
                           />
                         </div>
                       </div>
@@ -1879,7 +1881,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               e.target.value
                             )
                           }
-                          placeholder="Enter service description"
                           rows={3}
                         />
                       </div>

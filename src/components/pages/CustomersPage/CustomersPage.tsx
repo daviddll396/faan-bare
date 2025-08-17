@@ -3,30 +3,12 @@ import { Eye } from "lucide-react";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { useLoading } from "../../../contexts/LoadingContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import "./customerspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import CustomersIcon from "/icons/nav-customer-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import Modal from "../../reusables/Modal/Modal";
-
-const sampleFetchedCustomers = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    idNo: "A1234567",
-    phone: "+234-801-234-5678",
-    email: "john@faan.gov.ng",
-  },
-  {
-    id: 2,
-    firstName: "Jane",
-    lastName: "Smith",
-    idNo: "B9876543",
-    phone: "+234-802-345-6789",
-    email: "jane@faan.gov.ng",
-  },
-];
 
 interface CustomersPageProps {
   role?: string;
@@ -34,9 +16,29 @@ interface CustomersPageProps {
 
 const CustomersPage: React.FC<CustomersPageProps> = () => {
   const { showLoading, hideLoading } = useLoading();
+  const { searchCustomers } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
   const [fetched, setFetched] = useState(false);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  // State for customer search
+  const [searchForm, setSearchForm] = useState({
+    firstName: "",
+    lastName: "",
+    nin: "",
+  });
+  const [fetchedCustomers, setFetchedCustomers] = useState<
+    Array<{
+      id: number;
+      firstName: string;
+      lastName: string;
+      idNo: string;
+      phone: string;
+      email: string;
+      address?: string;
+      nin?: string;
+    }>
+  >([]);
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -48,25 +50,60 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     firstName: "",
     lastName: "",
     phone: "",
-    dob: "",
     email: "",
     address: "",
     nin: "",
   });
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState<
-    (typeof sampleFetchedCustomers)[0] | null
-  >(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<{
+    id: number;
+    firstName: string;
+    lastName: string;
+    idNo: string;
+    phone: string;
+    email: string;
+    address?: string;
+    nin?: string;
+  } | null>(null);
 
-  const handleFetch = (e: React.FormEvent) => {
+  const handleFetch = async (e: React.FormEvent) => {
     e.preventDefault();
-    showLoading("Fetching customer information...");
+
+    // Validate that at least one search parameter is provided
+    if (!searchForm.firstName && !searchForm.lastName && !searchForm.nin) {
+      alert(
+        "Please provide at least one search parameter (First Name, Last Name, or NIN)"
+      );
+      return;
+    }
+
+    showLoading("Searching for customers...");
     setFetched(false);
-    setTimeout(() => {
-      hideLoading();
+
+    try {
+      const searchResult = await searchCustomers(
+        searchForm.nin || undefined,
+        searchForm.firstName || undefined,
+        searchForm.lastName || undefined
+      );
+
+      if (searchResult && searchResult.status && searchResult.data) {
+        console.log("✅ Customer search successful:", searchResult.data);
+        setFetchedCustomers(searchResult.data);
+        setFetched(true);
+      } else {
+        console.log("⚠️ No customers found or search failed");
+        setFetchedCustomers([]);
+        setFetched(true);
+      }
+    } catch (error) {
+      console.error("💥 Error searching customers:", error);
+      setFetchedCustomers([]);
       setFetched(true);
-    }, 2000);
+    } finally {
+      hideLoading();
+    }
   };
 
   const handleViewMore = (customer: (typeof sampleFetchedCustomers)[0]) => {
@@ -81,6 +118,10 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
 
   const handleCreateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchForm({ ...searchForm, [e.target.name]: e.target.value });
   };
 
   const handleCreateSubmit = (e: React.FormEvent) => {
@@ -122,26 +163,40 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
             <div className="customer-form-row">
               <div className="customer-form-group">
                 <label>First Name</label>
-                <input type="text" />
+                <input
+                  type="text"
+                  name="firstName"
+                  value={searchForm.firstName}
+                  onChange={handleSearchChange}
+                  placeholder="Enter first name"
+                />
               </div>
               <div className="customer-form-group">
                 <label>Last Name</label>
-                <input type="text" />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={searchForm.lastName}
+                  onChange={handleSearchChange}
+                  placeholder="Enter last name"
+                />
               </div>
             </div>
             <div className="customer-form-row">
-              <div className="customer-form-group">
+              <div className="customer-form-group" style={{ flex: 1 }}>
                 <label>NIN</label>
-                <input type="text" />
-              </div>
-              <div className="customer-form-group">
-                <label>Date of Birth</label>
-                <input type="date" />
+                <input
+                  type="text"
+                  name="nin"
+                  value={searchForm.nin}
+                  onChange={handleSearchChange}
+                  placeholder="Enter NIN number"
+                />
               </div>
             </div>
             <div className="customer-success-btn-container">
               <GradientButton type="submit" fullWidth>
-                FETCH
+                SEARCH
               </GradientButton>
             </div>
           </form>
@@ -164,24 +219,38 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleFetchedCustomers.map((user, idx) => (
-                    <tr key={user.id}>
-                      <td className="table-data-item">{idx + 1}.</td>
-                      <td className="table-data-item">{user.firstName}</td>
-                      <td className="table-data-item">{user.lastName}</td>
-                      <td className="table-data-item">{user.idNo}</td>
-                      <td className="table-data-item">{user.phone}</td>
-                      <td className="table-data-item">{user.email}</td>
-                      <td className="table-data-item">
-                        <button
-                          className="view-more-btn"
-                          onClick={() => handleViewMore(user)}
-                        >
-                          <Eye size={20} /> View More
-                        </button>
+                  {fetchedCustomers.length > 0 ? (
+                    fetchedCustomers.map((user, idx) => (
+                      <tr key={user.id}>
+                        <td className="table-data-item">{idx + 1}.</td>
+                        <td className="table-data-item">{user.firstName}</td>
+                        <td className="table-data-item">{user.lastName}</td>
+                        <td className="table-data-item">{user.idNo}</td>
+                        <td className="table-data-item">{user.phone}</td>
+                        <td className="table-data-item">{user.email}</td>
+                        <td className="table-data-item">
+                          <button
+                            className="view-more-btn"
+                            onClick={() => handleViewMore(user)}
+                          >
+                            <Eye size={20} /> View More
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        className="table-data-item"
+                        style={{ textAlign: "center", color: "#6b7280" }}
+                      >
+                        {fetched
+                          ? "No customers found matching your search criteria"
+                          : "Search for customers to see results"}
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
@@ -228,11 +297,11 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 />
               </div>
               <div className="customer-form-group">
-                <label>Date of Birth</label>
+                <label>NIN</label>
                 <input
-                  name="dob"
-                  type="date"
-                  value={form.dob}
+                  name="nin"
+                  type="text"
+                  value={form.nin}
                   onChange={handleCreateChange}
                 />
               </div>

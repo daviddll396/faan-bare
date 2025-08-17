@@ -26,12 +26,36 @@ const MessageToast: React.FC<MessageToastProps> = ({
     remove?: number;
   }>({});
 
-  useEffect(() => {
-    // Clear any existing timers
+  // Clear all timers function
+  const clearAllTimers = () => {
     Object.values(timersRef.current).forEach((timer) => {
-      if (timer) clearTimeout(timer);
+      if (timer) {
+        clearTimeout(timer);
+      }
     });
     timersRef.current = {};
+  };
+
+  // Force close function
+  const forceClose = () => {
+    clearAllTimers();
+    setIsAnimatingIn(false);
+    setIsAnimatingOut(true);
+
+    // Remove from DOM after slide-out animation completes
+    const removeTimer = setTimeout(() => {
+      setShouldRender(false);
+      setIsAnimatingIn(false);
+      setIsAnimatingOut(false);
+      onClose();
+    }, 300);
+
+    timersRef.current.remove = removeTimer;
+  };
+
+  useEffect(() => {
+    // Clear any existing timers first
+    clearAllTimers();
 
     if (isVisible) {
       // Start rendering
@@ -65,12 +89,29 @@ const MessageToast: React.FC<MessageToastProps> = ({
 
     // Cleanup function
     return () => {
-      Object.values(timersRef.current).forEach((timer) => {
-        if (timer) clearTimeout(timer);
-      });
-      timersRef.current = {};
+      clearAllTimers();
     };
   }, [isVisible, duration, onClose]);
+
+  // Additional cleanup when component unmounts
+  useEffect(() => {
+    return () => {
+      clearAllTimers();
+    };
+  }, []);
+
+  // Force close after maximum time to prevent stuck toasts
+  useEffect(() => {
+    if (shouldRender && isVisible) {
+      const maxDuration = Math.max(duration + 5000, 10000); // At least 10 seconds max
+      const forceCloseTimer = setTimeout(() => {
+        console.warn("MessageToast: Force closing stuck toast");
+        forceClose();
+      }, maxDuration);
+
+      return () => clearTimeout(forceCloseTimer);
+    }
+  }, [shouldRender, isVisible, duration]);
 
   if (!shouldRender) {
     return null;

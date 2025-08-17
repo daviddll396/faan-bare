@@ -6,16 +6,41 @@ import PaymentIcon from "/icons/payment-metric-icon.svg";
 import CancelledIcon from "/icons/dashboard-cancelled-bookings.svg";
 import PendingIcon from "/icons/dashboard-pending-bookings.svg";
 
-const MetricsCards: React.FC = () => {
+interface MetricsCardsProps {
+  adminStats?: {
+    status: boolean;
+    statusCode: number;
+    data: {
+      customerProfile: unknown | null;
+      walletBalance: number | null;
+      transactionStats: {
+        total: number;
+        completed: number;
+        pending: number;
+        cancelled: number;
+      };
+    };
+    message: string;
+  } | null;
+}
+
+const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
   const { user } = useAuth();
 
-  // Get transaction stats from user data, fallback to 0 if not available
-  const transactionStats = user?.transactionStats || {
-    total: 0,
-    completed: 0,
-    pending: 0,
-    cancelled: 0,
-  };
+  // Use admin stats if available, otherwise fall back to user transaction stats
+  const transactionStats = adminStats?.data?.transactionStats ||
+    user?.transactionStats || {
+      total: 0,
+      completed: 0,
+      pending: 0,
+      cancelled: 0,
+    };
+
+  // Debug logging to see which data source is being used
+  console.log("🔍 MetricsCards - Data Source Debug:");
+  console.log("📊 Admin Stats Available:", !!adminStats);
+  console.log("👤 User Transaction Stats:", user?.transactionStats);
+  console.log("🎯 Final Transaction Stats Used:", transactionStats);
 
   const metrics = [
     {

@@ -119,113 +119,56 @@
 }
 
 /* Progressive zoom scaling for modal container */
+/* More aggressive scaling to keep modals from getting too big */
 @media (max-width: 1920px) {
   .modal-container {
-    zoom: 1;
+    zoom: 0.95;
   }
 }
 
 @media (max-width: 1800px) {
   .modal-container {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1700px) {
-  .modal-container {
-    zoom: 1;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1600px) {
   .modal-container {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1500px) {
-  .modal-container {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1450px) {
-  .modal-container {
-    zoom: 0.95;
+    zoom: 0.85;
   }
 }
 
 @media (max-width: 1400px) {
   .modal-container {
-    zoom: 0.95;
-    padding: 20px;
-  }
-}
-
-@media (max-width: 1350px) {
-  .modal-container {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1300px) {
-  .modal-container {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1250px) {
-  .modal-container {
-    zoom: 0.9;
+    zoom: 0.8;
+    padding: 28px;
   }
 }
 
 @media (max-width: 1200px) {
   .modal-container {
-    zoom: 1;
+    zoom: 0.75;
+    padding: 24px;
   }
-  .modal-header{
-    padding-bottom:8px;
+  .modal-header {
+    padding-bottom: 12px;
   }
-  .modal-header-title{
-
-    font-size:16px;
-  }
-}
-
-@media (max-width: 1150px) {
-  .modal-container {
-    zoom: .9;
-  }
-}
-
-@media (max-width: 1100px) {
-  .modal-container {
-    zoom: .9;
-  }
-}
-
-@media (max-width: 1050px) {
-  .modal-container {
-    zoom: .9;
+  .modal-header-title {
+    font-size: 16px;
   }
 }
 
 @media (max-width: 1000px) {
   .modal-container {
-    zoom: .9;
-  }
-}
-
-@media (max-width: 950px) {
-  .modal-container {
-    zoom: .9;
+    zoom: 0.7;
+    padding: 20px;
   }
 }
 
 @media (max-width: 900px) {
   .modal-container {
-      zoom: .9;
+    zoom: 0.65;
+    padding: 18px;
   }
 }
 
@@ -261,5 +204,39 @@
 
   .modal-header-title {
     font-size: 13px;
+  }
+}
+
+/* Extra Small Mobile Responsive (below 480px) */
+@media (max-width: 480px) {
+  .modal-container {
+    padding: 16px;
+    min-width: 280px;
+    width: 98vw;
+    max-width: 98vw;
+    border-radius: 8px;
+  }
+
+  .modal-close-btn {
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .modal-header {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    gap: 6px;
+  }
+
+  .modal-logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modal-header-title {
+    font-size: 12px;
   }
 }

@@ -14,37 +14,37 @@
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .sidebar {
-    zoom: 1;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1800px) {
   .sidebar {
-    zoom: 0.95;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 1700px) {
   .sidebar {
-    zoom: 0.85;
+    zoom: 0.8;
   }
 }
 
 @media (max-width: 1600px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1500px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1450px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.7;
   }
 }
 
@@ -56,37 +56,37 @@
 
 @media (max-width: 1350px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1300px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1250px) {
   .sidebar {
-    zoom: 0.7;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 1200px) {
   .sidebar {
-    zoom: 0.7;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 1150px) {
   .sidebar {
-    zoom: 0.7;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 1100px) {
   .sidebar {
-    zoom: 0.7;
+    zoom: 0.6;
   }
 }
 
@@ -110,7 +110,7 @@
 
 @media (max-width: 900px) {
   .sidebar {
-    zoom: 0.5;
+    zoom: 0.4;
   }
 }
 
@@ -221,6 +221,12 @@
 .desktop-label {
   display: block;
 }
+.desktop-icon {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  align-self: center;
+}
 
 .mobile-icon,
 .mobile-label {
@@ -305,8 +311,7 @@
     color: white;
   } */
 
-  Active hover state
-  .nav-item.active:hover {
+  Active hover state .nav-item.active:hover {
     background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;
   }
@@ -364,7 +369,6 @@
     stroke: white;
   }
   .nav-item:hover {
-    
     color: #979797;
   }
 

@@ -18,6 +18,18 @@ import ServicesBottomBarIcon from "/icons/services-bottombar.svg";
 import PaymentsBottomBarIcon from "/icons/payments-bottombar.svg";
 import ProfileBottomBarIcon from "/icons/profile-bottombar.svg";
 
+interface MenuItem {
+  icon: (() => React.ReactNode) | null;
+  mobileIcon: () => React.ReactNode;
+  label: string;
+  mobileLabel: string;
+  page: PageType;
+  showForCustomer: boolean;
+  showForAdmin: boolean;
+  mobileOnly?: boolean;
+  desktopOnly?: boolean;
+}
+
 interface SidebarProps {
   activePage: PageType;
   onPageChange: (page: PageType) => void;
@@ -40,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       icon: () => (
         <img src={DashboardIcon} alt="Dashboard" width={20} height={20} />
@@ -106,6 +118,49 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       icon: () => (
+        <img
+          src="/icons/reports-icon.svg"
+          alt="Reports"
+          width={20}
+          height={20}
+        />
+      ),
+      mobileIcon: () => <FileText size={20} />,
+      label: "Reports",
+      mobileLabel: "Reports",
+      page: "reports" as PageType,
+      showForCustomer: false,
+      showForAdmin: true,
+      desktopOnly: true,
+    },
+    {
+      icon: () => (
+        <img
+          src="/icons/audit-trail-icon.svg"
+          alt="Audit Trail"
+          width={20}
+          height={20}
+        />
+      ),
+      mobileIcon: () => <FileText size={20} />,
+      label: "Audit Trail",
+      mobileLabel: "Audit Trail",
+      page: "audit-trail" as PageType,
+      showForCustomer: false,
+      showForAdmin: true,
+      desktopOnly: true,
+    },
+    {
+      icon: () => <img src={BillIcon} alt="Invoices" width={20} height={20} />,
+      mobileIcon: () => <FileText size={20} />,
+      label: "Invoices",
+      mobileLabel: "Invoices",
+      page: "invoices" as PageType,
+      showForCustomer: true,
+      showForAdmin: false,
+    },
+    {
+      icon: () => (
         <img src={PaymentIcon} alt="Payment" width={20} height={20} />
       ),
       mobileIcon: () => (
@@ -150,7 +205,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
     if (userRole === "Customer")
       return item.showForCustomer && (!item.mobileOnly || windowWidth <= 768);
-    return item.showForAdmin && (!item.mobileOnly || windowWidth <= 768);
+    return item.showForAdmin && (!item.desktopOnly || windowWidth > 768);
   });
 
   return (

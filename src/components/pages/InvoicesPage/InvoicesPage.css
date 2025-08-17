@@ -1,0 +1,1170 @@
+/* ======================================== */
+/* INVOICES PAGE STYLING */
+/* ======================================== */
+
+.invoices-page {
+  width: 100%;
+  padding: 0 16px;
+  animation: slideInUp 0.6s ease-out;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 24px;
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+/* Page Actions */
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  animation: slideInUp 0.6s ease-out 0.2s both;
+}
+
+.page-actions .search-input {
+  flex: 1;
+  max-width: 400px;
+}
+
+/* Invoices Container */
+.invoices-container {
+  animation: slideInUp 0.6s ease-out 0.3s both;
+}
+
+.no-invoices {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  font-size: 16px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e4e4e4;
+}
+
+/* Invoices Grid */
+.invoices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* Invoice Card */
+.invoice-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e4e4;
+  padding: 24px;
+  animation: slideInUp 0.6s ease-out both;
+  position: relative; /* For absolute positioned expiry warning */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.invoice-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Staggered animation for invoice cards */
+.invoice-card:nth-child(1) {
+  animation-delay: 0.4s;
+}
+.invoice-card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.invoice-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.invoice-card:nth-child(4) {
+  animation-delay: 0.7s;
+}
+.invoice-card:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+/* Invoice Header */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Invoice Expiry Warning */
+.invoice-expiry-warning {
+  position: absolute;
+  bottom: 24px;
+  left: 8px;
+  z-index: 2;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  padding-bottom: 0px;
+  border-radius: 8px;
+  max-width: 240px;
+  text-align: center;
+  color: #4b5563 !important; /* Grey text color */
+}
+
+.expiry-warning.urgent {
+  color: #dc2626;
+
+  /* animation: pulse 2s infinite; */
+}
+
+.expiry-warning.expiry-info {
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 2px solid #0369a1;
+  box-shadow: 0 2px 4px rgba(3, 105, 161, 0.2);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.invoice-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: #070600;
+  font-family: monospace;
+}
+
+.invoice-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.invoice-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.invoice-status.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.invoice-status.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Invoice Details */
+.invoice-details {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.invoice-details > div {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.invoice-details strong {
+  color: #374151;
+}
+
+/* Invoice Services */
+.invoice-services {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.invoice-services > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.service-item {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+  padding: 4px 0;
+}
+
+/* Invoice Total */
+.invoice-total {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #070600;
+  text-align: center;
+}
+
+/* Invoice Content Area - Flex grow to push actions to bottom */
+.invoice-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Invoice Actions */
+.invoice-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: auto; /* Push to bottom */
+}
+
+/* Custom View Details Button */
+.view-details-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+}
+
+.view-details-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+  transform: translateY(-1px);
+}
+
+.view-details-btn:active {
+  transform: translateY(0);
+}
+
+.view-details-btn:focus {
+  outline: none;
+  border-color: #007948;
+}
+
+/* Create Invoice Modal */
+.create-invoice-modal .modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.create-invoice-title {
+  color: #070600;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.services-selection-subtitle {
+  color: #6c6c6c;
+  font-size: 14px;
+  margin-bottom: 16px;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.services-selection {
+  margin-bottom: 32px;
+}
+
+.services-selection h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 16px;
+}
+
+.available-services {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.service-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px 16px 16px;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.service-info {
+  flex: 1;
+}
+
+.service-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 4px;
+}
+
+.service-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.service-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #007948;
+}
+
+/* Selected Services */
+.selected-services {
+  border-top: 2px solid #e4e4e4;
+  padding-top: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.selected-services h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 16px;
+}
+
+.selected-service {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.service-details .service-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #070600;
+  margin: 0;
+}
+
+.service-details .service-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #007948;
+  margin: 0;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quantity-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+  border-color: #007948;
+  color: #007948;
+  background: #f0fdf4;
+}
+
+.quantity {
+  font-size: 16px;
+  font-weight: 600;
+  color: #070600;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Modal Actions */
+.modal-actions {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e4e4e4;
+  text-align: center;
+}
+
+/* Payment Modal */
+.payment-modal .modal-content {
+  max-width: 500px;
+}
+
+.payment-methods {
+  margin: 24px 0;
+}
+
+.payment-methods h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 16px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.payment-option:hover {
+  border-color: #007948;
+  background: #f8fafc;
+}
+
+.payment-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+  background: #fff;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.payment-option input[type="radio"]:checked {
+  border-color: #007948;
+  background: #fff;
+}
+
+.payment-option input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #007948;
+  border-radius: 50%;
+}
+
+.payment-option label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #070600;
+  cursor: pointer;
+  margin: 0;
+  flex: 1;
+  user-select: none;
+}
+
+/* Make the entire payment option clickable */
+.payment-option input[type="radio"]:focus + label,
+.payment-option:hover label {
+  color: #007948;
+}
+
+/* View Details Modal */
+.view-details-modal .modal-content {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.view-details-modal h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #070600;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.invoice-details-content {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.invoice-details-content > div {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.invoice-details-content strong {
+  color: #070600;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.invoice-details-content .invoice-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.invoice-details-content .invoice-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.invoice-details-content .invoice-status.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.invoice-details-content .invoice-status.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.invoice-details-content ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+
+.invoice-details-content li {
+  margin-bottom: 4px;
+  color: #374151;
+}
+
+.payment-summary {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.payment-summary h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 16px;
+}
+
+.invoice-summary-details > div {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.invoice-summary-details strong {
+  color: #374151;
+}
+
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .invoices-page {
+    padding: 0 12px;
+  }
+
+  .page-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .page-actions .search-input {
+    max-width: none;
+  }
+
+  .invoices-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .invoice-card {
+    padding: 16px;
+  }
+
+  .invoice-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .invoice-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .service-option {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .selected-service {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .quantity-controls {
+    align-self: flex-end;
+  }
+
+  /* Modal Responsive Adjustments */
+  .view-details-modal .modal-content {
+    max-width: 95vw;
+    max-height: 85vh;
+    padding: 20px;
+  }
+
+  .view-details-modal h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .invoice-details-content {
+    padding: 16px;
+  }
+
+  .invoice-details-content > div {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .payment-summary {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .payment-summary h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .invoice-summary-details > div {
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  /* Create Invoice Modal Responsive Adjustments */
+  .create-invoice-modal .modal-content {
+    max-height: 85vh;
+    padding: 20px;
+  }
+
+  .create-invoice-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+    padding-left: 8px;
+  }
+
+  .services-selection-subtitle {
+    font-size: 13px;
+    margin-bottom: 14px;
+    padding-left: 8px;
+  }
+
+  .services-selection {
+    margin-bottom: 24px;
+  }
+
+  .services-selection h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .available-services {
+    gap: 12px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .service-option {
+    padding: 14px 20px 14px 14px;
+  }
+
+  .service-name {
+    font-size: 15px;
+  }
+
+  .service-description {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .service-price {
+    font-size: 16px;
+  }
+
+  .selected-services {
+    padding-top: 20px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .selected-services h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .selected-service {
+    padding: 10px 14px;
+    margin-bottom: 10px;
+  }
+
+  .service-details .service-name {
+    font-size: 13px;
+  }
+
+  .service-details .service-price {
+    font-size: 13px;
+  }
+
+  .quantity-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .quantity {
+    font-size: 15px;
+  }
+
+  .modal-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .invoice-card {
+    padding: 12px;
+  }
+  .invoices-page {
+    padding: 0px;
+    padding-bottom: var(--page-bottom-padding-mobile);
+  }
+
+  .invoice-number {
+    font-size: 16px;
+  }
+
+  .invoice-status {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  /* Extra Small Mobile Modal Adjustments */
+  .view-details-modal .modal-content {
+    max-width: 98vw;
+    max-height: 90vh;
+    padding: 16px;
+  }
+
+  .view-details-modal h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .invoice-details-content {
+    padding: 12px;
+  }
+
+  .invoice-details-content > div {
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+
+  .payment-summary {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .payment-summary h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .invoice-summary-details > div {
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+  .invoice-details-content .invoice-status {
+    padding: 3px 10px;
+    font-size: 11px;
+  }
+
+  /* Extra Small Mobile Create Invoice Modal Adjustments */
+  .create-invoice-modal .modal-content {
+    max-height: 90vh;
+    padding: 16px;
+  }
+
+  .create-invoice-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    padding-left: 6px;
+  }
+
+  .services-selection-subtitle {
+    font-size: 12px;
+    margin-bottom: 12px;
+    padding-left: 6px;
+  }
+
+  .services-selection {
+    margin-bottom: 20px;
+  }
+
+  .services-selection h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .available-services {
+    gap: 10px;
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  .service-option {
+    padding: 12px 16px 12px 12px;
+  }
+
+  .service-name {
+    font-size: 14px;
+  }
+
+  .service-description {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .service-price {
+    font-size: 15px;
+  }
+
+  .selected-services {
+    padding-top: 16px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .selected-services h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .selected-service {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
+  .service-details .service-name {
+    font-size: 12px;
+  }
+
+  .service-details .service-price {
+    font-size: 12px;
+  }
+
+  .quantity-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 15px;
+  }
+
+  .quantity {
+    font-size: 14px;
+  }
+
+  .modal-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+}
+
+/* ======================================== */
+/* ZOOM RESPONSIVENESS */
+/* ======================================== */
+
+/* Default zoom levels for components */
+.invoices-page {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+.page-actions {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+.invoices-container {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+.invoices-grid {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+.invoice-card {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Border button zoom scaling is handled by the BorderButton component CSS */
+
+/* Border button zoom scaling for invoices page buttons */
+.border-button-invoicespage {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Modal zoom scaling */
+.create-invoice-modal .modal-content,
+.payment-modal .modal-content,
+.view-details-modal .modal-content {
+  zoom: 1; /* Default zoom level */
+  transition: zoom 0.3s ease;
+}
+
+/* Responsive zoom scaling - Much gentler approach */
+/* Only slight adjustments for very large screens */
+@media (max-width: 1920px) {
+  .invoices-page {
+    zoom: 0.98;
+  }
+  .page-actions {
+    zoom: 0.98;
+  }
+  .invoices-container {
+    zoom: 0.98;
+  }
+  .invoices-grid {
+    zoom: 0.98;
+  }
+  .invoice-card {
+    zoom: 0.98;
+  }
+  .border-button-invoicespage {
+    zoom: 0.93;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 0.98;
+  }
+}
+
+@media (max-width: 1800px) {
+  .invoices-page {
+    zoom: 0.96;
+  }
+  .page-actions {
+    zoom: 0.96;
+  }
+  .invoices-container {
+    zoom: 0.96;
+  }
+  .invoices-grid {
+    zoom: 0.96;
+  }
+  .invoice-card {
+    zoom: 0.96;
+  }
+  .border-button-invoicespage {
+    zoom: 0.88;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 0.96;
+  }
+}
+
+@media (max-width: 1600px) {
+  .invoices-page {
+    zoom: 0.94;
+  }
+  .page-actions {
+    zoom: 0.94;
+  }
+  .invoices-container {
+    zoom: 0.94;
+  }
+  .invoices-grid {
+    zoom: 0.94;
+  }
+  .invoice-card {
+    zoom: 0.94;
+  }
+  .border-button-invoicespage {
+    zoom: 0.78;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 0.94;
+  }
+}
+
+@media (max-width: 1400px) {
+  .invoices-page {
+    zoom: 0.92;
+  }
+  .page-actions {
+    zoom: 0.92;
+  }
+  .invoices-container {
+    zoom: 0.92;
+  }
+  .invoices-grid {
+    zoom: 0.92;
+  }
+  .invoice-card {
+    zoom: 0.92;
+  }
+  .border-button-invoicespage {
+    zoom: 0.66;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 0.92;
+  }
+}
+
+@media (max-width: 1200px) {
+  .invoices-page {
+    zoom: 0.9;
+  }
+  .page-actions {
+    zoom: 0.9;
+  }
+  .invoices-container {
+    zoom: 0.9;
+  }
+  .invoices-grid {
+    zoom: 0.9;
+  }
+  .invoice-card {
+    zoom: 0.9;
+  }
+  .border-button-invoicespage {
+    zoom: 0.58;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 1000px) {
+  .invoices-page {
+    zoom: 0.88;
+  }
+  .page-actions {
+    zoom: 0.88;
+  }
+  .invoices-container {
+    zoom: 0.88;
+  }
+  .invoices-grid {
+    zoom: 0.88;
+  }
+  .invoice-card {
+    zoom: 0.88;
+  }
+  .border-button-invoicespage {
+    zoom: 0.5;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 0.88;
+  }
+}
+
+/* Reset zoom for mobile devices to use standard responsive behavior */
+@media (max-width: 900px) {
+  .invoices-page {
+    zoom: 1;
+  }
+  .page-actions {
+    zoom: 1;
+  }
+  .invoices-container {
+    zoom: 1;
+  }
+  .invoices-grid {
+    zoom: 1;
+  }
+  .invoice-card {
+    zoom: 1;
+  }
+  .border-button-invoicespage {
+    zoom: 1;
+  }
+  .create-invoice-modal .modal-content,
+  .payment-modal .modal-content,
+  .view-details-modal .modal-content {
+    zoom: 1;
+  }
+}

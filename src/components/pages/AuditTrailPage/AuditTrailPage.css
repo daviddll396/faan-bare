@@ -1,0 +1,262 @@
+/* Audit Trail Page Styles */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.audit-trail-page {
+  width: 100%;
+  padding: 0 0 32px 0;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  animation: slideInUp 0.4s ease-out;
+}
+
+.page-actions {
+  display: flex;
+  gap: 24px;
+  margin: 32px 0 24px 0;
+  animation: slideInUp 0.4s ease-out 0.2s both;
+  align-items: center;
+}
+
+.content-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e4e4;
+  padding: 32px;
+  animation: slideInUp 0.6s ease-out 0.4s both;
+  zoom: 1;
+  transition: zoom 0.3s ease;
+}
+
+/* Audit Summary Section */
+.audit-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e4e4e4;
+}
+
+.summary-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #070600;
+}
+
+.summary-value.success {
+  color: #10b981;
+}
+
+.summary-value.failed {
+  color: #ef4444;
+}
+
+.summary-value.warning {
+  color: #f59e0b;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 4px 8px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-badge.success {
+  background: #ecfdf5;
+  color: #10b981;
+  border: 1px solid #a7f3d0;
+}
+
+.status-badge.failed {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
+.status-badge.warning {
+  background: #fffbeb;
+  color: #f59e0b;
+  border: 1px solid #fed7aa;
+}
+
+/* Button Styles */
+.border-button-audittrail {
+  zoom: 1;
+  transition: zoom 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .audit-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .audit-trail-page {
+    padding: 0 16px 32px 16px;
+  }
+
+  .page-actions {
+    flex-direction: column;
+    gap: 16px;
+    margin: 20px 0 20px 0;
+  }
+
+  .content-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .audit-summary {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0px;
+  }
+
+  .summary-item {
+    padding: 16px;
+  }
+
+  .summary-value {
+    font-size: 24px;
+  }
+  .audit-trail-page {
+    padding: 0px;
+  }
+  .page-actions {
+    width: 100%;
+    align-items: flex-start;
+  }
+}
+
+/* Progressive zoom scaling for high DPI displays */
+@media (max-width: 1920px) {
+  .content-card {
+    zoom: 0.85;
+  }
+  .border-button-audittrail {
+    zoom: 0.85;
+  }
+  .audit-summary {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 1800px) {
+  .content-card {
+    zoom: 0.8;
+  }
+  .border-button-audittrail {
+    zoom: 0.8;
+  }
+  .audit-summary {
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 1600px) {
+  .content-card {
+    zoom: 0.75;
+  }
+  .border-button-audittrail {
+    zoom: 0.75;
+  }
+  .audit-summary {
+    zoom: 0.75;
+  }
+}
+
+@media (max-width: 1400px) {
+  .content-card {
+    zoom: 0.7;
+  }
+  .border-button-audittrail {
+    zoom: 0.7;
+  }
+  .audit-summary {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 1200px) {
+  .content-card {
+    zoom: 0.65;
+  }
+  .border-button-audittrail {
+    zoom: 0.65;
+  }
+  .audit-summary {
+    zoom: 0.65;
+  }
+}
+
+@media (max-width: 1000px) {
+  .content-card {
+    zoom: 0.6;
+  }
+  .border-button-audittrail {
+    zoom: 0.6;
+  }
+  .audit-summary {
+    zoom: 0.6;
+  }
+}
+
+@media (max-width: 900px) {
+  .content-card {
+    zoom: 0.55;
+  }
+  .border-button-audittrail {
+    zoom: 0.55;
+  }
+  .audit-summary {
+    zoom: 0.55;
+  }
+}
+
+/* Reset zoom for mobile devices */
+@media (max-width: 768px) {
+  .content-card {
+    zoom: 1;
+  }
+  .border-button-audittrail {
+    zoom: 1;
+  }
+}

@@ -12,6 +12,7 @@ import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { Eye, EyeOff } from "lucide-react";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
+import DataTable from "../../reusables/DataTable/DataTable";
 
 interface DashboardPageProps {
   role?: string;
@@ -26,10 +27,18 @@ interface Transaction {
   price?: string;
   status?: string;
   createdAt?: string;
+  customerName?: string;
+  customerId?: string;
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
-  const { user, fundWallet, getTransactionHistory } = useAuth();
+  const {
+    user,
+    fundWallet,
+    getTransactionHistory,
+    getAdminTransactionHistory,
+    getAdminDashboardStats,
+  } = useAuth();
   const [showFundWallet, setShowFundWallet] = React.useState(false);
   const [fundAmount, setFundAmount] = React.useState("");
   const [showFundLoading, setShowFundLoading] = React.useState(false);
@@ -46,6 +55,21 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   });
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [adminStats, setAdminStats] = useState<{
+    status: boolean;
+    statusCode: number;
+    data: {
+      customerProfile: unknown | null;
+      walletBalance: number | null;
+      transactionStats: {
+        total: number; // Total bookings/bills
+        completed: number; // Completed/successful payments
+        pending: number; // Pending payments
+        cancelled: number; // Failed/cancelled payments
+      };
+    };
+    message: string;
+  } | null>(null);
 
   // Use wallet balance from user data, fallback to 0
   const walletBalance = user?.walletBalance || 0;
@@ -60,18 +84,94 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   // Fetch transactions for the last 6 months on mount
   React.useEffect(() => {
     const fetchTransactions = async () => {
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setMonth(endDate.getMonth() - 6);
-      const format = (d: Date) => d.toISOString().slice(0, 10);
-      const txns = await getTransactionHistory(
-        format(startDate),
-        format(endDate)
-      );
-      if (txns) setTransactions(txns as Transaction[]);
+      let txns;
+
+      // Use admin transaction history for admin users, regular history for customers
+      if (user?.role === "Admin") {
+        console.log(
+          "🔐 Admin user detected, fetching admin transaction history for dashboard"
+        );
+        txns = await getAdminTransactionHistory();
+      } else {
+        console.log(
+          "👤 Customer user detected, fetching regular transaction history for dashboard"
+        );
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(endDate.getMonth() - 6);
+        const format = (d: Date) => d.toISOString().slice(0, 10);
+        txns = await getTransactionHistory(format(startDate), format(endDate));
+      }
+
+      if (txns) {
+        console.log("📄 Raw transaction data for dashboard:", txns);
+        setTransactions(txns as Transaction[]);
+      }
     };
     fetchTransactions();
-  }, [getTransactionHistory]);
+  }, [getTransactionHistory, getAdminTransactionHistory, user?.role]);
+
+  // Fetch admin dashboard stats for admin users
+  React.useEffect(() => {
+    const fetchAdminStats = async () => {
+      if (user?.role === "Admin") {
+        console.log("🔐 Admin user detected, fetching dashboard stats");
+        const stats = await getAdminDashboardStats();
+        if (stats) {
+          console.log("📊 Admin dashboard stats received:", stats);
+          setAdminStats(stats);
+        }
+      }
+    };
+
+    fetchAdminStats();
+  }, [getAdminDashboardStats, user?.role]);
+
+  // Log admin stats whenever they change
+  React.useEffect(() => {
+    if (adminStats && user?.role === "Admin") {
+      console.log("🎯 === ADMIN DASHBOARD STATS UPDATED ===");
+      console.log("📊 Current Admin Stats:", adminStats);
+      console.log(
+        "📋 Total Bookings/Bills:",
+        adminStats.data.transactionStats.total
+      );
+      console.log(
+        "⏳ Pending Bookings/Bills:",
+        adminStats.data.transactionStats.pending
+      );
+      console.log(
+        "✅ Completed Bookings/Bills:",
+        adminStats.data.transactionStats.completed
+      );
+      console.log(
+        "❌ Cancelled Bookings/Bills:",
+        adminStats.data.transactionStats.cancelled
+      );
+      console.log("💰 Wallet Balance:", adminStats.data.walletBalance);
+      console.log("👤 Customer Profile:", adminStats.data.customerProfile);
+      console.log("📋 API Status:", adminStats.status);
+      console.log("🔢 Status Code:", adminStats.statusCode);
+      console.log("💬 Message:", adminStats.message);
+
+      // Additional context for clarity
+      console.log("📊 === BOOKING & PAYMENT STATISTICS ===");
+      console.log("🎫 Total Bookings:", adminStats.data.transactionStats.total);
+      console.log("💳 Total Bills:", adminStats.data.transactionStats.total);
+      console.log(
+        "✅ Successful Payments:",
+        adminStats.data.transactionStats.completed
+      );
+      console.log(
+        "⏳ Pending Payments:",
+        adminStats.data.transactionStats.pending
+      );
+      console.log(
+        "❌ Failed/Cancelled Payments:",
+        adminStats.data.transactionStats.cancelled
+      );
+    }
+  }, [adminStats, user?.role]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
@@ -177,14 +277,68 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           </div>
         </div>
       )}
-      <MetricsCards />
-      <div className="dashboard-bottom-grid">
-        <ChartSection />
-        <TransactionsTable
-          onSeeAll={() => setShowAllTransactions(true)}
-          transactions={transactions}
-        />
-      </div>
+      {!showAllTransactions ? (
+        <>
+          <MetricsCards adminStats={adminStats} />
+          <div className="dashboard-bottom-grid">
+            <ChartSection adminStats={adminStats} />
+            <TransactionsTable
+              onSeeAll={() => setShowAllTransactions(true)}
+              transactions={transactions}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="all-transactions-page">
+          <div className="all-transactions-header">
+            <BorderButton
+              text="Back to Dashboard"
+              onClick={() => setShowAllTransactions(false)}
+              className="back-to-dashboard-btn"
+            />
+            <h2 className="all-transactions-title">All Transactions</h2>
+          </div>
+          <DataTable
+            headers={
+              user?.role === "Admin"
+                ? ["ID", "Customer ID", "Service", "Amount", "Status", "Date"]
+                : ["ID", "Service", "Amount", "Status", "Date"]
+            }
+            data={transactions.map((txn) => {
+              const baseData = [
+                txn.id,
+                txn.tariffName || txn.service || "N/A",
+                txn.amount
+                  ? `₦${txn.amount.toLocaleString()}`
+                  : txn.price || "N/A",
+                <span
+                  key="status"
+                  className={`status-badge ${
+                    txn.status?.toLowerCase() || "pending"
+                  }`}
+                >
+                  {txn.status || "PENDING"}
+                </span>,
+                txn.createdAt
+                  ? new Date(txn.createdAt).toLocaleDateString()
+                  : "N/A",
+              ];
+
+              // Insert customer name after ID for admin users
+              if (user?.role === "Admin") {
+                baseData.splice(
+                  1,
+                  0,
+                  txn.customerName || txn.customerId || "Unknown Customer"
+                );
+              }
+
+              return baseData;
+            })}
+            className="all-transactions-table"
+          />
+        </div>
+      )}
 
       {/* Fund Wallet Modal */}
       <Modal
@@ -243,19 +397,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
             </form>
           </div>
         )}
-      </Modal>
-
-      {/* All Transactions Modal */}
-      <Modal
-        isOpen={showAllTransactions}
-        onClose={() => setShowAllTransactions(false)}
-        showHeader={true}
-        headerTitle="All Transactions"
-        className="all-transactions-modal"
-      >
-        <div className="all-transactions-table-container">
-          <TransactionsTable expanded hideTitle transactions={transactions} />
-        </div>
       </Modal>
     </div>
   );

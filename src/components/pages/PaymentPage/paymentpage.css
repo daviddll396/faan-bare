@@ -65,26 +65,9 @@
   animation: slideInUp 0.4s ease-out 0.2s both;
 }
 
-.payment-table-card {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e4e4e4;
-  padding: 0 0 0 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  padding-bottom: 10px;
-  animation: slideInUp 0.4s ease-out 0.4s both;
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
+/* Payment table now uses reusable DataTable component */
 .payment-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 16px;
-}
-
-.payment-table .alt-row {
-  background: var(--bg-color);
+  /* Custom styling can be added here if needed */
 }
 
 .payment-status-badge {
@@ -240,7 +223,7 @@
 /* Receipt Modal Styles */
 .payment-receipt-modal {
   min-width: 520px;
-  max-width: 800px;
+  max-width: 600px;
 }
 
 .payment-receipt-content {
@@ -248,21 +231,127 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  gap: 16px;
 }
 
-.payment-receipt-table {
-  width: 100%;
-  margin-bottom: 18px;
+/* Receipt Header */
+.receipt-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 8px;
 }
 
-.payment-receipt-table table {
-  width: 100%;
-  border-collapse: collapse;
+.receipt-success-icon {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 6px;
+}
+
+.receipt-subtitle {
   font-size: 15px;
+  color: #6c7278;
+  font-weight: 500;
 }
 
-.payment-receipt-table thead tr {
-  background: #fafafa;
+/* Receipt Details */
+.receipt-details {
+  width: 100%;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.receipt-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.receipt-detail-row:last-child {
+  border-bottom: none;
+}
+
+.receipt-detail-label {
+  color: #6c7278;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.receipt-detail-value {
+  color: #070600;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.receipt-detail-value.highlight {
+  color: #10b981;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Receipt Summary */
+.receipt-summary {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e4e4e4;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.receipt-summary-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #070600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.receipt-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.receipt-summary-item span:first-child {
+  color: #6c7278;
+  font-weight: 500;
+}
+
+.receipt-summary-item span:last-child {
+  color: #070600;
+  font-weight: 600;
+}
+
+.receipt-summary-item.total {
+  border-top: 2px solid #e4e4e4;
+  margin-top: 6px;
+  padding-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.receipt-summary-item.total span:first-child {
+  color: #070600;
+}
+
+.receipt-summary-item.total span:last-child {
+  color: #10b981;
 }
 
 .payment-receipt-actions {
@@ -359,11 +448,9 @@
 /* ===================== MEDIA QUERIES BELOW ===================== */
 
 /* Progressive zoom scaling for payment tabs with aggressive scaling for high DPI displays */
+/* Progressive zoom scaling for payment tabs and buttons */
 @media (max-width: 1920px) {
   .payment-tabs-row {
-    zoom: 1.1;
-  }
-  .payment-table-card {
     zoom: 1.1;
   }
   .border-button-paymentpage {
@@ -375,9 +462,6 @@
   .payment-tabs-row {
     zoom: 1.05;
   }
-  .payment-table-card {
-    zoom: 1.05;
-  }
   .border-button-paymentpage {
     zoom: 1.05;
   }
@@ -385,9 +469,6 @@
 
 @media (max-width: 1700px) {
   .payment-tabs-row {
-    zoom: 1;
-  }
-  .payment-table-card {
     zoom: 1;
   }
   .border-button-paymentpage {
@@ -399,9 +480,6 @@
   .payment-tabs-row {
     zoom: 0.95;
   }
-  .payment-table-card {
-    zoom: 0.95;
-  }
   .border-button-paymentpage {
     zoom: 0.95;
   }
@@ -409,9 +487,6 @@
 
 @media (max-width: 1500px) {
   .payment-tabs-row {
-    zoom: 0.9;
-  }
-  .payment-table-card {
     zoom: 0.9;
   }
   .border-button-paymentpage {
@@ -423,9 +498,6 @@
   .payment-tabs-row {
     zoom: 0.85;
   }
-  .payment-table-card {
-    zoom: 0.85;
-  }
   .border-button-paymentpage {
     zoom: 0.85;
   }
@@ -433,9 +505,6 @@
 
 @media (max-width: 1400px) {
   .payment-tabs-row {
-    zoom: 0.8;
-  }
-  .payment-table-card {
     zoom: 0.8;
   }
   .border-button-paymentpage {
@@ -447,9 +516,6 @@
   .payment-tabs-row {
     zoom: 0.78;
   }
-  .payment-table-card {
-    zoom: 0.78;
-  }
   .border-button-paymentpage {
     zoom: 0.78;
   }
@@ -457,9 +523,6 @@
 
 @media (max-width: 1300px) {
   .payment-tabs-row {
-    zoom: 0.76;
-  }
-  .payment-table-card {
     zoom: 0.76;
   }
   .border-button-paymentpage {
@@ -471,9 +534,6 @@
   .payment-tabs-row {
     zoom: 0.74;
   }
-  .payment-table-card {
-    zoom: 0.74;
-  }
   .border-button-paymentpage {
     zoom: 0.74;
   }
@@ -481,9 +541,6 @@
 
 @media (max-width: 1200px) {
   .payment-tabs-row {
-    zoom: 0.72;
-  }
-  .payment-table-card {
     zoom: 0.72;
   }
   .border-button-paymentpage {
@@ -495,9 +552,6 @@
   .payment-tabs-row {
     zoom: 0.7;
   }
-  .payment-table-card {
-    zoom: 0.7;
-  }
   .border-button-paymentpage {
     zoom: 0.7;
   }
@@ -505,9 +559,6 @@
 
 @media (max-width: 1100px) {
   .payment-tabs-row {
-    zoom: 0.68;
-  }
-  .payment-table-card {
     zoom: 0.68;
   }
   .border-button-paymentpage {
@@ -519,9 +570,6 @@
   .payment-tabs-row {
     zoom: 0.66;
   }
-  .payment-table-card {
-    zoom: 0.66;
-  }
   .border-button-paymentpage {
     zoom: 0.66;
   }
@@ -531,9 +579,6 @@
   .payment-tabs-row {
     zoom: 0.64;
   }
-  .payment-table-card {
-    zoom: 1.1;
-  }
   .border-button-paymentpage {
     zoom: 0.64;
   }
@@ -541,9 +586,6 @@
 
 @media (max-width: 950px) {
   .payment-tabs-row {
-    zoom: 0.62;
-  }
-  .payment-table-card {
     zoom: 0.62;
   }
   .border-button-paymentpage {
@@ -555,9 +597,6 @@
   .payment-tabs-row {
     zoom: 0.6;
   }
-  .payment-table-card {
-    zoom: 0.6;
-  }
   .border-button-paymentpage {
     zoom: 0.6;
   }
@@ -565,21 +604,12 @@
     flex-direction: column;
     gap: 12px;
   }
-  .payment-table th,
-  .payment-table td {
-    padding: 12px 6px 12px 10px;
-    font-size: 15px;
-  }
 }
 
 /* Reset zoom for mobile devices */
 @media (max-width: 768px) {
   .payment-tabs-row {
     zoom: 1;
-  }
-  .payment-table-card {
-    zoom: 1;
-    overflow: auto;
   }
   .border-button-paymentpage {
     zoom: 1;
@@ -610,15 +640,32 @@
     white-space: nowrap;
     box-shadow: none;
   }
-  .payment-table-card {
-    border-radius: 10px;
-  }
 
   /* Mobile Modal Adjustments */
   .payment-invoice-modal,
   .payment-receipt-modal {
     min-width: 90vw;
     max-width: 95vw;
+  }
+
+  .receipt-title {
+    font-size: 20px;
+  }
+
+  .receipt-subtitle {
+    font-size: 14px;
+  }
+
+  .receipt-details {
+    padding: 16px;
+  }
+
+  .receipt-summary {
+    padding: 16px;
+  }
+
+  .receipt-summary-title {
+    font-size: 16px;
   }
 
   .payment-reason-modal {
@@ -644,5 +691,56 @@
   .payment-reason-details {
     flex-direction: column;
     gap: 12px;
+  }
+}
+
+/* Extra Small Mobile Responsive (below 480px) */
+@media (max-width: 480px) {
+  .payment-invoice-modal,
+  .payment-receipt-modal {
+    min-width: 98vw;
+    max-width: 98vw;
+  }
+
+  .receipt-title {
+    font-size: 18px;
+  }
+
+  .receipt-subtitle {
+    font-size: 13px;
+  }
+
+  .receipt-details {
+    padding: 12px;
+  }
+
+  .receipt-summary {
+    padding: 12px;
+  }
+
+  .receipt-summary-title {
+    font-size: 15px;
+  }
+
+  .receipt-detail-row {
+    padding: 6px 0;
+  }
+
+  .receipt-detail-label,
+  .receipt-detail-value {
+    font-size: 13px;
+  }
+
+  .receipt-summary-item {
+    padding: 4px 0;
+    font-size: 13px;
+  }
+
+  .receipt-summary-item.total {
+    font-size: 15px;
+  }
+
+  .payment-receipt-actions {
+    margin-top: 6px;
   }
 }

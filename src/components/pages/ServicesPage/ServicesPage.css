@@ -151,6 +151,24 @@
   max-width: 531px;
 }
 
+.service-name-input {
+  width: 100%;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 18px;
+  font-family: inherit;
+  background: #fff;
+  color: #070600;
+  outline: none;
+  transition: border 0.2s;
+  font-weight: 500;
+}
+
+.service-name-input:focus {
+  border: 1.5px solid #007948;
+}
+
 .service-field-group.currency-group {
   width: 180px;
   min-width: 180px;
@@ -551,10 +569,41 @@
   border: 1px solid #007948;
 }
 
+/* Calendar and Time icon styling */
+.booking-form-input[type="date"]::-webkit-calendar-picker-indicator,
+.booking-form-input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.4) sepia(0) saturate(0) hue-rotate(0deg) brightness(0.7);
+  cursor: pointer;
+}
+
+.booking-form-input[type="date"]::-moz-calendar-picker-indicator,
+.booking-form-input[type="time"]::-moz-calendar-picker-indicator {
+  filter: invert(0.4) sepia(0) saturate(0) hue-rotate(0deg) brightness(0.7);
+  cursor: pointer;
+}
+
 .booking-form-input:disabled {
   background: #f8f9fa;
-  color: #6c7278;
+  color: #898989;
   cursor: not-allowed;
+}
+
+/* Error state for individual form fields */
+.booking-form-input.error {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.booking-form-input.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Required field indicator */
+.booking-form-label.required::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: 600;
 }
 
 .booking-add-passenger-btn {
@@ -632,6 +681,8 @@
   font-weight: 700;
   cursor: pointer;
   padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 .booking-form-error {
@@ -877,298 +928,298 @@ select.booking-form-input {
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
   .services-customer-grid {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .booking-form-card {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .booking-summary-card {
-    zoom: 0.95;
+    zoom: 1.03;
   }
   .services-page .content-card {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .services-page .add-service-form-card {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .border-button-userspage {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .border-button-servicespage {
-    zoom: 0.9;
+    zoom: 0.98;
   }
   .services-action-buttons-row {
-    zoom: 0.9;
+    zoom: 0.98;
   }
 }
 
 @media (max-width: 1800px) {
   .services-customer-grid {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .booking-form-card {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .booking-summary-card {
-    zoom: 0.94;
+    zoom: 1.02;
   }
   .services-page .content-card {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .services-page .add-service-form-card {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .border-button-userspage {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .border-button-servicespage {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .services-action-buttons-row {
-    zoom: 0.85;
+    zoom: 0.93;
   }
 }
 
 @media (max-width: 1700px) {
   .services-customer-grid {
-    zoom: 0.75;
+    zoom: 0.83;
   }
   .booking-form-card {
-    zoom: 0.75;
+    zoom: 0.83;
   }
   .booking-summary-card {
-    zoom: 0.93;
+    zoom: 1.01;
   }
   .services-page .content-card {
-    zoom: 0.75;
+    zoom: 0.83;
   }
   .services-page .add-service-form-card {
-    zoom: 0.75;
+    zoom: 0.83;
   }
   .border-button-userspage {
-    zoom: 0.75;
+    zoom: 0.83;
   }
   .border-button-servicespage {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .services-action-buttons-row {
-    zoom: 0.8;
+    zoom: 0.88;
   }
 }
 
 @media (max-width: 1600px) {
   .services-customer-grid {
-    zoom: 0.7;
+    zoom: 0.78;
   }
   .booking-form-card {
-    zoom: 0.7;
+    zoom: 0.78;
   }
   .booking-summary-card {
-    zoom: 0.92;
+    zoom: 1;
   }
   .services-page .content-card {
-    zoom: 0.7;
+    zoom: 0.78;
   }
   .services-page .add-service-form-card {
-    zoom: 0.7;
+    zoom: 0.78;
   }
   .border-button-userspage {
-    zoom: 0.7;
+    zoom: 0.78;
   }
   .border-button-servicespage {
-    zoom: 0.75;
+    zoom: 0.83;
   }
   .services-action-buttons-row {
-    zoom: 0.75;
+    zoom: 0.83;
   }
 }
 
 @media (max-width: 1500px) {
   .services-customer-grid {
-    zoom: 0.65;
+    zoom: 0.73;
   }
   .booking-form-card {
-    zoom: 0.65;
+    zoom: 0.73;
   }
   .booking-summary-card {
-    zoom: 0.91;
+    zoom: 0.99;
   }
   .services-page .content-card {
-    zoom: 0.65;
+    zoom: 0.73;
   }
   .services-page .add-service-form-card {
-    zoom: 0.65;
+    zoom: 0.73;
   }
   .border-button-userspage {
-    zoom: 0.65;
+    zoom: 0.73;
   }
   .border-button-servicespage {
-    zoom: 0.7;
+    zoom: 0.78;
   }
   .services-action-buttons-row {
-    zoom: 0.7;
+    zoom: 0.78;
   }
 }
 
 @media (max-width: 1450px) {
   .services-customer-grid {
-    zoom: 0.6;
+    zoom: 0.68;
   }
   .booking-form-card {
-    zoom: 0.6;
+    zoom: 0.68;
   }
   .booking-summary-card {
-    zoom: 0.9;
+    zoom: 0.98;
   }
   .services-page .content-card {
-    zoom: 0.6;
+    zoom: 0.68;
   }
   .services-page .add-service-form-card {
-    zoom: 0.6;
+    zoom: 0.68;
   }
   .border-button-userspage {
-    zoom: 0.6;
+    zoom: 0.68;
   }
   .border-button-servicespage {
-    zoom: 0.65;
+    zoom: 0.73;
   }
   .services-action-buttons-row {
-    zoom: 0.65;
+    zoom: 0.73;
   }
 }
 
 @media (max-width: 1400px) {
   .services-customer-grid {
-    zoom: 0.58;
+    zoom: 0.66;
   }
   .booking-form-card {
-    zoom: 0.58;
+    zoom: 0.66;
   }
   .booking-summary-card {
-    zoom: 0.89;
+    zoom: 0.97;
   }
   .services-page .content-card {
-    zoom: 0.58;
+    zoom: 0.66;
   }
   .services-page .add-service-form-card {
-    zoom: 0.58;
+    zoom: 0.66;
   }
   .border-button-userspage {
-    zoom: 0.58;
+    zoom: 0.66;
   }
   .border-button-servicespage {
-    zoom: 0.6;
+    zoom: 0.68;
   }
   .services-action-buttons-row {
-    zoom: 0.6;
+    zoom: 0.68;
   }
 }
 
 @media (max-width: 1350px) {
   .services-customer-grid {
-    zoom: 0.56;
+    zoom: 0.64;
   }
   .booking-form-card {
-    zoom: 0.56;
+    zoom: 0.64;
   }
   .booking-summary-card {
-    zoom: 0.88;
+    zoom: 0.96;
   }
   .services-page .content-card {
-    zoom: 0.56;
+    zoom: 0.64;
   }
   .services-page .add-service-form-card {
-    zoom: 0.56;
+    zoom: 0.64;
   }
   .border-button-userspage {
-    zoom: 0.56;
+    zoom: 0.64;
   }
   .border-button-servicespage {
-    zoom: 0.58;
+    zoom: 0.66;
   }
   .services-action-buttons-row {
-    zoom: 0.58;
+    zoom: 0.66;
   }
 }
 
 @media (max-width: 1300px) {
   .services-customer-grid {
-    zoom: 0.54;
+    zoom: 0.62;
   }
   .booking-form-card {
-    zoom: 0.54;
+    zoom: 0.62;
   }
   .booking-summary-card {
-    zoom: 0.87;
+    zoom: 0.95;
   }
   .services-page .content-card {
-    zoom: 0.54;
+    zoom: 0.62;
   }
   .services-page .add-service-form-card {
-    zoom: 0.54;
+    zoom: 0.62;
   }
   .border-button-userspage {
-    zoom: 0.54;
+    zoom: 0.62;
   }
   .border-button-servicespage {
-    zoom: 0.56;
+    zoom: 0.64;
   }
   .services-action-buttons-row {
-    zoom: 0.56;
+    zoom: 0.64;
   }
 }
 
 @media (max-width: 1250px) {
   .services-customer-grid {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .booking-form-card {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .booking-summary-card {
-    zoom: 0.86;
+    zoom: 0.94;
   }
   .services-page .content-card {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .services-page .add-service-form-card {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .border-button-userspage {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .border-button-servicespage {
-    zoom: 0.54;
+    zoom: 0.62;
   }
   .services-action-buttons-row {
-    zoom: 0.54;
+    zoom: 0.62;
   }
 }
 
 @media (max-width: 1200px) {
   .services-customer-grid {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .booking-form-card {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .booking-summary-card {
-    zoom: 0.85;
+    zoom: 0.93;
   }
   .services-page .content-card {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .services-page .add-service-form-card {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .border-button-userspage {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .border-button-servicespage {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .services-action-buttons-row {
-    zoom: 0.52;
+    zoom: 0.6;
   }
   .customer-modal-center > div {
     zoom: 2.3 !important;
@@ -1177,28 +1228,28 @@ select.booking-form-input {
 
 @media (max-width: 1150px) {
   .services-customer-grid {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .booking-form-card {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .booking-summary-card {
-    zoom: 0.84;
+    zoom: 0.92;
   }
   .services-page .content-card {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .services-page .add-service-form-card {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .border-button-userspage {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .border-button-servicespage {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .services-action-buttons-row {
-    zoom: 0.5;
+    zoom: 0.58;
   }
   .customer-modal-center > div {
     zoom: 2.4 !important;
@@ -1207,28 +1258,28 @@ select.booking-form-input {
 
 @media (max-width: 1100px) {
   .services-customer-grid {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .booking-form-card {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .booking-summary-card {
-    zoom: 0.83;
+    zoom: 0.91;
   }
   .services-page .content-card {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .services-page .add-service-form-card {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .border-button-userspage {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .border-button-servicespage {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .services-action-buttons-row {
-    zoom: 0.48;
+    zoom: 0.56;
   }
   .customer-modal-center > div {
     zoom: 2.5 !important;
@@ -1237,28 +1288,28 @@ select.booking-form-input {
 
 @media (max-width: 1050px) {
   .services-customer-grid {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .booking-form-card {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .booking-summary-card {
-    zoom: 0.82;
+    zoom: 0.9;
   }
   .services-page .content-card {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .services-page .add-service-form-card {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .border-button-userspage {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .border-button-servicespage {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .services-action-buttons-row {
-    zoom: 0.46;
+    zoom: 0.54;
   }
   .customer-modal-center > div {
     zoom: 2.5 !important;
@@ -1267,28 +1318,28 @@ select.booking-form-input {
 
 @media (max-width: 1000px) {
   .services-customer-grid {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .booking-form-card {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .booking-summary-card {
-    zoom: 0.81;
+    zoom: 0.89;
   }
   .services-page .content-card {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .services-page .add-service-form-card {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .border-button-userspage {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .border-button-servicespage {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .services-action-buttons-row {
-    zoom: 0.44;
+    zoom: 0.52;
   }
   .customer-modal-center > div {
     zoom: 2.5 !important;
@@ -1297,28 +1348,28 @@ select.booking-form-input {
 
 @media (max-width: 950px) {
   .services-customer-grid {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .booking-form-card {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .booking-summary-card {
-    zoom: 0.8;
+    zoom: 0.88;
   }
   .services-page .content-card {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .services-page .add-service-form-card {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .border-button-userspage {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .border-button-servicespage {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .services-action-buttons-row {
-    zoom: 0.42;
+    zoom: 0.5;
   }
   .customer-modal-center > div {
     zoom: 2.8 !important;
@@ -1327,28 +1378,28 @@ select.booking-form-input {
 
 @media (max-width: 900px) {
   .services-customer-grid {
-    zoom: 0.38;
+    zoom: 0.46;
   }
   .booking-form-card {
-    zoom: 0.38;
+    zoom: 0.46;
   }
   .booking-summary-card {
-    zoom: 0.79;
+    zoom: 0.87;
   }
   .services-page .content-card {
-    zoom: 0.38;
+    zoom: 0.46;
   }
   .services-page .add-service-form-card {
-    zoom: 0.38;
+    zoom: 0.46;
   }
   .border-button-userspage {
-    zoom: 0.38;
+    zoom: 0.46;
   }
   .border-button-servicespage {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .services-action-buttons-row {
-    zoom: 0.4;
+    zoom: 0.48;
   }
   .customer-modal-center > div {
     zoom: 2.8 !important;
@@ -1445,6 +1496,7 @@ select.booking-form-input {
   }
   .services-customer-page {
     padding: 0px;
+    padding-bottom: var(--page-bottom-padding-mobile);
 
     overflow-x: hidden;
   }
@@ -1597,6 +1649,19 @@ select.booking-form-input {
     max-width: 100%;
     height: 38px !important;
   }
+
+  /* Calendar and Time icon styling */
+  .booking-form-input[type="date"]::-webkit-calendar-picker-indicator,
+  .booking-form-input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.4) sepia(0) saturate(0) hue-rotate(0deg) brightness(0.7);
+    cursor: pointer;
+  }
+
+  .booking-form-input[type="date"]::-moz-calendar-picker-indicator,
+  .booking-form-input[type="time"]::-moz-calendar-picker-indicator {
+    filter: invert(0.4) sepia(0) saturate(0) hue-rotate(0deg) brightness(0.7);
+    cursor: pointer;
+  }
   .booking-form-fields-row-mobile {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1704,7 +1769,7 @@ select.booking-form-input {
     background: #e0e0e0;
   }
   .passenger-mobile-delete:hover {
-    background: #ffeaea;
+    background: #fff5f5;
   }
   .services-page .page-header-bottom {
     align-items: end;

@@ -13,9 +13,36 @@ import ExportIcon from "/icons/charts-export-icon.svg";
 import BorderButton from "../../../reusables/BorderButton/BorderButton";
 import { useAuth } from "../../../../contexts/AuthContext";
 
-const ChartSection: React.FC = () => {
+interface ChartSectionProps {
+  adminStats?: {
+    status: boolean;
+    statusCode: number;
+    data: {
+      customerProfile: unknown | null;
+      walletBalance: number | null;
+      transactionStats: {
+        total: number;
+        completed: number;
+        pending: number;
+        cancelled: number;
+      };
+    };
+    message: string;
+  } | null;
+}
+
+const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
   const { user } = useAuth();
-  const transactionStats = user?.transactionStats || { total: 0, completed: 0 };
+
+  // Use admin stats if available, otherwise fall back to user transaction stats
+  const transactionStats = adminStats?.data?.transactionStats ||
+    user?.transactionStats || { total: 0, completed: 0 };
+
+  // Debug logging to see which data source is being used
+  console.log("🔍 ChartSection - Data Source Debug:");
+  console.log("📊 Admin Stats Available:", !!adminStats);
+  console.log("👤 User Transaction Stats:", user?.transactionStats);
+  console.log("🎯 Final Transaction Stats Used:", transactionStats);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -103,7 +130,10 @@ const ChartSection: React.FC = () => {
           />
         </div>
         <div className="chart-container">
-          <ResponsiveContainer width="100%" height={windowWidth <= 768 ? 200 : 300}>
+          <ResponsiveContainer
+            width="100%"
+            height={windowWidth <= 768 ? 200 : 300}
+          >
             <BarChart
               data={data}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
