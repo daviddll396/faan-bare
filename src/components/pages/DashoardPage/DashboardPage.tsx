@@ -361,7 +361,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           phone_number: user?.phoneNumber || "",
           email: user?.email || "",
           amount: Math.round(amount),
-          redirecturl: window.location.origin + "/",
+          // redirecturl: window.location.origin + "/",
           currency: "NGN",
           reference,
           onCompleted: async (data: unknown) => {
@@ -374,8 +374,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
             }
             hasProcessedCompletionRef.current = true;
 
-            // Call backend to record the successful fund
-            const result = await fundWallet(amount, reference);
+            // Call backend to record the successful fund (include provider response)
+            console.log("Calling fundWallet with provider response", data);
+            const result = await fundWallet(amount, reference, data);
             setShowFundLoading(false);
             paymentInitializedRef.current = false;
             if (result) {

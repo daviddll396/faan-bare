@@ -723,9 +723,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .slice(0, 10)
         .replace(/-/g, "")}-${Math.random().toString(36).substring(2, 8)}`;
 
+      // Prefer amount from providerResponse if available (ensure we record actual paid amount)
+      const paidAmount =
+        (providerResponse && (providerResponse as any).amount) || amount;
+
       const requestBody: Record<string, unknown> = {
         reference: externalReference ?? reference,
-        amount: amount,
+        amount: paidAmount,
       };
       if (providerResponse !== undefined) {
         requestBody.providerResponse = providerResponse;
