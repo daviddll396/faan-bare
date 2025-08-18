@@ -67,7 +67,7 @@
   background-color: #0079480d;
   border: 1px solid #007948;
   font-weight: 500;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   border-radius: 12px;
   font-size: 16px;
   animation: slideInUp 0.4s ease-out 0.6s both;
@@ -358,12 +358,36 @@
 
 .services-customer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  /* Fixed 4 columns layout on desktop */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr; /* make grid rows equal height */
   gap: 28px;
   width: 100%;
   animation: slideInUp 0.6s ease-out 0.4s both;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;
+}
+
+/* Responsive grid: 3 cols <=1400px, 2 cols <=1000px, 1 col <=600px */
+@media (max-width: 1400px) {
+  .services-customer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .services-customer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .services-customer-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 12px;
+  }
 }
 
 .services-customer-grid:has(.service-card:only-child) {
@@ -378,16 +402,17 @@
 
 .service-card {
   background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e4e4e4;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  padding: 0 0 24px 0;
+  border-radius: 14px;
+  border: 1px solid #eef2f4;
+  box-shadow: 0 4px 18px rgba(16, 24, 40, 0.06);
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   min-width: 0;
-  transition: box-shadow 0.2s;
-  animation: slideInUp 0.6s ease-out both;
+  height: 100%;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  animation: none;
 }
 
 /* Staggered animation for service cards */
@@ -418,10 +443,10 @@
 
 .service-card-img-wrap {
   width: 100%;
-  height: 140px;
-  border-radius: 16px 16px 0 0;
+  height: 200px;
+  border-radius: 14px 14px 0 0;
   overflow: hidden;
-  background: var(--bg-color);
+  background: #f7fafc;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -431,27 +456,85 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px 16px 0 0;
+  border-radius: 0;
+}
+
+.service-card-body {
+  padding: 16px 18px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* allow body to grow to fill card height so footer stays at bottom */
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.service-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .service-card-name {
-  font-size: 16px;
-  color: #969696;
-  font-weight: 500;
-  margin: 18px 0 0 0;
-  padding: 0 18px;
-  min-height: 36px;
-  white-space: nowrap;
+  font-size: 20px;
+  color: #0f172a;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  max-width: 60%;
 }
 
 .service-card-price {
-  font-size: 22px;
-  font-weight: 800;
-  color: #070600;
-  margin: 2px 0 18px 0;
-  padding: 0 18px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #065f46;
+  flex-wrap: nowrap;
+}
+
+.service-card-desc {
+  font-size: 18px;
+  color: #64748b;
+  line-height: 1.4;
+  min-height: 30px;
+  flex: 1 1 auto; /* allow description to grow and push meta to bottom */
+}
+
+.service-card-meta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: auto; /* keep meta (Book Service) pinned to card bottom */
+}
+
+.service-card-action-text {
+  font-size: 18px;
+  color: #047857; /* green */
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 10px;
+  letter-spacing: 0.02em;
+  transition: background-color 150ms ease, color 150ms ease,
+    transform 150ms ease;
+}
+
+.service-card-action-text:focus {
+  outline: 2px solid rgba(4, 120, 87, 0.12);
+  border-radius: 6px;
+}
+
+/* Hover effect for Book Service text */
+.service-card-action-text:hover {
+  color: #065f46; /* darker green */
+  background-color: rgba(4, 120, 87, 0.08);
+  transform: translateY(-2px);
+  border-radius: 6px;
 }
 
 .service-card-btn {
@@ -476,7 +559,7 @@
 }
 
 .service-card-btn-wrap {
-  padding: 0 18px;
+  padding: 8px 18px 0 18px;
   width: 100%;
 }
 
@@ -486,49 +569,68 @@
 
 .booking-form-card {
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e4e4e4;
-  padding: 36px 32px 32px 32px;
+  border-radius: 14px;
+  border: none; /* borderless */
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08); /* elevated subtle shadow */
+  padding: 28px 24px 24px 24px;
   margin-top: 18px;
   margin-bottom: 18px;
-  animation: slideInUp 0.4s ease-out;
+  animation: none;
   zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .booking-tabs-row {
   display: flex;
-  gap: 32px;
-  margin-bottom: 0;
-  margin-top: 30px;
-  animation: slideInUp 0.4s ease-out 0.1s both;
+  gap: 12px;
+  margin-bottom: 12px;
+  margin-top: 18px;
+  align-items: center;
 }
 
+/* Tabs styled like the Book Service control: pill buttons */
 .booking-tab {
-  font-size: 16px;
-  font-weight: 500;
-  color: #969696;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280; /* muted grey text for inactive */
+  background: #f3f4f6; /* light grey background for inactive */
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
-  padding-bottom: 8px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s, border 0.2s;
+  border: none;
+  transition: background-color 150ms ease, color 150ms ease,
+    transform 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-tab:focus {
+  outline: 2px solid rgba(4, 120, 87, 0.12);
+  border-radius: 10px;
+}
+
+.booking-tab:hover {
+  background: #e9eef0;
+  color: #4b5563;
+  transform: translateY(-2px);
 }
 
 .booking-tab.active {
-  color: #007948;
-  border-bottom: 2px solid #007948;
+  color: #047857; /* green text */
+  background: #eafaf3; /* light green background */
+  box-shadow: 0 6px 18px rgba(4, 120, 87, 0.06);
+  transform: translateY(-2px);
+  font-weight: 700;
 }
 
 .booking-tab-underline {
-  width: 100%;
-  height: 1.5px;
-  background: #e4e4e4;
-  margin-bottom: 24px;
-  margin-top: -2px;
+  display: none; /* no divider under tabs */
 }
 
 .booking-form-fields-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-bottom: 18px;
   animation: slideInUp 0.4s ease-out 0.2s both;
@@ -551,7 +653,7 @@
 
 .booking-form-input {
   width: 100%;
-  height: 48px;
+  height: 55px; /* increased by 5px */
   border: 1px solid #d9d9d9;
   border-radius: 10px;
   padding: 0 18px;
@@ -627,6 +729,114 @@
 .booking-passengers-table-section {
   margin-top: 18px;
   animation: slideInUp 0.4s ease-out 0.3s both;
+}
+
+.booking-passengers-list {
+  display: block;
+}
+
+.passengers-pill-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.passenger-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fafafa; /* light grey background */
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04); /* subtle shadow */
+}
+
+.passenger-pill-left {
+  flex: 0 0 48px;
+}
+
+.passenger-pill-icon {
+  width: 48px;
+  height: 48px;
+}
+
+/* light grey background for the pill icon container */
+.passenger-pill-left {
+  background: #f8fafc; /* lighter grey */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.passenger-pill-designation {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.passenger-pill-meta {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* circular delete button with light red background */
+.passenger-pill-delete {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff5f5; /* light red */
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.passenger-pill-delete-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.passenger-pill-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.passenger-pill-title {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.passenger-pill-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.passenger-pill-actions {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 842px) {
+  .passengers-pill-wrap {
+    gap: 10px;
+  }
+  .passenger-pill {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .passenger-pill-icon {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .booking-passengers-table-title {
@@ -1418,6 +1628,10 @@ select.booking-form-input {
   }
   .booking-form-card {
     zoom: 1;
+    /* ensure mobile keeps borderless elevated look */
+    border: none;
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+    padding: 20px 16px;
   }
   .booking-summary-card {
     zoom: 1;
@@ -1588,7 +1802,8 @@ select.booking-form-input {
     margin-bottom: 12px;
   }
   .booking-form-fields-row {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin-bottom: 8px;
   }
@@ -1647,7 +1862,7 @@ select.booking-form-input {
   .booking-form-input[type="time"] {
     min-width: calc(100% - 14px);
     max-width: 100%;
-    height: 38px !important;
+    height: 53px !important; /* match increased field height */
   }
 
   /* Calendar and Time icon styling */

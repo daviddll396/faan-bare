@@ -138,7 +138,7 @@
   font-weight: 500;
   color: #626262;
   flex: 1;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   cursor: text;
   width: 95%;
 }
@@ -154,7 +154,7 @@
   font-size: 15px;
   font-weight: 500;
   color: #626262;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -183,7 +183,7 @@
 .search-dropdown-option {
   padding: 12px 32px;
   font-size: 15px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   color: #626262;
   cursor: pointer;
   transition: background 0.15s;

@@ -259,7 +259,7 @@
 .remember-label,
 .auth-form-footer-modern,
 .auth-form-link-modern {
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 
 /* Validation error styling */
@@ -269,7 +269,7 @@
   font-weight: 500;
   margin-top: 4px;
   margin-left: 2px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 
 /* Error state for inputs */

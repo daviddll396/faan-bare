@@ -10,7 +10,6 @@ import PageTitle from "../../reusables/PageTitle/PageTitle";
 import ServicesIcon from "/icons/nav-product-icon.svg";
 import "./ServicesPage.css";
 import { Edit, Trash2 } from "lucide-react";
-import { TbCurrencyNaira } from "react-icons/tb";
 import { FiUserPlus } from "react-icons/fi";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
@@ -62,58 +61,90 @@ const customerServices = [
   {
     id: 1,
     name: "International Arrival",
-    price: "8,000",
-    amount: 8000,
+    description: "Facilitation of International Arrival service",
+    price: "7,000",
+    amount: 7000,
     image: "/images/intl-arrival.svg",
   },
   {
     id: 2,
     name: "International Departure",
-    price: "10,000",
-    amount: 10000,
+    description: "Facilitation of International Departure service",
+    price: "7,000",
+    amount: 7000,
     image: "/images/intl-departure.svg",
   },
   {
     id: 3,
-    name: "VIP Lounge International",
-    price: "6,000",
-    amount: 6000,
+    name: "VIP lounge International",
+    description: "NAIA VIP International lounge service",
+    price: "5,000",
+    amount: 5000,
     image: "/images/vip-lounge.svg",
   },
   {
     id: 4,
     name: "Abuja International OneOff",
-    price: "12,000",
-    amount: 12000,
+    description: "International Facilitation for Abuja One-off users",
+    price: "10,000",
+    amount: 10000,
     image: "/images/abj-intl.svg",
   },
   {
     id: 5,
-    name: "One Year Protocol Service(Domestic operations PH)",
-    price: "500,000",
-    amount: 500000,
+    name: "One Year Protocol Service (Domestic operations PH)",
+    description: "2 UNITS WHITE ODC",
+    price: "1,000,000",
+    amount: 1000000,
     image: "/images/one-year.svg",
   },
   {
     id: 6,
     name: "Additional One(1) Unit(Domestic ODC PH)",
+    description: "1 unit additional DOMESTIC",
+    price: "200,000",
+    amount: 200000,
+    image: "/images/add-one-unit.svg",
+  },
+  {
+    id: 7,
+    name: "Extra ODC",
+    description: "Adding Extra ODC after the first addition",
     price: "300,000",
     amount: 300000,
     image: "/images/add-one-unit.svg",
   },
   {
-    id: 7,
-    name: "Port Harcourt Domestic Service",
-    price: "1,000,000",
-    amount: 1000000,
-    image: "/images/ph-domestic.svg",
-  },
-  {
     id: 8,
     name: "Protocol Car Park Porthacourt",
-    price: "800,000",
-    amount: 800000,
+    description: "Car park for one year",
+    price: "1,000,000",
+    amount: 1000000,
     image: "/images/ph-protocol.svg",
+  },
+  {
+    id: 9,
+    name: "Protocol Lounge porthacourt",
+    description: "Lounge service for one year",
+    price: "1,000,000",
+    amount: 1000000,
+    image: "/images/vip-lounge.svg",
+  },
+  {
+    id: 10,
+    name: "Test Airport Service 1",
+    description: "This is to test the test service api integration",
+    price: "500",
+    amount: 500,
+    image: "/images/default-service.svg",
+  },
+  {
+    id: 11,
+    name: "EXtra On-Duty-charge",
+    description: "For ODC",
+    price: "10,000",
+    amount: 10000,
+    image: "/images/default-service.svg",
   },
 ];
 
@@ -331,16 +362,17 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             console.log(
               "🎯 ServicesPage: Using API tariffs for customer services"
             );
-            // Convert API tariffs to customer service format
+            // Convert API tariffs to customer service format (include description)
             const convertedServices = tariffsData.data.map(
               (tariff: {
                 id: number;
                 name: string;
-                description: string;
+                description?: string;
                 amount: number;
               }) => ({
                 id: tariff.id,
                 name: tariff.name,
+                description: tariff.description || "Description not available",
                 price: tariff.amount.toLocaleString(), // Convert amount to formatted string
                 amount: tariff.amount, // Keep the raw amount for calculations
                 image: getImageForTariff(tariff.name), // Map to existing image
@@ -1382,81 +1414,75 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <div className="booking-passengers-table-title">
                     PASSENGERS ADDED
                   </div>
-                  <div className="booking-passengers-table-wrap">
-                    <table className="booking-passengers-table">
-                      <thead>
-                        <tr>
-                          <th>S/N</th>
-                          <th>NAME</th>
-                          <th>AIRPORT</th>
-                          <th>AIRLINE</th>
-                          <th>FLIGHT NO.</th>
-                          <th>TRAVEL DATE/TIME</th>
-                          <th>SPECIAL REQUIREMENTS</th>
-                          <th>ACTION</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {passengers.length === 0 ? (
-                          <tr>
-                            <td
-                              className="table-data-item"
-                              colSpan={8}
-                              style={{ textAlign: "center", color: "#6c6c6c" }}
-                            >
-                              <span
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: 8,
-                                }}
-                              >
-                                <FiUserPlus size={18} />
-                                No passengers yet. Please add a passenger to
-                                continue.
-                              </span>
-                            </td>
-                          </tr>
-                        ) : (
-                          passengers.map((p, idx) => (
-                            <tr key={idx}>
-                              <td>{idx + 1}.</td>
-                              <td>
-                                {p.firstName} {p.lastName}
-                              </td>
-                              <td>{p.airport}</td>
-                              <td>{p.airline}</td>
-                              <td>{p.flightNumber}</td>
-                              <td>
-                                {p.travelDate}
-                                {p.airportTime ? ` @${p.airportTime}` : ""}
-                              </td>
-                              <td>{p.specialReq || "none"}</td>
-                              <td>
-                                <button
-                                  className="booking-delete-btn"
-                                  onClick={() => handleDeletePassenger(idx)}
-                                >
-                                  <img
-                                    src="/icons/delete-passenger.svg"
-                                    alt="Delete"
-                                    style={{ width: 20, height: 20 }}
-                                  />
-                                  <span
-                                    style={{
-                                      color: "#BC2600",
-                                      fontWeight: 700,
-                                    }}
-                                  >
-                                    Delete
+                  <div className="booking-passengers-list">
+                    {passengers.length === 0 ? (
+                      <div style={{ textAlign: "center", color: "#6c6c6c" }}>
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <FiUserPlus size={18} /> No passengers yet. Please add
+                          a passenger to continue.
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="passengers-pill-wrap">
+                        {passengers.map((p, idx) => (
+                          <div className="passenger-pill" key={idx}>
+                            <div className="passenger-pill-left">
+                              <img
+                                src="/icons/passengers-details-airplane.svg"
+                                alt="Airplane"
+                                className="passenger-pill-icon"
+                              />
+                            </div>
+                            <div className="passenger-pill-body">
+                              <div className="passenger-pill-title">
+                                {p.firstName} {p.lastName}{" "}
+                                {p.designation && (
+                                  <span className="passenger-pill-designation">
+                                    ({p.designation})
                                   </span>
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
+                                )}
+                              </div>
+                              <div className="passenger-pill-sub">
+                                {p.airport || "International Arrival"} •{" "}
+                                {p.airline || "Airline"} •{" "}
+                                {p.flightNumber || "-"}
+                              </div>
+                              <div className="passenger-pill-meta">
+                                {p.gender && <span>{p.gender}</span>}
+                                {p.mobile && <span> • {p.mobile}</span>}
+                                {p.travelDate && <span> • {p.travelDate}</span>}
+                                {p.airportTime && (
+                                  <span> • {p.airportTime}</span>
+                                )}
+                                {p.destination && (
+                                  <span> • {p.destination}</span>
+                                )}
+                                {p.specialReq && <span> • {p.specialReq}</span>}
+                              </div>
+                            </div>
+                            <div className="passenger-pill-actions">
+                              <button
+                                className="passenger-pill-delete"
+                                aria-label="Delete Passenger"
+                                onClick={() => handleDeletePassenger(idx)}
+                              >
+                                <img
+                                  src="/icons/delete-passenger.svg"
+                                  alt="Delete"
+                                  className="passenger-pill-delete-icon"
+                                />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {passengers.length > 0 && (
                     <div className="booking-passengers-actions">
@@ -1930,26 +1956,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   className="service-card-img"
                 />
               </div>
-              <div className="service-card-name">{service.name}</div>
-              <div className="service-card-price">
-                <TbCurrencyNaira
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 800,
-                    verticalAlign: "middle",
-                    marginTop: -2,
-                  }}
-                />
-                {service.price}
-              </div>
-              <div className="service-card-btn-wrap">
-                <GradientButton
-                  fullWidth
-                  size={windowWidth <= 768 ? "tiny" : "medium"}
-                  onClick={() => setSelectedService(service)}
-                >
-                  BOOK SERVICE
-                </GradientButton>
+
+              <div className="service-card-body">
+                <div className="service-card-top">
+                  <div className="service-card-name">{service.name}</div>
+                  <div className="service-card-price">₦{service.price}</div>
+                </div>
+
+                <div className="service-card-desc">
+                  {service.description && service.description.length > 0
+                    ? service.description
+                    : "Description not available"}
+                </div>
+
+                <div className="service-card-meta">
+                  <button
+                    type="button"
+                    className="service-card-action-text"
+                    onClick={() => setSelectedService(service)}
+                  >
+                    Book Service
+                  </button>
+                </div>
               </div>
             </div>
           ))}

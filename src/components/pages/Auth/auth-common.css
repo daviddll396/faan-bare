@@ -87,7 +87,7 @@
 
 .auth-image-text {
   color: white;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   font-size: 23px;
   font-weight: 500;
   line-height: 1.4;
@@ -309,7 +309,7 @@
   flex-direction: column;
   gap: 0;
   align-items: stretch;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   /* Removed zoom-based scaling to keep uniform sizing */
 }
 
@@ -356,7 +356,7 @@
   color: #070600;
   outline: none;
   transition: border 0.2s;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 .form-input-modern:focus {
   border-color: #007948;
@@ -377,7 +377,7 @@
   transition: background 0.2s;
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 .login-btn-modern:disabled {
   background: #b3b3b3;
@@ -389,14 +389,14 @@
   font-size: 0.93rem;
   text-align: center;
   color: #18181b;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 .auth-form-link-modern {
   color: #007948;
   text-decoration: none;
   font-weight: 500;
   margin-left: 4px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 .auth-form-link-modern:hover {
   text-decoration: underline;

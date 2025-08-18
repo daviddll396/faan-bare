@@ -15,7 +15,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   animation: slideInUp 0.6s ease-out 0.2s both;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;

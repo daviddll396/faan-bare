@@ -226,7 +226,7 @@ table {
   color: #070600;
   letter-spacing: 0.5px;
   border-bottom: 1px solid #e4e4e4;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
   white-space: nowrap;
 }
 
@@ -272,7 +272,7 @@ table {
   border-bottom: 1px solid #f1f5f9;
   font-size: 16px;
   color: #898989;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 .table-data-item-role {
   padding: 10px 20px;
@@ -300,13 +300,13 @@ table {
 .status-badge-table.active {
   color: #009a34;
   font-weight: 700;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 
 .status-badge-table.inactive {
   color: #d60000;
   font-weight: 700;
-  font-family: "Poppins", sans-serif;
+  font-family: "Archivo", sans-serif;
 }
 
 .action-btn-table {
@@ -503,7 +503,7 @@ table {
 
 /* Reference Code */
 .reference-code {
-  font-family: "Poppins", monospace;
+  font-family: "Archivo", monospace;
   font-size: 12px;
   background: #f1f5f9;
   padding: 4px 8px;
@@ -513,7 +513,7 @@ table {
 /* Bill/Payment ID */
 .bill-id,
 .payment-id {
-  font-family: "Poppins", monospace;
+  font-family: "Archivo", monospace;
   font-size: 12px;
 }
 
@@ -800,7 +800,7 @@ table {
 @media (max-width: 768px) {
   .page-content {
     gap: 15px;
-    padding-bottom:var(--page-bottom-padding-mobile);
+    padding-bottom: var(--page-bottom-padding-mobile);
   }
   /* .sidebar {
     width: 240px;

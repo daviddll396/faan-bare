@@ -258,7 +258,7 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--black);
-    font-family: "Poppins", sans-serif;
+    font-family: "Archivo", sans-serif;
   }
 
   /* Mobile User Subtitle */
@@ -266,6 +266,6 @@
     font-size: 12px;
     font-weight: 400;
     color: #898989;
-    font-family: "Poppins", sans-serif;
+    font-family: "Archivo", sans-serif;
   }
 }
