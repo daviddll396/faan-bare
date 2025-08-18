@@ -206,7 +206,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   setGuestUser: (formData: GuestFormData) => void;
-  fundWallet: (amount: number) => Promise<boolean>;
+  fundWallet: (amount: number, externalReference?: string) => Promise<boolean>;
   getAllTariffs: () => Promise<TariffsResponse | null>;
   makePayment: (
     reference: string,
@@ -304,12 +304,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (storedUser && storedToken) {
         try {
           const userData = JSON.parse(storedUser);
-          setUser(userData);
+
+          // Check if token is expired (mock tokens don't expire, but real ones would)
+          if (storedToken.startsWith("mock-")) {
+            // Mock tokens don't expire
+            setUser(userData);
+          } else {
+            // For real tokens, check if they're expired
+            // You can implement JWT expiration checking here if needed
+            // For now, we'll assume real tokens are valid if they exist
+            setUser(userData);
+          }
         } catch (error) {
           console.error("Error parsing stored user data:", error);
+          // Clear corrupted data
           localStorage.removeItem(STORAGE_KEYS.USER);
           localStorage.removeItem(STORAGE_KEYS.TOKEN);
+          // Don't redirect here - just clear the data and let user stay on current page
         }
+      } else {
+        // No stored credentials - this is normal for new users or logged out users
+        // Don't redirect, just ensure user state is null
+        setUser(null);
       }
       setIsLoading(false);
     };
@@ -346,6 +362,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
         return null;
       }
 
@@ -675,7 +697,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
   };
 
-  const fundWallet = async (amount: number): Promise<boolean> => {
+  const fundWallet = async (
+    amount: number,
+    externalReference?: string
+  ): Promise<boolean> => {
     try {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       if (!token) {
@@ -693,8 +718,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .slice(0, 10)
         .replace(/-/g, "")}-${Math.random().toString(36).substring(2, 8)}`;
 
-      const requestBody = {
-        reference: reference,
+      const requestBody: Record<string, unknown> = {
+        reference: externalReference ?? reference,
         amount: amount,
       };
 
@@ -725,6 +750,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return false;
+        }
+
         return false;
       }
 
@@ -825,6 +856,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               response.status,
               response.statusText
             );
+
+            // Check if token is expired and redirect if needed
+            if (checkTokenAndRedirect(response)) {
+              return null;
+            }
+
             const errorText = await response.text();
             console.error("❌ Error response body:", errorText);
             return null;
@@ -910,6 +947,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             response.status,
             response.statusText
           );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
           const errorText = await response.text();
           console.error("❌ Error response body:", errorText);
           return null;
@@ -996,6 +1039,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return { success: false, message: "Authentication expired" };
+        }
+
         const errorText = await response.text();
         console.error("❌ Error response body:", errorText);
         return {
@@ -1102,6 +1151,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
         const errorText = await response.text();
         console.error("❌ Error response body:", errorText);
         return null;
@@ -1193,6 +1248,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return false;
+        }
+
         const errorText = await response.text();
         console.error("❌ Error response body:", errorText);
         return false;
@@ -1280,6 +1341,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
         return null;
       }
       const responseText = await response.text();
@@ -1334,6 +1401,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
         return null;
       }
 
@@ -1405,6 +1478,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             response.status,
             response.statusText
           );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
           return null;
         }
 
@@ -1485,6 +1564,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           response.status,
           response.statusText
         );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
         return null;
       }
 
@@ -1543,6 +1628,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(guestUser));
     localStorage.setItem(STORAGE_KEYS.TOKEN, `guest-token-${Date.now()}`);
     console.log("Guest user created:", guestUser);
+  };
+
+  // Function to check if token is expired and redirect if needed
+  const checkTokenAndRedirect = (response: Response): boolean => {
+    if (response.status === HTTP_STATUS.UNAUTHORIZED && user) {
+      console.log("Token expired or invalid, redirecting to login");
+      logout();
+      // Only redirect if we're not already on the login page
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+      return true; // Token was expired/invalid
+    }
+    return false; // Token is still valid or no user to redirect
   };
 
   const value: AuthContextType = {

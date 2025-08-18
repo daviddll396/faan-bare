@@ -14,6 +14,35 @@ import { Eye, EyeOff } from "lucide-react";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import DataTable from "../../reusables/DataTable/DataTable";
 
+// ITEXPay inline types
+type ItexPayOptions = {
+  api_key: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  email: string;
+  amount: number;
+  redirecturl?: string;
+  currency: string;
+  reference: string;
+  onCompleted: (data: unknown) => void;
+  onError: (err: unknown) => void;
+  onClose?: () => void;
+};
+
+interface ItexPayInstance {
+  init: () => void;
+}
+
+interface ItexPayNS {
+  ItexPay: new (opts: ItexPayOptions) => ItexPayInstance;
+}
+
+type WindowWithItex = Window & {
+  ItexPayNS?: ItexPayNS;
+  ITEX_PUBLIC_API_KEY?: string;
+};
+
 interface DashboardPageProps {
   role?: string;
 }
@@ -70,6 +99,72 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     };
     message: string;
   } | null>(null);
+
+  // Payment initialization guards
+  const paymentInitializedRef = React.useRef(false);
+  const hasProcessedCompletionRef = React.useRef(false);
+  const [itexReady, setItexReady] = React.useState(false);
+
+  // Dynamically load ITEXPay script once
+  React.useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://checkout.itexpay.com/v1.0.0/itexpay-inline-staging-min.js";
+    script.async = true;
+    // Expose the VITE env key to window for the ITEX SDK to read if needed
+    try {
+      const envKey = (
+        import.meta as unknown as { env?: { VITE_ITEX_API_KEY?: string } }
+      )?.env?.VITE_ITEX_API_KEY;
+      if (envKey) {
+        (window as WindowWithItex).ITEX_PUBLIC_API_KEY = envKey;
+        console.log("Exported VITE_ITEX_API_KEY to window.ITEX_PUBLIC_API_KEY");
+      } else {
+        console.warn("VITE_ITEX_API_KEY not set in import.meta.env");
+      }
+    } catch (err) {
+      console.warn("Failed to export VITE_ITEX_API_KEY to window", err);
+    }
+    let mounted = true;
+    const onLoad = () => {
+      if (!mounted) return;
+      console.log("ITEXPay script loaded");
+      setItexReady(true);
+      // Log env key and window availability when script loads
+      try {
+        const envKey = (
+          import.meta as unknown as { env?: { VITE_ITEX_API_KEY?: string } }
+        )?.env?.VITE_ITEX_API_KEY;
+        console.log("VITE_ITEX_API_KEY (env) on script load:", envKey);
+        console.log(
+          "window.ItexPayNS present:",
+          !!(window as WindowWithItex).ItexPayNS
+        );
+      } catch (err) {
+        console.warn("Could not read import.meta.env at script load", err);
+      }
+    };
+    const onError = () => {
+      if (!mounted) return;
+      console.error("Failed to load ITEXPay script");
+      setItexReady(false);
+    };
+
+    script.addEventListener("load", onLoad);
+    script.addEventListener("error", onError);
+    document.body.appendChild(script);
+
+    return () => {
+      mounted = false;
+      script.removeEventListener("load", onLoad);
+      script.removeEventListener("error", onError);
+      try {
+        document.body.removeChild(script);
+      } catch {
+        // ignore
+      }
+    };
+  }, []);
 
   // Use wallet balance from user data, fallback to 0
   const walletBalance = user?.walletBalance || 0;
@@ -204,20 +299,137 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     setShowFundWallet(false);
 
     try {
-      const success = await fundWallet(amount);
+      // Prevent multiple payment windows
+      if (paymentInitializedRef.current) {
+        console.log("Payment already initialized, ignoring duplicate request");
+        return;
+      }
 
-      if (success) {
-        setShowFundLoading(false);
-        setShowFundSuccess(true);
-        // Reopen modal to show success state
-        setShowFundWallet(true);
-        showToast("Wallet funded successfully!", "success");
-        // Note: The wallet balance will be automatically updated by the AuthContext
+      // Log environment & readiness before attempting init
+      try {
+        const envKeyNow = (
+          import.meta as unknown as { env?: { VITE_ITEX_API_KEY?: string } }
+        )?.env?.VITE_ITEX_API_KEY;
+        console.log(
+          "Attempting ITEXPay init - itexReady:",
+          itexReady,
+          "envKey:",
+          envKeyNow
+        );
+        console.log(
+          "window.ItexPayNS present:",
+          !!(window as WindowWithItex).ItexPayNS
+        );
+      } catch (err) {
+        console.warn("Could not read import.meta.env", err);
+      }
+
+      // Use ITEXPay inline checkout if available
+      const win = window as WindowWithItex;
+      const itexAvailable = !!(win && win.ItexPayNS);
+      if (itexAvailable) {
+        paymentInitializedRef.current = true;
+        hasProcessedCompletionRef.current = false;
+        if (!itexReady) {
+          console.log(
+            "ITEXPay available but script not yet ready — waiting for load event."
+          );
+        }
+
+        const reference = `itex-${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2, 8)}`;
+        // NOTE: API key hardcoded for testing per request
+        const apiKey =
+          "ITXPUB_STAGING_N9OSLGOKR2WT6KNKMRPHI0TNDZF3FEMCFDUO2PFN-6011000252-04GPRVVTV0CPUVD";
+        console.log("Using ITEX API key: [REDACTED]");
+        if (!apiKey) {
+          console.error(
+            "ITEX API key is missing. Set VITE_ITEX_API_KEY and restart dev server."
+          );
+          setShowFundLoading(false);
+          paymentInitializedRef.current = false;
+          setShowFundWallet(true);
+          showToast("Payment unavailable: missing API key.", "error");
+          return;
+        }
+
+        const Pay = new win.ItexPayNS!.ItexPay({
+          api_key: apiKey,
+          first_name: user?.firstName || "",
+          last_name: user?.lastName || "",
+          phone_number: user?.phoneNumber || "",
+          email: user?.email || "",
+          amount: Math.round(amount),
+          redirecturl: window.location.origin + "/",
+          currency: "NGN",
+          reference,
+          onCompleted: async (data: unknown) => {
+            console.log("ITEXPay success data:", data);
+            if (hasProcessedCompletionRef.current) {
+              console.log(
+                "Payment completion already processed, ignoring duplicate trigger"
+              );
+              return;
+            }
+            hasProcessedCompletionRef.current = true;
+
+            // Call backend to record the successful fund
+            const result = await fundWallet(amount, reference);
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            if (result) {
+              setShowFundSuccess(true);
+              setShowFundWallet(true);
+              showToast("Wallet funded successfully!", "success");
+            } else {
+              setShowFundWallet(true);
+              showToast("Failed to record funding on server.", "error");
+            }
+          },
+          onError: (err: unknown) => {
+            console.error("ITEXPay error:", err);
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            setShowFundWallet(true);
+            showToast("Payment failed or was cancelled.", "error");
+          },
+          onClose: () => {
+            console.log("ITEXPay closed by user");
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            setShowFundWallet(true);
+          },
+        });
+
+        try {
+          Pay.init();
+        } catch (err) {
+          console.error("Failed to init ITEXPay:", err);
+          setShowFundLoading(false);
+          paymentInitializedRef.current = false;
+          setShowFundWallet(true);
+          showToast(
+            "Payment system unavailable. Please try again later.",
+            "error"
+          );
+        }
       } else {
-        setShowFundLoading(false);
-        // Reopen modal to show error state
-        setShowFundWallet(true);
-        showToast("Failed to fund wallet. Please try again.", "error");
+        // Fallback: call backend fundWallet directly (useful for testing without ITEX)
+        const success = await fundWallet(amount);
+
+        if (success) {
+          setShowFundLoading(false);
+          setShowFundSuccess(true);
+          // Reopen modal to show success state
+          setShowFundWallet(true);
+          showToast("Wallet funded successfully!", "success");
+        } else {
+          setShowFundLoading(false);
+          // Reopen modal to show error state
+          setShowFundWallet(true);
+          showToast("Failed to fund wallet. Please try again.", "error");
+        }
       }
     } catch (error) {
       console.error("Fund wallet error:", error);

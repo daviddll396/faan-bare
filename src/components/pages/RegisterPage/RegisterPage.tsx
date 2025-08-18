@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import Modal from "../../reusables/Modal/Modal";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/onboarding-image.svg";
-// import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 import { Eye, EyeOff } from "lucide-react";
 import "./RegisterPage.css";
 
@@ -30,36 +31,36 @@ import "./RegisterPage.css";
 // };
 
 // AES encryption function (CBC with PKCS5 padding)
-// const encryptAESCBC = (
-//   plaintext: string,
-//   secret: string,
-//   iv: string
-// ): string => {
-//   const key = CryptoJS.enc.Utf8.parse(secret);
-//   const ivBytes = CryptoJS.enc.Utf8.parse(iv);
-//   const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
-//     iv: ivBytes,
-//     padding: CryptoJS.pad.Pkcs7,
-//     mode: CryptoJS.mode.CBC,
-//   });
-//   return encrypted.toString(); // base64-encoded
-// };
+const encryptAESCBC = (
+  plaintext: string,
+  secret: string,
+  iv: string
+): string => {
+  const key = CryptoJS.enc.Utf8.parse(secret);
+  const ivBytes = CryptoJS.enc.Utf8.parse(iv);
+  const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
+    iv: ivBytes,
+    padding: CryptoJS.pad.Pkcs7,
+    mode: CryptoJS.mode.CBC,
+  });
+  return encrypted.toString(); // base64-encoded
+};
 
 // AES decryption function (CBC with PKCS5 padding)
-// const decryptAESCBC = (
-//   encryptedText: string,
-//   secret: string,
-//   iv: string
-// ): string => {
-//   const key = CryptoJS.enc.Utf8.parse(secret);
-//   const ivBytes = CryptoJS.enc.Utf8.parse(iv);
-//   const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
-//     iv: ivBytes,
-//     padding: CryptoJS.pad.Pkcs7,
-//     mode: CryptoJS.mode.CBC,
-//   });
-//   return decrypted.toString(CryptoJS.enc.Utf8);
-// };
+const decryptAESCBC = (
+  encryptedText: string,
+  secret: string,
+  iv: string
+): string => {
+  const key = CryptoJS.enc.Utf8.parse(secret);
+  const ivBytes = CryptoJS.enc.Utf8.parse(iv);
+  const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
+    iv: ivBytes,
+    padding: CryptoJS.pad.Pkcs7,
+    mode: CryptoJS.mode.CBC,
+  });
+  return decrypted.toString(CryptoJS.enc.Utf8);
+};
 
 const roleOptions = [
   { label: "Individual", value: "INDIVIDUAL" },
@@ -200,6 +201,10 @@ const initialFamilyForm = {
   dob: "",
 };
 
+// AES keys for encrypt/decrypt (shared with Indemnity page)
+const AES_SECRET_KEY = "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/"; // 32 bytes (AES-256)
+const AES_IV = "RVFU9+dRKhYkiCZI"; // 16 bytes
+
 const RegisterPage: React.FC = () => {
   const [form] = useState({
     firstName: "",
@@ -226,10 +231,6 @@ const RegisterPage: React.FC = () => {
     isVisible: false,
   });
   const navigate = useNavigate();
-
-  // Configuration for encryption
-  // const secretKey = "Dyny+oPMeF1VfkOjDjgxJOxjq8Mpo7A/"; // 32 bytes (AES-256)
-  // const ivKey = "RVFU9+dRKhYkiCZI"; // 16 bytes
 
   const [step, setStep] = useState<
     "role" | "form" | "credentials" | "documents" | "indemnity"
@@ -264,8 +265,21 @@ const RegisterPage: React.FC = () => {
   }>({});
 
   // Corporate document upload state
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  interface UploadedFile {
+    id: string;
+    file: File;
+    name: string;
+    size: number;
+    progress: number;
+    type: string;
+  }
+
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [fileError, setFileError] = useState<string>("");
+
+  // Indemnity form modal state
+  const [showIndemnityModal, setShowIndemnityModal] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Improved email regex (RFC 5322 Official Standard)
   const emailRegex =
@@ -362,14 +376,6 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  // const showToast = (message: string, type: "success" | "error") => {
-  //   setToast({
-  //     message,
-  //     type,
-  //     isVisible: true,
-  //   });
-  // };
-
   const handleIndividualChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -453,6 +459,16 @@ const RegisterPage: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
+  // Function to download FAAN form
+  const downloadFaanForm = () => {
+    const link = document.createElement("a");
+    link.href = "/FAAN_FORM"; // Path to the Word document
+    link.download = `FAAN_Form_${new Date().toISOString().split("T")[0]}.docx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errors = validateCredentials();
@@ -460,7 +476,7 @@ const RegisterPage: React.FC = () => {
     if (Object.keys(errors).length > 0) return;
 
     // Prepare customer data for indemnity form based on selected role
-    let customerData: any = {
+    let customerData: Record<string, unknown> = {
       email: "", // Will be set based on role
       password: password,
       customerType: selectedRole,
@@ -497,11 +513,98 @@ const RegisterPage: React.FC = () => {
       };
     }
 
-    // Store data in sessionStorage for indemnity form
-    sessionStorage.setItem("registrationData", JSON.stringify(customerData));
+    setIsSubmitting(true);
 
-    // Navigate to indemnity form
-    navigate("/indemnity-form", { state: { customerData } });
+    try {
+      // Encrypt and POST to register endpoint (same approach used on Indemnity page)
+      const payload = JSON.stringify(customerData);
+      const encryptedPayload = encryptAESCBC(payload, AES_SECRET_KEY, AES_IV);
+
+      const resp = await fetch("/auth/faan/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Client-Auth": "Basic dGVzdDp0ZXN0",
+          "X-Source": "web",
+        },
+        body: encryptedPayload,
+      });
+
+      // Read raw encrypted response text
+      const rawResponseText = await resp.text();
+
+      // Attempt to decrypt and parse
+      let decryptedResponse = "";
+      let responseData: Record<string, unknown> | null = null;
+      try {
+        decryptedResponse = decryptAESCBC(
+          String(rawResponseText),
+          AES_SECRET_KEY,
+          AES_IV
+        );
+        console.log(
+          "🔐 Decrypted registration response (raw string):",
+          decryptedResponse
+        );
+        responseData = JSON.parse(String(decryptedResponse));
+        console.log(
+          "🧾 Decrypted registration response (parsed):",
+          responseData
+        );
+      } catch (err) {
+        console.warn(
+          "Failed to decrypt/parse registration response, raw text:",
+          rawResponseText,
+          err
+        );
+      }
+
+      // If server returned non-OK HTTP, surface error (use decrypted message if available)
+      if (!resp.ok) {
+        const errMsg = String(
+          responseData?.message ?? rawResponseText ?? `HTTP ${resp.status}`
+        );
+        console.error("Registration failed:", resp.status, errMsg);
+        throw new Error(errMsg);
+      }
+
+      // Use decrypted response to decide success if available
+      const success =
+        responseData?.status === true ||
+        resp.status === 200 ||
+        resp.status === 201;
+      if (success) {
+        // On success, download FAAN form and notify user
+        downloadFaanForm();
+
+        setToast({
+          message: "Account created successfully! FAAN form downloaded.",
+          type: "success",
+          isVisible: true,
+        });
+
+        // Navigate to login after a short delay
+        setTimeout(() => {
+          setIsSubmitting(false);
+          navigate("/login");
+        }, 1200);
+      } else {
+        const errMsg = String(responseData?.message ?? "Registration failed");
+        throw new Error(errMsg);
+      }
+    } catch (error) {
+      console.error("Error creating account:", error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : String(error ?? "Failed to create account. Please try again.");
+      setToast({
+        message,
+        type: "error",
+        isVisible: true,
+      });
+      setIsSubmitting(false);
+    }
   };
 
   const handleCorporateChange = (
@@ -588,8 +691,8 @@ const RegisterPage: React.FC = () => {
   // File upload handlers for corporate documents
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileError("");
-    const files = Array.from(e.target.files || []);
-    const newFiles: any[] = [];
+    const files = Array.from(e.target.files || []) as File[];
+    const newFiles: UploadedFile[] = [];
     for (const file of files) {
       if (!/(pdf|jpeg|jpg)$/i.test(file.name.split(".").pop() || "")) {
         setFileError("Only PDF or JPEG files are allowed.");
@@ -614,8 +717,8 @@ const RegisterPage: React.FC = () => {
   const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setFileError("");
-    const files = Array.from(e.dataTransfer.files || []);
-    const newFiles: any[] = [];
+    const files = Array.from(e.dataTransfer.files || []) as File[];
+    const newFiles: UploadedFile[] = [];
     for (const file of files) {
       if (!/(pdf|jpeg|jpg)$/i.test(file.name.split(".").pop() || "")) {
         setFileError("Only PDF or JPEG files are allowed.");
@@ -1246,10 +1349,36 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="form-row-modern">
+              <div className="terms-checkbox-container">
+                <input
+                  type="checkbox"
+                  id="acceptTerms"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="terms-checkbox"
+                  style={{ background: "#fcfcfc" }}
+                />
+                <label htmlFor="acceptTerms" className="terms-label">
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => setShowIndemnityModal(true)}
+                  >
+                    terms and conditions
+                  </button>{" "}
+                  here and FAAN is indemnified against any claims or demands
+                </label>
+              </div>
+            </div>
+
             <GradientButton
               type="submit"
               fullWidth
-              disabled={!isCredentialsValid() || isSubmitting}
+              disabled={!isCredentialsValid() || isSubmitting || !acceptedTerms}
               loading={isSubmitting}
             >
               CREATE ACCOUNT
@@ -1812,10 +1941,38 @@ const RegisterPage: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="form-row-modern">
+              <div className="terms-checkbox-container">
+                <input
+                  type="checkbox"
+                  id="acceptTermsCorporate"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="terms-checkbox"
+                />
+                <label htmlFor="acceptTermsCorporate" className="terms-label">
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => setShowIndemnityModal(true)}
+                  >
+                    terms and conditions
+                  </button>
+                  (this will open a modal with the indemnity form containing
+                  your details)
+                </label>
+              </div>
+            </div>
+
             <GradientButton
               type="submit"
               fullWidth
-              disabled={uploadedFiles.length === 0 || isSubmitting}
+              disabled={
+                uploadedFiles.length === 0 || isSubmitting || !acceptedTerms
+              }
               loading={isSubmitting}
             >
               COMPLETE REGISTRATION
@@ -2273,10 +2430,36 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="form-row-modern">
+              <div className="terms-checkbox-container">
+                <input
+                  type="checkbox"
+                  id="acceptTermsGovernment"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="terms-checkbox"
+                />
+                <label htmlFor="acceptTermsGovernment" className="terms-label">
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => setShowIndemnityModal(true)}
+                  >
+                    terms and conditions
+                  </button>
+                  (this will open a modal with the indemnity form containing
+                  your details)
+                </label>
+              </div>
+            </div>
+
             <GradientButton
               type="submit"
               fullWidth
-              disabled={!isCredentialsValid() || isSubmitting}
+              disabled={!isCredentialsValid() || isSubmitting || !acceptedTerms}
               loading={isSubmitting}
             >
               CREATE ACCOUNT
@@ -2669,10 +2852,36 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="form-row-modern">
+              <div className="terms-checkbox-container">
+                <input
+                  type="checkbox"
+                  id="acceptTermsFamily"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="terms-checkbox"
+                />
+                <label htmlFor="acceptTermsFamily" className="terms-label">
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => setShowIndemnityModal(true)}
+                  >
+                    terms and conditions
+                  </button>
+                  (this will open a modal with the indemnity form containing
+                  your details)
+                </label>
+              </div>
+            </div>
+
             <GradientButton
               type="submit"
               fullWidth
-              disabled={!isCredentialsValid() || isSubmitting}
+              disabled={!isCredentialsValid() || isSubmitting || !acceptedTerms}
               loading={isSubmitting}
             >
               CREATE ACCOUNT
@@ -2698,6 +2907,90 @@ const RegisterPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Indemnity Form Modal */}
+      <Modal
+        isOpen={showIndemnityModal}
+        onClose={() => setShowIndemnityModal(false)}
+        showHeader={true}
+        headerTitle="Indemnity Form"
+        className="indemnity-form-modal"
+      >
+        <div className="indemnity-paper">
+          <div className="indemnity-letterhead">
+            <div className="indemnity-logo-wrap">
+              <img src={FaanLogo} alt="FAAN" className="indemnity-logo" />
+            </div>
+            <div className="indemnity-org">
+              <div className="org-name">
+                FEDERAL AIRPORTS AUTHORITY OF NIGERIA
+              </div>
+              <div className="form-code">FORM: AC-AWS001L</div>
+              <div className="org-address">
+                Corporate Headquarters Murtala Mohammed Int'l Airport, Domestic
+                Wing, Lagos, Nigeria
+              </div>
+            </div>
+          </div>
+          <div className="indemnity-title">INDEMNITY</div>
+          <div className="indemnity-body">
+            <p>
+              Pursuant to Part 4.2.1.7 Federal Airports Regulations 2xxx (Nig
+              CARs),
+            </p>
+            <p>
+              I/We{" "}
+              <span className="inline-blank">
+                {selectedRole === "INDIVIDUAL"
+                  ? `${individualForm.firstName} ${individualForm.lastName}`
+                  : selectedRole === "CORPORATE"
+                  ? corporateForm.businessName
+                  : selectedRole === "GOVERNMENT"
+                  ? governmentForm.officeName
+                  : selectedRole === "FAMILY"
+                  ? `${familyForm.firstName} ${familyForm.lastName}`
+                  : "User"}
+              </span>
+              <span>do hereby</span> unconditionally undertake to defend the
+              Federal Airports Authority of Nigeria (FAAN) or any of its
+              Directors or Officers against any suit or action howsoever arising
+              out of the registration or deregistration of the protocol
+              services.
+            </p>
+            <p>
+              I/We further covenant and agree to hold the FAAN, its Directors or
+              Officers harmless against any claim, demands and charges by
+              <span className="inline-blank">
+                {selectedRole === "INDIVIDUAL"
+                  ? `${individualForm.firstName} ${individualForm.lastName}`
+                  : selectedRole === "CORPORATE"
+                  ? corporateForm.businessName
+                  : selectedRole === "GOVERNMENT"
+                  ? governmentForm.officeName
+                  : selectedRole === "FAMILY"
+                  ? `${familyForm.firstName} ${familyForm.lastName}`
+                  : "User"}
+              </span>{" "}
+              or any third persons for damages arising out of the registration
+              or deregistration of services.
+            </p>
+            <p className="given-this">
+              Given this{" "}
+              <span className="inline-blank small">{new Date().getDate()}</span>{" "}
+              day of
+              <span className="inline-blank small">
+                {" "}
+                {new Date().toLocaleString("default", {
+                  month: "long",
+                })}{" "}
+              </span>
+              <span className="inline-blank small">
+                {new Date().getFullYear()}
+              </span>
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
