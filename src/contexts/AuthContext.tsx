@@ -727,6 +727,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         reference: externalReference ?? reference,
         amount: amount,
       };
+      if (providerResponse !== undefined) {
+        requestBody.providerResponse = providerResponse;
+      }
 
       console.log("Fund wallet request body:", requestBody);
       console.log("Generated reference:", reference);
