@@ -206,7 +206,11 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   setGuestUser: (formData: GuestFormData) => void;
-  fundWallet: (amount: number, externalReference?: string) => Promise<boolean>;
+  fundWallet: (
+    amount: number,
+    externalReference?: string,
+    providerResponse?: unknown
+  ) => Promise<boolean>;
   getAllTariffs: () => Promise<TariffsResponse | null>;
   makePayment: (
     reference: string,
@@ -699,7 +703,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fundWallet = async (
     amount: number,
-    externalReference?: string
+    externalReference?: string,
+    providerResponse?: unknown
   ): Promise<boolean> => {
     try {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
