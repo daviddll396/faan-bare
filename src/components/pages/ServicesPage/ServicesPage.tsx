@@ -953,8 +953,14 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             <h2 className="booking-form-title">
               {windowWidth <= 768
                 ? selectedService.name
-                : "Please input all required details to add a passenger."}
+                : "Passenger & Airport Details"}
             </h2>
+            {windowWidth > 768 && (
+              <p className="booking-form-helper">
+                Please input all required passenger and airport details to add a
+                passenger.
+              </p>
+            )}
             {/* Tabs */}
             <div className="booking-tabs-row">
               <div
@@ -1177,14 +1183,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   </div>
                 )}
-                <button
-                  className="booking-add-passenger-btn"
-                  type="button"
-                  onClick={handleAddPassenger}
-                  style={{ marginTop: 12, marginBottom: 0 }}
-                >
-                  + Add New Passenger
-                </button>
+                <div className="booking-add-passenger-row">
+                  <button
+                    className="booking-add-passenger-btn"
+                    type="button"
+                    onClick={handleAddPassenger}
+                    style={{ marginTop: 12, marginBottom: 0 }}
+                  >
+                    + Add New Passenger
+                  </button>
+                </div>
               </>
             )}
             {/* Airport Details Form */}
@@ -1397,14 +1405,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   </>
                 )}
-                <button
-                  className="booking-add-passenger-btn"
-                  type="button"
-                  onClick={handleAddPassenger}
-                  style={{ marginTop: 12, marginBottom: 0 }}
-                >
-                  + Add New Passenger
-                </button>
+                <div className="booking-add-passenger-row">
+                  <button
+                    className="booking-add-passenger-btn"
+                    type="button"
+                    onClick={handleAddPassenger}
+                    style={{ marginTop: 12, marginBottom: 0 }}
+                  >
+                    + Add New Passenger
+                  </button>
+                </div>
               </>
             )}
             {/* Only show passengers table and summary card inside form card on desktop */}

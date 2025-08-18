@@ -16,6 +16,15 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* ======================================== */
 /* ADMIN VIEW COMPONENTS */
 /* ======================================== */
@@ -57,7 +66,7 @@
   border: 1px solid #e4e4e4;
   padding: 30px 42px 30px 42px;
   width: 63%;
-  animation: slideInUp 0.4s ease-out;
+  animation: fadeIn 0.2s ease-out both;
 }
 
 .add-more-items-btn {
@@ -70,7 +79,7 @@
   font-family: "Archivo", sans-serif;
   border-radius: 12px;
   font-size: 16px;
-  animation: slideInUp 0.4s ease-out 0.6s both;
+  animation: fadeIn 0.2s ease-out 0.6s both;
   cursor: pointer;
 }
 
@@ -83,7 +92,7 @@
   align-items: flex-start;
   gap: 10px;
   margin-bottom: 45px;
-  animation: slideInUp 0.4s ease-out both;
+  animation: fadeIn 0.4s ease-out both;
   position: relative;
   z-index: 1;
   flex-wrap: wrap;
@@ -302,13 +311,13 @@
 }
 
 .services-page .content-card {
-  animation: slideInUp 0.6s ease-out 0.4s both;
+  animation: fadeIn 0.4s ease-out 0.4s both;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;
 }
 
 .services-page .add-service-form-card {
-  animation: slideInUp 0.6s ease-out;
+  animation: fadeIn 0.4s ease-out;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;
 }
@@ -320,7 +329,7 @@
 .services-customer-page {
   width: 100%;
   padding: 0 16px;
-  animation: slideInUp 0.6s ease-out;
+  animation: fadeIn 0.4s ease-out;
   /* Remove zoom scaling from page container */
 }
 
@@ -330,7 +339,7 @@
   gap: 12px;
   margin-bottom: 43px;
   margin-top: 43px;
-  animation: slideInUp 0.6s ease-out 0.2s both;
+  animation: fadeIn 0.4s ease-out 0.2s both;
 }
 
 .services-customer-header > .search-input {
@@ -363,7 +372,7 @@
   grid-auto-rows: 1fr; /* make grid rows equal height */
   gap: 28px;
   width: 100%;
-  animation: slideInUp 0.6s ease-out 0.4s both;
+  animation: fadeIn 0.4s ease-out 0.4s both;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;
 }
@@ -633,7 +642,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-bottom: 18px;
-  animation: slideInUp 0.4s ease-out 0.2s both;
+  animation: fadeIn 0.4s ease-out 0.2s both;
 }
 
 .booking-form-field-col {
@@ -726,9 +735,16 @@
   background: #eafaf3;
 }
 
+/* Row wrapper to right-align the add passenger button */
+.booking-add-passenger-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
 .booking-passengers-table-section {
   margin-top: 18px;
-  animation: slideInUp 0.4s ease-out 0.3s both;
+  animation: fadeIn 0.4s ease-out 0.3s both;
 }
 
 .booking-passengers-list {
@@ -922,27 +938,28 @@ select.booking-form-input {
 /* ======================================== */
 
 .booking-summary-card {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #dbdbdb;
-  padding: 30px;
-  margin-top: 32px;
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
+  border-radius: 14px;
+  border: none;
+  padding: 28px 26px;
+  margin-top: 28px;
   width: 100%;
-  max-width: 472px;
+  max-width: 100%;
   margin-left: 0;
-  margin-right: auto;
-  box-shadow: none;
+  margin-right: 0;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
   display: block;
-  animation: slideInUp 0.4s ease-out 0.4s both;
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
+  animation: fadeIn 0.4s ease-out 0.2s both;
+  zoom: 1;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
 }
 
 .booking-summary-title {
-  font-size: 22px;
-  font-weight: 500;
-  color: #070600;
-  margin-bottom: 30px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 18px;
   letter-spacing: 0.01em;
 }
 
@@ -950,20 +967,33 @@ select.booking-form-input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #070600;
-  margin-bottom: 16px;
-  padding: 0 10px;
+  color: #374151;
+  margin-bottom: 14px;
+  padding: 6px 8px;
 }
 
 .booking-summary-row.total {
-  font-weight: 700;
-  background: #f6f8f9;
-  padding: 12px 10px;
-  border-radius: 6px;
-  font-size: 17px;
-  margin-bottom: 24px;
+  font-weight: 800;
+  background: #ecfdf5; /* light green */
+  padding: 14px 12px;
+  border-radius: 10px;
+  font-size: 18px;
+  margin-bottom: 22px;
+  color: #047857;
+}
+
+.booking-summary-row span:last-child {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 18px;
+}
+
+.booking-summary-note {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
 }
 
 .booking-pay-btn {
@@ -1002,11 +1032,18 @@ select.booking-form-input {
 }
 
 .booking-form-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 500;
   color: var(--black);
   margin-bottom: 18px;
   letter-spacing: 0.01em;
+}
+
+.booking-form-helper {
+  margin-top: -12px;
+  margin-bottom: 20px;
+  color: #6b7280;
+  font-size: 18px;
 }
 /* ======================================== */
 /* CUSTOMER MODAL COMPONENTS */
@@ -1645,7 +1682,7 @@ select.booking-form-input {
     width: 100%;
   }
   .booking-summary-title {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     color: #070600;
     margin-bottom: 10px;
@@ -1656,7 +1693,7 @@ select.booking-form-input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 400;
     color: #898989;
     margin-bottom: 6px;
@@ -1665,19 +1702,19 @@ select.booking-form-input {
   .booking-summary-row span:last-child {
     font-weight: 600;
     color: #070600;
-    font-size: 16px;
+    font-size: 17px;
   }
   .booking-summary-row.total {
     font-weight: 600;
     background: none;
     padding: 0;
     border-radius: 0;
-    font-size: 15px;
+    font-size: 17px;
     margin-bottom: 0;
     color: #070600;
   }
   .booking-summary-row.total span:last-child {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: #070600;
   }
@@ -1836,7 +1873,7 @@ select.booking-form-input {
     margin: 8px 0 0 0;
   }
   .booking-form-title {
-    font-size: 15px;
+    font-size: 16px;
     margin-bottom: 10px;
     font-weight: 600;
   }
@@ -1892,7 +1929,7 @@ select.booking-form-input {
     flex-direction: column;
   }
   .booking-passengers-table-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     margin-bottom: 15px;
     margin-top: 30px;
