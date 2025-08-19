@@ -466,9 +466,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     );
   };
 
-  const addMoreService = () => {
-    setServices([...services, { ...initialService }]);
-  };
+  // removed unused addMoreService helper (UI currently doesn't expose adding more rows)
 
   const handleBookingFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

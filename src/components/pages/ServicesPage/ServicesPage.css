@@ -66,8 +66,8 @@
   border: none; /* borderless card */
   box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
   padding: 24px 28px;
- 
-width:1000px;
+
+  width: 1000px;
   animation: fadeIn 0.2s ease-out both;
 }
 

@@ -56,11 +56,7 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
     cancelled: number;
   };
 
-  // prevStats may be populated if backend returns previous month stats
-  // kept for potential future use
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const [prevStats, setPrevStats] = React.useState<Counts | null>(null);
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  // previous-month stats are computed on demand; we don't store a separate prevStats state here
 
   // Current and previous month computed counts (preferred source for comparisons)
   const [monthCounts, setMonthCounts] = React.useState<{
@@ -78,7 +74,7 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
       try {
         const provided = adminStats?.data?.previousTransactionStats;
         if (provided) {
-          if (mounted) setPrevStats(provided);
+          // backend provided previous month stats; no local prev state needed
           return;
         }
 
@@ -90,6 +86,8 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
         const txns = await getTransactionHistory(format(start), format(end));
         if (!mounted) return;
         if (Array.isArray(txns)) {
+          // computed values available via monthCounts later; no separate prevStats state maintained here
+          // kept the computation for clarity but do not store it separately
           const total = txns.length;
           const completed = txns.filter(
             (x: Txn) => (x.status || "").toUpperCase() === "COMPLETED"
@@ -100,7 +98,10 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
           const cancelled = txns.filter(
             (x: Txn) => (x.status || "").toUpperCase() === "CANCELLED"
           ).length;
-          setPrevStats({ total, completed, pending, cancelled });
+          void total; // intentionally ignore values; kept for readability
+          void completed;
+          void pending;
+          void cancelled;
         }
       } catch (err) {
         console.warn("MetricsCards: failed to fetch previous month stats", err);
