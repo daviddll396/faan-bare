@@ -26,7 +26,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
+  // Keep the outside-click effect (harmless when using native select)
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -49,44 +49,30 @@ const SearchInput: React.FC<SearchInputProps> = ({
   if (options) {
     return (
       <div
-        className={`search-input-wrapper search-input-dropdown-wrapper${
-          open ? " open" : ""
-        }`}
+        className={`search-input-wrapper search-input-dropdown-wrapper`}
         ref={wrapperRef}
-        tabIndex={0}
-        onClick={() => setOpen((prev) => !prev)}
       >
         <img src={SearchIcon} alt="search" className="search-input-icon" />
-        <div className="search-dropdown-value">
-          {value ? (
-            value
-          ) : (
-            <span className="search-dropdown-placeholder">{placeholder}</span>
-          )}
-        </div>
-        <img
-          src={ChevronDown}
-          alt="dropdown"
-          className={`search-input-chevron${open ? " rotated" : ""}`}
-        />
-        {open && (
-          <div className="search-dropdown-list">
-            {options.map((opt) => (
-              <div
-                key={opt}
-                className={`search-dropdown-option${
-                  opt === value ? " selected" : ""
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (onChange) onChange({ target: { value: opt } });
-                  setOpen(false);
-                }}
-              >
-                {opt}
-              </div>
-            ))}
-          </div>
+        <select
+          className="search-input-select"
+          value={value ?? ""}
+          onChange={(e) => {
+            if (onChange) onChange(e as unknown as any);
+          }}
+        >
+          <option value="">{placeholder}</option>
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+        {withDropdown && (
+          <img
+            src={ChevronDown}
+            alt="dropdown"
+            className="search-input-chevron"
+          />
         )}
       </div>
     );

@@ -60,6 +60,15 @@ interface Transaction {
   customerId?: string;
 }
 
+// Extended transaction shape for funding records that may include balances/references
+interface FundingTransaction extends Transaction {
+  reference?: string;
+  paymentMethod?: string;
+  method?: string;
+  balanceBefore?: number;
+  balanceAfter?: number;
+}
+
 const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   const {
     user,
@@ -69,7 +78,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     getAdminDashboardStats,
   } = useAuth();
   const [showFundWallet, setShowFundWallet] = React.useState(false);
-  const [fundAmount, setFundAmount] = React.useState("");
+  const [fundAmountDisplay, setFundAmountDisplay] = React.useState("");
+  const [fundAmountNum, setFundAmountNum] = React.useState<number | null>(null);
   const [showFundLoading, setShowFundLoading] = React.useState(false);
   const [showFundSuccess, setShowFundSuccess] = React.useState(false);
   const [showBalance, setShowBalance] = React.useState(true);
@@ -84,6 +94,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   });
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const FUNDING_STORAGE_KEY = "faan_funding_records";
+  const [fundingRecords, setFundingRecords] = useState<FundingTransaction[]>(
+    []
+  );
   const [adminStats, setAdminStats] = useState<{
     status: boolean;
     statusCode: number;
@@ -206,6 +220,19 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     fetchTransactions();
   }, [getTransactionHistory, getAdminTransactionHistory, user?.role]);
 
+  // Load persisted funding records into state on mount
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as FundingTransaction[];
+        setFundingRecords(parsed || []);
+      }
+    } catch (err) {
+      console.warn("Failed to read persisted funding records:", err);
+    }
+  }, []);
+
   // Fetch admin dashboard stats for admin users
   React.useEffect(() => {
     const fetchAdminStats = async () => {
@@ -276,10 +303,23 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     });
   };
 
+  // Format numeric input with commas for display (e.g. 300000 -> "300,000")
+  const formatNumberInput = (raw: string) => {
+    const digits = String(raw).replace(/\D/g, "");
+    if (!digits) return "";
+    return Number(digits).toLocaleString("en-US");
+  };
+
+  const parseAmount = (formatted: string) => {
+    const n = Number(String(formatted).replace(/,/g, ""));
+    return Number.isFinite(n) ? n : 0;
+  };
+
   const handleOpenFundWallet = () => setShowFundWallet(true);
   const handleCloseFundWallet = () => {
     setShowFundWallet(false);
-    setFundAmount("");
+    setFundAmountDisplay("");
+    setFundAmountNum(null);
     setShowFundLoading(false);
     setShowFundSuccess(false);
   };
@@ -288,8 +328,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     e.preventDefault();
 
     // Validate minimum amount
-    const amount = parseFloat(fundAmount);
-    if (amount < 200000) {
+    const amount = fundAmountNum ?? parseAmount(fundAmountDisplay);
+    if (!amount || amount < 200000) {
       showToast("Minimum fundable amount is ₦200,000", "error");
       return;
     }
@@ -383,6 +423,35 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               setShowFundSuccess(true);
               setShowFundWallet(true);
               showToast("Wallet funded successfully!", "success");
+              // Persist funding record locally so it shows up in Recent Funding Records
+              try {
+                const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+                const existing: FundingTransaction[] = stored
+                  ? JSON.parse(stored)
+                  : [];
+                const now = new Date().toISOString();
+                const record: FundingTransaction = {
+                  id: Date.now(),
+                  reference,
+                  paymentMethod: "ITEXPay",
+                  method: "ITEXPay",
+                  amount: Math.round(amount),
+                  balanceBefore: localWalletBalance,
+                  balanceAfter: localWalletBalance + Math.round(amount),
+                  createdAt: now,
+                };
+                const updated = [record, ...existing].slice(0, 50); // keep recent 50
+                localStorage.setItem(
+                  FUNDING_STORAGE_KEY,
+                  JSON.stringify(updated)
+                );
+                // update fundingRecords state so Recent Funding Records table updates
+                setFundingRecords((prev) => [record, ...prev].slice(0, 50));
+                // also update local wallet balance optimistically
+                setLocalWalletBalance((b) => b + Math.round(amount));
+              } catch (err) {
+                console.warn("Failed to persist funding record locally", err);
+              }
             } else {
               setShowFundWallet(true);
               showToast("Failed to record funding on server.", "error");
@@ -425,6 +494,31 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           // Reopen modal to show success state
           setShowFundWallet(true);
           showToast("Wallet funded successfully!", "success");
+          // Persist funding record locally for fallback path as well
+          try {
+            const referenceFallback = `fund-${Date.now()}-fallback`;
+            const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+            const existing: FundingTransaction[] = stored
+              ? JSON.parse(stored)
+              : [];
+            const now = new Date().toISOString();
+            const record: FundingTransaction = {
+              id: Date.now(),
+              reference: referenceFallback,
+              paymentMethod: "BACKEND",
+              method: "BACKEND",
+              amount: Math.round(amount),
+              balanceBefore: localWalletBalance,
+              balanceAfter: localWalletBalance + Math.round(amount),
+              createdAt: now,
+            };
+            const updated = [record, ...existing].slice(0, 50);
+            localStorage.setItem(FUNDING_STORAGE_KEY, JSON.stringify(updated));
+            setTransactions((prev) => [record as Transaction, ...prev]);
+            setLocalWalletBalance((b) => b + Math.round(amount));
+          } catch (err) {
+            console.warn("Failed to persist fallback funding record:", err);
+          }
         } else {
           setShowFundLoading(false);
           // Reopen modal to show error state
@@ -500,6 +594,71 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               transactions={transactions}
             />
           </div>
+          {/* Funding records section - shows recent wallet funding attempts */}
+          <div className="funding-records-section">
+            <DataTable
+              header={
+                <div className="data-table-header">Recent Funding Records</div>
+              }
+              headers={
+                user?.role === "Admin"
+                  ? [
+                      "Reference",
+                      "Customer ID",
+                      "Method",
+                      "Amount",
+                      "Balance Before",
+                      "Balance After",
+                      "Date",
+                    ]
+                  : [
+                      "Reference",
+                      "Method",
+                      "Amount",
+                      "Balance Before",
+                      "Balance After",
+                      "Date",
+                    ]
+              }
+              data={fundingRecords.map((tx) =>
+                user?.role === "Admin"
+                  ? [
+                      tx.reference || `TX-${tx.id}`,
+                      tx.customerId || "-",
+                      tx.paymentMethod || tx.method || "ITEX/OTHER",
+                      tx.amount
+                        ? `₦${tx.amount.toLocaleString()}`
+                        : tx.price || "-",
+                      typeof tx.balanceBefore === "number"
+                        ? `₦${tx.balanceBefore.toLocaleString()}`
+                        : "-",
+                      typeof tx.balanceAfter === "number"
+                        ? `₦${tx.balanceAfter.toLocaleString()}`
+                        : "-",
+                      tx.createdAt
+                        ? new Date(tx.createdAt).toLocaleString()
+                        : "-",
+                    ]
+                  : [
+                      tx.reference || `TX-${tx.id}`,
+                      tx.paymentMethod || tx.method || "ITEX/OTHER",
+                      tx.amount
+                        ? `₦${tx.amount.toLocaleString()}`
+                        : tx.price || "-",
+                      typeof tx.balanceBefore === "number"
+                        ? `₦${tx.balanceBefore.toLocaleString()}`
+                        : "-",
+                      typeof tx.balanceAfter === "number"
+                        ? `₦${tx.balanceAfter.toLocaleString()}`
+                        : "-",
+                      tx.createdAt
+                        ? new Date(tx.createdAt).toLocaleString()
+                        : "-",
+                    ]
+              )}
+              className="funding-records-table"
+            />
+          </div>
         </>
       ) : (
         <div className="all-transactions-page">
@@ -509,9 +668,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               onClick={() => setShowAllTransactions(false)}
               className="back-to-dashboard-btn"
             />
-            <h2 className="all-transactions-title">All Transactions</h2>
           </div>
           <DataTable
+            header="All Transactions"
             headers={
               user?.role === "Admin"
                 ? ["ID", "Customer ID", "Service", "Amount", "Status", "Date"]
@@ -590,10 +749,13 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               <div className="fund-wallet-input-wrapper">
                 <span className="fund-wallet-currency">₦</span>
                 <input
-                  type="number"
-                  min="200000"
-                  value={fundAmount}
-                  onChange={(e) => setFundAmount(e.target.value)}
+                  type="text"
+                  value={fundAmountDisplay}
+                  onChange={(e) => {
+                    const digits = String(e.target.value).replace(/\D/g, "");
+                    setFundAmountNum(digits ? Number(digits) : null);
+                    setFundAmountDisplay(formatNumberInput(e.target.value));
+                  }}
                   placeholder="200,000"
                   className="fund-wallet-input"
                   required
@@ -602,7 +764,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               <GradientButton
                 type="submit"
                 fullWidth
-                disabled={!fundAmount || parseFloat(fundAmount) < 200000}
+                disabled={!fundAmountNum || (fundAmountNum ?? 0) < 200000}
                 className="fund-wallet-submit-btn"
               >
                 FUND WALLET

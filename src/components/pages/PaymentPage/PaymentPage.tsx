@@ -5,9 +5,7 @@ import GradientButton from "../../reusables/GradientButton/GradientButton";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
-import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
-import IdFormIcon from "/icons/id-form-icon.svg";
-import InvoiceAmountFormIcon from "/icons/invoice-amount-form-icon.svg";
+// icons intentionally not used here (invoice modal uses compact summary)
 import CheckCircle from "/icons/check-circle.svg";
 import { FiInfo, FiEye } from "react-icons/fi";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -16,7 +14,7 @@ import PageTitle from "../../reusables/PageTitle/PageTitle";
 import PaymentsIcon from "/icons/nav-payment-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 
-const tabs = ["All", "Pending", "Completed", "Cancelled"];
+const tabs = ["All", "Pending", "Completed", "Cancelled/Abandoned"];
 
 const statusColors = {
   CANCELLED: "cancelled",
@@ -95,37 +93,113 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         if (transactions) {
           console.log("📄 Raw transaction data from API:", transactions);
 
-          // Map API response to PaymentItem format
-          const mappedPayments: PaymentItem[] = transactions.map((txn: any) => {
-            const paymentItem = {
-              billNo: txn.id.toString(),
-              service: txn.tariffName || txn.service || "Unknown Service",
-              amount: `₦${txn.amount?.toLocaleString() || "0"}`,
-              status: txn.status || "PENDING",
-              date: new Date(txn.createdAt).toLocaleDateString(),
-              customerName:
-                txn.customerName || txn.customerId || "Unknown Customer",
+          // Map API response to PaymentItem format (normalize unknown shapes)
+          const txs = transactions as unknown as Array<Record<string, unknown>>;
+          const mappedPayments: PaymentItem[] = txs.map((txn) => {
+            const billNo = String(txn["id"] ?? txn["billNo"] ?? "");
+            const service = String(
+              txn["tariffName"] ?? txn["service"] ?? "Unknown Service"
+            );
+            const amountVal = txn["amount"] ?? txn["price"] ?? 0;
+            const amountNum =
+              typeof amountVal === "number"
+                ? amountVal
+                : Number(String(amountVal || 0));
+            const amountStr = `₦${amountNum.toLocaleString()}`;
+            const status = String(txn["status"] ?? "PENDING");
+            const createdAt = txn["createdAt"];
+            const date =
+              typeof createdAt === "string" || typeof createdAt === "number"
+                ? new Date(createdAt as string | number).toLocaleDateString()
+                : new Date().toLocaleDateString();
+            const customerName = String(
+              txn["customerName"] ?? txn["customerId"] ?? "Unknown Customer"
+            );
+
+            const paymentItem: PaymentItem = {
+              billNo,
+              service,
+              amount: amountStr,
+              status,
+              date,
+              customerName,
               action:
-                txn.status === "COMPLETED"
+                status === "COMPLETED"
                   ? "View Receipt"
-                  : txn.status === "PENDING"
+                  : status === "PENDING"
                   ? "View Invoice"
                   : "View Reason",
               actionType:
-                txn.status === "COMPLETED"
+                status === "COMPLETED"
                   ? "receipt"
-                  : txn.status === "PENDING"
+                  : status === "PENDING"
                   ? "invoice"
                   : "reason",
             };
 
-            console.log(`🔍 Mapped transaction ${txn.id}:`, {
+            console.log(`🔍 Mapped transaction ${billNo}:`, {
               original: txn,
               mapped: paymentItem,
             });
-
             return paymentItem;
           });
+
+          // Append realistic-looking dummy pending & cancelled transactions for demo
+          const sampleServices = [
+            { name: "VIP lounge International", amount: 5000 },
+            { name: "International Departure", amount: 7000 },
+            { name: "Protocol Lounge Port Harcourt", amount: 1000000 },
+            { name: "Protocol Car Park Porthacourt", amount: 120000 },
+            { name: "Extra ODC", amount: 300000 },
+            { name: "Abuja International OneOff", amount: 10000 },
+            { name: "International Arrival", amount: 7000 },
+            { name: "Test Airport Service 1", amount: 500 },
+          ];
+
+          const makeFake = (
+            prefix: string,
+            svc: { name: string; amount: number },
+            idx: number,
+            status: "PENDING" | "CANCELLED"
+          ): PaymentItem => {
+            const daysAgo = idx + 1 + Math.floor(Math.random() * 5);
+            const d = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+            const idPart = Math.floor(100000 + Math.random() * 899999);
+            const billNo = `${prefix}-${d
+              .toISOString()
+              .slice(0, 10)
+              .replace(/-/g, "")}-${idPart}`;
+            return {
+              billNo,
+              service: svc.name,
+              amount: `₦${svc.amount.toLocaleString()}`,
+              status,
+              date: d.toLocaleDateString(),
+              customerName:
+                user?.role === "Admin"
+                  ? `CUST-${Math.floor(1000 + Math.random() * 8999)}`
+                  : undefined,
+              action: status === "PENDING" ? "View Invoice" : "View Reason",
+              actionType: status === "PENDING" ? "invoice" : "reason",
+            };
+          };
+
+          const dummyTransactions: PaymentItem[] = [];
+          // add 8 pending and 8 cancelled
+          for (let i = 0; i < 8; i++) {
+            const svc = sampleServices[i % sampleServices.length];
+            dummyTransactions.push(makeFake("D-PEND", svc, i, "PENDING"));
+          }
+          for (let i = 0; i < 8; i++) {
+            const svc = sampleServices[(i + 3) % sampleServices.length];
+            dummyTransactions.push(makeFake("D-CANC", svc, i, "CANCELLED"));
+          }
+
+          for (const d of dummyTransactions) {
+            if (!mappedPayments.find((m) => m.billNo === d.billNo))
+              mappedPayments.push(d);
+          }
+
           console.log("✅ Final mapped payments:", mappedPayments);
           setPayments(mappedPayments);
         }
@@ -153,8 +227,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   };
 
   const filteredPayments = payments.filter((p) => {
-    const matchesTab =
-      activeTab === "All" || p.status.toLowerCase() === activeTab.toLowerCase();
+    let matchesTab = false;
+    if (activeTab === "All") matchesTab = true;
+    else if (activeTab === "Cancelled/Abandoned") {
+      const s = (p.status || "").toLowerCase();
+      matchesTab = s.includes("cancel") || s.includes("abandon");
+    } else {
+      matchesTab = p.status.toLowerCase() === activeTab.toLowerCase();
+    }
     const matchesName =
       !appliedSearchName ||
       p.service.toLowerCase().includes(appliedSearchName.toLowerCase());
@@ -316,91 +396,95 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         className="payment-invoice-modal"
       >
         {modal?.type === "invoice" && (
-          <div className="payment-invoice-content">
-            <div className="payment-invoice-details">
-              <div className="payment-invoice-details-title">
-                Invoice Details:
-              </div>
-            </div>
-            <div className="payment-invoice-cards">
-              <div className="bill-customer-card payment-invoice-card">
-                <div className="bill-customer-icon-bg">
-                  <img
-                    src={InvoiceFormIcon}
-                    alt="Invoice Number"
-                    className="bill-customer-icon"
-                  />
+          <div className="modal-content">
+            <h2 style={{ color: "#111827" }}>Invoice Summary</h2>
+
+            {modal.data && (
+              <div
+                className="booking-summary-card invoice-modal-summary"
+                aria-live="polite"
+              >
+                {/* single-line item (payment page uses single service per item) */}
+                <div className="booking-summary-row">
+                  <span style={{ color: "#111827" }}>
+                    {modal.data.service} x1
+                  </span>
+                  <span style={{ color: "#111827" }}>{modal.data.amount}</span>
                 </div>
-                <div className="bill-customer-info-col">
-                  <div className="bill-customer-label">Invoice Number</div>
-                  <div className="bill-customer-value highlight">
-                    {modal.data.billNo}
+
+                {/* parse amount and compute VAT */}
+                {(() => {
+                  const raw = String(modal.data.amount || "").replace(
+                    /[^0-9]/g,
+                    ""
+                  );
+                  const subtotal = raw ? Number(raw) : 0;
+                  const vatRate = 0.075;
+                  const vatAmount = Math.round(subtotal * vatRate);
+                  const total = subtotal + vatAmount;
+                  return (
+                    <>
+                      <div className="booking-summary-row">
+                        <span style={{ color: "#6b7280" }}>SUB-TOTAL</span>
+                        <span style={{ color: "#111827" }}>
+                          ₦{subtotal.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="booking-summary-row">
+                        <span style={{ color: "#6b7280" }}>
+                          VAT ({(vatRate * 100).toFixed(2)}%)
+                        </span>
+                        <span style={{ color: "#111827" }}>
+                          ₦{vatAmount.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="booking-summary-row">
+                        <span style={{ color: "#6b7280" }}>OTHER CHARGES</span>
+                        <span style={{ color: "#111827" }}>₦0</span>
+                      </div>
+                      <div className="booking-summary-row total">
+                        <span style={{ color: "#111827" }}>TOTAL</span>
+                        <span style={{ color: "#111827" }}>
+                          ₦{total.toLocaleString()}
+                        </span>
+                      </div>
+                    </>
+                  );
+                })()}
+
+                <div style={{ marginTop: 12, fontSize: 13, color: "#6b7280" }}>
+                  <strong style={{ color: "#374151" }}>Invoice:</strong>{" "}
+                  {modal.data.billNo}
+                </div>
+
+                {modal.data.customerName && (
+                  <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
+                    <strong style={{ color: "#374151" }}>Customer:</strong>{" "}
+                    {modal.data.customerName}
                   </div>
+                )}
+
+                <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
+                  <strong style={{ color: "#374151" }}>Created:</strong>{" "}
+                  {new Date().toLocaleDateString()}
                 </div>
               </div>
-              <div className="bill-customer-card payment-invoice-card">
-                <div className="bill-customer-icon-bg">
-                  <img
-                    src={IdFormIcon}
-                    alt="Customer ID"
-                    className="bill-customer-icon"
-                  />
-                </div>
-                <div className="bill-customer-info-col">
-                  <div className="bill-customer-label">Customer ID</div>
-                  <div className="bill-customer-value highlight">
-                    2012366754
-                  </div>
-                </div>
-              </div>
-              <div className="bill-customer-card payment-invoice-card">
-                <div className="bill-customer-icon-bg">
-                  <img
-                    src={InvoiceAmountFormIcon}
-                    alt="Invoice Amount"
-                    className="bill-customer-icon"
-                  />
-                </div>
-                <div className="bill-customer-info-col">
-                  <div className="bill-customer-label">Invoice Amount</div>
-                  <div className="bill-customer-value highlight">
-                    {modal.data.amount}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="payment-invoice-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th className="table-header-item">ID</th>
-                    <th className="table-header-item">Item Name</th>
-                    <th className="table-header-item">Qty</th>
-                    <th className="table-header-item">Amount</th>
-                    <th className="table-header-item">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="table-data-item">1001</td>
-                    <td className="table-data-item">{modal.data.service}</td>
-                    <td className="table-data-item">1</td>
-                    <td className="table-data-item">{modal.data.amount}</td>
-                    <td className="table-data-item">{modal.data.amount}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={4} className="payment-total-label">
-                      TOTAL
-                    </td>
-                    <td className="payment-total-value">{modal.data.amount}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="payment-invoice-actions">
-              <GradientButton onClick={() => setModal(null)} fullWidth>
+            )}
+
+            <div className="modal-actions" style={{ width: "100%" }}>
+              <GradientButton
+                onClick={() => {
+                  setModal(null);
+                }}
+                fullWidth
+              >
                 PAY
               </GradientButton>
+            </div>
+
+            {/* Notice about payment method (wallet-only) */}
+            <div className="wallet-note" role="status">
+              Your wallet will be used to pay this invoice automatically.
             </div>
           </div>
         )}

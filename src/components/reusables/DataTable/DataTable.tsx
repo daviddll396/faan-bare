@@ -7,6 +7,7 @@ interface DataTableProps {
   data: React.ReactNode[][];
   className?: string;
   itemsPerPage?: number;
+  header?: React.ReactNode; // optional header (e.g., title or custom node)
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -14,6 +15,7 @@ const DataTable: React.FC<DataTableProps> = ({
   data,
   className = "",
   itemsPerPage = 8,
+  header,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -72,6 +74,7 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <>
       <div className={`data-table-card ${className}`}>
+        {header && <div className="data-table-header">{header}</div>}
         {data.length === 0 ? (
           <div className="data-table-no-data">
             <div className="no-data-icon">

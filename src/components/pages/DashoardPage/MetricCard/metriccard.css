@@ -129,11 +129,103 @@
 }
 
 .metric-card {
-  background: white;
-  padding: 26px 35px;
-  border-radius: 12px;
+  background: #fff;
+  padding: 20px 22px;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-  border: 1px solid #e4e4e4;
+.metric-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.metric-card-title {
+  font-size: 18px;
+  color: #222b45;
+  font-weight: 600;
+}
+
+.metric-card-action {
+  background: none;
+  border: 1px solid #e6edf0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.metric-card-value {
+  font-size: 48px;
+  font-weight: 800;
+  color: #131314;
+  margin-bottom: 12px;
+}
+
+.metric-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.metric-card-icon img {
+  width: 28px;
+  height: 28px;
+}
+
+.metric-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #16a34a;
+}
+
+.metric-trend-badge {
+  background: #ecfdf5;
+  border-radius: 6px;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Trend badge color variants */
+.metric-trend-badge.positive {
+  background: #ecfdf5; /* light green */
+  color: #16a34a;
+}
+.metric-trend-badge.neutral {
+  background: #f3f4f6; /* light grey */
+  color: #6b7280;
+}
+.metric-trend-badge.negative {
+  background: #fff5f5; /* light red */
+  color: #b91c1c;
+}
+
+.metric-trend-text {
+  font-size: 15px;
+  font-weight: 600;
+}
+.metric-trend-text.positive {
+  color: #16a34a;
+}
+.metric-trend-text.negative {
+  color: #b91c1c;
+}
+.metric-trend-text.neutral {
+  color: #6b7280;
 }
 
 .metric-header {

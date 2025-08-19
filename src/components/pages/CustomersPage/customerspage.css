@@ -149,11 +149,11 @@
 
 .customer-card {
   background: #fff;
-  border-radius: 10px;
-
-  padding: 30px 47px 41px 47px;
-  max-width: 910px;
-  border: 1px solid #e4e4e4;
+  border-radius: 14px;
+  border: none; /* borderless card */
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
+  padding: 24px 32px;
+  max-width: 920px;
 }
 
 /* Zoom scaling for customer card */
@@ -305,35 +305,38 @@
 }
 
 .customer-form-group input {
-  border: 1.5px solid #d9d9d9;
-  border-radius: 10px;
-  padding: 16px 18px;
+  border: 1.5px solid #eef2f7;
+  border-radius: 12px;
+  padding: 21px 18px; /* taller fields */
   font-size: 16px;
   font-family: inherit;
   background: #fff;
   color: #222b45;
   outline: none;
-  transition: border 0.2s;
+  transition: border 0.15s ease, box-shadow 0.15s ease;
   font-weight: 500;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.02);
 }
 
 .customer-form-group input:focus {
-  border: 1.5px solid #007948;
+  border: 1.5px solid #10b981;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
 }
 
 .customer-fetch-btn {
   width: 100%;
-  background: linear-gradient(180deg, #007948 0%, #007948 100%);
+  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
   color: #fff;
   font-size: 17px;
   font-weight: 700;
   border: none;
-  border-radius: 10px;
-  padding: 16px 0;
+  border-radius: 12px;
+  padding: 18px 0;
   cursor: pointer;
-  margin-top: 32px;
-  transition: background 0.2s;
+  margin-top: 20px;
+  transition: background 0.16s ease, box-shadow 0.16s ease;
   letter-spacing: 1px;
+  box-shadow: 0 8px 28px rgba(2, 6, 23, 0.06);
 }
 
 .customer-fetch-btn:hover {

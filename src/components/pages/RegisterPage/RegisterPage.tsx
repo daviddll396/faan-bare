@@ -4,7 +4,7 @@ import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import Modal from "../../reusables/Modal/Modal";
 import FaanLogo from "/images/faan-logo.svg";
-import OnboardingImage from "/images/onboarding-image.svg";
+import OnboardingImage from "/images/boarding1.jpg";
 import CryptoJS from "crypto-js";
 import { Eye, EyeOff } from "lucide-react";
 import "./RegisterPage.css";
@@ -1189,7 +1189,11 @@ const RegisterPage: React.FC = () => {
             <GradientButton
               type="submit"
               fullWidth
-              disabled={!isIndividualFormValid() || isSubmitting}
+              disabled={
+                !isIndividualFormValid() ||
+                isSubmitting ||
+                Object.values(formErrors).some(Boolean)
+              }
               loading={isSubmitting}
             >
               CONTINUE
@@ -1675,7 +1679,11 @@ const RegisterPage: React.FC = () => {
             <GradientButton
               type="submit"
               fullWidth
-              disabled={!isCorporateFormValid() || isSubmitting}
+              disabled={
+                !isCorporateFormValid() ||
+                isSubmitting ||
+                Object.values(corporateFormErrors).some(Boolean)
+              }
               loading={isSubmitting}
             >
               CONTINUE
@@ -2692,7 +2700,11 @@ const RegisterPage: React.FC = () => {
             <GradientButton
               type="submit"
               fullWidth
-              disabled={!isFamilyFormValid() || isSubmitting}
+              disabled={
+                !isFamilyFormValid() ||
+                isSubmitting ||
+                Object.values(familyFormErrors).some(Boolean)
+              }
               loading={isSubmitting}
             >
               CONTINUE

@@ -5,7 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import FaanLogo from "/images/faan-logo.svg";
-import OnboardingImage from "/images/onboarding-image.svg";
+import OnboardingImage from "/images/boarding1.jpg";
 import "./LoginPage.css";
 
 const LoginPage: React.FC = () => {

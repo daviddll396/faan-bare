@@ -1,13 +1,15 @@
 import React from "react";
 import "./chartsection.css";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
   Legend,
+  Tooltip,
 } from "recharts";
 import ExportIcon from "/icons/charts-export-icon.svg";
 import BorderButton from "../../../reusables/BorderButton/BorderButton";
@@ -70,7 +72,8 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
     "Dec",
   ];
   const currentMonth = new Date().toLocaleString("default", { month: "short" });
-  const data = months.map((month) =>
+  type RawRow = { month: string; Bills: number; Payment: number };
+  const rawData: RawRow[] = months.map((month) =>
     month === currentMonth
       ? {
           month,
@@ -79,6 +82,17 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
         }
       : { month, Bills: 0, Payment: 0 }
   );
+
+  // If Bills and Payment are exactly equal for a month, offset them slightly so both lines remain visible
+  const data = rawData.map((row) => {
+    const bills = Number(row.Bills) || 0;
+    const payment = Number(row.Payment) || 0;
+    if (bills === payment && bills !== 0) {
+      // offset by a tiny amount (sub-pixel) to make both lines visible
+      return { ...row, Bills: bills + 0.4 };
+    }
+    return row;
+  });
 
   // Export chart data as CSV
   const handleExport = () => {
@@ -101,11 +115,11 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
   return (
     <>
       <div className="chart-header-mobile mobile-only">
-        <p>Total Bookings vs. Completed Services</p>
+        <p>Total Bookings vs. Completed Bookings</p>
       </div>
       <div className="chart-section">
         <div className="chart-header">
-          <h3>Total Bookings vs. Completed Services</h3>
+          <h3>Total Bookings vs. Completed Bookings</h3>
           <BorderButton
             text="Export"
             icon={ExportIcon}
@@ -120,7 +134,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
             </p>
             <p>
               <span className="chart-dot chart-dot-completed"></span>
-              Completed Services
+              Completed Bookings
             </p>
           </div>
           <BorderButton
@@ -134,10 +148,20 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
             width="100%"
             height={windowWidth <= 768 ? 200 : 300}
           >
-            <BarChart
+            <LineChart
               data={data}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 12, right: 18, left: 12, bottom: 6 }}
             >
+              <defs>
+                <linearGradient id="gradBills" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0095FF" stopOpacity={0.18} />
+                  <stop offset="100%" stopColor="#0095FF" stopOpacity={0.02} />
+                </linearGradient>
+                <linearGradient id="gradPayment" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00E096" stopOpacity={0.14} />
+                  <stop offset="100%" stopColor="#00E096" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#EFF1F3" />
               <XAxis
                 dataKey="month"
@@ -150,46 +174,141 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                 tickLine={false}
                 tick={{ fontSize: 12, fill: "#7B91B0" }}
               />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: 8,
+                  border: "none",
+                  boxShadow: "0 6px 18px rgba(16,24,40,0.08)",
+                }}
+                labelStyle={{ color: "#6b7280" }}
+                formatter={(value: unknown, name: unknown, props: unknown) => {
+                  try {
+                    const p = props as
+                      | { payload?: Record<string, unknown> }
+                      | undefined;
+                    const month = p?.payload?.month as string | undefined;
+                    const rawRow = rawData.find((r) => r.month === month) as
+                      | RawRow
+                      | undefined;
+                    const label = String(name ?? "");
+                    if (rawRow) {
+                      if (
+                        label.toLowerCase().includes("bill") ||
+                        label.toLowerCase().includes("total")
+                      ) {
+                        return [String(rawRow.Bills) as React.ReactNode, label];
+                      }
+                      if (
+                        label.toLowerCase().includes("payment") ||
+                        label.toLowerCase().includes("completed")
+                      ) {
+                        return [
+                          String(rawRow.Payment) as React.ReactNode,
+                          label,
+                        ];
+                      }
+                    }
+                  } catch {
+                    // fallback
+                  }
+                  return [
+                    String(value ?? "") as React.ReactNode,
+                    String(name ?? ""),
+                  ];
+                }}
+              />
               <Legend
                 wrapperStyle={{
-                  paddingTop: "20px",
+                  paddingTop: "8px",
                   display: windowWidth <= 768 ? "none" : "flex",
                   justifyContent: "center",
-                  gap: "9px",
+                  gap: "12px",
                 }}
                 iconType="circle"
                 iconSize={12}
                 layout="horizontal"
                 align="center"
                 verticalAlign="bottom"
-                formatter={(value) => (
-                  <span
-                    style={{
-                      color: "#222B45",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                      marginLeft: "0px",
-                    }}
-                  >
-                    {value}
-                  </span>
-                )}
+                formatter={(value: string) => {
+                  const label = String(value || "");
+                  // use current month's raw values for legend
+                  const currentRaw: RawRow | undefined = rawData.find(
+                    (r) => r.month === currentMonth
+                  );
+                  if (currentRaw) {
+                    if (label.toLowerCase().includes("bill")) {
+                      return (
+                        <span
+                          style={{
+                            color: "#222B45",
+                            fontSize: 12,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {label} ({currentRaw.Bills})
+                        </span>
+                      );
+                    }
+                    if (
+                      label.toLowerCase().includes("completed") ||
+                      label.toLowerCase().includes("payment")
+                    ) {
+                      return (
+                        <span
+                          style={{
+                            color: "#222B45",
+                            fontSize: 12,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {label}
+                        </span>
+                      );
+                    }
+                  }
+                  return (
+                    <span
+                      style={{
+                        color: "#222B45",
+                        fontSize: 12,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {label}
+                    </span>
+                  );
+                }}
               />
-              <Bar
+              <Area
+                type="monotone"
                 dataKey="Bills"
-                fill="#0095FF"
-                radius={[2, 2, 0, 0]}
+                stroke="#0095FF"
+                strokeWidth={2}
+                fill="url(#gradBills)"
                 name="Bills"
-                barSize={19}
+                animationDuration={800}
               />
-              <Bar
+              {/* draw a subtle line for Bills so it's visible */}
+              <Line
+                type="monotone"
+                dataKey="Bills"
+                stroke="#0077DD"
+                strokeWidth={2}
+                dot={false}
+                name="Total Bookings"
+                opacity={0.9}
+              />
+              <Line
+                type="monotone"
                 dataKey="Payment"
-                fill="#00E096"
-                radius={[2, 2, 0, 0]}
-                name="Payment"
-                barSize={19}
+                stroke="#00E096"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+                name="Completed Bookings"
+                animationDuration={900}
               />
-            </BarChart>
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>

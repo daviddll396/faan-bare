@@ -37,13 +37,19 @@
   align-items: center;
   justify-content: space-between;
   background: #fff;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  padding: 32px 36px;
+  border-radius: 14px;
+  border: none; /* borderless elevated style */
+  padding: 28px 28px;
   min-width: 340px;
   max-width: 100%;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08);
+}
+.all-transactions-header {
+  display: flex;
+  flex-direction: row-reverse;
+  border: none;
 }
 
 /* Responsive zoom scaling for the wallet card to handle different desktop sizes and scaling */
@@ -278,14 +284,14 @@
 .booking-card {
   flex: 1;
   background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e4e4e4;
-  padding: 28px 0 18px 0;
+  border-radius: 14px;
+  border: none;
+  padding: 24px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 160px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08);
 }
 .booking-label {
   color: #969696;
@@ -649,7 +655,7 @@
   gap: 24px;
   margin-bottom: 20px;
   padding: 14px 0;
-  border-bottom: 1px solid #e4e4e4;
+
   zoom: 1;
   transition: zoom 0.3s ease;
 }
@@ -663,6 +669,21 @@
   font-weight: 700;
   color: #070600;
   margin: 0;
+}
+
+/* Funding records section styling */
+.funding-records-section {
+  margin-top: 0px;
+  animation: fadeIn 0.4s ease-out 0.2s both;
+}
+.funding-records-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #070600;
+  margin: 0 0 12px 0;
+}
+.funding-records-table .status-badge {
+  font-size: 14px;
 }
 
 /* All Transactions Table - Now using reusable DataTable component */

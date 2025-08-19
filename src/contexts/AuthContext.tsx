@@ -701,6 +701,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
   };
 
+  // Stable check for token expiration that redirects to login when necessary
+  const checkTokenAndRedirect = useCallback(
+    (response: Response): boolean => {
+      if (response.status === HTTP_STATUS.UNAUTHORIZED && user) {
+        console.log("Token expired or invalid, redirecting to login");
+        // Clear local user and token directly rather than calling logout to keep this function stable
+        setUser(null);
+        localStorage.removeItem(STORAGE_KEYS.USER);
+        localStorage.removeItem(STORAGE_KEYS.TOKEN);
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+        return true;
+      }
+      return false;
+    },
+    [user]
+  );
+
   const fundWallet = async (
     amount: number,
     externalReference?: string,
@@ -724,8 +743,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .replace(/-/g, "")}-${Math.random().toString(36).substring(2, 8)}`;
 
       // Prefer amount from providerResponse if available (ensure we record actual paid amount)
-      const paidAmount =
-        (providerResponse && (providerResponse as any).amount) || amount;
+      // Safely inspect providerResponse without using `any` by treating it as a Record
+      let paidAmount: number = amount;
+      if (providerResponse && typeof providerResponse === "object") {
+        const resp = providerResponse as Record<string, unknown>;
+        if (
+          Object.prototype.hasOwnProperty.call(resp, "amount") &&
+          typeof resp.amount === "number"
+        ) {
+          paidAmount = resp.amount as number;
+        }
+      }
 
       const requestBody: Record<string, unknown> = {
         reference: externalReference ?? reference,
@@ -918,7 +946,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         tariffsInFlightRef.current = null;
         return null;
       }
-    }, []);
+    }, [checkTokenAndRedirect]);
 
   const createTariff = useCallback(
     async (
@@ -998,7 +1026,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
     },
-    []
+    [checkTokenAndRedirect]
   );
 
   const makePayment = async (
@@ -1642,19 +1670,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log("Guest user created:", guestUser);
   };
 
-  // Function to check if token is expired and redirect if needed
-  const checkTokenAndRedirect = (response: Response): boolean => {
-    if (response.status === HTTP_STATUS.UNAUTHORIZED && user) {
-      console.log("Token expired or invalid, redirecting to login");
-      logout();
-      // Only redirect if we're not already on the login page
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-      return true; // Token was expired/invalid
-    }
-    return false; // Token is still valid or no user to redirect
-  };
+  // removed duplicate declaration (kept useCallback version above)
 
   const value: AuthContextType = {
     user,

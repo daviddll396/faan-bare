@@ -50,7 +50,15 @@ const Dashboard: React.FC = () => {
   // Define allowed pages based on role
   const allowedPages: PageType[] =
     user?.role === "Customer"
-      ? ["dashboard", "services", "invoices", "payment", "logout", "profile"]
+      ? [
+          "dashboard",
+          "services",
+          "reports",
+          "invoices",
+          "payment",
+          "logout",
+          "profile",
+        ]
       : user?.role === "Guest"
       ? ["services", "logout"]
       : [

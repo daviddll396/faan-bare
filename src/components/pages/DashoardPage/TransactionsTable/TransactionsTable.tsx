@@ -24,6 +24,15 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   hideTitle,
   transactions,
 }) => {
+  type Tx = {
+    id?: number;
+    tariffName?: string;
+    service?: string;
+    amount?: number;
+    price?: string;
+    status?: string;
+    createdAt?: string;
+  };
   const dummyTransactions = [
     {
       id: 1,
@@ -83,13 +92,15 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
     },
   ];
   const hasRealData = transactions && transactions.length > 0;
+  const isLargeScreen = window.innerWidth > 1800;
+  const sliceCount = isLargeScreen ? 5 : 4;
   const visibleTransactions = hasRealData
     ? expanded
       ? transactions
-      : transactions.slice(0, 5)
+      : transactions.slice(0, sliceCount)
     : expanded
     ? dummyTransactions
-    : dummyTransactions.slice(0, 5);
+    : dummyTransactions.slice(0, sliceCount);
   const showStatusAndDate = hasRealData && expanded;
 
   // Helper to truncate service name
@@ -97,13 +108,13 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
     str.length > n ? str.slice(0, n - 1) + "..." : str;
 
   // Helper to get service name safely
-  const getServiceName = (transaction: any) => {
+  const getServiceName = (transaction: Tx) => {
     return transaction.tariffName || transaction.service || "";
   };
 
   // Helper to get amount safely
-  const getAmount = (transaction: any) => {
-    if (hasRealData && transaction.amount) {
+  const getAmount = (transaction: Tx) => {
+    if (hasRealData && typeof transaction.amount === "number") {
       return `₦${transaction.amount.toLocaleString()}`;
     }
     return transaction.price || "";
@@ -119,13 +130,16 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         {!hideTitle && (
           <div className="table-title">
             <h3>Recent Transactions</h3>
+            {/* <p className="table-sub">Latest bookings and payments</p> */}
           </div>
         )}
-        {!expanded && (
-          <button className="see-all-btn" onClick={onSeeAll}>
-            See All
-          </button>
-        )}
+        <div className="table-header-actions">
+          {!expanded && (
+            <button className="see-all-btn" onClick={onSeeAll}>
+              See All
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Desktop Table View */}
@@ -142,55 +156,65 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           </colgroup>
           <thead>
             <tr>
-              <th>#</th>
+              <th>S/N</th>
               <th className="gap-col"></th>
               <th>Service</th>
               <th className="gap-col"></th>
-              <th>{hasRealData ? "Amount" : "Price"}</th>
+              <th style={{ textAlign: "right" }}>
+                {hasRealData ? "Amount" : "Price"}
+              </th>
               {showStatusAndDate && <th>Status</th>}
               {showStatusAndDate && <th>Date</th>}
             </tr>
           </thead>
           <tbody>
             {visibleTransactions.map((transaction, index) => (
-              <tr key={transaction.id}>
+              <tr key={transaction.id} className="transactions-row">
                 <td className="centered-col">{index + 1}.</td>
                 <td className="gap-col"></td>
                 <td>
                   <div className="service-cell">
-                    <img
-                      className="transaction-icon"
-                      src={AirplaneIcon}
-                      alt="Petrol"
-                      width={24}
-                      height={24}
-                    />
-                    {expanded ? (
-                      <span>{getServiceName(transaction)}</span>
-                    ) : (
-                      <span title={getServiceName(transaction)}>
-                        {truncate(getServiceName(transaction), 24)}
-                      </span>
-                    )}
+                    <div className="transaction-icon-wrap">
+                      <img
+                        className="transaction-icon"
+                        src={AirplaneIcon}
+                        alt="Icon"
+                        width={24}
+                        height={24}
+                      />
+                    </div>
+                    <div className="service-meta">
+                      {expanded ? (
+                        <span className="service-name">
+                          {getServiceName(transaction)}
+                        </span>
+                      ) : (
+                        <span
+                          title={getServiceName(transaction)}
+                          className="service-name"
+                        >
+                          {truncate(getServiceName(transaction), 32)}
+                        </span>
+                      )}
+                      <div className="service-sub">
+                        {transaction.createdAt
+                          ? new Date(transaction.createdAt).toLocaleDateString()
+                          : "—"}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td className="gap-col"></td>
-                <td>{getAmount(transaction)}</td>
+                <td className="transaction-amount-cell">
+                  {getAmount(transaction)}
+                </td>
                 {showStatusAndDate && (
                   <>
                     <td>
                       <span
-                        style={{
-                          color:
-                            (transaction.status || "") === "COMPLETED"
-                              ? "#007948"
-                              : (transaction.status || "") === "PENDING"
-                              ? "#CB5B00"
-                              : (transaction.status || "") === "CANCELLED"
-                              ? "#BA0104"
-                              : "#222b45",
-                          fontWeight: 600,
-                        }}
+                        className={`status-badge ${(
+                          transaction.status || ""
+                        ).toLowerCase()}`}
                       >
                         {transaction.status || ""}
                       </span>
@@ -236,10 +260,19 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                         year: "numeric",
                       }
                     )
-                  : "Wed. Jun 11, 2025"}
+                  : "—"}
               </div>
             </div>
-            <div className="transaction-amount">{getAmount(transaction)}</div>
+            <div className="transaction-amount-wrap">
+              <div className="transaction-amount">{getAmount(transaction)}</div>
+              <div
+                className={`status-badge ${(
+                  transaction.status || ""
+                ).toLowerCase()}`}
+              >
+                {transaction.status}
+              </div>
+            </div>
           </div>
         ))}
       </div>

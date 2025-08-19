@@ -1,14 +1,23 @@
 /* DataTable Styles - Exact copy from PaymentPage table */
 .data-table-card {
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e4e4e4;
-  padding: 0 0 0 0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  padding-bottom: 10px;
+  border-radius: 14px;
+  border: none;
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  padding-bottom: 12px;
   animation: slideInUp 0.4s ease-out 0.4s both;
   zoom: 1; /* Default zoom level */
   transition: zoom 0.3s ease;
+}
+
+.data-table-header {
+  padding: 18px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #070600;
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
+  border-radius: 14px 14px 0 0;
 }
 
 .data-table {

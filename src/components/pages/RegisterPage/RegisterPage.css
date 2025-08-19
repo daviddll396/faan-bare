@@ -1076,3 +1076,98 @@ input[type="date"]::-moz-calendar-picker-indicator {
     font-size: 13px;
   }
 }
+
+/* New aesthetic overrides for register page to match app style */
+.register-card {
+  background: #fff;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-logo {
+  width: 92px;
+  height: 92px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+}
+
+.register-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.register-subtitle {
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.register-form-placeholder {
+  background: #fff;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+  padding: 36px;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+}
+
+.register-individual-form-card {
+  max-width: 700px;
+  width: 100%;
+  padding: 36px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
+}
+
+.form-input-modern {
+  border: 1.5px solid #eef2f7;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--bg-color);
+  color: #111827;
+  outline: none;
+  transition: border 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.02);
+}
+
+.form-input-modern:focus {
+  border-color: #10b981;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+}
+
+.register-file-upload-text {
+  color: #007948;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.register-footer {
+  margin-top: 28px;
+  text-align: center;
+  width: 100%;
+  font-size: 15px;
+  color: #6b7280;
+}

@@ -184,6 +184,13 @@ const UsersPage: React.FC<UsersPageProps> = () => {
     setFilteredUsers(filtered);
   };
 
+  // Auto-run search when role selection changes so switching role filters immediately
+  React.useEffect(() => {
+    // Only run when a role is selected; empty string means no filter
+    handleSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRole]);
+
   // Clear search filters
   const handleClearSearch = () => {
     setSearchName("");

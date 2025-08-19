@@ -8,6 +8,7 @@ import "./customerspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import CustomersIcon from "/icons/nav-customer-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
+import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
 
 interface CustomersPageProps {
@@ -204,57 +205,38 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       )}
       {activeTab === "fetch" && fetched && (
         <>
-          <div className="content-card">
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th className="table-header-item">S/N</th>
-                    <th className="table-header-item">First Name</th>
-                    <th className="table-header-item">Last Name</th>
-                    <th className="table-header-item">ID No.</th>
-                    <th className="table-header-item">Phone No.</th>
-                    <th className="table-header-item">Email</th>
-                    <th className="table-header-item">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {fetchedCustomers.length > 0 ? (
-                    fetchedCustomers.map((user, idx) => (
-                      <tr key={user.id}>
-                        <td className="table-data-item">{idx + 1}.</td>
-                        <td className="table-data-item">{user.firstName}</td>
-                        <td className="table-data-item">{user.lastName}</td>
-                        <td className="table-data-item">{user.idNo}</td>
-                        <td className="table-data-item">{user.phone}</td>
-                        <td className="table-data-item">{user.email}</td>
-                        <td className="table-data-item">
-                          <button
-                            className="view-more-btn"
-                            onClick={() => handleViewMore(user)}
-                          >
-                            <Eye size={20} /> View More
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={7}
-                        className="table-data-item"
-                        style={{ textAlign: "center", color: "#6b7280" }}
-                      >
-                        {fetched
-                          ? "No customers found matching your search criteria"
-                          : "Search for customers to see results"}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <DataTable
+            headers={[
+              "S/N",
+              "First Name",
+              "Last Name",
+              "ID No.",
+              "Phone No.",
+              "Email",
+              "Actions",
+            ]}
+            data={
+              fetchedCustomers.length > 0
+                ? fetchedCustomers.map((user, idx) => [
+                    `${idx + 1}.`,
+                    user.firstName,
+                    user.lastName,
+                    user.idNo,
+                    user.phone,
+                    user.email,
+                    <button
+                      key={`view-${user.id}`}
+                      className="view-more-btn"
+                      onClick={() => handleViewMore(user)}
+                    >
+                      <Eye size={20} /> View More
+                    </button>,
+                  ])
+                : []
+            }
+            className="customer-table-card"
+          />
+
           {windowWidth <= 768 && <SlideIndicator />}
         </>
       )}

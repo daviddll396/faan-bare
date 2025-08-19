@@ -75,7 +75,8 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 32px;
-  /* background: rgba(0, 0, 0, 0.3); */
+  /* darker overlay on top of image */
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
   z-index: 2;
 }
 
@@ -226,7 +227,7 @@
 }
 
 .form-row label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: #898989;
 }
@@ -323,7 +324,7 @@
 
 .auth-form-subtitle-modern {
   color: #969696;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   margin-bottom: 20px;
 }
@@ -403,7 +404,7 @@
 }
 
 .form-row-modern label {
-  font-size: 13px;
+  font-size: 15px;
   color: #898989;
   font-weight: 500;
   margin-bottom: 1px;
@@ -422,7 +423,7 @@
     zoom: 0.97;
   }
   .auth-form-modern {
-    zoom: 0.9;
+    zoom: 0.1;
   }
 }
 @media (max-width: 1600px) {
@@ -430,7 +431,7 @@
     zoom: 0.94;
   }
   .auth-form-modern {
-    zoom: 0.8;
+    zoom: 0.95;
   }
 }
 @media (max-width: 1500px) {
@@ -649,7 +650,7 @@
 
   /* Adjust forgot password link for mobile */
   .forgot-link {
-    font-size: 14px;
+    font-size: 15px;
     text-align: right;
     display: block;
     margin-bottom: 10px;

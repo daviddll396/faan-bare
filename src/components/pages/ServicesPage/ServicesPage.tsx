@@ -17,32 +17,33 @@ import Modal from "../../reusables/Modal/Modal";
 import SlideIndicator from "../../reusables/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 
-// Remita Payment Engine types
-declare global {
-  interface Window {
-    RmPaymentEngine: {
-      init: (config: RemitaPaymentConfig) => RemitaPaymentHandler;
-    };
-  }
-}
-
-interface RemitaPaymentConfig {
-  key: string;
-  customerId: string;
-  transactionId: number;
-  firstName: string;
-  lastName: string;
+// ITEXPay inline types (local)
+type ItexPayOptions = {
+  api_key: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
   email: string;
   amount: number;
-  narration: string;
-  onSuccess: (response: Record<string, unknown>) => void;
-  onError: (response: Record<string, unknown>) => void;
-  onClose: () => void;
+  redirecturl?: string;
+  currency: string;
+  reference: string;
+  onCompleted: (data: unknown) => void;
+  onError: (err: unknown) => void;
+  onClose?: () => void;
+};
+
+interface ItexPayInstance {
+  init: () => void;
 }
 
-interface RemitaPaymentHandler {
-  showPaymentWidget: () => void;
+interface ItexPayNS {
+  ItexPay: new (opts: ItexPayOptions) => ItexPayInstance;
 }
+
+type WindowWithItex = Window & { ItexPayNS?: ItexPayNS };
+
+// Payment provider: ITEXPay inline is used for payments
 
 // Guard to prevent duplicate fetches within a single mount (React 18 StrictMode)
 
@@ -175,18 +176,10 @@ interface BookingPassenger {
 }
 
 const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
-  // Remita Payment Configuration
-  const REMITA_PUBLIC_KEY =
-    "QzAwMDAyNzEyNTl8MTEwNjE4NjF8OWZjOWYwNmMyZDk3MDRhYWM3YThiOThlNTNjZTE3ZjYxOTY5NDdmZWE1YzU3NDc0ZjE2ZDZjNTg1YWYxNWY3NWM4ZjMzNzZhNjNhZWZlOWQwNmJhNTFkMjIxYTRiMjYzZDkzNGQ3NTUxNDIxYWNlOGY4ZWEyODY3ZjlhNGUwYTY="; // Replace with your actual public key
+  // Note: Remita removed — using ITEXPay for payments
 
-  const {
-    getAllTariffs,
-    refreshUserDetails,
-    generateInvoice,
-    createTariff,
-    makePayment,
-    user,
-  } = useAuth();
+  const { getAllTariffs, refreshUserDetails, createTariff, makePayment, user } =
+    useAuth();
   const { showLoading, hideLoading } = useLoading();
   const getAllTariffsRef = useRef(getAllTariffs);
   const showLoadingRef = useRef(showLoading);
@@ -251,10 +244,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const [fieldErrors, setFieldErrors] = React.useState<{
     [key: string]: boolean;
   }>({});
-  const [generatedRRR, setGeneratedRRR] = React.useState<string>("");
+  const [bookingFormError, setBookingFormError] = React.useState<string | null>(
+    null
+  );
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
   const [showReceiptModal, setShowReceiptModal] = React.useState(false);
-  const [lastOrderId, setLastOrderId] = React.useState<string>("");
+  const [lastOrderId] = React.useState<string>("");
   const [receiptData, setReceiptData] = React.useState<{
     invoiceNumber: string;
     rrr: string;
@@ -405,10 +400,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             );
             console.log("🎯 ServicesPage: Admin services:", adminServices);
             setTimeout(() => {
-              showToast(
-                `${tariffsData.data.length} services loaded successfully`,
-                "success"
-              );
+              showToast(`Services loaded successfully`, "success");
             }, 500);
           } else {
             console.log(
@@ -449,19 +441,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   }, []);
 
   // Add useEffect to check if Remita script is loaded
-  useEffect(() => {
-    const checkRemitaScript = () => {
-      if (typeof window.RmPaymentEngine !== "undefined") {
-        console.log("✅ Remita Payment Engine loaded successfully");
-      } else {
-        console.warn("⚠️ Remita Payment Engine not yet loaded");
-        // Check again after a short delay
-        setTimeout(checkRemitaScript, 1000);
-      }
-    };
-
-    checkRemitaScript();
-  }, []);
+  // Remita script removed.
 
   // Monitor payment success modal state changes
   useEffect(() => {
@@ -498,6 +478,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     if (fieldErrors[e.target.name]) {
       setFieldErrors((prev) => ({ ...prev, [e.target.name]: false }));
     }
+    // Clear any form-level error message when user edits fields
+    if (bookingFormError) setBookingFormError(null);
   };
 
   const handleCreateServices = async (e: React.FormEvent) => {
@@ -641,6 +623,25 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
     if (Object.keys(newFieldErrors).length > 0) {
       setFieldErrors(newFieldErrors);
+      // Map keys to human friendly labels
+      const labelMap: { [key: string]: string } = {
+        firstName: "First Name",
+        lastName: "Last Name",
+        designation: "Designation",
+        gender: "Gender",
+        mobile: "Mobile Number",
+        specialReq: "Special Requirement",
+        airport: "Airport",
+        travelDate: "Travel Date",
+        flightNumber: "Flight Number",
+        airportTime: "Airport Time",
+        airline: "Airline",
+        destination: "Destination",
+      };
+      const missing = Object.keys(newFieldErrors).map((k) => labelMap[k] || k);
+      setBookingFormError(
+        `Please fill in all required details: ${missing.join(", ")}`
+      );
       return;
     }
 
@@ -660,7 +661,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       destination: "",
     });
     setFieldErrors({});
-    setGeneratedRRR(""); // Clear RRR when adding new passenger
   };
   const handleDeletePassenger = (idx: number) => {
     setPassengers(passengers.filter((_, i) => i !== idx));
@@ -718,8 +718,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       const otherCharges = 500; // Fixed charge
       const total = subTotal + otherCharges;
 
-      // Function to process Remita payment
-      const handlePayment = () => {
+      // Function to process payment: Guests use ITEXPay inline; Customers call backend directly
+      const handlePayment = async () => {
         if (!selectedService?.id) {
           showToast("No service selected for payment", "error");
           return;
@@ -730,84 +730,24 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           return;
         }
 
-        if (!generatedRRR) {
-          showToast("Please generate RRR first", "error");
-          return;
-        }
+        const firstName =
+          passengers[0]?.firstName || user?.firstName || "Guest";
+        const lastName = passengers[0]?.lastName || user?.lastName || "User";
+        const email = user?.email || "guest@example.com";
+        const transactionId = Math.floor(Math.random() * 1101233);
+        const reference = `NM-${Date.now()}-${Math.random()
+          .toString(36)
+          .slice(2, 8)}`;
 
-        // Check if Remita script is loaded
-        if (typeof window.RmPaymentEngine === "undefined") {
-          console.error("❌ Remita Payment Engine not loaded");
-          showToast(
-            "Payment engine not available. Please refresh the page.",
-            "error"
-          );
-          return;
-        }
-
-        try {
-          // Reset payment success flag for new payment
-          let isPaymentSuccessful = false;
-
-          // Get user details for payment
-          const firstName =
-            passengers[0]?.firstName || user?.firstName || "Guest";
-          const lastName = passengers[0]?.lastName || user?.lastName || "User";
-          const email = user?.email || "guest@example.com";
-
-          // Generate unique transaction ID
-          const transactionId = Math.floor(Math.random() * 1101233);
-
-          console.log("🚀 === STARTING REMITA PAYMENT ===");
-          console.log("💰 Amount:", total);
-          console.log("🔢 RRR:", generatedRRR);
-          console.log("🔢 Transaction ID:", transactionId);
-
-          // Initialize Remita payment engine
-          const paymentEngine = window.RmPaymentEngine.init({
-            key: REMITA_PUBLIC_KEY,
-            transactionId: transactionId,
-            customerId: user?.customerId || "GUEST",
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            amount: total,
-            narration: `Payment for ${selectedService.name} - ${passengers.length} passenger(s)`,
-            onSuccess: (response) => {
-              console.log("🎉 === REMITA PAYMENT SUCCESSFUL ===");
-              console.log("📄 Payment response:", response);
-              console.log("🔢 Transaction ID:", transactionId);
-              console.log("💰 Amount:", total);
-              console.log("🔢 RRR:", generatedRRR);
-
-              // Show success toast
-              showToast("Payment successful!", "success");
-
-              // Call make payment endpoint to record success
-              (async () => {
-                try {
-                  const result = await makePayment(
-                    generatedRRR,
-                    selectedService.id
-                  );
-                  if (!result?.success) {
-                    console.warn(
-                      "⚠️ makePayment did not confirm success:",
-                      result
-                    );
-                  }
-                } catch (err) {
-                  console.error(
-                    "💥 Error calling makePayment after Remita:",
-                    err
-                  );
-                }
-              })();
-
-              // Prepare receipt data and show receipt modal
+        // If authenticated Customer: call makePayment backend directly
+        if (user && user.role === "Customer") {
+          try {
+            showToast("Processing payment...", "success");
+            const result = await makePayment(reference, selectedService.id);
+            if (result?.success) {
               const paymentInfo = {
                 invoiceNumber: lastOrderId || `INV-${Date.now()}`,
-                rrr: generatedRRR,
+                rrr: reference,
                 transactionId,
                 amount: total,
                 serviceName: selectedService.name,
@@ -816,106 +756,93 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               };
               setReceiptData(paymentInfo);
               setShowReceiptModal(true);
-              isPaymentSuccessful = true; // Set payment successful flag
+              refreshUserDetails();
+              showToast("Payment recorded successfully", "success");
+            } else {
+              showToast(result?.message || "Payment failed", "error");
+            }
+          } catch (err) {
+            console.error("Error calling makePayment for Customer:", err);
+            showToast("Payment failed. Please try again.", "error");
+          }
 
-              // Refresh user details after successful payment
+          return;
+        }
+
+        // Otherwise (Guest): use ITEXPay inline
+        try {
+          let isPaymentSuccessful = false;
+
+          console.log("🚀 === STARTING ITEXPAY PAYMENT ===");
+          console.log("💰 Amount:", total);
+          console.log("🔢 Transaction ID:", transactionId);
+
+          const win = window as WindowWithItex;
+          const itexAvailable = !!(win && win.ItexPayNS);
+          if (!itexAvailable) {
+            showToast("Payment provider unavailable", "error");
+            return;
+          }
+
+          // Hardcoded ITEXPay API key for debugging
+          const apiKey =
+            "ITXPUB_STAGING_N9OSLGOKR2WT6KNKMRPHI0TNDZF3FEMCFDUO2PFN-6011000252-04GPRVVTV0CPUVD";
+
+          const Pay = new win.ItexPayNS!.ItexPay({
+            api_key: apiKey,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: user?.phoneNumber || "",
+            email: email,
+            amount: Math.round(total),
+            redirecturl: window.location.origin + "/",
+            currency: "NGN",
+            reference,
+            onCompleted: async () => {
+              if (isPaymentSuccessful) return;
+              isPaymentSuccessful = true;
+              showToast("Payment successful!", "success");
+              try {
+                await makePayment(reference, selectedService.id);
+              } catch (err) {
+                console.error("Error calling makePayment after ITEX:", err);
+              }
+              const paymentInfo = {
+                invoiceNumber: lastOrderId || `INV-${Date.now()}`,
+                rrr: reference,
+                transactionId,
+                amount: total,
+                serviceName: selectedService.name,
+                customerId: user?.customerId || "GUEST",
+                paymentDate: new Date().toLocaleString(),
+              };
+              setReceiptData(paymentInfo);
+              setShowReceiptModal(true);
               refreshUserDetails();
             },
-            onError: (response) => {
-              console.error("❌ === REMITA PAYMENT FAILED ===");
-              console.error("📄 Error response:", response);
-              console.error("🔢 Transaction ID:", transactionId);
-
+            onError: (err: unknown) => {
+              console.error("ITEXPay error:", err);
               showToast("Payment failed. Please try again.", "error");
             },
             onClose: () => {
-              console.log("🚪 === REMITA PAYMENT CLOSED ===");
-              console.log("🔢 Transaction ID:", transactionId);
-              console.log("✅ Payment was successful:", isPaymentSuccessful);
-
-              // Only show "Payment was cancelled" if it wasn't successful
-              if (!isPaymentSuccessful) {
+              if (!isPaymentSuccessful)
                 showToast("Payment was cancelled", "error");
-              } else {
-                console.log(
-                  "🎉 Payment was successful, not showing cancelled message"
-                );
-              }
             },
           });
 
-          // Show the payment widget
-          paymentEngine.showPaymentWidget();
+          try {
+            Pay.init();
+          } catch (err) {
+            console.error("ITEX init error", err);
+            showToast("Payment initialization failed", "error");
+          }
         } catch (error) {
           console.error("💥 Payment initialization error:", error);
           showToast("Failed to initialize payment", "error");
         }
       };
 
-      // Function to generate RRR (Remita Retrieval Reference)
-      const handleGenerateRRR = async () => {
-        if (!selectedService?.id) {
-          showToast("No service selected for RRR generation", "error");
-          return;
-        }
-
-        if (passengers.length === 0) {
-          showToast("Please add at least one passenger", "error");
-          return;
-        }
-
-        showLoading("Generating RRR...");
-
-        try {
-          // Generate a unique order ID
-          const orderId = `ORDER-${Date.now()}-${Math.random()
-            .toString(36)
-            .substring(2, 8)}`;
-
-          // Get customer ID from user context
-          const customerId = user?.customerId || "FN904439"; // Fallback to default if user not available
-
-          const invoiceRequest = {
-            orderId: orderId,
-            tariffId: selectedService.id,
-            customerId: customerId,
-            description: "Payment for Airport Tariff",
-          };
-
-          console.log("🚀 === STARTING RRR GENERATION ===");
-          console.log("📋 Invoice request:", invoiceRequest);
-          console.log("⏰ Request timestamp:", new Date().toISOString());
-
-          const response = await generateInvoice(invoiceRequest);
-
-          if (response && response.status) {
-            console.log("🎉 === RRR GENERATED SUCCESSFULLY ===");
-            console.log("📄 Response data:", response.data);
-            console.log("🔢 RRR:", response.data.rrr);
-            console.log("👤 Customer ID:", response.data.customerId);
-            console.log("✅ Status:", response.status);
-            console.log("📊 Status Code:", response.statusCode);
-            console.log("💬 Message:", response.message);
-
-            // Store the generated RRR
-            setGeneratedRRR(response.data.rrr);
-            setLastOrderId(orderId);
-
-            hideLoading();
-            showToast(
-              `RRR generated successfully: ${response.data.rrr}`,
-              "success"
-            );
-          } else {
-            hideLoading();
-            showToast("Failed to generate RRR. Please try again.", "error");
-          }
-        } catch (error) {
-          console.error("💥 RRR generation error:", error);
-          hideLoading();
-          showToast("Error generating RRR. Please try again.", "error");
-        }
-      };
+      // RRR generation removed (Remita no longer used)
 
       return (
         <div className="services-customer-page">
@@ -1183,6 +1110,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   </div>
                 )}
+                {/* Show form-level error above add button */}
+                {bookingFormError && (
+                  <div className="booking-form-error-text">
+                    {bookingFormError}
+                  </div>
+                )}
                 <div className="booking-add-passenger-row">
                   <button
                     className="booking-add-passenger-btn"
@@ -1405,6 +1338,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   </>
                 )}
+                {/* Show form-level error above add button */}
+                {bookingFormError && (
+                  <div className="booking-form-error-text">
+                    {bookingFormError}
+                  </div>
+                )}
                 <div className="booking-add-passenger-row">
                   <button
                     className="booking-add-passenger-btn"
@@ -1494,14 +1433,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       </div>
                     )}
                   </div>
-                  {passengers.length > 0 && (
-                    <div className="booking-passengers-actions">
-                      <BorderButton
-                        text="Generate RRR"
-                        onClick={handleGenerateRRR}
-                      />
-                    </div>
-                  )}
+                  {/* RRR generation removed — use ITEXPay inline on PAY */}
                 </div>
                 <div className="booking-summary-card">
                   <div className="booking-summary-title">SUMMARY</div>
@@ -1513,29 +1445,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <span>OTHER CHARGES</span>
                     <span>₦{otherCharges.toLocaleString()}</span>
                   </div>
-                  {generatedRRR && (
-                    <div
-                      className="booking-summary-row"
-                      style={{
-                        background: "#f0fdf4",
-                        padding: "12px 10px",
-                        borderRadius: "6px",
-                      }}
-                    >
-                      <span style={{ color: "#007948", fontWeight: "600" }}>
-                        RRR:
-                      </span>
-                      <span
-                        style={{
-                          color: "#007948",
-                          fontWeight: "700",
-                          fontFamily: "monospace",
-                        }}
-                      >
-                        {generatedRRR}
-                      </span>
-                    </div>
-                  )}
+                  {/* RRR removed */}
                   <div className="booking-summary-row total">
                     <span>TOTAL</span>
                     <span>₦{total.toLocaleString()}</span>
@@ -1544,23 +1454,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <GradientButton
                       fullWidth
                       onClick={handlePayment}
-                      disabled={passengers.length === 0 || !generatedRRR}
+                      disabled={passengers.length === 0}
                     >
                       PAY
                     </GradientButton>
-                    {!generatedRRR && passengers.length > 0 && (
-                      <div
-                        style={{
-                          textAlign: "center",
-                          marginTop: "8px",
-                          fontSize: "12px",
-                          color: "#6b7280",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        Generate RRR first to enable payment
-                      </div>
-                    )}
                   </div>
                 </div>
               </>
@@ -1632,14 +1529,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   ))}
                 </div>
-                {passengers.length > 0 && (
-                  <div className="booking-passengers-actions">
-                    <BorderButton
-                      text="Generate RRR"
-                      onClick={handleGenerateRRR}
-                    />
-                  </div>
-                )}
+                {/* RRR generation removed — ITEXPay is used on PAY */}
               </div>
               <div className="booking-summary-card">
                 <div className="booking-summary-title">SUMMARY</div>
@@ -1651,29 +1541,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <span>OTHER CHARGES</span>
                   <span>₦{otherCharges.toLocaleString()}</span>
                 </div>
-                {generatedRRR && (
-                  <div
-                    className="booking-summary-row"
-                    style={{
-                      background: "#f0fdf4",
-                      padding: "12px 10px",
-                      borderRadius: "6px",
-                    }}
-                  >
-                    <span style={{ color: "#007948", fontWeight: "600" }}>
-                      RRR:
-                    </span>
-                    <span
-                      style={{
-                        color: "#007948",
-                        fontWeight: "700",
-                        fontFamily: "monospace",
-                      }}
-                    >
-                      {generatedRRR}
-                    </span>
-                  </div>
-                )}
+                {/* RRR removed */}
                 <div className="booking-summary-row total">
                   <span>TOTAL</span>
                   <span>₦{total.toLocaleString()}</span>
@@ -1683,23 +1551,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 <GradientButton
                   fullWidth
                   onClick={handlePayment}
-                  disabled={passengers.length === 0 || !generatedRRR}
+                  disabled={passengers.length === 0}
                 >
                   PAY
                 </GradientButton>
-                {!generatedRRR && passengers.length > 0 && (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      marginTop: "8px",
-                      fontSize: "12px",
-                      color: "#6b7280",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    Generate RRR first to enable payment
-                  </div>
-                )}
               </div>
             </>
           )}
@@ -1711,7 +1566,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               setShowPaymentSuccess(false);
               setSelectedService(null);
               setPassengers([]);
-              setGeneratedRRR(""); // Clear RRR when closing payment success
               setBookingForm({
                 firstName: "",
                 lastName: "",
@@ -1751,7 +1605,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       setShowPaymentSuccess(false);
                       setSelectedService(null);
                       setPassengers([]);
-                      setGeneratedRRR(""); // Clear RRR when closing payment success
                       setBookingForm({
                         firstName: "",
                         lastName: "",
@@ -1783,7 +1636,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               setShowReceiptModal(false);
               setSelectedService(null);
               setPassengers([]);
-              setGeneratedRRR("");
               setReceiptData(null);
               setActiveTab("passenger");
             }}
@@ -1805,10 +1657,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <span>Invoice Number</span>
                     <span className="mono">{receiptData.invoiceNumber}</span>
                   </div>
-                  <div className="meta-row">
-                    <span>RRR</span>
-                    <span className="mono">{receiptData.rrr}</span>
-                  </div>
+                  {/* RRR removed - Remita no longer used */}
                   <div className="meta-row">
                     <span>Transaction ID</span>
                     <span className="mono">{receiptData.transactionId}</span>
@@ -1880,9 +1729,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                             <div class='meta-row'><span>Invoice Number</span><span class='mono'>${
                               receiptData.invoiceNumber
                             }</span></div>
-                            <div class='meta-row'><span>RRR</span><span class='mono'>${
-                              receiptData.rrr
-                            }</span></div>
+                            <!-- RRR removed - Remita no longer used -->
                             <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
                               receiptData.transactionId
                             }</span></div>
@@ -2087,7 +1934,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               <form className="user-form-list" onSubmit={handleCreateServices}>
                 {services.map((service, idx) => (
                   <div className="service-form-row" key={idx}>
-                    <div className="service-index-circle">{idx + 1}.</div>
+                    {/* <div className="service-index-circle">{idx + 1}.</div> */}
                     <div className="service-form-body">
                       <div className="service-row-top">
                         <div className="service-field-group service-name-group">
@@ -2156,7 +2003,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                   </div>
                 ))}
-                <div className="form-row form-row-full">
+                {/* <div className="form-row form-row-full">
                   <button
                     type="button"
                     className="add-more-items-btn"
@@ -2164,10 +2011,10 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   >
                     + Add New Service
                   </button>
-                </div>
+                </div> */}
                 <div className="form-actions">
                   <GradientButton type="submit" fullWidth>
-                    SAVE ITEM(S)
+                    SAVE SERVICE
                   </GradientButton>
                 </div>
               </form>

@@ -126,7 +126,7 @@
 
 .stat-info h3 {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: #1e293b;
   margin: 0;
 }
@@ -299,13 +299,13 @@ table {
 
 .status-badge-table.active {
   color: #009a34;
-  font-weight: 700;
+  font-weight: 600;
   font-family: "Archivo", sans-serif;
 }
 
 .status-badge-table.inactive {
   color: #d60000;
-  font-weight: 700;
+  font-weight: 600;
   font-family: "Archivo", sans-serif;
 }
 

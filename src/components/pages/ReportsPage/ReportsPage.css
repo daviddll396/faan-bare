@@ -57,6 +57,11 @@
   zoom: 1;
   transition: zoom 0.3s ease;
 }
+.reports-actions {
+  display: flex;
+  gap: 12px;
+ 
+}
 
 .reports-tab {
   font-size: 14px;

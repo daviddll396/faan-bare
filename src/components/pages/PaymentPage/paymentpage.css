@@ -453,42 +453,59 @@
 
 .payment-reason-message {
   width: 100%;
-  background: #fdeaea;
-  border-radius: 8px;
-  padding: 18px 20px;
+  background: #fff7f7; /* subtle red tint */
+  border-radius: 12px;
+  padding: 16px 18px;
   color: #b91c1c;
-  font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 16px;
   text-align: center;
+  box-shadow: 0 6px 20px rgba(185, 28, 28, 0.06);
 }
 
 .payment-reason-details {
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .payment-reason-detail {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fbfbfb;
+  border-radius: 8px;
+  border: 1px solid #f0f2f4;
 }
 
 .payment-reason-label {
-  color: #6c7278;
-  font-weight: 500;
-  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 13px;
 }
 
 .payment-reason-value {
   color: #070600;
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .payment-reason-actions {
-  margin-top: 8px;
+  margin-top: 12px;
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.payment-reason-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
 }
 

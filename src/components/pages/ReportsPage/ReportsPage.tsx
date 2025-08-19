@@ -22,7 +22,7 @@ interface AdminTransactionItem {
 }
 
 const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
-  const { getAdminTransactionHistory } = useAuth();
+  const { getAdminTransactionHistory, getTransactionHistory, user } = useAuth();
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
@@ -59,19 +59,61 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const txns = await getAdminTransactionHistory();
-        if (Array.isArray(txns)) {
-          setTransactions(txns as AdminTransactionItem[]);
-        } else {
-          setTransactions([]);
+        if (role === "Admin") {
+          const txns = await getAdminTransactionHistory();
+          if (Array.isArray(txns)) {
+            setTransactions(txns as AdminTransactionItem[]);
+          } else {
+            setTransactions([]);
+          }
+          return;
         }
+
+        if (role === "Customer") {
+          if (!getTransactionHistory) {
+            setTransactions([]);
+            return;
+          }
+          const txns = await getTransactionHistory(fromDate, toDate);
+          if (!txns || !Array.isArray(txns)) {
+            setTransactions([]);
+            return;
+          }
+          const mapped = txns.map(
+            (t) =>
+              ({
+                id: t.id,
+                tariffId: t.tariffId,
+                tariffName: t.tariffName,
+                amount: t.amount,
+                status: t.status,
+                createdAt: t.createdAt,
+                customerId: t.customerId || user?.customerId,
+                customerName: user
+                  ? `${user.firstName} ${user.lastName}`.trim()
+                  : undefined,
+              } as AdminTransactionItem)
+          );
+          setTransactions(mapped);
+          return;
+        }
+
+        setTransactions([]);
       } catch (e) {
-        console.error("Reports: failed to fetch admin transactions", e);
+        console.error("Reports: failed to fetch transactions", e);
         showToast("Failed to load report data", "error");
       }
     };
-    if (role === "Admin") fetchData();
-  }, [getAdminTransactionHistory, role]);
+
+    fetchData();
+  }, [
+    getAdminTransactionHistory,
+    getTransactionHistory,
+    role,
+    fromDate,
+    toDate,
+    user,
+  ]);
 
   // Date filter helpers
   const inRange = (iso?: string) => {
@@ -107,10 +149,62 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
     a.id > b.id ? 1 : -1
   );
 
+  // Dummy demo data for Active Customers (used when no real data)
+  const demoActiveCustomers = [
+    {
+      id: "CUST-1001",
+      name: "Alice Johnson",
+      lastActivity: new Date().toISOString(),
+      totalTxns: 3,
+    },
+    {
+      id: "CUST-1002",
+      name: "Bob Ade",
+      lastActivity: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      totalTxns: 2,
+    },
+    {
+      id: "CUST-1003",
+      name: "Christine Okoro",
+      lastActivity: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+      totalTxns: 5,
+    },
+  ];
+
+  const visibleActiveCustomers = activeCustomers.length
+    ? activeCustomers
+    : demoActiveCustomers;
+
   // Pending transactions in range
   const pendingTxns = transactions.filter(
     (t) => inRange(t.createdAt) && (t.status || "").toUpperCase() === "PENDING"
   );
+
+  // Demo pending transactions (for admin demo purposes)
+  const demoPendingTxns: AdminTransactionItem[] = [
+    {
+      id: 9001,
+      tariffId: 1,
+      tariffName: "International Arrival",
+      amount: 7000,
+      status: "PENDING",
+      createdAt: new Date().toISOString(),
+      customerName: "Demo Customer",
+      customerId: "DEMO-001",
+    },
+    {
+      id: 9002,
+      tariffId: 3,
+      tariffName: "VIP lounge International",
+      amount: 5000,
+      status: "PENDING",
+      createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+      customerName: "Demo Customer 2",
+      customerId: "DEMO-002",
+    },
+  ];
+
+  const visiblePendingTxns = pendingTxns.length ? pendingTxns : demoPendingTxns;
 
   // Completed payments in range
   const completedTxns = transactions.filter(
@@ -121,7 +215,13 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
   // Single table tabs
   const [activeTab, setActiveTab] = React.useState<
     "active" | "pending" | "completed"
-  >("active");
+  >(role === "Customer" ? "pending" : "active");
+
+  // Determine which tabs are available based on role
+  const availableTabs =
+    role === "Customer"
+      ? ["pending", "completed"]
+      : ["active", "pending", "completed"];
 
   const tableHeaders: string[] =
     activeTab === "active"
@@ -130,7 +230,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
 
   const tableData: React.ReactNode[][] =
     activeTab === "active"
-      ? activeCustomers.map((c, i) => [
+      ? visibleActiveCustomers.map((c, i) => [
           i + 1,
           c.id,
           c.name || "-",
@@ -138,7 +238,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
           c.totalTxns,
         ])
       : activeTab === "pending"
-      ? pendingTxns.map((t) => [
+      ? visiblePendingTxns.map((t) => [
           t.id,
           t.customerName || t.customerId || "-",
           t.tariffName || "-",
@@ -227,11 +327,136 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
     return handleDownloadCompleted();
   };
 
-  if (role !== "Admin") {
+  // Download as JSON
+  const handleDownloadJson = () => {
+    let rows: Array<Record<string, unknown>> = [];
+    if (activeTab === "active") {
+      rows = visibleActiveCustomers.map((c, i) => ({
+        SN: i + 1,
+        customerId: c.id,
+        customerName: c.name,
+        lastActivity: c.lastActivity,
+        totalTransactions: c.totalTxns,
+      }));
+    } else if (activeTab === "pending") {
+      rows = visiblePendingTxns.map((t) => ({
+        id: t.id,
+        customer: t.customerName || t.customerId,
+        service: t.tariffName,
+        amount: t.amount ?? 0,
+        status: t.status,
+        date: t.createdAt,
+      }));
+    } else {
+      rows = completedTxns.map((t) => ({
+        id: t.id,
+        customer: t.customerName || t.customerId,
+        service: t.tariffName,
+        amount: t.amount ?? 0,
+        status: t.status,
+        date: t.createdAt,
+      }));
+    }
+
+    if (!rows.length) {
+      showToast("No data to download", "error");
+      return;
+    }
+
+    const blob = new Blob([JSON.stringify(rows, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${activeTab}-report_${fromDate}_to_${toDate}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Download as printable PDF (opens print dialog)
+  const handleDownloadPdf = () => {
+    let headers: string[] = [];
+    let rows: Array<string[]> = [];
+    if (activeTab === "active") {
+      headers = [
+        "S/N",
+        "Customer ID",
+        "Customer Name",
+        "Last Activity",
+        "Total Txns",
+      ];
+      rows = visibleActiveCustomers.map((c, i) => [
+        String(i + 1),
+        c.id,
+        c.name || "",
+        c.lastActivity ? new Date(c.lastActivity).toLocaleString() : "",
+        String(c.totalTxns),
+      ]);
+    } else if (activeTab === "pending") {
+      headers = ["ID", "Customer", "Service", "Amount", "Status", "Date"];
+      rows = visiblePendingTxns.map((t) => [
+        String(t.id),
+        t.customerName || t.customerId || "",
+        t.tariffName || "",
+        t.amount ? `₦${t.amount.toLocaleString()}` : "₦0",
+        t.status || "",
+        t.createdAt ? new Date(t.createdAt).toLocaleString() : "",
+      ]);
+    } else {
+      headers = ["ID", "Customer", "Service", "Amount", "Status", "Date"];
+      rows = completedTxns.map((t) => [
+        String(t.id),
+        t.customerName || t.customerId || "",
+        t.tariffName || "",
+        t.amount ? `₦${t.amount.toLocaleString()}` : "₦0",
+        t.status || "",
+        t.createdAt ? new Date(t.createdAt).toLocaleString() : "",
+      ]);
+    }
+
+    if (!rows.length) {
+      showToast("No data to download", "error");
+      return;
+    }
+
+    const title = `${activeTab.toUpperCase()} Report (${fromDate} to ${toDate})`;
+    const style = `
+      <style>
+        body{font-family:Arial,Helvetica,sans-serif;color:#111827;padding:24px}
+        table{width:100%;border-collapse:collapse}
+        th,td{border:1px solid #e5e7eb;padding:8px;text-align:left}
+        th{background:#f8fafc}
+        h1{font-size:18px}
+      </style>`;
+
+    const tableRows = rows
+      .map(
+        (r) =>
+          `<tr>${r
+            .map((c) => `<td>${String(c).replace(/</g, "&lt;")}</td>`)
+            .join("")}</tr>`
+      )
+      .join("");
+
+    const html = `<!doctype html><html><head><meta charset='utf-8'><title>${title}</title>${style}</head><body><h1>${title}</h1><table><thead><tr>${headers
+      .map((h) => `<th>${h}</th>`)
+      .join(
+        ""
+      )}</tr></thead><tbody>${tableRows}</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();},200);};</script></body></html>`;
+    const win = window.open("", "_blank");
+    if (win) {
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+    }
+  };
+
+  if (role !== "Admin" && role !== "Customer") {
     return (
       <div className="reports-page">
         <div className="reports-guard">
-          Reports are available to admin users only.
+          Reports are available to admin and customer users only.
         </div>
       </div>
     );
@@ -283,26 +508,39 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
             onClick={handleDownloadCurrent}
             className="border-button-reports"
           />
+          <BorderButton
+            text="Download JSON"
+            onClick={handleDownloadJson}
+            className="border-button-reports"
+          />
+          <BorderButton
+            text="Download PDF"
+            onClick={handleDownloadPdf}
+            className="border-button-reports"
+          />
         </div>
       </div>
 
       <div className="reports-tabs-row">
-        {[
-          { key: "active", label: "Active Customers" },
-          { key: "pending", label: "Pending Transactions" },
-          { key: "completed", label: "Completed Payments" },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            className={`reports-tab${
-              activeTab === (tab.key as any) ? " active" : ""
-            }`}
-            onClick={() => setActiveTab(tab.key as any)}
-            type="button"
-          >
-            {tab.label}
-          </button>
-        ))}
+        {availableTabs.map((key) => {
+          const labelMap: Record<string, string> = {
+            active: "Active Customers",
+            pending: "Pending Transactions",
+            completed: "Completed Payments",
+          };
+          return (
+            <button
+              key={key}
+              className={`reports-tab${activeTab === key ? " active" : ""}`}
+              onClick={() =>
+                setActiveTab(key as "active" | "pending" | "completed")
+              }
+              type="button"
+            >
+              {labelMap[key]}
+            </button>
+          );
+        })}
       </div>
 
       <div className="reports-table-wrap">

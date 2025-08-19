@@ -143,10 +143,33 @@
   width: 95%;
 }
 
+/* Native select styling to match the search input aesthetic */
+.search-input-select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 500;
+  color: #626262;
+  flex: 1;
+  font-family: "Archivo", sans-serif;
+  padding: 10px 6px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+}
+
+.search-input-select option {
+  color: #070600;
+}
+
 .search-input-dropdown-wrapper {
   padding-right: 32px;
   width: 268px;
   cursor: pointer;
+  z-index: 999;
 }
 
 .search-dropdown-value {
@@ -174,7 +197,7 @@
   border: 1px solid #d9d9d9;
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  z-index: 99999;
+  z-index: 99999 !important;
   margin-top: 4px;
   max-height: 220px;
   overflow-y: auto;
@@ -187,6 +210,7 @@
   color: #626262;
   cursor: pointer;
   transition: background 0.15s;
+  z-index: 999;
 }
 
 .search-dropdown-option:hover,

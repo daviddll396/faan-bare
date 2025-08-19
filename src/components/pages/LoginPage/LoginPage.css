@@ -41,16 +41,15 @@
 
 .login-card {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
-  border: 1px solid #e4e4e4;
-  padding: 48px 40px;
+  border-radius: 14px;
+  border: none; /* borderless card */
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  padding: 40px 36px;
   width: 100%;
-  max-width: 420px;
+  max-width: 520px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Removed zoom-based scaling for uniform sizing */
 }
 
 .login-header {
@@ -60,23 +59,23 @@
 }
 
 .login-logo {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 24px;
+  width: 92px;
+  height: 92px;
+  margin-bottom: 20px;
   border-radius: 12px;
 }
 
 .login-title {
   font-size: 28px;
   font-weight: 700;
-  color: #222b45;
+  color: #0f172a;
   margin-bottom: 8px;
   text-align: center;
 }
 
 .login-subtitle {
-  color: #6c7278;
-  font-size: 16px;
+  color: #6b7280;
+  font-size: 15px;
   font-weight: 400;
   text-align: center;
 }
@@ -106,7 +105,7 @@
   font-size: 16px;
   font-weight: 700;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 16px 0;
   cursor: pointer;
   transition: background 0.2s;
@@ -116,6 +115,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 8px 28px rgba(2, 6, 23, 0.06);
 }
 
 .login-button:hover:not(:disabled) {
@@ -165,6 +165,20 @@
 
 /* form-input-modern styles centralized in auth-common.css */
 
+/* Override form input styles locally to match new aesthetic */
+.form-input-modern {
+  border: 1.5px solid #eef2f7;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.02);
+}
+.form-input-modern:focus {
+  border-color: #10b981;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  outline: none;
+}
+
 .login-btn-modern {
   width: 100%;
   background: linear-gradient(180deg, #007948 0%, #007948 100%);
@@ -204,7 +218,7 @@
 }
 
 .form-row label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: #6c7278;
 }

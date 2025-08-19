@@ -9,6 +9,43 @@ import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import "./InvoicesPage.css";
 
+// helper to map service names to images (reuses same assets as ServicesPage)
+const getImageForService = (serviceName: string): string => {
+  const imageMap: { [k: string]: string } = {
+    "International Arrival": "/images/intl-arrival.svg",
+    "International Departure": "/images/intl-departure.svg",
+    "VIP lounge International": "/images/vip-lounge.svg",
+    "Abuja International OneOff": "/images/abj-intl.svg",
+    "One Year Protocol Service (Domestic operations PH)":
+      "/images/one-year.svg",
+    "Additional One(1) Unit(Domestic ODC PH)": "/images/add-one-unit.svg",
+    "Extra ODC": "/images/add-one-unit.svg",
+    "Protocol Car Park Porthacourt": "/images/ph-protocol.svg",
+    "Protocol Lounge porthacourt": "/images/vip-lounge.svg",
+    "Port Harcourt Domestic Service": "/images/ph-domestic.svg",
+  };
+
+  if (imageMap[serviceName]) return imageMap[serviceName];
+
+  const availableImages = [
+    "/images/intl-arrival.svg",
+    "/images/intl-departure.svg",
+    "/images/vip-lounge.svg",
+    "/images/abj-intl.svg",
+    "/images/one-year.svg",
+    "/images/add-one-unit.svg",
+    "/images/ph-protocol.svg",
+    "/images/ph-domestic.svg",
+  ];
+
+  const hash = serviceName.split("").reduce((a, b) => {
+    a = (a << 5) - a + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  const idx = Math.abs(hash) % availableImages.length;
+  return availableImages[idx];
+};
+
 // Remita Payment Engine types
 declare global {
   interface Window {
@@ -64,9 +101,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
   const { getAllTariffs, user, makePayment, refreshUserDetails } = useAuth();
   const { showLoading, hideLoading } = useLoading();
 
-  // Remita Payment Configuration
-  const REMITA_PUBLIC_KEY =
-    "QzAwMDAyNzEyNTl8MTEwNjE4NjF8OWZjOWYwNmMyZDk3MDRhYWM3YThiOThlNTNjZTE3ZjYxOTY5NDdmZWE1YzU3NDc0ZjE2ZDZjNTg1YWYxNWY3NWM4ZjMzNzZhNjNhZWZlOWQwNmJhNTFkMjIxYTRiMjYzZDkzNGQ3NTUxNDIxYWNlOGY4ZWEyODY3ZjlhNGUwYTY=";
+  // Remita removed for invoices - wallet-only flow
 
   // State for available services (tariffs)
   const [availableServices, setAvailableServices] = useState<
@@ -106,10 +141,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
   // Top sentinel for scrolling precisely to top
   const invoicesTopRef = React.useRef<HTMLDivElement | null>(null);
 
-  // State for payment method
-  const [paymentMethod, setPaymentMethod] = useState<"wallet" | "remita">(
-    "wallet"
-  );
+  // Payment will always use wallet for invoices
 
   // State for current time (for countdown timers)
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -130,24 +162,48 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
   const [receiptData, setReceiptData] = useState<{
     invoiceNumber: string;
     transactionId: number;
-    amount: number;
+    amount: number; // total
+    subtotal: number;
+    vatRate: number;
+    vatAmount: number;
     paymentDate: string;
     items: { name: string; amount: number; quantity: number }[];
     customerId?: string;
+    paymentChannel?: string; // e.g. Web, pos
+    paymentMethod?: string; // e.g. Wallet
   } | null>(null);
 
-  const openInvoiceReceipt = (invoice: Invoice, txId: number) => {
+  const openInvoiceReceipt = (
+    invoice: Invoice,
+    txId: number,
+    paymentChannel: string = "Web",
+    paymentMethod: string = "Wallet"
+  ) => {
+    const items = invoice.services.map((s) => ({
+      name: s.name,
+      amount: s.amount,
+      quantity: s.quantity,
+    }));
+    const subtotal = items.reduce(
+      (sum, it) => sum + it.amount * it.quantity,
+      0
+    );
+    const vatRate = 0.075; // 7.5% VAT (adjust if needed)
+    const vatAmount = Math.round(subtotal * vatRate);
+    const total = subtotal + vatAmount;
+
     setReceiptData({
       invoiceNumber: invoice.invoiceNumber,
       transactionId: txId,
-      amount: invoice.totalAmount,
+      amount: total,
+      subtotal,
+      vatRate,
+      vatAmount,
       paymentDate: new Date().toLocaleString(),
-      items: invoice.services.map((s) => ({
-        name: s.name,
-        amount: s.amount,
-        quantity: s.quantity,
-      })),
+      items,
       customerId: user?.customerId,
+      paymentChannel,
+      paymentMethod,
     });
     setShowReceiptModal(true);
   };
@@ -352,18 +408,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     });
   };
 
-  // Handle service quantity change
-  const handleQuantityChange = (serviceId: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      setSelectedServices(selectedServices.filter((s) => s.id !== serviceId));
-    } else {
-      setSelectedServices(
-        selectedServices.map((s) =>
-          s.id === serviceId ? { ...s, quantity: newQuantity } : s
-        )
-      );
-    }
-  };
+  // quantities updated when adding services; no separate quantity control UI here
 
   // Generate invoice
   const handleGenerateInvoice = () => {
@@ -372,10 +417,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       return;
     }
 
-    const totalAmount = selectedServices.reduce(
+    // compute subtotal, VAT and total
+    const subtotal = selectedServices.reduce(
       (sum, service) => sum + service.amount * service.quantity,
       0
     );
+    const VAT_RATE = 0.075; // 7.5% VAT
+    const totalAmount = subtotal + Math.round(subtotal * VAT_RATE);
 
     const newInvoice: Invoice = {
       id: `INV-${Date.now()}`,
@@ -441,100 +489,59 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     setShowViewDetailsModal(true);
   };
 
-  // Process payment
+  // Process payment (always wallet) - now includes VAT breakdown
   const processPayment = async () => {
     if (!selectedInvoice) return;
 
     try {
-      if (paymentMethod === "wallet") {
-        // Handle wallet payment
-        showLoading("Processing wallet payment...");
+      showLoading("Processing wallet payment...");
 
-        // Process each service separately to handle quantities properly
-        let allPaymentsSuccessful = true;
-        const paymentResults = [];
+      // compute subtotal/VAT handled in receipt generation; no local use here
 
-        for (const service of selectedInvoice.services) {
-          // Generate a unique reference for each service payment
-          const reference = `INV-${selectedInvoice.invoiceNumber}-${
-            service.id
-          }-${service.quantity}-${Date.now()}-${Math.random()
-            .toString(36)
-            .substring(2, 6)}`;
+      let allPaymentsSuccessful = true;
+      const paymentResults: {
+        service: InvoiceService;
+        success: boolean;
+        errorMessage?: string;
+      }[] = [];
 
-          console.log(`🚀 === PROCESSING SERVICE PAYMENT ===`);
-          console.log(`📋 Service: ${service.name}`);
-          console.log(`🔢 Quantity: ${service.quantity}`);
-          console.log(`🔢 Reference: ${reference}`);
-          console.log(`🎯 Tariff ID: ${service.id}`);
-          console.log(`💰 Service Amount: ₦${service.amount.toLocaleString()}`);
-          console.log(
-            `💰 Total for this service: ₦${(
-              service.amount * service.quantity
-            ).toLocaleString()}`
-          );
-
-          // Log the exact request body being sent to the API
-          const requestBody = {
-            reference: reference,
-            tariffId: service.id,
-          };
-          console.log(`📤 === PAYMENT REQUEST BODY ===`);
-          console.log(`📋 Request Body:`, JSON.stringify(requestBody, null, 2));
-          console.log(`📍 API Endpoint: /api/faan/transactions/make-payment`);
-          console.log(`🔑 Method: POST`);
-
-          // Make payment for this service (quantity will be handled by the API)
-          const paymentResult = await makePayment(reference, service.id);
-
-          if (paymentResult.success) {
-            console.log(
-              `✅ Payment successful for ${service.name} x${service.quantity}`
-            );
-            paymentResults.push({ service, success: true });
-          } else {
-            console.error(
-              `❌ Payment failed for ${service.name} x${service.quantity}`
-            );
-            console.error(`❌ Error message: ${paymentResult.message}`);
-            paymentResults.push({
-              service,
-              success: false,
-              errorMessage: paymentResult.message,
-            });
-            allPaymentsSuccessful = false;
-          }
+      // make payment per service (backend expects tariffId)
+      for (const service of selectedInvoice.services) {
+        const reference = `INV-${selectedInvoice.invoiceNumber}-${service.id}-${
+          service.quantity
+        }-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+        const paymentResult = await makePayment(reference, service.id);
+        if (paymentResult.success)
+          paymentResults.push({ service, success: true });
+        else {
+          paymentResults.push({
+            service,
+            success: false,
+            errorMessage: paymentResult.message,
+          });
+          allPaymentsSuccessful = false;
         }
+      }
 
-        if (allPaymentsSuccessful) {
-          console.log("🎉 === ALL WALLET PAYMENTS SUCCESSFUL ===");
-
-          // Update invoice status
-          setInvoices(
-            invoices.map((inv) =>
-              inv.id === selectedInvoice.id ? { ...inv, status: "paid" } : inv
-            )
-          );
-
-          setShowPaymentModal(false);
-          // Build receipt before clearing selection
-          const txId = Math.floor(Math.random() * 1101233);
-          openInvoiceReceipt(selectedInvoice, txId);
-          setSelectedInvoice(null);
-          showToast("Wallet payment processed successfully!", "success");
-          refreshUserDetails(); // Refresh user details after successful wallet payment
-        } else {
-          console.error("❌ === SOME WALLET PAYMENTS FAILED ===");
-
-          // Show the first error message as the main toast message
-          const firstError = paymentResults.find((result) => !result.success);
-          const mainErrorMessage = firstError?.errorMessage || "Payment failed";
-
-          showToast(`Payment failed: ${mainErrorMessage}`, "error");
-        }
-      } else if (paymentMethod === "remita") {
-        // Handle Remita payment
-        await handleRemitaPayment(selectedInvoice);
+      if (allPaymentsSuccessful) {
+        setInvoices(
+          invoices.map((inv) =>
+            inv.id === selectedInvoice.id ? { ...inv, status: "paid" } : inv
+          )
+        );
+        setShowPaymentModal(false);
+        const txId = Math.floor(Math.random() * 1101233);
+        // pass payment channel/method to receipt (defaults used inside)
+        openInvoiceReceipt(selectedInvoice, txId, "Web", "Wallet");
+        setSelectedInvoice(null);
+        showToast("Wallet payment processed successfully!", "success");
+        refreshUserDetails();
+      } else {
+        const firstError = paymentResults.find((r) => !r.success);
+        showToast(
+          `Payment failed: ${firstError?.errorMessage || "Unknown error"}`,
+          "error"
+        );
       }
     } catch (error) {
       console.error("💥 Payment processing error:", error);
@@ -545,112 +552,35 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
   };
 
   // Handle Remita payment
-  const handleRemitaPayment = async (invoice: Invoice) => {
-    if (!selectedInvoice) return;
-
-    // Check if Remita script is loaded
-    if (typeof window.RmPaymentEngine === "undefined") {
-      console.error("❌ Remita Payment Engine not loaded");
-      showToast(
-        "Payment engine not available. Please refresh the page.",
-        "error"
-      );
-      return;
-    }
-
-    try {
-      // Close the payment modal immediately when starting Remita payment
-      setShowPaymentModal(false);
-      setSelectedInvoice(null);
-
-      // Reset payment success flag for new payment
-      let isPaymentSuccessful = false;
-
-      // Get user details for payment
-      const firstName = user?.firstName || "Guest";
-      const lastName = user?.lastName || "User";
-      const email = user?.email || "guest@example.com";
-
-      // Generate unique transaction ID
-      const transactionId = Math.floor(Math.random() * 1101233);
-
-      console.log("🚀 === STARTING REMITA PAYMENT FOR INVOICE ===");
-      console.log("💰 Amount:", invoice.totalAmount);
-      console.log("🔢 Invoice Number:", invoice.invoiceNumber);
-      console.log("🔢 Transaction ID:", transactionId);
-
-      // Initialize Remita payment engine
-      const paymentEngine = window.RmPaymentEngine.init({
-        key: REMITA_PUBLIC_KEY,
-        transactionId: transactionId,
-        customerId: user?.customerId || "GUEST",
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        amount: invoice.totalAmount,
-        narration: `Payment for Invoice ${invoice.invoiceNumber} - ${invoice.services.length} service(s)`,
-        onSuccess: (response) => {
-          console.log("🎉 === REMITA PAYMENT SUCCESSFUL ===");
-          console.log("📄 Payment response:", response);
-          console.log("🔢 Transaction ID:", transactionId);
-          console.log("💰 Amount:", invoice.totalAmount);
-          console.log("🔢 Invoice Number:", invoice.invoiceNumber);
-
-          // Show success toast
-          showToast("Remita payment successful!", "success");
-
-          // Set payment success flag
-          isPaymentSuccessful = true;
-
-          // Update invoice status
-          setInvoices(
-            invoices.map((inv) =>
-              inv.id === invoice.id ? { ...inv, status: "paid" } : inv
-            )
-          );
-
-          // Refresh user details to update wallet balance and transaction history
-          refreshUserDetails();
-
-          // Show receipt modal
-          openInvoiceReceipt(invoice, transactionId);
-        },
-        onError: (response) => {
-          console.error("❌ === REMITA PAYMENT FAILED ===");
-          console.error("📄 Error response:", response);
-          console.error("🔢 Transaction ID:", transactionId);
-
-          showToast("Remita payment failed. Please try again.", "error");
-        },
-        onClose: () => {
-          console.log("🚪 === REMITA PAYMENT CLOSED ===");
-          console.log("🔢 Transaction ID:", transactionId);
-          console.log("✅ Payment was successful:", isPaymentSuccessful);
-
-          // Only show "Payment was cancelled" if it wasn't successful
-          if (!isPaymentSuccessful) {
-            showToast("Payment was cancelled", "error");
-          } else {
-            console.log(
-              "🎉 Payment was successful, not showing cancelled message"
-            );
-          }
-        },
-      });
-
-      // Show the payment widget
-      paymentEngine.showPaymentWidget();
-    } catch (error) {
-      console.error("💥 Remita payment initialization error:", error);
-      showToast("Failed to initialize Remita payment", "error");
-    }
-  };
+  // remove old Remita handler (invoices now always use wallet)
 
   // Calculate total for selected services
   const selectedServicesTotal = selectedServices.reduce(
     (sum, service) => sum + service.amount * service.quantity,
     0
   );
+  // VAT for create-invoice summary
+  const VAT_RATE = 0.075; // 7.5%
+  const selectedServicesVat = Math.round(selectedServicesTotal * VAT_RATE);
+  const selectedServicesGrandTotal =
+    selectedServicesTotal + selectedServicesVat;
+
+  // Helper to compute subtotal/vat/total for a given invoice (used for modal/receipt)
+  const computeInvoiceTotals = (invoice: Invoice) => {
+    const subtotal = invoice.services.reduce(
+      (sum, s) => sum + s.amount * s.quantity,
+      0
+    );
+    const vatRate = 0.075;
+    const vatAmount = Math.round(subtotal * vatRate);
+    const total = subtotal + vatAmount;
+    return { subtotal, vatRate, vatAmount, total };
+  };
+
+  // breakdown for currently selected invoice (used in modal)
+  const invoiceBreakdown = selectedInvoice
+    ? computeInvoiceTotals(selectedInvoice)
+    : null;
 
   // Helper function to check if invoice is about to expire (within 10 minutes)
   const isInvoiceExpiringSoon = (invoice: Invoice): boolean => {
@@ -693,7 +623,25 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       />
 
       <div ref={invoicesTopRef} className="page-header">
-        <PageTitle icon="/icons/nav-bill-icon.svg" title="Invoices" />
+        {showCreateInvoicePage ? (
+          <PageTitle
+            icon="/icons/nav-bill-icon.svg"
+            title="Create Invoice"
+            breadcrumb={[
+              { label: "Invoices", icon: "/icons/nav-bill-icon.svg" },
+              { label: "Create Invoice" },
+            ]}
+            onBreadcrumbClick={(idx) => {
+              // clicking first crumb returns to invoices list
+              if (idx === 0) {
+                setShowCreateInvoicePage(false);
+                setSelectedServices([]);
+              }
+            }}
+          />
+        ) : (
+          <PageTitle icon="/icons/nav-bill-icon.svg" title="Invoices" />
+        )}
       </div>
       {!showCreateInvoicePage && (
         <div className="page-actions">
@@ -733,23 +681,36 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
             </p>
             <div className="available-services">
               {availableServices.map((service) => (
-                <div key={service.id} className="service-option">
-                  <div className="service-info">
-                    <div className="service-name">{service.name}</div>
-                    <div className="service-description">
-                      {service.description}
-                    </div>
-                    <div className="service-price">
-                      ₦{service.amount.toLocaleString()}
-                    </div>
+                <div key={service.id} className="service-card">
+                  <div className="service-card-img-wrap">
+                    <img
+                      src={getImageForService(service.name)}
+                      alt={service.name}
+                      className="service-card-img"
+                    />
                   </div>
-                  <div className="service-actions">
-                    <GradientButton
-                      size={window.innerWidth <= 768 ? "tiny" : "small"}
-                      onClick={() => handleServiceSelection(service)}
-                    >
-                      Add to Invoice
-                    </GradientButton>
+
+                  <div className="service-card-body">
+                    <div className="service-card-top">
+                      <div className="service-card-name">{service.name}</div>
+                      <div className="service-card-price">
+                        ₦{service.amount.toLocaleString()}
+                      </div>
+                    </div>
+
+                    <div className="service-card-desc">
+                      {service.description || "Description not available"}
+                    </div>
+
+                    <div className="service-card-meta">
+                      <button
+                        type="button"
+                        className="service-card-action-text"
+                        onClick={() => handleServiceSelection(service)}
+                      >
+                        Add to Invoice
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -757,46 +718,43 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           </div>
 
           {selectedServices.length > 0 && (
-            <div className="selected-services">
-              <h3>Selected Services</h3>
+            <div className="booking-summary-card">
+              <div className="booking-summary-title">SUMMARY</div>
+              {/* list each service and qty */}
               {selectedServices.map((service) => (
-                <div key={service.id} className="selected-service">
-                  <div className="service-details">
-                    <span className="service-name">{service.name}</span>
-                    <span className="service-price">
-                      ₦{service.amount.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="quantity-controls">
-                    <button
-                      onClick={() =>
-                        handleQuantityChange(service.id, service.quantity - 1)
-                      }
-                      className="quantity-btn"
-                    >
-                      -
-                    </button>
-                    <span className="quantity">{service.quantity}</span>
-                    <button
-                      onClick={() =>
-                        handleQuantityChange(service.id, service.quantity + 1)
-                      }
-                      className="quantity-btn"
-                    >
-                      +
-                    </button>
-                  </div>
+                <div key={service.id} className="booking-summary-row">
+                  <span>
+                    {service.name} x{service.quantity}
+                  </span>
+                  <span>
+                    ₦{(service.amount * service.quantity).toLocaleString()}
+                  </span>
                 </div>
               ))}
 
-              <div className="invoice-total">
-                <strong>
-                  Total Amount: ₦{selectedServicesTotal.toLocaleString()}
-                </strong>
+              <div className="booking-summary-row">
+                <span>SUB-TOTAL</span>
+                <span>₦{selectedServicesTotal.toLocaleString()}</span>
+              </div>
+              <div className="booking-summary-row">
+                <span>VAT ({(VAT_RATE * 100).toFixed(2)}%)</span>
+                <span>₦{selectedServicesVat.toLocaleString()}</span>
+              </div>
+              <div className="booking-summary-row">
+                <span>OTHER CHARGES</span>
+                <span>₦0</span>
+              </div>
+              <div className="booking-summary-row total">
+                <span>TOTAL</span>
+                <span>₦{selectedServicesGrandTotal.toLocaleString()}</span>
               </div>
 
-              <div className="modal-actions">
-                <GradientButton onClick={handleGenerateInvoice} fullWidth>
+              <div style={{ width: "100%" }}>
+                <GradientButton
+                  onClick={handleGenerateInvoice}
+                  fullWidth
+                  className="booking-pay-btn"
+                >
                   Generate Invoice
                 </GradientButton>
               </div>
@@ -820,9 +778,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               {filteredInvoices.map((invoice) => (
                 <div
                   key={invoice.id}
-                  className={`invoice-card ${
-                    invoice.status === "pending" ? "pending" : ""
-                  }`}
+                  className={`invoice-card ${invoice.status}`}
                 >
                   <div className="invoice-content-area">
                     <div className="invoice-header">
@@ -902,74 +858,102 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
         </div>
       )}
 
-      {/* Payment Modal */}
+      {/* Invoice Summary Modal (wallet payment pre-decided) */}
       <Modal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        className="payment-modal"
+        className="invoice-summary-modal"
       >
         <div className="modal-content">
-          <h2>Payment Options</h2>
+          <h2 style={{ color: "#111827" }}>Invoice Summary</h2>
+
           {selectedInvoice && (
-            <div className="payment-summary">
-              <h3>Invoice Summary</h3>
-              <div className="invoice-summary-details">
-                <div>
-                  <strong>Invoice:</strong> {selectedInvoice.invoiceNumber}
+            <div
+              className="booking-summary-card invoice-modal-summary"
+              aria-live="polite"
+            >
+              {selectedInvoice.services.map((s) => (
+                <div key={s.id} className="booking-summary-row">
+                  <span style={{ color: "#111827" }}>
+                    {s.name} x{s.quantity}
+                  </span>
+                  <span style={{ color: "#111827" }}>
+                    ₦{(s.amount * s.quantity).toLocaleString()}
+                  </span>
                 </div>
-                <div>
-                  <strong>Amount:</strong> ₦
-                  {selectedInvoice.totalAmount.toLocaleString()}
-                </div>
-                <div>
-                  <strong>Customer:</strong> {selectedInvoice.customerName}
-                </div>
+              ))}
+
+              <div className="booking-summary-row">
+                <span style={{ color: "#6b7280" }}>SUB-TOTAL</span>
+                <span style={{ color: "#111827" }}>
+                  ₦
+                  {invoiceBreakdown
+                    ? invoiceBreakdown.subtotal.toLocaleString()
+                    : selectedInvoice.totalAmount.toLocaleString()}
+                </span>
+              </div>
+
+              <div className="booking-summary-row">
+                <span style={{ color: "#6b7280" }}>
+                  VAT{" "}
+                  {invoiceBreakdown
+                    ? `(${(invoiceBreakdown.vatRate * 100).toFixed(2)}%)`
+                    : ""}
+                </span>
+                <span style={{ color: "#111827" }}>
+                  ₦
+                  {invoiceBreakdown
+                    ? invoiceBreakdown.vatAmount.toLocaleString()
+                    : "0"}
+                </span>
+              </div>
+
+              <div className="booking-summary-row">
+                <span style={{ color: "#6b7280" }}>OTHER CHARGES</span>
+                <span style={{ color: "#111827" }}>₦0</span>
+              </div>
+
+              <div className="booking-summary-row total">
+                <span style={{ color: "#111827" }}>TOTAL</span>
+                <span style={{ color: "#111827" }}>
+                  ₦
+                  {invoiceBreakdown
+                    ? invoiceBreakdown.total.toLocaleString()
+                    : selectedInvoice.totalAmount.toLocaleString()}
+                </span>
+              </div>
+
+              <div style={{ marginTop: 12, fontSize: 13, color: "#6b7280" }}>
+                <strong style={{ color: "#374151" }}>Invoice:</strong>{" "}
+                {selectedInvoice.invoiceNumber}
+              </div>
+
+              <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
+                <strong style={{ color: "#374151" }}>Customer:</strong>{" "}
+                {selectedInvoice.customerName}
+              </div>
+
+              <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
+                <strong style={{ color: "#374151" }}>Created:</strong>{" "}
+                {selectedInvoice.createdAt.toLocaleDateString()}
+                {/* •
+                <strong style={{ color: "#374151", marginLeft: 8 }}>
+                  Due:
+                </strong>{" "}
+                {selectedInvoice.dueDate.toLocaleDateString()} */}
               </div>
             </div>
           )}
 
-          <div className="payment-methods">
-            <h3>Select Payment Method</h3>
-
-            <div
-              className="payment-option"
-              onClick={() => setPaymentMethod("wallet")}
-            >
-              <input
-                type="radio"
-                id="wallet"
-                name="paymentMethod"
-                value="wallet"
-                checked={paymentMethod === "wallet"}
-                onChange={(e) =>
-                  setPaymentMethod(e.target.value as "wallet" | "remita")
-                }
-              />
-              <label htmlFor="wallet">Pay via Wallet</label>
-            </div>
-
-            <div
-              className="payment-option"
-              onClick={() => setPaymentMethod("remita")}
-            >
-              <input
-                type="radio"
-                id="remita"
-                name="paymentMethod"
-                value="remita"
-                checked={paymentMethod === "remita"}
-                onChange={(e) =>
-                  setPaymentMethod(e.target.value as "wallet" | "remita")
-                }
-              />
-              <label htmlFor="remita">Pay via Remita</label>
-            </div>
-          </div>
-
           <div className="modal-actions" style={{ width: "100%" }}>
             <GradientButton onClick={processPayment} fullWidth>
-              Process Payment
+              Confirm & Pay
             </GradientButton>
+          </div>
+
+          {/* Notice about payment method (wallet-only) */}
+          <div className="wallet-note" role="status">
+            Your wallet will be used to pay this invoice automatically.
           </div>
         </div>
       </Modal>
@@ -1004,6 +988,14 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                 <span>Payment Date</span>
                 <span>{receiptData.paymentDate}</span>
               </div>
+              <div className="meta-row">
+                <span>Payment Channel</span>
+                <span>{receiptData.paymentChannel || "Web"}</span>
+              </div>
+              <div className="meta-row">
+                <span>Payment Method</span>
+                <span>{receiptData.paymentMethod || "Wallet"}</span>
+              </div>
             </div>
             <div className="receipt-items">
               <div className="thead">
@@ -1020,6 +1012,18 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                   </span>
                 </div>
               ))}
+              <div className="row">
+                <span>SUBTOTAL</span>
+                <span className="right mono">
+                  ₦{receiptData.subtotal.toLocaleString()}
+                </span>
+              </div>
+              <div className="row">
+                <span>VAT ({(receiptData.vatRate * 100).toFixed(2)}%)</span>
+                <span className="right mono">
+                  ₦{receiptData.vatAmount.toLocaleString()}
+                </span>
+              </div>
               <div className="total">
                 <span>Total</span>
                 <span className="right mono">
@@ -1078,6 +1082,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                         <div class='meta-row'><span>Payment Date</span><span>${
                           receiptData.paymentDate
                         }</span></div>
+                        <div class='meta-row'><span>Payment Channel</span><span>${
+                          receiptData.paymentChannel || "Web"
+                        }</span></div>
+                        <div class='meta-row'><span>Payment Method</span><span>${
+                          receiptData.paymentMethod || "Wallet"
+                        }</span></div>
                       </div>
                       <div class='receipt-items'>
                         <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
@@ -1091,15 +1101,19 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                               ).toLocaleString()}</span></div>`
                           )
                           .join("")}
+                        <div class='row'><span>SUBTOTAL</span><span class='right mono'>₦${receiptData.subtotal.toLocaleString()}</span></div>
+                        <div class='row'><span>VAT (${(
+                          receiptData.vatRate * 100
+                        ).toFixed(
+                          2
+                        )}%)</span><span class='right mono'>₦${receiptData.vatAmount.toLocaleString()}</span></div>
                         <div class='total'><span>Total</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
                       </div>
                       <div class='receipt-foot'>Customer ID: ${
                         user?.customerId || ""
                       }</div>
                     </div>
-                    <script>
-                      window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
-                    </script>
+                    <script>window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };</script>
                   </body></html>`;
                   const win = window.open("", "_blank");
                   if (win) {

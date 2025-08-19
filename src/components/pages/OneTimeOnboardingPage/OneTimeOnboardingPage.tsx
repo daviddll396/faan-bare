@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import FaanLogo from "/images/faan-logo.svg";
-import OnboardingImage from "/images/onboarding-image.svg";
+import OnboardingImage from "/images/boarding1.jpg";
 import "./OneTimeOnboardingPage.css";
 
 interface OneTimeFormData {
