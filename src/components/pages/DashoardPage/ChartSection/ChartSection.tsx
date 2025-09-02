@@ -257,7 +257,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                         <span
                           style={{
                             color: "#222B45",
-                            fontSize: 12,
+                            fontSize: windowWidth <= 768 ? 12 : windowWidth <= 1450 ? 14 : 12,
                             fontWeight: 500,
                           }}
                         >
@@ -270,7 +270,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                     <span
                       style={{
                         color: "#222B45",
-                        fontSize: 12,
+                        fontSize: windowWidth <= 768 ? 12 : windowWidth <= 1450 ? 14 : 12,
                         fontWeight: 500,
                       }}
                     >

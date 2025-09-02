@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   pageTitle: string;
+  onPageChange?: (page: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
+const Header: React.FC<HeaderProps> = ({ pageTitle, onPageChange }) => {
   const { user } = useAuth();
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -49,18 +50,20 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
 
           {open && (
             <div className="user-dropdown" role="menu">
-              {/* <button
+              <button
                 type="button"
                 className="dropdown-item"
                 onClick={(e) => {
                   e.stopPropagation();
                   setOpen(false);
-                  navigate("/profile");
+                  if (onPageChange) {
+                    onPageChange("profile");
+                  }
                 }}
               >
                 Profile
               </button>
-              <div className="dropdown-divider" /> */}
+              <div className="dropdown-divider" />
               <button
                 type="button"
                 className="dropdown-item logout"

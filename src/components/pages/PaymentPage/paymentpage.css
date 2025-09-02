@@ -25,8 +25,6 @@
   padding-left: 2px;
   position: relative;
   animation: slideInUp 0.4s ease-out;
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
 }
 
 .payment-tab {
@@ -82,6 +80,8 @@
   margin: 0 auto;
   border: none;
 }
+
+
 
 .payment-status-badge.cancelled {
   background: #fdeaea;
@@ -541,254 +541,52 @@
   transition: zoom 0.3s ease;
 }
 
-/* ===================== MEDIA QUERIES BELOW ===================== */
-
-/* Progressive zoom scaling for payment tabs with aggressive scaling for high DPI displays */
-/* Progressive zoom scaling for payment tabs and buttons */
-@media (max-width: 1920px) {
-  .payment-tabs-row {
-    zoom: 1.1;
-  }
-  .border-button-paymentpage {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .payment-tabs-row {
-    zoom: 1.05;
-  }
-  .border-button-paymentpage {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1700px) {
-  .payment-tabs-row {
-    zoom: 1;
-  }
-  .border-button-paymentpage {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1600px) {
-  .payment-tabs-row {
-    zoom: 0.95;
-  }
-  .border-button-paymentpage {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1500px) {
-  .payment-tabs-row {
-    zoom: 0.9;
-  }
-  .border-button-paymentpage {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1450px) {
-  .payment-tabs-row {
-    zoom: 0.85;
-  }
-  .border-button-paymentpage {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1400px) {
-  .payment-tabs-row {
-    zoom: 0.8;
-  }
-  .border-button-paymentpage {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1350px) {
-  .payment-tabs-row {
-    zoom: 0.78;
-  }
-  .border-button-paymentpage {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1300px) {
-  .payment-tabs-row {
-    zoom: 0.76;
-  }
-  .border-button-paymentpage {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1250px) {
-  .payment-tabs-row {
-    zoom: 0.74;
-  }
-  .border-button-paymentpage {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1200px) {
-  .payment-tabs-row {
-    zoom: 0.72;
-  }
-  .border-button-paymentpage {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1150px) {
-  .payment-tabs-row {
-    zoom: 0.7;
-  }
-  .border-button-paymentpage {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1100px) {
-  .payment-tabs-row {
-    zoom: 0.68;
-  }
-  .border-button-paymentpage {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1050px) {
-  .payment-tabs-row {
-    zoom: 0.66;
-  }
-  .border-button-paymentpage {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1000px) {
-  .payment-tabs-row {
-    zoom: 0.64;
-  }
-  .border-button-paymentpage {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 950px) {
-  .payment-tabs-row {
-    zoom: 0.62;
-  }
-  .border-button-paymentpage {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 900px) {
-  .payment-tabs-row {
-    zoom: 0.6;
-  }
-  .border-button-paymentpage {
-    zoom: 0.6;
-  }
-  .payment-search-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .payment-tabs-row {
-    zoom: 1;
-  }
-  .border-button-paymentpage {
-    zoom: 1;
-  }
-  .payment-search-row {
-    margin: 20px 0px;
-  }
+@media (max-width: 1750px) {
   .payment-status-badge {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 5px !important;
-    padding: 2px 3px;
-  }
-  .payment-action-btn .payment-action-icon {
-    display: none;
+    font-size: 13px;
+    padding: 6px;
   }
   .payment-action-btn {
-    text-decoration: underline;
-    gap: 0px;
-    font-size: 12px;
-    font-weight: 600;
-    background: none !important;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.15s;
-    white-space: nowrap;
-    box-shadow: none;
-  }
-
-  /* Mobile Modal Adjustments */
-  .payment-invoice-modal,
-  .payment-receipt-modal {
-    min-width: 90vw;
-    max-width: 95vw;
-  }
-
-  .receipt-title {
-    font-size: 20px;
-  }
-
-  .receipt-subtitle {
     font-size: 14px;
   }
-
-  .receipt-details {
-    padding: 16px;
+  .payment-action-btn .payment-action-icon {
+    font-size: 18px;
+    
   }
+  .payment-tabs-row {
 
-  .receipt-summary {
-    padding: 16px;
+    gap: 24px;    
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-left: 2px;
+
   }
-
-  .receipt-summary-title {
+  
+  .payment-tab {
     font-size: 16px;
-  }
 
-  .payment-reason-modal {
-    min-width: 90vw;
-    max-width: 95vw;
-  }
+    padding: 0 7px 10px 7px;
+    margin-right: 16px;
 
-  .payment-success-modal {
-    min-width: 90vw;
-    max-width: 95vw;
-  }
-
-  .payment-invoice-cards {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .payment-invoice-card {
-    min-width: 100%;
-    padding: 12px 16px;
-  }
-
-  .payment-reason-details {
-    flex-direction: column;
-    gap: 12px;
   }
 }
+@media (max-width: 1450px) {
+  .payment-status-badge {
+    font-size: 12px;
+    padding: 4px;
+  }
+  .payment-action-btn {
+    font-size: 13px;
+  }
+  .payment-action-btn .payment-action-icon {
+    font-size: 16px;
+  }
+  
+}
+
+/* ===================== MEDIA QUERIES BELOW ===================== */
+
+/* Removed legacy zoom-based responsiveness. Use explicit responsive rules instead. */
 
 /* Extra Small Mobile Responsive (below 480px) */
 @media (max-width: 480px) {

@@ -4,7 +4,7 @@ import { useLoading } from "../../../contexts/LoadingContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
-import SearchInput from "../../reusables/SearchInput/SearchInput";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import "./InvoicesPage.css";
@@ -645,15 +645,35 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       </div>
       {!showCreateInvoicePage && (
         <div className="page-actions">
-          <SearchInput
-            placeholder="Search invoices..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <BorderButton
-            text="Create New Invoice"
-            onClick={() => setShowCreateInvoicePage(true)}
-            className="border-button-invoicespage"
+          <FieldButton
+            inputs={[
+              {
+                placeholder: "Search invoices...",
+                value: searchQuery,
+                onChange: (
+                  e:
+                    | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                    | { target: { value: string } }
+                ) => {
+                  const change = e as React.ChangeEvent<
+                    HTMLInputElement | HTMLSelectElement
+                  >;
+                  if (change && (change.currentTarget || change.nativeEvent)) {
+                    setSearchQuery(change.currentTarget.value);
+                    return;
+                  }
+                  const fallback = e as { target: { value: string } };
+                  setSearchQuery(fallback.target.value);
+                },
+              },
+            ]}
+            buttons={[
+              {
+                text: "Create New Invoice",
+                onClick: () => setShowCreateInvoicePage(true),
+                className: "border-button-invoicespage",
+              },
+            ]}
           />
         </div>
       )}

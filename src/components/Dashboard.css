@@ -281,6 +281,81 @@ table {
   color: #898989;
 }
 
+@media (max-width: 1750px) {
+  .table-header-item{
+    font-size:14px;
+  }
+  .table-data-item{
+    font-size:14px;
+  }
+  .table-data-item-role{
+    font-size:14px;
+  }
+  .table-header-item:first-child {
+    padding-left: 100px;
+  }
+  .table-header-item:last-child {
+    padding-right: 100px;
+  }
+  .table-data-item:first-child {
+    padding-left: 100px;
+  }
+  .table-data-item:last-child {
+    padding-right: 100px;
+  }
+}
+
+@media (max-width: 1450px) {
+  .table-header-item{
+    font-size:13px;
+    padding-top:15px;
+  }
+  .table-data-item{
+    font-size:13px;
+  }
+  .table-data-item-role{
+    font-size:13px;
+  }
+  .table-header-item:first-child {
+    padding-left: 80px;
+  }
+  .table-header-item:last-child {
+    padding-right: 80px;
+  }
+  .table-data-item:first-child {
+    padding-left: 80px;
+  }
+  .table-data-item:last-child {
+    padding-right: 80px;
+  }
+
+  
+}
+
+@media (max-width: 1150px) {
+  .table-header-item{
+    font-size:12px;
+  }
+  .table-data-item{
+    font-size:12px;
+  }
+  .table-data-item-role{
+    font-size:12px;
+  }
+  .table-header-item:first-child {
+    padding-left: 60px;
+  }
+  .table-header-item:last-child {
+    padding-right: 60px;
+  }
+  .table-data-item:first-child {
+    padding-left: 60px;
+  }
+  .table-data-item:last-child {
+    padding-right: 60px;
+  }
+}
+
 .role-badge-table {
   border: 1px solid #e2e2e2;
   border-radius: 6px;
@@ -559,6 +634,18 @@ table {
   .dashboard-content {
     padding: 45px 39px;
   }
+
+  .role-badge,
+.status-badge,
+.category-badge,
+.type-badge,
+.method-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 1px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
 }
 
 @media (max-width: 1400px) {

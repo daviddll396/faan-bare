@@ -9,6 +9,32 @@
   transition: zoom 0.3s ease;
 }
 
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-header h3 {
+  margin: 0;
+  color: var(--black);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.chart-container {
+  height: 300px;
+}
+
+.recharts-legend-wrapper {
+  padding-top: 0px;
+}
+
+.inner-chart-header-mobile {
+  display: none;
+}
+
 /* Responsive zoom scaling for the chart section to handle different desktop sizes and scaling */
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
 @media (max-width: 1920px) {
@@ -44,6 +70,12 @@
 @media (max-width: 1450px) {
   .chart-section {
     zoom: 0.7;
+  }
+  .chart-header {
+    zoom: 1.3;
+  }
+  .recharts-default-legend {
+    zoom: 1.3;
   }
 }
 
@@ -81,117 +113,97 @@
   .chart-section {
     zoom: 0.58;
   }
-}
-
-@media (max-width: 1100px) {
-  .chart-section {
-    zoom: 0.56;
-  }
-}
-
-@media (max-width: 1050px) {
-  .chart-section {
-    zoom: 0.54;
-  }
-}
-
-@media (max-width: 1000px) {
-  .chart-section {
-    zoom: 0.52;
-  }
-}
-
-@media (max-width: 950px) {
-  .chart-section {
-    zoom: 0.5;
-  }
-}
-
-@media (max-width: 900px) {
-  .chart-section {
-    zoom: 0.48;
-  }
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.chart-header h3 {
-  margin: 0;
-  color: var(--black);
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.chart-container {
-  height: 300px;
-}
-
-.recharts-legend-wrapper {
-  padding-top: 0px;
-}
-
-.inner-chart-header-mobile {
-  display: none;
-}
-
-/* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
-  .chart-section {
-    zoom: 1;
-    width: 100%;
-    padding: 24px 13px 10px 13px;
-    border-radius: 10px;
-  }
   .chart-header {
-    display: none;
+    zoom: 1.4;
   }
-  .chart-header-mobile {
-    color: var(--black);
-    margin-bottom: -10px;
-    font-weight: 500;
-    font-size: 15px;
-    margin-top: 10px;
-  }
-  .inner-chart-header-mobile {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .inner-chart-header-mobile p {
-    font-weight: 600;
-    font-size: 10px;
-    color: #565656;
-  }
-  .chart-vs-mobile {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+  .chart-header h3 {
+    font-size: 20px;
   }
 
-  /* Chart dots for mobile legend */
-  .chart-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
+  @media (max-width: 1100px) {
+    .chart-section {
+      zoom: 0.56;
+    }
   }
 
-  .chart-dot-total {
-    background-color: #0095ff;
+  @media (max-width: 1050px) {
+    .chart-section {
+      zoom: 0.54;
+    }
   }
 
-  .chart-dot-completed {
-    background-color: #00e096;
+  @media (max-width: 1000px) {
+    .chart-section {
+      zoom: 0.52;
+    }
   }
-  .chart-container {
-    margin-left: -50px;
-    margin-top: 10px;
-    height: auto;
+
+  @media (max-width: 950px) {
+    .chart-section {
+      zoom: 0.5;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .chart-section {
+      zoom: 0.48;
+    }
+  }
+
+  /* Reset zoom for mobile devices to use standard responsive behavior */
+  @media (max-width: 768px) {
+    .chart-section {
+      zoom: 1;
+      width: 100%;
+      padding: 24px 13px 10px 13px;
+      border-radius: 10px;
+    }
+    .chart-header {
+      display: none;
+    }
+    .chart-header-mobile {
+      color: var(--black);
+      margin-bottom: -10px;
+      font-weight: 500;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+    .inner-chart-header-mobile {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .inner-chart-header-mobile p {
+      font-weight: 600;
+      font-size: 10px;
+      color: #565656;
+    }
+    .chart-vs-mobile {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Chart dots for mobile legend */
+    .chart-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .chart-dot-total {
+      background-color: #0095ff;
+    }
+
+    .chart-dot-completed {
+      background-color: #00e096;
+    }
+    .chart-container {
+      margin-left: -50px;
+      margin-top: 10px;
+      height: auto;
+    }
   }
 }

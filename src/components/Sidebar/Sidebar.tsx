@@ -9,7 +9,7 @@ import CustomerIcon from "../../../public/icons/nav-customer-icon.svg";
 import BillIcon from "../../../public/icons/nav-bill-icon.svg";
 import PaymentIcon from "../../../public/icons/nav-payment-icon.svg";
 import LogoutIcon from "../../../public/icons/nav-logout-icon.svg";
-import { Users, UserCheck, FileText } from "lucide-react";
+import { Users, UserCheck, FileText, ChevronRight } from "lucide-react";
 
 // Mobile-specific icons (using Lucide React icons for better mobile experience)
 
@@ -46,11 +46,43 @@ const Sidebar: React.FC<SidebarProps> = ({
   userRole,
 }) => {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [showSmallLogo, setShowSmallLogo] = React.useState(false);
+  const [mainLogoFadingOut, setMainLogoFadingOut] = React.useState(false);
+  const [smallLogoFadingIn, setSmallLogoFadingIn] = React.useState(false);
+
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  React.useEffect(() => {
+    if (isCollapsed) {
+      // Start fading out main logo immediately
+      setMainLogoFadingOut(true);
+
+      // After 0.5s, hide main logo completely and show small logo
+      const hideMainTimer = setTimeout(() => {
+        setShowSmallLogo(true);
+      }, 250);
+
+      // After 1s total, start fading in small logo
+      const showSmallTimer = setTimeout(() => {
+        setSmallLogoFadingIn(true);
+      }, 500);
+
+      return () => {
+        clearTimeout(hideMainTimer);
+        clearTimeout(showSmallTimer);
+      };
+    } else {
+      // When expanding, reset all states immediately
+      setMainLogoFadingOut(false);
+      setShowSmallLogo(false);
+      setSmallLogoFadingIn(false);
+    }
+  }, [isCollapsed]);
 
   const menuItems: MenuItem[] = [
     {
@@ -176,9 +208,16 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForCustomer: true,
       showForAdmin: true,
     },
-    // Profile only for Customer
+    // Profile for both mobile and desktop
     {
-      icon: null,
+      icon: () => (
+        <img
+          src="/icons/nav-user-icon.svg"
+          alt="Profile"
+          width={20}
+          height={20}
+        />
+      ),
       mobileIcon: () => (
         <img
           src={ProfileBottomBarIcon}
@@ -191,15 +230,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       page: "profile" as PageType,
       showForCustomer: true,
       showForAdmin: true,
-      mobileOnly: true,
     },
   ];
 
-  // Filter menu items based on role and windowWidth for Profile
+  // Filter menu items based on role and windowWidth
   const filteredMenuItems = menuItems.filter((item) => {
-    if (item.page === "profile") {
-      return windowWidth <= 768; // Show profile for both Customer and Admin on mobile
-    }
     if (userRole === "Guest") {
       return item.page === "services"; // Guest users only see services
     }
@@ -209,11 +244,37 @@ const Sidebar: React.FC<SidebarProps> = ({
   });
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
         <div className="logo">
-          <img src="/images/faan-logo.svg" alt="logo" />
+          {!isCollapsed && (
+            <img
+              src="/images/faan-logo.svg"
+              alt="logo"
+              className={`main-logo ${mainLogoFadingOut ? "fade-out" : ""}`}
+            />
+          )}
+          {showSmallLogo && (
+            <img
+              src="/images/faan-logo-small.png"
+              alt="logo"
+              className={`small-logo ${smallLogoFadingIn ? "fade-in" : ""}`}
+              style={{
+                width: "80%",
+                height: "70%",
+              }}
+            />
+          )}
         </div>
+        {windowWidth > 768 && (
+          <button
+            className={`collapse-button ${isCollapsed ? "collapsed" : ""}`}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <ChevronRight className="chevron-icon" />
+          </button>
+        )}
       </div>
 
       <nav className="sidebar-nav">
@@ -237,13 +298,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <item.mobileIcon />
                 </div>
               )}
-              {/* Only show labels on mobile for customers, not for admin */}
-              {!(windowWidth <= 768 && userRole !== "Customer") && (
-                <>
-                  <span className="desktop-label">{item.label}</span>
-                  <span className="mobile-label">{item.mobileLabel}</span>
-                </>
-              )}
+              {/* Only show labels on mobile for customers, not for admin, and hide in collapsed desktop */}
+              {!(windowWidth <= 768 && userRole !== "Customer") &&
+                !isCollapsed && (
+                  <>
+                    <span className="desktop-label">{item.label}</span>
+                    <span className="mobile-label">{item.mobileLabel}</span>
+                  </>
+                )}
             </div>
           ))}
       </nav>
@@ -251,7 +313,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="sidebar-footer">
         <div className="nav-item logout" onClick={onLogout}>
           <img src={LogoutIcon} alt="Logout" width={20} height={20} />
-          <span>Log Out</span>
+          {!isCollapsed && (
+            <span style={{ whiteSpace: "nowrap" }}>Log Out</span>
+          )}
         </div>
       </div>
     </div>

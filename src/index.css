@@ -60,7 +60,7 @@ select:-webkit-autofill:active {
 }
 
 :root {
-  --bg-color: #f7f7f7;
+  --bg-color: #fff;
   --mobile-margin-top: 100px;
   --mobile-x-padding: 20px;
   --black: #070600;

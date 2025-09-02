@@ -1207,493 +1207,70 @@ select.booking-form-input {
 /* RESPONSIVE STYLING - MEDIA QUERIES */
 /* ======================================== */
 
-/* Responsive zoom scaling for the services customer grid to handle different desktop sizes and scaling */
-/* Progressive zoom scaling with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .services-customer-grid {
-    zoom: 0.93;
-  }
-  .booking-form-card {
-    zoom: 0.93;
-  }
-  .booking-summary-card {
-    zoom: 1.03;
-  }
-  .services-page .content-card {
-    zoom: 0.93;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.93;
-  }
-  .border-button-userspage {
-    zoom: 0.93;
-  }
-  .border-button-servicespage {
-    zoom: 0.98;
-  }
-  .services-action-buttons-row {
-    zoom: 0.98;
-  }
-}
-
-@media (max-width: 1800px) {
-  .services-customer-grid {
-    zoom: 0.88;
-  }
-  .booking-form-card {
-    zoom: 0.88;
-  }
-  .booking-summary-card {
-    zoom: 1.02;
-  }
-  .services-page .content-card {
-    zoom: 0.88;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.88;
-  }
-  .border-button-userspage {
-    zoom: 0.88;
-  }
-  .border-button-servicespage {
-    zoom: 0.93;
-  }
-  .services-action-buttons-row {
-    zoom: 0.93;
-  }
-}
-
-@media (max-width: 1700px) {
-  .services-customer-grid {
-    zoom: 0.83;
-  }
-  .booking-form-card {
-    zoom: 0.83;
-  }
-  .booking-summary-card {
-    zoom: 1.01;
-  }
-  .services-page .content-card {
-    zoom: 0.83;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.83;
-  }
-  .border-button-userspage {
-    zoom: 0.83;
-  }
-  .border-button-servicespage {
-    zoom: 0.88;
-  }
-  .services-action-buttons-row {
-    zoom: 0.88;
-  }
-}
-
-@media (max-width: 1600px) {
-  .services-customer-grid {
-    zoom: 0.78;
-  }
-  .booking-form-card {
-    zoom: 0.78;
-  }
-  .booking-summary-card {
-    zoom: 1;
-  }
-  .services-page .content-card {
-    zoom: 0.78;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.78;
-  }
-  .border-button-userspage {
-    zoom: 0.78;
-  }
-  .border-button-servicespage {
-    zoom: 0.83;
-  }
-  .services-action-buttons-row {
-    zoom: 0.83;
-  }
-}
-
-@media (max-width: 1500px) {
-  .services-customer-grid {
-    zoom: 0.73;
-  }
-  .booking-form-card {
-    zoom: 0.73;
-  }
-  .booking-summary-card {
-    zoom: 0.99;
-  }
-  .services-page .content-card {
-    zoom: 0.73;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.73;
-  }
-  .border-button-userspage {
-    zoom: 0.73;
-  }
-  .border-button-servicespage {
-    zoom: 0.78;
-  }
-  .services-action-buttons-row {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1450px) {
-  .services-customer-grid {
-    zoom: 0.68;
-  }
-  .booking-form-card {
-    zoom: 0.68;
-  }
-  .booking-summary-card {
-    zoom: 0.98;
-  }
-  .services-page .content-card {
-    zoom: 0.68;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.68;
-  }
-  .border-button-userspage {
-    zoom: 0.68;
-  }
-  .border-button-servicespage {
-    zoom: 0.73;
-  }
-  .services-action-buttons-row {
-    zoom: 0.73;
-  }
-}
-
-@media (max-width: 1400px) {
-  .services-customer-grid {
-    zoom: 0.66;
-  }
-  .booking-form-card {
-    zoom: 0.66;
-  }
-  .booking-summary-card {
-    zoom: 0.97;
-  }
-  .services-page .content-card {
-    zoom: 0.66;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.66;
-  }
-  .border-button-userspage {
-    zoom: 0.66;
-  }
-  .border-button-servicespage {
-    zoom: 0.68;
-  }
-  .services-action-buttons-row {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1350px) {
-  .services-customer-grid {
-    zoom: 0.64;
-  }
-  .booking-form-card {
-    zoom: 0.64;
-  }
-  .booking-summary-card {
-    zoom: 0.96;
-  }
-  .services-page .content-card {
-    zoom: 0.64;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.64;
-  }
-  .border-button-userspage {
-    zoom: 0.64;
-  }
-  .border-button-servicespage {
-    zoom: 0.66;
-  }
-  .services-action-buttons-row {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1300px) {
-  .services-customer-grid {
-    zoom: 0.62;
-  }
-  .booking-form-card {
-    zoom: 0.62;
-  }
-  .booking-summary-card {
-    zoom: 0.95;
-  }
-  .services-page .content-card {
-    zoom: 0.62;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.62;
-  }
-  .border-button-userspage {
-    zoom: 0.62;
-  }
-  .border-button-servicespage {
-    zoom: 0.64;
-  }
-  .services-action-buttons-row {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 1250px) {
-  .services-customer-grid {
-    zoom: 0.6;
-  }
-  .booking-form-card {
-    zoom: 0.6;
-  }
-  .booking-summary-card {
-    zoom: 0.94;
-  }
-  .services-page .content-card {
-    zoom: 0.6;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.6;
-  }
-  .border-button-userspage {
-    zoom: 0.6;
-  }
-  .border-button-servicespage {
-    zoom: 0.62;
-  }
-  .services-action-buttons-row {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 1200px) {
-  .services-customer-grid {
-    zoom: 0.58;
-  }
-  .booking-form-card {
-    zoom: 0.58;
-  }
-  .booking-summary-card {
-    zoom: 0.93;
-  }
-  .services-page .content-card {
-    zoom: 0.58;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.58;
-  }
-  .border-button-userspage {
-    zoom: 0.58;
-  }
-  .border-button-servicespage {
-    zoom: 0.6;
-  }
-  .services-action-buttons-row {
-    zoom: 0.6;
-  }
-  .customer-modal-center > div {
-    zoom: 2.3 !important;
-  }
-}
-
-@media (max-width: 1150px) {
-  .services-customer-grid {
-    zoom: 0.56;
-  }
-  .booking-form-card {
-    zoom: 0.56;
-  }
-  .booking-summary-card {
-    zoom: 0.92;
-  }
-  .services-page .content-card {
-    zoom: 0.56;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.56;
-  }
-  .border-button-userspage {
-    zoom: 0.56;
-  }
-  .border-button-servicespage {
-    zoom: 0.58;
-  }
-  .services-action-buttons-row {
-    zoom: 0.58;
-  }
-  .customer-modal-center > div {
-    zoom: 2.4 !important;
-  }
-}
-
-@media (max-width: 1100px) {
-  .services-customer-grid {
-    zoom: 0.54;
-  }
-  .booking-form-card {
-    zoom: 0.54;
-  }
-  .booking-summary-card {
-    zoom: 0.91;
-  }
-  .services-page .content-card {
-    zoom: 0.54;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.54;
-  }
-  .border-button-userspage {
-    zoom: 0.54;
-  }
-  .border-button-servicespage {
-    zoom: 0.56;
-  }
-  .services-action-buttons-row {
-    zoom: 0.56;
-  }
-  .customer-modal-center > div {
-    zoom: 2.5 !important;
-  }
-}
-
-@media (max-width: 1050px) {
-  .services-customer-grid {
-    zoom: 0.52;
-  }
-  .booking-form-card {
-    zoom: 0.52;
-  }
-  .booking-summary-card {
-    zoom: 0.9;
-  }
-  .services-page .content-card {
-    zoom: 0.52;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.52;
-  }
-  .border-button-userspage {
-    zoom: 0.52;
-  }
-  .border-button-servicespage {
-    zoom: 0.54;
-  }
-  .services-action-buttons-row {
-    zoom: 0.54;
-  }
-  .customer-modal-center > div {
-    zoom: 2.5 !important;
-  }
-}
-
-@media (max-width: 1000px) {
-  .services-customer-grid {
-    zoom: 0.5;
-  }
-  .booking-form-card {
-    zoom: 0.5;
-  }
-  .booking-summary-card {
-    zoom: 0.89;
-  }
-  .services-page .content-card {
-    zoom: 0.5;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.5;
-  }
-  .border-button-userspage {
-    zoom: 0.5;
-  }
-  .border-button-servicespage {
-    zoom: 0.52;
-  }
-  .services-action-buttons-row {
-    zoom: 0.52;
-  }
-  .customer-modal-center > div {
-    zoom: 2.5 !important;
-  }
-}
-
-@media (max-width: 950px) {
-  .services-customer-grid {
-    zoom: 0.48;
-  }
-  .booking-form-card {
-    zoom: 0.48;
-  }
-  .booking-summary-card {
-    zoom: 0.88;
-  }
-  .services-page .content-card {
-    zoom: 0.48;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.48;
-  }
-  .border-button-userspage {
-    zoom: 0.48;
-  }
-  .border-button-servicespage {
-    zoom: 0.5;
-  }
-  .services-action-buttons-row {
-    zoom: 0.5;
-  }
-  .customer-modal-center > div {
-    zoom: 2.8 !important;
-  }
-}
-
-@media (max-width: 900px) {
-  .services-customer-grid {
-    zoom: 0.46;
-  }
-  .booking-form-card {
-    zoom: 0.46;
-  }
-  .booking-summary-card {
-    zoom: 0.87;
-  }
-  .services-page .content-card {
-    zoom: 0.46;
-  }
-  .services-page .add-service-form-card {
-    zoom: 0.46;
-  }
-  .border-button-userspage {
-    zoom: 0.46;
-  }
-  .border-button-servicespage {
-    zoom: 0.48;
-  }
-  .services-action-buttons-row {
-    zoom: 0.48;
-  }
-  .customer-modal-center > div {
-    zoom: 2.8 !important;
-  }
-  .booking-form-fields-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
+/* Removed legacy zoom-based media queries. Responsive behavior is handled
+   via explicit layout and font-size adjustments elsewhere in the stylesheet. */
 
 /* Reset zoom for mobile devices to use standard responsive behavior */
+
+@media (max-width: 1850px) {
+  .service-card-name,
+  .service-card-price {
+    font-size: 18px;
+  }
+  .service-card-desc{
+    font-size:16px;
+  }
+  .service-card-action-text{
+    font-size:15px;
+  }
+  .service-card-body{
+    padding:14px;
+  }
+}
+
+@media (max-width: 1550px) {
+  .services-customer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .service-card-name,
+  .service-card-price {
+    font-size: 16px;
+  }
+
+  .booking-form-title{
+    font-size:20px;
+  }
+  .booking-form-helper{
+    font-size:16px;
+  }
+  .booking-form-fields-row{
+    gap:10px;
+  }
+  .booking-tab{
+    font-size:13px;
+  }
+  .booking-form-error-text{
+    font-size:14px;
+  }
+  .booking-summary-title{
+    font-size:18px;
+  }
+  .booking-summary-row{
+    font-size:14px;
+  }
+  .booking-summary-row.total{
+    font-size:16px;
+  }
+  .booking-summary-row.total span:last-child{
+    font-size:17px;
+  }
+  .booking-summary-note{
+    font-size:12px;
+  }
+
+}
+
 @media (max-width: 842px) {
   .services-customer-grid {
     padding-bottom: var(--page-bottom-padding-mobile);
@@ -1894,6 +1471,37 @@ select.booking-form-input {
     padding: 0px 12px;
     height: 38px;
     border-radius: 8px;
+  }
+
+  /* Destination autocomplete dropdown styles */
+  .booking-destination-autocomplete {
+    position: relative;
+  }
+  .booking-destination-autocomplete .dest-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    z-index: 60;
+    max-height: 220px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #e6e9ee;
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(2, 6, 23, 0.06);
+  }
+  .booking-destination-autocomplete .dest-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    color: #111827;
+    font-size: 14px;
+  }
+  .booking-destination-autocomplete .dest-item:hover {
+    background: #f8fafc;
+  }
+  .booking-destination-autocomplete .dest-item.no-results {
+    color: #6b7280;
+    cursor: default;
   }
   .booking-add-passenger-btn {
     font-size: 13px;
@@ -2312,3 +1920,25 @@ select.booking-form-input {
     grid-template-columns: 1fr 100px;
   }
 }
+
+/* Compatibility layer: neutralize legacy zoom-based rules used earlier in this file.
+   Instead of leaving many zoom declarations, override them here so components
+   use their normal CSS sizes and transitions. This avoids touching every
+   previous media block while effectively removing zoom styling.
+*/
+.services-customer-grid,
+.booking-form-card,
+.booking-summary-card,
+.services-page .content-card,
+.services-page .add-service-form-card,
+.border-button-userspage,
+.border-button-servicespage,
+.services-action-buttons-row,
+.customer-modal-center > div {
+  zoom: unset !important;
+  transition: none !important; /* neutralize zoom transitions only */
+}
+
+/* Also ensure any other zoom rules are ignored by forcing no-zoom globally
+   inside this page scope. Use with care—this only affects rules matching the
+   selectors above and not unrelated global transitions. */

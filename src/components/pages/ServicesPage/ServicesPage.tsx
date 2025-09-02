@@ -9,6 +9,7 @@ import ChevronDown from "../../../../public/icons/chevron-down.svg";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import ServicesIcon from "/icons/nav-product-icon.svg";
 import "./ServicesPage.css";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import { Edit, Trash2 } from "lucide-react";
 import { FiUserPlus } from "react-icons/fi";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
@@ -1781,23 +1782,46 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           <PageTitle icon={ServicesIcon} title="Services" />
         </div>
         <div className="services-customer-header">
-          <SearchInput
-            placeholder="Search services"
-            value={customerSearchName}
-            onChange={(e) => setCustomerSearchName(e.target.value)}
+          <FieldButton
+            inputs={[
+              {
+                placeholder: "Search services",
+                value: customerSearchName,
+                onChange: (
+                  e:
+                    | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                    | { target: { value: string } }
+                ) => {
+                  const maybeChange = e as React.ChangeEvent<
+                    HTMLInputElement | HTMLSelectElement
+                  >;
+                  if (
+                    maybeChange &&
+                    maybeChange.target &&
+                    typeof maybeChange.target.value === "string"
+                  ) {
+                    setCustomerSearchName(maybeChange.target.value);
+                    return;
+                  }
+
+                  const fallback = e as { target: { value: string } };
+                  setCustomerSearchName(fallback.target.value);
+                },
+              },
+            ]}
+            buttons={[
+              {
+                text: "Search",
+                onClick: handleCustomerSearch,
+                className: "border-button-userspage",
+              },
+              {
+                text: "Clear",
+                onClick: handleCustomerClearSearch,
+                className: "border-button-userspage",
+              },
+            ]}
           />
-          <div style={{ display: "flex", gap: 12 }}>
-            <BorderButton
-              text="Search"
-              onClick={handleCustomerSearch}
-              className="border-button-userspage"
-            />
-            <BorderButton
-              text="Clear"
-              onClick={handleCustomerClearSearch}
-              className="border-button-userspage"
-            />
-          </div>
         </div>
 
         {/* Show services */}

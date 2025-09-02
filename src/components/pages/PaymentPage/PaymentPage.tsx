@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import SearchInput from "../../reusables/SearchInput/SearchInput";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import DataTable from "../../reusables/DataTable/DataTable";
@@ -287,28 +286,60 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         </div>
       )}
       <div className="payment-search-row">
-        <SearchInput
-          placeholder="Search name"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
+        <FieldButton
+          inputs={[
+            {
+              placeholder: "Search name",
+              value: searchName,
+              onChange: (
+                e:
+                  | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                  | { target: { value: string } }
+              ) => {
+                const change = e as React.ChangeEvent<
+                  HTMLInputElement | HTMLSelectElement
+                >;
+                if (change && (change.currentTarget || change.nativeEvent)) {
+                  setSearchName(change.currentTarget.value);
+                  return;
+                }
+                const fallback = e as { target: { value: string } };
+                setSearchName(fallback.target.value);
+              },
+            },
+            {
+              placeholder: "Bill No.",
+              value: searchBillNo,
+              onChange: (
+                e:
+                  | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                  | { target: { value: string } }
+              ) => {
+                const change = e as React.ChangeEvent<
+                  HTMLInputElement | HTMLSelectElement
+                >;
+                if (change && (change.currentTarget || change.nativeEvent)) {
+                  setSearchBillNo(change.currentTarget.value);
+                  return;
+                }
+                const fallback = e as { target: { value: string } };
+                setSearchBillNo(fallback.target.value);
+              },
+            },
+          ]}
+          buttons={[
+            {
+              text: "Search",
+              onClick: handleSearch,
+              className: "border-button-paymentpage",
+            },
+            {
+              text: "Clear",
+              onClick: handleClearSearch,
+              className: "border-button-paymentpage",
+            },
+          ]}
         />
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <SearchInput
-            placeholder="Bill No."
-            value={searchBillNo}
-            onChange={(e) => setSearchBillNo(e.target.value)}
-          />
-          <BorderButton
-            text="Search"
-            onClick={handleSearch}
-            className="border-button-paymentpage"
-          />
-          <BorderButton
-            text="Clear"
-            onClick={handleClearSearch}
-            className="border-button-paymentpage"
-          />
-        </div>
       </div>
       {!isLoading && (
         <DataTable
