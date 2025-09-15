@@ -5,6 +5,48 @@
   margin-bottom: 32px;
   position: relative;
 }
+
+.customer-status-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: #f8f9fa;
+  padding: 4px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.status-tab {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 14px;
+  color: #6c757d;
+  position: relative;
+}
+
+.status-tab:hover {
+  background: #0079481a;
+  color: #007948;
+}
+
+.status-tab.active {
+  background: #007948;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 121, 72, 0.3);
+}
+
+/* Customer Details Actions */
+.customer-details-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
 .customer-success-btn-container {
   width: 100%;
 }

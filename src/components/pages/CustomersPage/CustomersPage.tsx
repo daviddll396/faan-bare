@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import CheckCircle from "../../../../public/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
@@ -10,6 +10,7 @@ import CustomersIcon from "/icons/nav-customer-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
+import MessageToast from "../../reusables/MessageToast/MessageToast";
 
 interface CustomersPageProps {
   role?: string;
@@ -17,10 +18,73 @@ interface CustomersPageProps {
 
 const CustomersPage: React.FC<CustomersPageProps> = () => {
   const { showLoading, hideLoading } = useLoading();
-  const { searchCustomers } = useAuth();
+  const { searchCustomers, getAllCustomers, changeCustomerStatus } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
   const [fetched, setFetched] = useState(false);
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // State for all customers tab
+  const [allCustomersStatus, setAllCustomersStatus] = useState("PENDING");
+  const [allCustomersData, setAllCustomersData] = useState<
+    Array<{
+      id: number;
+      firstName: string;
+      lastName: string;
+      idNo: string;
+      phone: string;
+      email: string;
+      address?: string;
+      nin?: string;
+      status: string;
+      createdAt: string;
+    }>
+  >([]);
+  const [allCustomersFetched, setAllCustomersFetched] = useState(false);
+
+  // State for toast messages
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [showToast, setShowToast] = useState(false);
+
+  // Helper function to show toast messages
+  const showToastMessage = (
+    message: string,
+    type: "success" | "error" = "success"
+  ) => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
+
+  // Function to handle customer approval
+  const handleApproveCustomer = async (customer: typeof selectedCustomer) => {
+    if (!customer) return;
+
+    showLoading("Approving customer...");
+
+    try {
+      const result = await changeCustomerStatus(customer.idNo, "APPROVED");
+
+      if (result && result.status) {
+        console.log("✅ Customer approved successfully:", result);
+        showToastMessage("Customer approved successfully!", "success");
+
+        // Close the modal
+        handleCloseCustomerDetails();
+
+        // Refresh the pending customers list
+        handleFetchAllCustomers("PENDING");
+      } else {
+        console.log("⚠️ Customer approval failed:", result);
+        showToastMessage("Failed to approve customer", "error");
+      }
+    } catch (error) {
+      console.error("💥 Error approving customer:", error);
+      showToastMessage("Error approving customer", "error");
+    } finally {
+      hideLoading();
+    }
+  };
 
   // State for customer search
   const [searchForm, setSearchForm] = useState({
@@ -40,7 +104,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       nin?: string;
     }>
   >([]);
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -107,8 +171,76 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     }
   };
 
-  const handleViewMore = (customer: (typeof fetchedCustomers)[number]) => {
-    setSelectedCustomer(customer);
+  const handleFetchAllCustomers = async (status: string) => {
+    showLoading(`Fetching ${status.toLowerCase()} customers...`);
+    setAllCustomersFetched(false);
+
+    try {
+      const result = await getAllCustomers(status);
+
+      if (
+        result &&
+        result.status &&
+        result.data &&
+        Array.isArray(result.data)
+      ) {
+        console.log(`✅ ${status} customers fetch successful:`, result.data);
+        setAllCustomersData(result.data);
+        setAllCustomersFetched(true);
+
+        // Show success toast with customer count
+        const customerCount = result.data.length;
+        const message =
+          customerCount > 0
+            ? `${customerCount} ${status.toLowerCase()} customer${
+                customerCount === 1 ? "" : "s"
+              } retrieved successfully`
+            : `No ${status.toLowerCase()} customers found`;
+        showToastMessage(message, "success");
+      } else {
+        console.log(
+          `⚠️ No ${status.toLowerCase()} customers found or fetch failed`
+        );
+        setAllCustomersData([]);
+        setAllCustomersFetched(true);
+        showToastMessage(
+          `Failed to retrieve ${status.toLowerCase()} customers`,
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error(
+        `💥 Error fetching ${status.toLowerCase()} customers:`,
+        error
+      );
+      setAllCustomersData([]);
+      setAllCustomersFetched(true);
+      showToastMessage(
+        `Error retrieving ${status.toLowerCase()} customers`,
+        "error"
+      );
+    } finally {
+      hideLoading();
+    }
+  };
+
+  const handleViewMore = (
+    customer:
+      | (typeof fetchedCustomers)[number]
+      | (typeof allCustomersData)[number]
+  ) => {
+    // Convert to the expected format for the modal
+    const customerForModal = {
+      id: customer.id,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      idNo: customer.idNo,
+      phone: customer.phone,
+      email: customer.email,
+      address: customer.address,
+      nin: customer.nin,
+    };
+    setSelectedCustomer(customerForModal);
     setShowCustomerDetails(true);
   };
 
@@ -151,6 +283,17 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
           onClick={() => setActiveTab("fetch")}
         >
           Fetch Customer Info
+        </button>
+        <button
+          className={`customer-tab${activeTab === "all" ? " active" : ""}`}
+          onClick={() => {
+            setActiveTab("all");
+            if (!allCustomersFetched) {
+              handleFetchAllCustomers(allCustomersStatus);
+            }
+          }}
+        >
+          All Customers
         </button>
       </div>
       {activeTab === "fetch" && !fetched && (
@@ -236,6 +379,86 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
             }
             className="customer-table-card"
           />
+
+          {windowWidth <= 768 && <SlideIndicator />}
+        </>
+      )}
+      {activeTab === "all" && (
+        <>
+          {/* Status Sub-tabs */}
+          <div className="customer-status-tabs">
+            <button
+              className={`status-tab${
+                allCustomersStatus === "PENDING" ? " active" : ""
+              }`}
+              onClick={() => {
+                setAllCustomersStatus("PENDING");
+                handleFetchAllCustomers("PENDING");
+              }}
+            >
+              PENDING
+            </button>
+            <button
+              className={`status-tab${
+                allCustomersStatus === "APPROVED" ? " active" : ""
+              }`}
+              onClick={() => {
+                setAllCustomersStatus("APPROVED");
+                handleFetchAllCustomers("APPROVED");
+              }}
+            >
+              APPROVED
+            </button>
+          </div>
+
+          {/* All Customers Data Table */}
+          {allCustomersFetched && (
+            <DataTable
+              headers={[
+                "S/N",
+                "First Name",
+                "Last Name",
+                "ID No.",
+                "Phone No.",
+                "Email",
+                "Status",
+                "Created Date",
+                "Actions",
+              ]}
+              data={
+                allCustomersData.length > 0
+                  ? allCustomersData.map((customer, idx) => [
+                      `${idx + 1}.`,
+                      customer.firstName,
+                      customer.lastName,
+                      customer.idNo,
+                      customer.phone,
+                      customer.email,
+                      <span
+                        className={`status-badge ${
+                          allCustomersStatus === "PENDING"
+                            ? "pending"
+                            : "completed"
+                        }`}
+                      >
+                        {allCustomersStatus}
+                      </span>,
+                      customer.createdAt
+                        ? new Date(customer.createdAt).toLocaleDateString()
+                        : "N/A",
+                      <button
+                        key={`view-${customer.id}`}
+                        className="view-more-btn"
+                        onClick={() => handleViewMore(customer)}
+                      >
+                        <Eye size={20} /> View More
+                      </button>,
+                    ])
+                  : []
+              }
+              className="customer-table-card"
+            />
+          )}
 
           {windowWidth <= 768 && <SlideIndicator />}
         </>
@@ -406,8 +629,29 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   {selectedCustomer.email}
                 </div>
               </div>
+              <div className="customer-details-item">
+                <div className="customer-details-label">Status:</div>
+                <div className="customer-details-value">
+                  <span
+                    className={`status-badge ${
+                      allCustomersStatus === "PENDING" ? "pending" : "completed"
+                    }`}
+                  >
+                    {allCustomersStatus}
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="customer-details-actions">
+              {allCustomersStatus === "PENDING" && (
+                <GradientButton
+                  variant="primary"
+                  size="medium"
+                  onClick={() => handleApproveCustomer(selectedCustomer)}
+                >
+                  APPROVE CUSTOMER
+                </GradientButton>
+              )}
               <GradientButton
                 variant="close"
                 size="medium"
@@ -419,6 +663,15 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
           </div>
         )}
       </Modal>
+
+      {/* Message Toast */}
+      <MessageToast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        duration={3000}
+      />
     </div>
   );
 };

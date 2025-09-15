@@ -21,8 +21,8 @@ const getApiBaseUrl = (): string => {
     // In production (Vercel), use the proxy path
     return "";
   }
-  // Local development - use the direct API server
-  return "http://197.253.19.78:9091";
+  // Local development - use Vite proxy (empty string)
+  return "";
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -39,6 +39,8 @@ const API_ENDPOINTS = {
   ADMIN_TRANSACTION_HISTORY: `${API_BASE_URL}/api/faan/transactions/history-admin`,
   ADMIN_DASHBOARD_STATS: `${API_BASE_URL}/api/faan/transactions/stat`,
   CUSTOMER_SEARCH: `${API_BASE_URL}/api/faan/customers/search`,
+  GET_ALL_CUSTOMERS: `${API_BASE_URL}/api/faan/customers`,
+  CHANGE_CUSTOMER_STATUS: `${API_BASE_URL}/api/faan/customers`,
 };
 
 const ENCRYPTION_CONFIG = {
@@ -192,6 +194,38 @@ interface CustomerSearchResponse {
   message: string;
 }
 
+interface GetAllCustomersResponse {
+  status: boolean;
+  statusCode: number;
+  data: Array<{
+    id: number;
+    firstName: string;
+    lastName: string;
+    idNo: string;
+    phone: string;
+    email: string;
+    address?: string;
+    nin?: string;
+    status: string;
+    createdAt: string;
+  }>;
+  message: string;
+}
+
+interface ChangeCustomerStatusRequest {
+  status: "PENDING" | "APPROVED";
+}
+
+interface ChangeCustomerStatusResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data?: {
+    id: number;
+    status: string;
+  };
+}
+
 interface GuestFormData {
   firstName: string;
   lastName: string;
@@ -236,6 +270,11 @@ interface AuthContextType {
     firstName?: string,
     lastName?: string
   ) => Promise<CustomerSearchResponse | null>;
+  getAllCustomers: (status?: string) => Promise<GetAllCustomersResponse | null>;
+  changeCustomerStatus: (
+    customerId: string,
+    status: "PENDING" | "APPROVED"
+  ) => Promise<ChangeCustomerStatusResponse | null>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -1645,6 +1684,173 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const getAllCustomers = async (
+    status?: string
+  ): Promise<GetAllCustomersResponse | null> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for fetching all customers");
+        return null;
+      }
+
+      // Build query parameters
+      const params = new URLSearchParams();
+      if (status) params.append("status", status);
+
+      const customersUrl = `${
+        API_ENDPOINTS.GET_ALL_CUSTOMERS
+      }?${params.toString()}`;
+
+      console.log("🚀 === FETCHING ALL CUSTOMERS ===");
+      console.log("📍 Request URL:", customersUrl);
+      console.log("🔍 Status Filter:", status);
+
+      const response = await fetch(customersUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to fetch all customers:",
+          response.status,
+          response.statusText
+        );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
+        return null;
+      }
+
+      const responseText = await response.text();
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty response from get all customers API");
+        return null;
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (error) {
+        console.error("💥 Failed to parse get all customers JSON:", error);
+        return null;
+      }
+
+      console.log("📄 === GET ALL CUSTOMERS RESPONSE ===");
+      console.log("📊 Raw API Response:", data);
+      console.log("🔍 Response Type:", typeof data);
+      console.log("📋 Response Keys:", Object.keys(data || {}));
+
+      if (data && typeof data === "object" && data.status !== undefined) {
+        console.log("✅ Get all customers data structure:", data);
+        return data as GetAllCustomersResponse;
+      } else {
+        console.log(
+          "⚠️ Get all customers data structure not recognized:",
+          data
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("💥 Error fetching all customers:", error);
+      return null;
+    }
+  };
+
+  const changeCustomerStatus = async (
+    customerId: string,
+    status: "PENDING" | "APPROVED"
+  ): Promise<ChangeCustomerStatusResponse | null> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for changing customer status");
+        return null;
+      }
+
+      const changeStatusUrl = `${API_ENDPOINTS.CHANGE_CUSTOMER_STATUS}/${customerId}/change-status`;
+      const requestBody: ChangeCustomerStatusRequest = { status };
+
+      console.log("🚀 === CHANGING CUSTOMER STATUS ===");
+      console.log("📍 Request URL:", changeStatusUrl);
+      console.log("🔍 Customer ID:", customerId);
+      console.log("📋 New Status:", status);
+      console.log("📤 Request Body:", requestBody);
+
+      const response = await fetch(changeStatusUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("📥 Change status response status:", response.status);
+      console.log(
+        "📥 Change status response status text:",
+        response.statusText
+      );
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to change customer status:",
+          response.status,
+          response.statusText
+        );
+
+        // Check if token is expired and redirect if needed
+        if (checkTokenAndRedirect(response)) {
+          return null;
+        }
+
+        return null;
+      }
+
+      const responseText = await response.text();
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty response from change customer status API");
+        return null;
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (error) {
+        console.error("💥 Failed to parse change customer status JSON:", error);
+        return null;
+      }
+
+      console.log("📄 === CHANGE CUSTOMER STATUS RESPONSE ===");
+      console.log("📊 Raw API Response:", data);
+      console.log("🔍 Response Type:", typeof data);
+      console.log("📋 Response Keys:", Object.keys(data || {}));
+
+      if (data && typeof data === "object" && data.status !== undefined) {
+        console.log("✅ Change customer status data structure:", data);
+        return data as ChangeCustomerStatusResponse;
+      } else {
+        console.log(
+          "⚠️ Change customer status data structure not recognized:",
+          data
+        );
+        return null;
+      }
+    } catch (error) {
+      console.error("💥 Error changing customer status:", error);
+      return null;
+    }
+  };
+
   const setGuestUser = (formData: GuestFormData) => {
     const guestUser: User = {
       id: `guest-${Date.now()}`,
@@ -1689,6 +1895,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getAdminTransactionHistory,
     getAdminDashboardStats,
     searchCustomers,
+    getAllCustomers,
+    changeCustomerStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
