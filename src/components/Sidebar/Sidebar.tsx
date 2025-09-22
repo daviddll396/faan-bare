@@ -2,13 +2,13 @@ import React from "react";
 
 import "./sidebar.css";
 import type { PageType } from "../Dashboard";
-import DashboardIcon from "../../../public/icons/nav-dashboard-icon.svg";
-import UserIcon from "../../../public/icons/nav-user-icon.svg";
-import ProductIcon from "../../../public/icons/nav-product-icon.svg";
-import CustomerIcon from "../../../public/icons/nav-customer-icon.svg";
-import BillIcon from "../../../public/icons/nav-bill-icon.svg";
-import PaymentIcon from "../../../public/icons/nav-payment-icon.svg";
-import LogoutIcon from "../../../public/icons/nav-logout-icon.svg";
+import DashboardIcon from "/icons/nav-dashboard-icon.svg";
+import UserIcon from "/icons/nav-user-icon.svg";
+import ProductIcon from "/icons/nav-product-icon.svg";
+import CustomerIcon from "/icons/nav-customer-icon.svg";
+import BillIcon from "/icons/nav-bill-icon.svg";
+import PaymentIcon from "/icons/nav-payment-icon.svg";
+import LogoutIcon from "/icons/nav-logout-icon.svg";
 import { Users, UserCheck, FileText, ChevronRight } from "lucide-react";
 
 // Mobile-specific icons (using Lucide React icons for better mobile experience)
@@ -189,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       mobileLabel: "Invoices",
       page: "invoices" as PageType,
       showForCustomer: true,
-      showForAdmin: false,
+      showForAdmin: true, // allow admins to access invoices
     },
     {
       icon: () => (
@@ -256,7 +256,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
           {showSmallLogo && (
             <img
-              src="/images/faan-logo-small.png"
+              src="/images/faan-small-white.png"
               alt="logo"
               className={`small-logo ${smallLogoFadingIn ? "fade-in" : ""}`}
               style={{

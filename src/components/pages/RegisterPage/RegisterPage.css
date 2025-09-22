@@ -22,14 +22,6 @@
   }
 }
 
-.form-row-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 7px;
-  animation: slideInUp 0.4s ease-out both;
-}
-
 /* Two-column layout for form fields */
 .form-row-group {
   display: grid;
@@ -48,20 +40,9 @@
   animation: slideInUp 0.4s ease-out both;
 }
 
-/* Label styling for full-width form fields to match the grey color */
-.form-row-full label {
-  font-size: 14px;
-  color: #6c7278;
-  font-weight: 500;
-  margin-bottom: 1px;
-  margin-left: 2px;
-  text-align: left;
-  font-family: "Archivo", sans-serif;
-}
-
 .select-role-text {
   color: #898989 !important;
-  font-size: 13px !important;
+  font-size: 16px !important;
 }
 
 /* Staggered animation for form rows */
@@ -126,79 +107,6 @@
   animation-delay: 0.55s;
 }
 
-.form-input-modern {
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  background: var(--bg-color);
-  color: #18181b;
-  outline: none;
-  transition: border 0.2s;
-}
-
-.form-input-modern:focus {
-  border-color: #007948;
-}
-
-/* Disabled input styling for CAC number field */
-.form-input-modern:disabled,
-.form-input-modern.disabled {
-  background-color: var(--bg-color);
-  color: #535353 !important;
-  border-color: #d1d5db;
-  cursor: not-allowed;
-}
-
-.form-input-modern:disabled::placeholder,
-.form-input-modern.disabled::placeholder {
-  color: #9ca3af;
-}
-
-/* Select dropdown styling */
-.form-input-modern select,
-select.form-input-modern {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px 16px;
-  padding-right: 40px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-/* Remove default dropdown arrow on IE */
-select.form-input-modern::-ms-expand {
-  display: none;
-}
-
-.login-btn-modern {
-  width: 100%;
-  background: linear-gradient(180deg, #007948 0%, #007948 100%);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 700;
-  border: none;
-  border-radius: 10px;
-  padding: 16px 0;
-  cursor: pointer;
-  transition: background 0.2s;
-  letter-spacing: 1px;
-  margin-top: 8px;
-  animation: slideInUp 0.4s ease-out 0.5s both;
-}
-
-.login-btn-modern:hover:not(:disabled) {
-  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
-}
-
-.login-btn-modern:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
 .auth-form-footer-modern {
   margin-top: 32px;
   text-align: center;
@@ -252,7 +160,7 @@ select.form-input-modern::-ms-expand {
 .register-title {
   font-size: 28px;
   font-weight: 700;
-  color: #222b45;
+  color: #000;
   margin-bottom: 8px;
   text-align: center;
 }
@@ -346,7 +254,7 @@ select.form-input-modern::-ms-expand {
   gap: 12px;
   width: 100%;
   padding: 18px 18px;
-  border: 1.5px solid #d9d9d9;
+  border: 1.5px solid #f0f0f0;
   border-radius: 10px;
   background: var(--bg-color);
   font-size: 14px;
@@ -501,35 +409,8 @@ select.form-input-modern::-ms-expand {
   margin-bottom: 0;
 }
 
-.form-input-modern,
-select.form-input-modern {
-  height: 48px;
-  border: 1.5px solid #d9d9d9;
-  border-radius: 10px;
-  padding: 0 16px;
-  font-weight: 500;
-  background: var(--bg-color);
-  color: #18181b;
-  outline: none;
-  transition: border 0.2s;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-
-select.form-input-modern {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: var(--bg-color) url("/icons/chevron-down.svg") no-repeat right
-    16px center/15px 15px;
-  padding-right: 36px;
-  cursor: pointer;
-}
-
-.form-input-modern:focus,
-select.form-input-modern:focus {
-  border-color: #007948;
-}
+/* Per-page input/select sizing/visuals removed in favor of reusable components.
+   Use `Input` (.reusable-input) and `ListBox` for visuals and sizing. */
 
 .register-individual-form-card label {
   color: #6c7278;
@@ -573,28 +454,6 @@ select.form-input-modern:focus {
 }
 
 /* Make sure the chevron SVG is black. If not, use a filter: invert(0) or update the SVG itself. */
-
-.form-input-modern[type="date"] {
-  appearance: auto;
-  -webkit-appearance: auto;
-  -moz-appearance: auto;
-  background: var(--bg-color);
-  color: #18181b;
-  border: 1.5px solid #d9d9d9;
-  border-radius: 10px;
-  height: 48px;
-
-  font-weight: 500;
-  padding: 0 16px;
-  outline: none;
-  transition: border 0.2s;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-
-.form-input-modern[type="date"]:focus {
-  border-color: #007948;
-}
 
 /* ======================================== */
 /* MEDIA QUERIES - RESPONSIVE DESIGN */
@@ -941,7 +800,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
   padding: 32px 40px;
   position: relative;
   overflow: hidden;
-  color: #111827;
+  color: #000;
   min-height: 600px;
   width: 800px;
 }
@@ -974,28 +833,28 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .org-name {
   font-size: 14px;
   font-weight: 700;
-  color: #111827;
+  color: #000;
   margin-bottom: 4px;
   letter-spacing: 0.05em;
 }
 
 .form-code {
   font-size: 12px;
-  color: #6b7280;
+  color: #969696;
   font-weight: 500;
   margin-bottom: 8px;
 }
 
 .org-address {
   font-size: 12px;
-  color: #6b7280;
+  color: #969696;
   line-height: 1.4;
 }
 
 .indemnity-title {
   font-size: 22px;
   font-weight: 800;
-  color: #111827;
+  color: #000;
   text-align: center;
   margin-bottom: 24px;
   letter-spacing: 0.05em;
@@ -1004,7 +863,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .indemnity-body {
   font-size: 14px;
   line-height: 1.6;
-  color: #374151;
+  color: #000;
 }
 
 .indemnity-body p {
@@ -1012,21 +871,21 @@ input[type="date"]::-moz-calendar-picker-indicator {
 }
 
 .inline-blank {
-  border-bottom: 2px dotted #6b7280;
+  border-bottom: 2px dotted #969696;
   padding: 0 4px;
   font-weight: 600;
-  color: #111827;
+  color: #000;
 }
 
 .inline-blank.small {
-  border-bottom: 1px dotted #6b7280;
+  border-bottom: 1px dotted #969696;
   padding: 0 2px;
 }
 
 .dots {
   display: inline-block;
   width: 40px;
-  border-bottom: 1px dotted #6b7280;
+  border-bottom: 1px dotted #969696;
   margin: 0 8px;
 }
 
@@ -1101,13 +960,13 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .register-title {
   font-size: 28px;
   font-weight: 700;
-  color: #0f172a;
+  color: #000;
   margin-bottom: 8px;
   text-align: center;
 }
 
 .register-subtitle {
-  color: #6b7280;
+  color: #969696;
   font-size: 15px;
   font-weight: 400;
   text-align: center;
@@ -1138,24 +997,6 @@ input[type="date"]::-moz-calendar-picker-indicator {
   box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
 }
 
-.form-input-modern {
-  border: 1.5px solid #eef2f7;
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 15px;
-  font-weight: 500;
-  background: var(--bg-color);
-  color: #111827;
-  outline: none;
-  transition: border 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.02);
-}
-
-.form-input-modern:focus {
-  border-color: #10b981;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
-}
-
 .register-file-upload-text {
   color: #007948;
   font-weight: 700;
@@ -1169,5 +1010,5 @@ input[type="date"]::-moz-calendar-picker-indicator {
   text-align: center;
   width: 100%;
   font-size: 15px;
-  color: #6b7280;
+  color: #969696;
 }

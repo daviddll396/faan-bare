@@ -41,6 +41,7 @@ const API_ENDPOINTS = {
   CUSTOMER_SEARCH: `${API_BASE_URL}/api/faan/customers/search`,
   GET_ALL_CUSTOMERS: `${API_BASE_URL}/api/faan/customers`,
   CHANGE_CUSTOMER_STATUS: `${API_BASE_URL}/api/faan/customers`,
+  CREATE_CUSTOMER: `${API_BASE_URL}/auth/faan/register`,
 };
 
 const ENCRYPTION_CONFIG = {
@@ -201,13 +202,16 @@ interface GetAllCustomersResponse {
     id: number;
     firstName: string;
     lastName: string;
-    idNo: string;
-    phone: string;
+    customerId: string;
+    phoneNumber: string;
     email: string;
     address?: string;
     nin?: string;
-    status: string;
+    customerStatus: string;
     createdAt: string;
+    creationType?: string;
+    customerType?: string;
+    dob?: string;
   }>;
   message: string;
 }
@@ -231,6 +235,29 @@ interface GuestFormData {
   lastName: string;
   email: string;
   phoneNumber: string;
+}
+
+interface CreateCustomerRequest {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  phoneNumber: string;
+  address: string;
+  password: string;
+  email: string;
+  nin: string;
+  userType: "CUSTOMER" | "ADMIN";
+  creationType: "ADMIN" | "CUSTOMER";
+  customerType: "INDIVIDUAL" | "CORPORATE" | "GOVERNMENT" | "FAMILY";
+}
+
+interface CreateCustomerResponse {
+  status: boolean;
+  message: string;
+  data?: {
+    customerId: string;
+    email: string;
+  };
 }
 
 interface AuthContextType {
@@ -275,6 +302,9 @@ interface AuthContextType {
     customerId: string,
     status: "PENDING" | "APPROVED"
   ) => Promise<ChangeCustomerStatusResponse | null>;
+  createCustomer: (
+    request: CreateCustomerRequest
+  ) => Promise<CreateCustomerResponse | null>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -1619,7 +1649,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Build query parameters
       const params = new URLSearchParams();
       if (nin) params.append("nin", nin);
-      if (firstName) params.append("firstName", firstName);
+      if (firstName) params.append("firsName", firstName); // Note: API uses "firsName" (typo in API)
       if (lastName) params.append("lastName", lastName);
 
       const searchUrl = `${API_ENDPOINTS.CUSTOMER_SEARCH}?${params.toString()}`;
@@ -1751,6 +1781,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (data && typeof data === "object" && data.status !== undefined) {
         console.log("✅ Get all customers data structure:", data);
+
+        // Handle case where status is false but it's a valid response (no customers found)
+        if (data.status === false && data.statusCode === 404) {
+          console.log("ℹ️ No customers found - returning empty array");
+          return {
+            status: true, // Convert to success for our app logic
+            statusCode: 200,
+            data: [], // Empty array
+            message: data.message || "No customers found",
+          } as GetAllCustomersResponse;
+        }
+
         return data as GetAllCustomersResponse;
       } else {
         console.log(
@@ -1876,6 +1918,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log("Guest user created:", guestUser);
   };
 
+  const createCustomer = async (
+    request: CreateCustomerRequest
+  ): Promise<CreateCustomerResponse | null> => {
+    try {
+      console.log("=== STARTING CREATE CUSTOMER REQUEST ===");
+      console.log("📍 Request URL:", API_ENDPOINTS.CREATE_CUSTOMER);
+      console.log("📝 Customer data (before encryption):", request);
+      console.log("⏰ Request timestamp:", new Date().toISOString());
+
+      // Encrypt the payload
+      const payload = JSON.stringify(request);
+      const encryptedPayload = encryptAESCBC(
+        payload,
+        ENCRYPTION_CONFIG.SECRET_KEY,
+        ENCRYPTION_CONFIG.IV_KEY
+      );
+
+      console.log("🔐 Encrypted payload length:", encryptedPayload.length);
+
+      // Make the API call
+      const response = await fetch(API_ENDPOINTS.CREATE_CUSTOMER, {
+        method: "POST",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "X-Source": REQUEST_HEADERS.X_SOURCE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+        },
+        body: encryptedPayload,
+      });
+
+      const rawResponseText = await response.text();
+      console.log("🚨 Raw response text:", rawResponseText);
+
+      // Decrypt the response
+      const decryptedResponse = CryptoJS.AES.decrypt(
+        rawResponseText,
+        CryptoJS.enc.Utf8.parse(ENCRYPTION_CONFIG.SECRET_KEY),
+        {
+          iv: CryptoJS.enc.Utf8.parse(ENCRYPTION_CONFIG.IV_KEY),
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7,
+        }
+      ).toString(CryptoJS.enc.Utf8);
+
+      console.log("🚨 Decrypted response:", decryptedResponse);
+
+      const data = JSON.parse(decryptedResponse);
+      console.log("🚨 Parsed response data:", data);
+
+      if (response.ok && data.status) {
+        console.log("✅ Customer created successfully:", data);
+        return data;
+      } else {
+        console.error("🚨 Customer creation failed:", data);
+        return data; // Return the error response
+      }
+    } catch (error) {
+      console.error("💥 Error creating customer:", error);
+      return null;
+    }
+  };
+
   // removed duplicate declaration (kept useCallback version above)
 
   const value: AuthContextType = {
@@ -1897,6 +2001,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     searchCustomers,
     getAllCustomers,
     changeCustomerStatus,
+    createCustomer,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

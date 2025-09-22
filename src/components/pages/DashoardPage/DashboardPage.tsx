@@ -8,6 +8,7 @@ import Modal from "../../reusables/Modal/Modal";
 import "./dashboardpage.css";
 import WalletIcon from "/icons/dashboard-wallet-icon.svg";
 import BorderButton from "../../reusables/BorderButton/BorderButton";
+import SolidButton from "../../reusables/SolidButton";
 import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { Eye, EyeOff } from "lucide-react";
@@ -315,6 +316,38 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     return Number.isFinite(n) ? n : 0;
   };
 
+  // Generate a cryptographically-strong unique payment reference for ITEXPay
+  const generatePaymentReference = (): string => {
+    try {
+      // Access the browser crypto API with a typed local variable to avoid `any`
+      const webCrypto =
+        typeof crypto !== "undefined"
+          ? (crypto as Crypto & { randomUUID?: () => string })
+          : undefined;
+
+      // Prefer native UUID if available (modern browsers)
+      if (webCrypto && typeof webCrypto.randomUUID === "function") {
+        return `itex-${webCrypto.randomUUID()}`;
+      }
+
+      // Fallback to secure random bytes
+      if (webCrypto && typeof webCrypto.getRandomValues === "function") {
+        const arr = new Uint8Array(8);
+        webCrypto.getRandomValues(arr);
+        const hex = Array.from(arr)
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+        return `itex-${Date.now()}-${hex}-${Math.random()
+          .toString(36)
+          .slice(2, 8)}`;
+      }
+    } catch {
+      // ignore and fallback to timestamp+random
+    }
+
+    return `itex-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+  };
+
   const handleOpenFundWallet = () => setShowFundWallet(true);
   const handleCloseFundWallet = () => {
     setShowFundWallet(false);
@@ -376,9 +409,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           );
         }
 
-        const reference = `itex-${Date.now()}-${Math.random()
-          .toString(36)
-          .slice(2, 8)}`;
+        const reference = generatePaymentReference();
         // NOTE: API key hardcoded for testing per request
         const apiKey =
           "ITXPUB_STAGING_N9OSLGOKR2WT6KNKMRPHI0TNDZF3FEMCFDUO2PFN-6011000252-04GPRVVTV0CPUVD";
@@ -394,12 +425,36 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           return;
         }
 
+        // Validate required fields for ITEXPay
+        const firstName = user?.firstName || "Customer";
+        const lastName = user?.lastName || "User";
+        const phoneNumber = user?.phoneNumber || "";
+        const email = user?.email || "";
+
+        // Check if we have minimum required information
+        if (!firstName || !lastName || !phoneNumber || !email) {
+          console.error("Missing required user information for ITEXPay:", {
+            firstName,
+            lastName,
+            phoneNumber,
+            email,
+          });
+          setShowFundLoading(false);
+          paymentInitializedRef.current = false;
+          setShowFundWallet(true);
+          showToast(
+            "Please complete your profile information before funding wallet.",
+            "error"
+          );
+          return;
+        }
+
         const Pay = new win.ItexPayNS!.ItexPay({
           api_key: apiKey,
-          first_name: user?.firstName || "",
-          last_name: user?.lastName || "",
-          phone_number: user?.phoneNumber || "",
-          email: user?.email || "",
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
+          email: email,
           amount: Math.round(amount),
           // redirecturl: window.location.origin + "/",
           currency: "NGN",
@@ -576,10 +631,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                 </div>
               </div>
             </div>
-            <BorderButton
+            <SolidButton
               text="FUND WALLET"
-              className="fund-wallet-btn-dashboard"
               onClick={handleOpenFundWallet}
+              size="medium"
+              variant="primary"
             />
           </div>
         </div>

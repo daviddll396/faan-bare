@@ -8,6 +8,7 @@ interface ModalProps {
   children: React.ReactNode;
   showHeader?: boolean;
   headerTitle?: string;
+  showLogo?: boolean;
   className?: string;
 }
 
@@ -17,6 +18,7 @@ const Modal: React.FC<ModalProps> = ({
   children,
   showHeader = false,
   headerTitle = "",
+  showLogo = true,
   className = "",
 }) => {
   if (!isOpen) return null;
@@ -42,9 +44,11 @@ const Modal: React.FC<ModalProps> = ({
         {/* Optional Header */}
         {showHeader && (
           <div className="modal-header">
-            <div className="modal-logo">
-              <img src={FaanLogo} alt="FAAN Logo" />
-            </div>
+            {showLogo && (
+              <div className="modal-logo">
+                <img src={FaanLogo} alt="FAAN Logo" />
+              </div>
+            )}
             {headerTitle && (
               <div className="modal-header-title">{headerTitle}</div>
             )}

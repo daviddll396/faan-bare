@@ -13,8 +13,8 @@ interface SearchInputProps {
   options?: string[];
 }
 
-import SearchIcon from "../../../../public/icons/search-icon.svg";
-import ChevronDown from "../../../../public/icons/chevron-down.svg";
+import SearchIcon from "/icons/search-icon.svg";
+import ChevronDown from "/icons/chevron-down.svg";
 
 const SearchInput: React.FC<SearchInputProps> = ({
   placeholder,

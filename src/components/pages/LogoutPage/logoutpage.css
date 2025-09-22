@@ -42,13 +42,13 @@
 .logout-title {
   font-weight: 700;
   font-size: 22px;
-  color: #0f172a;
+  color: #000;
   margin-bottom: 10px;
   text-align: center;
 }
 
 .logout-text {
-  color: #6b7280;
+  color: #969696;
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 26px;
@@ -76,6 +76,6 @@
 
 .logout-btn-cancel {
   background: #fff;
-  color: #374151;
-  border: 1px solid #e6eef0;
+  color: #000;
+  border: 1px solid #f0f0f0;
 }

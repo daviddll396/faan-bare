@@ -1,5 +1,6 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { useLoading } from "../../../../contexts/LoadingContext";
 import "./transactionstable.css";
 import AirplaneIcon from "/icons/airplane-icon.svg";
 
@@ -18,89 +19,96 @@ interface TransactionsTableProps {
   }>;
 }
 
+// Transaction interface matching what AuthContext returns
+interface Transaction {
+  id: number;
+  tariffName?: string;
+  service?: string;
+  amount?: number;
+  price?: string;
+  status?: string;
+  createdAt?: string;
+  customerName?: string;
+  customerId?: string;
+}
+
 const TransactionsTable: React.FC<TransactionsTableProps> = ({
   onSeeAll,
   expanded,
   hideTitle,
-  transactions,
+  transactions: propTransactions,
 }) => {
-  type Tx = {
-    id?: number;
-    tariffName?: string;
-    service?: string;
-    amount?: number;
-    price?: string;
-    status?: string;
-    createdAt?: string;
-  };
-  const dummyTransactions = [
-    {
-      id: 1,
-      service: "International Arrival",
-      price: "₦50,000",
-      status: "COMPLETED",
-      createdAt: "2024-01-01T10:00:00",
-    },
-    {
-      id: 2,
-      service: "International Departure",
-      price: "₦50,000",
-      status: "PENDING",
-      createdAt: "2024-01-02T11:00:00",
-    },
-    {
-      id: 3,
-      service: "Domestic Arrival",
-      price: "₦50,000",
-      status: "COMPLETED",
-      createdAt: "2024-01-03T12:00:00",
-    },
-    {
-      id: 4,
-      service: "Prootocol Lounge PH.",
-      price: "₦50,000",
-      status: "CANCELLED",
-      createdAt: "2024-01-04T13:00:00",
-    },
-    {
-      id: 5,
-      service: "Abuja International Oneoff",
-      price: "₦50,000",
-      status: "COMPLETED",
-      createdAt: "2024-01-05T14:00:00",
-    },
-    {
-      id: 6,
-      service: "Protocol Car Park PH.",
-      price: "₦50,000",
-      status: "PENDING",
-      createdAt: "2024-01-06T15:00:00",
-    },
-    {
-      id: 7,
-      service: "Port Harcourt Domestic Service",
-      price: "₦50,000",
-      status: "COMPLETED",
-      createdAt: "2024-01-07T16:00:00",
-    },
-    {
-      id: 8,
-      service: "Abuja Domestic Service",
-      price: "₦50,000",
-      status: "CANCELLED",
-      createdAt: "2024-01-08T17:00:00",
-    },
-  ];
-  const hasRealData = transactions && transactions.length > 0;
+  const { getTransactionHistory, getAdminTransactionHistory, user } = useAuth();
+  const { showLoading, hideLoading } = useLoading();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  // Fetch transactions on component mount
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      showLoading("Loading transactions...");
+      try {
+        let fetchedTransactions;
+
+        // Use admin transaction history for admin users, regular history for customers
+        if (user?.role === "Admin") {
+          console.log(
+            "🔐 Admin user detected, fetching admin transaction history for TransactionsTable"
+          );
+          fetchedTransactions = await getAdminTransactionHistory();
+        } else {
+          console.log(
+            "👤 Customer user detected, fetching regular transaction history for TransactionsTable"
+          );
+          const endDate = new Date();
+          const startDate = new Date();
+          startDate.setMonth(endDate.getMonth() - 6);
+          const format = (d: Date) => d.toISOString().slice(0, 10);
+          fetchedTransactions = await getTransactionHistory(
+            format(startDate),
+            format(endDate)
+          );
+        }
+
+        if (fetchedTransactions) {
+          console.log(
+            "📄 Raw transaction data for TransactionsTable:",
+            fetchedTransactions
+          );
+          setTransactions(fetchedTransactions as Transaction[]);
+        } else {
+          console.log("No transactions found");
+          setTransactions([]);
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+        setTransactions([]);
+      } finally {
+        hideLoading();
+      }
+    };
+
+    fetchTransactions();
+  }, [
+    getTransactionHistory,
+    getAdminTransactionHistory,
+    user?.role,
+    showLoading,
+    hideLoading,
+  ]);
+
+  // Use propTransactions if provided (for backward compatibility), otherwise use fetched transactions
+  const finalTransactions =
+    propTransactions && propTransactions.length > 0
+      ? propTransactions
+      : transactions;
+  const hasRealData = finalTransactions && finalTransactions.length > 0;
   const isLargeScreen = window.innerWidth > 1800;
   const sliceCount = isLargeScreen ? 5 : 4;
   const visibleTransactions = hasRealData
     ? expanded
-      ? transactions
-      : transactions.slice(0, sliceCount)
-    : expanded
-    ? dummyTransactions
-    : dummyTransactions.slice(0, sliceCount);
+      ? finalTransactions
+      : finalTransactions.slice(0, sliceCount)
+    : [];
   const showStatusAndDate = hasRealData && expanded;
 
   // Helper to truncate service name
@@ -108,17 +116,53 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
     str.length > n ? str.slice(0, n - 1) + "..." : str;
 
   // Helper to get service name safely
-  const getServiceName = (transaction: Tx) => {
+  const getServiceName = (transaction: Transaction) => {
     return transaction.tariffName || transaction.service || "";
   };
 
   // Helper to get amount safely
-  const getAmount = (transaction: Tx) => {
+  const getAmount = (transaction: Transaction) => {
     if (hasRealData && typeof transaction.amount === "number") {
       return `₦${transaction.amount.toLocaleString()}`;
     }
     return transaction.price || "";
   };
+
+  // Show no transactions state
+  if (!hasRealData) {
+    return (
+      <div
+        className={`transactions-table${hideTitle ? " no-top-padding" : ""}${
+          expanded ? " expanded" : ""
+        }`}
+      >
+        <div className="table-header">
+          {!hideTitle && (
+            <div className="table-title">
+              <h3>Recent Transactions</h3>
+            </div>
+          )}
+        </div>
+        <div className="empty-state">
+          <div className="empty-state-icon">
+            <img
+              src={AirplaneIcon}
+              alt="No transactions"
+              width={48}
+              height={48}
+            />
+          </div>
+          <div className="empty-state-content">
+            <h4>No transactions yet</h4>
+            <p>
+              Your transaction history will appear here once you make your first
+              booking or payment.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

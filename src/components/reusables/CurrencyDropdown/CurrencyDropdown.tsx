@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import ChevronDown from "../../../../public/icons/chevron-down.svg";
-import NgFlag from "../../../../public/icons/ng-flag.svg";
+import ChevronDown from "/icons/chevron-down.svg";
+import NgFlag from "/icons/ng-flag.svg";
 import "./currencydropdown.css";
 
 interface CurrencyDropdownProps {

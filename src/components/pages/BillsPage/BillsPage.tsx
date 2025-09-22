@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import "./billspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import BillTitleIcon from "/icons/bill-title-icon.svg";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import AddIcon from "/icons/add-icon.svg";
 import { useLoading } from "../../../contexts/LoadingContext";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
+import BorderButton from "../../reusables/BorderButton/BorderButton";
+import Input from "../../reusables/Input/Input";
+import DataTable from "../../reusables/DataTable/DataTable";
+import ListBox, { type ListBoxOption } from "../../reusables/ListBox";
 
-import { Eye } from "lucide-react";
-import BillsNinIcon from "/icons/bills-nin-icon.svg";
-import BillsIdIcon from "/icons/bills-id-icon.svg";
-import BillsFnIcon from "/icons/bills-fn-icon.svg";
-import BillsEmailIcon from "/icons/bills-email-icon.svg";
-import ChevronDown from "/icons/chevron-down.svg";
+import { Eye, User, Mail } from "lucide-react";
 import RemoveFormIcon from "/icons/trash-can-icon.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
@@ -21,6 +20,7 @@ import CheckCircle from "/icons/check-circle.svg";
 
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import Modal from "../../reusables/Modal/Modal";
+import SolidButton from "../../reusables/SolidButton";
 
 interface BillsPageProps {
   role?: string;
@@ -44,6 +44,13 @@ const BillsPage: React.FC<BillsPageProps> = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
   const [showReceiptModal, setShowReceiptModal] = React.useState(false);
   const [selectedBill, setSelectedBill] = React.useState<Bill | null>(null);
+
+  // Search form state
+  const [searchForm, setSearchForm] = useState({
+    customerName: "",
+    customerId: "",
+    customerNin: "",
+  });
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
@@ -77,7 +84,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       qty: 10,
       amount: "₦12,000",
       paid: "₦12,000",
-      outstanding: "₦12,000",
+      outstanding: "₦0",
       date: "12-08-2024 @11:32pm",
     },
     {
@@ -86,7 +93,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       qty: 10,
       amount: "₦12,000",
       paid: "₦12,000",
-      outstanding: "₦12,000",
+      outstanding: "₦0",
       date: "12-08-2024 @11:32pm",
     },
     {
@@ -95,7 +102,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       qty: 10,
       amount: "₦12,000",
       paid: "₦12,000",
-      outstanding: "₦12,000",
+      outstanding: "₦0",
       date: "12-08-2024 @11:32pm",
     },
     {
@@ -104,7 +111,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       qty: 10,
       amount: "₦12,000",
       paid: "₦12,000",
-      outstanding: "₦12,000",
+      outstanding: "₦0",
       date: "12-08-2024 @11:32pm",
     },
     {
@@ -113,7 +120,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       qty: 10,
       amount: "₦12,000",
       paid: "₦12,000",
-      outstanding: "₦12,000",
+      outstanding: "₦0",
       date: "12-08-2024 @11:32pm",
     },
   ];
@@ -126,6 +133,18 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     "Jet A1 Fuel",
     "Parking Fees",
   ];
+
+  // ListBox options
+  const itemOptions: ListBoxOption[] = billItemsList.map((item, index) => ({
+    id: index,
+    name: item,
+    value: item,
+  }));
+
+  const currencyOptions: ListBoxOption[] = [
+    { id: "NGN", name: "NGN", value: "NGN" },
+  ];
+
   const initialBillItem = {
     item: "",
     baseTariff: "",
@@ -134,9 +153,6 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     currency: "NGN",
   };
   const [billItems, setBillItems] = React.useState([{ ...initialBillItem }]);
-  const [itemSelectOpen, setItemSelectOpen] = React.useState<number | null>(
-    null
-  );
 
   // Sample invoice data
   const invoiceNumber = "201564";
@@ -177,15 +193,17 @@ const BillsPage: React.FC<BillsPageProps> = () => {
   const handleBillItemChange = (
     idx: number,
     field: keyof typeof initialBillItem,
-    value: string
+    value: string | ListBoxOption
   ) => {
     const updated = [...billItems];
+    const newValue = typeof value === "object" ? value.value : value;
+
     if (field === "baseTariff" || field === "amount" || field === "qty") {
       // Only allow numbers
-      const raw = value.replace(/[^\d]/g, "");
+      const raw = newValue.replace(/[^\d]/g, "");
       updated[idx][field] = raw;
     } else {
-      updated[idx][field] = value;
+      updated[idx][field] = newValue;
     }
     setBillItems(updated);
   };
@@ -203,7 +221,13 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     <div className="page-content">
       <div className="page-header">
         {!showResults ? (
-          <PageTitle icon={BillTitleIcon} title="Bill Search" />
+          <PageTitle
+            icon={BillTitleIcon}
+            title="Bill Search"
+            subtitle={
+              "To create a bill, search for the customer using their ID, NIN, or name. Enter at least one field to search."
+            }
+          />
         ) : !showBillCreation ? (
           <>
             {windowWidth <= 768 ? (
@@ -250,171 +274,192 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       </div>
       <div className="bill-search-center">
         {!showResults && (
-          <div className="bill-search-card">
-            <div className="bill-search-title">Bill Search</div>
-            <div className="bill-search-subtitle">
-              To create a Bill search for customer, input the Customer's ID, NIN
-              and Name
-            </div>
+          <div className="bill-search-section">
             <form className="bill-search-form" onSubmit={handleSubmit}>
-              <div className="bill-form-group">
-                <label>Customer Name</label>
-                <input type="text" placeholder="" />
+              <div
+                className="bill-search-inputs"
+                style={{ display: "flex", flexDirection: "row", gap: 12 }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Input
+                    placeholder="Customer Name"
+                    value={searchForm.customerName}
+                    onChange={(e) =>
+                      setSearchForm((prev) => ({
+                        ...prev,
+                        customerName: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Input
+                    placeholder="Customer ID"
+                    value={searchForm.customerId}
+                    onChange={(e) =>
+                      setSearchForm((prev) => ({
+                        ...prev,
+                        customerId: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Input
+                    placeholder="Customer NIN"
+                    value={searchForm.customerNin}
+                    onChange={(e) =>
+                      setSearchForm((prev) => ({
+                        ...prev,
+                        customerNin: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
               </div>
-              <div className="bill-form-group">
-                <label>Customer ID</label>
-                <input type="text" placeholder="" />
+
+              <div className="bill-search-actions">
+                <GradientButton type="submit" fullWidth>
+                  SEARCH CUSTOMER
+                </GradientButton>
               </div>
-              <div className="bill-form-group">
-                <label>Customer NIN</label>
-                <input type="text" placeholder="" />
-              </div>
-              <GradientButton type="submit" fullWidth>
-                SEARCH
-              </GradientButton>
             </form>
           </div>
         )}
         {showResults && !showBillCreation && (
-          <>
-            <div className="bill-results-wrapper">
-              <div className="bill-results-title">Customer Details</div>
-              <div className="bill-customer-details-row">
-                <div className="bill-customer-card">
-                  <img
-                    src={BillsNinIcon}
-                    alt="NIN"
-                    className="bill-customer-icon"
-                  />
-
-                  <div className="bill-customer-info-col">
-                    <div className="bill-customer-label">NIN</div>
-                    <div className="bill-customer-value highlight">
-                      {customer.nin}
-                    </div>
-                  </div>
-                </div>
-                <div className="bill-customer-card">
-                  <img
-                    src={BillsIdIcon}
-                    alt="ID No."
-                    className="bill-customer-icon"
-                  />
-
-                  <div className="bill-customer-info-col">
-                    <div className="bill-customer-label">ID No.</div>
-                    <div className="bill-customer-value highlight">
-                      {customer.idNo}
-                    </div>
-                  </div>
-                </div>
-                <div className="bill-customer-card">
-                  <img
-                    src={BillsFnIcon}
-                    alt="First Name"
-                    className="bill-customer-icon"
-                  />
-
-                  <div className="bill-customer-info-col">
-                    <div className="bill-customer-label">First Name</div>
-                    <div className="bill-customer-value highlight">
-                      {customer.firstName}
-                    </div>
-                  </div>
-                </div>
-                <div className="bill-customer-card">
-                  <img
-                    src={BillsFnIcon}
-                    alt="Last Name"
-                    className="bill-customer-icon"
-                  />
-
-                  <div className="bill-customer-info-col">
-                    <div className="bill-customer-label">Last Name</div>
-                    <div className="bill-customer-value highlight">
-                      {customer.lastName}
-                    </div>
-                  </div>
-                </div>
-                <div className="bill-customer-card">
-                  <img
-                    src={BillsEmailIcon}
-                    alt="Email"
-                    className="bill-customer-icon"
-                  />
-
-                  <div className="bill-customer-info-col">
-                    <div className="bill-customer-label">Email</div>
-                    <div className="bill-customer-value highlight">
-                      {customer.email}
-                    </div>
-                  </div>
-                </div>
+          <div className="bills-customer-details">
+            {/* Customer Header */}
+            <div className="bills-customer-header">
+              <div className="bills-customer-avatar">
+                <User size={60} color="#007948" />
               </div>
-              <div className="bill-results-header-row">
-                <div className="bill-results-title">
-                  Bill Transaction History
-                </div>
-                <BorderButton
+              <div className="bills-customer-info">
+                <h2 className="bills-customer-name">
+                  {customer.firstName} {customer.lastName}
+                </h2>
+                <p className="bills-customer-id">ID: {customer.idNo}</p>
+                <p className="bills-customer-nin">NIN: {customer.nin}</p>
+              </div>
+              <div className="bills-customer-actions">
+                <SolidButton
                   text="Create New Bill"
-                  icon={AddIcon}
+                  variant="primary"
+                  rounded={false}
+                  size="medium"
                   onClick={() => setShowBillCreation(true)}
-                  className="border-button-userspage"
                 />
               </div>
-              <div className="bill-results-table-card">
-                <table className="bill-results-table">
-                  <thead>
-                    <tr>
-                      <th className="table-header-item">Bill No.</th>
-                      <th className="table-header-item">Item Name</th>
-                      <th className="table-header-item">Qty</th>
-                      <th className="table-header-item">Amount</th>
-                      <th className="table-header-item">Paid</th>
-                      <th className="table-header-item">Outstanding</th>
-                      <th className="table-header-item">Bill Date/Time</th>
-                      <th className="table-header-item">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bills.map((bill, idx) => (
-                      <tr key={idx}>
-                        <td className="table-data-item">{bill.billNo}</td>
-                        <td className="table-data-item">{bill.itemName}</td>
-                        <td className="table-data-item">{bill.qty}</td>
-                        <td className="table-data-item">{bill.amount}</td>
-                        <td className="table-data-item">{bill.paid}</td>
-                        <td className="table-data-item">{bill.outstanding}</td>
-                        <td className="table-data-item">{bill.date}</td>
-                        <td className="table-data-item">
-                          <button
-                            className="bill-view-receipt-btn"
-                            onClick={() => {
-                              setSelectedBill(bill);
-                              setShowReceiptModal(true);
-                            }}
-                          >
-                            <Eye size={18} /> View Receipt
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            </div>
+
+            {/* Customer Information Grid */}
+            <div className="bills-info-grid">
+              {/* Personal Information */}
+              <div className="bills-info-card">
+                <div className="bills-info-card-header">
+                  <User size={20} color="#007948" />
+                  <h3>Personal Information</h3>
+                </div>
+                <div className="bills-info-card-content">
+                  <div className="bills-info-row">
+                    <span className="bills-info-label">First Name</span>
+                    <span className="bills-info-value">
+                      {customer.firstName}
+                    </span>
+                  </div>
+                  <div className="bills-info-row">
+                    <span className="bills-info-label">Last Name</span>
+                    <span className="bills-info-value">
+                      {customer.lastName}
+                    </span>
+                  </div>
+                  <div className="bills-info-row">
+                    <span className="bills-info-label">NIN</span>
+                    <span className="bills-info-value">{customer.nin}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="bills-info-card">
+                <div className="bills-info-card-header">
+                  <Mail size={20} color="#007948" />
+                  <h3>Contact Information</h3>
+                </div>
+                <div className="bills-info-card-content">
+                  <div className="bills-info-row">
+                    <span className="bills-info-label">Email</span>
+                    <span className="bills-info-value">{customer.email}</span>
+                  </div>
+                  <div className="bills-info-row">
+                    <span className="bills-info-label">Phone</span>
+                    <span className="bills-info-value">+234 801 234 5678</span>
+                  </div>
+                  <div className="bills-info-row">
+                    <span className="bills-info-label">Address</span>
+                    <span className="bills-info-value">
+                      123 Main Street, Lagos
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Transaction History */}
+
+            <div className="bills-transaction-content">
+              <DataTable
+                header="Recent Bill Records"
+                headers={[
+                  "Bill No.",
+                  "Item Name",
+                  "Qty",
+                  "Amount",
+                  "Paid",
+                  "Outstanding",
+                  "Bill Date/Time",
+                  "Actions",
+                ]}
+                data={bills.map((bill) => [
+                  bill.billNo,
+                  bill.itemName,
+                  bill.qty,
+                  bill.amount,
+                  bill.paid,
+                  bill.outstanding,
+                  bill.date,
+                  <button
+                    key={`action-${bill.billNo}`}
+                    className="bills-view-receipt-btn"
+                    onClick={() => {
+                      setSelectedBill(bill);
+                      setShowReceiptModal(true);
+                    }}
+                  >
+                    <Eye size={16} /> View Receipt
+                  </button>,
+                ])}
+                className="bills-transaction-table"
+                itemsPerPage={8}
+              />
+            </div>
+
             {windowWidth <= 768 && <SlideIndicator />}
-          </>
+          </div>
         )}
         {showBillCreation && (
-          <div className="add-service-form-bill">
-            <h2 className="add-user-title">Bill Creation</h2>
-            <p className="add-user-helper">
-              To create a Bill for a customer, input the Item, Base Tariff,
-              Quantity and Amount.
-            </p>
+          <div className="bill-creation-section">
+            <div className="bill-creation-header">
+              {/* <h3 className="bill-creation-title">Bill Creation</h3> */}
+              <p className="bill-creation-subtitle">
+                Create a bill for the customer by adding items, setting tariffs,
+                quantities, and amounts.
+              </p>
+            </div>
+
             <form
-              className="user-form-list"
+              className="bill-creation-form"
               onSubmit={(e) => {
                 e.preventDefault();
                 showLoading("Generating invoice...");
@@ -424,145 +469,112 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 }, 2000);
               }}
             >
-              {billItems.map((bill, idx) => (
-                <div
-                  className="bill-form-row"
-                  key={idx}
-                  style={{ alignItems: "center" }}
-                >
-                  <div className="service-index-circle">{idx + 1}.</div>
-                  <div
-                    className="service-field-group service-name-group"
-                    style={{ minWidth: 200, maxWidth: 200, width: 200 }}
-                  >
-                    <label>Choose Item:</label>
-                    <div
-                      className={`select-dropdown-wrapper${
-                        itemSelectOpen === idx ? " open" : ""
-                      }`}
-                    >
-                      <select
-                        value={bill.item}
-                        onFocus={() => setItemSelectOpen(idx)}
-                        onBlur={() => setItemSelectOpen(null)}
-                        onChange={(e) => {
-                          handleBillItemChange(idx, "item", e.target.value);
-                          setItemSelectOpen(null);
-                        }}
-                        style={{ minWidth: 200, maxWidth: 200, width: 200 }}
+              <div className="bill-items-container">
+                {billItems.map((bill, idx) => (
+                  <div className="bill-item-card" key={idx}>
+                    <div className="bill-item-header">
+                      <div className="bill-item-number">{idx + 1}</div>
+                      <h4 className="bill-item-title">Item {idx + 1}</h4>
+                      <button
+                        type="button"
+                        className="bill-item-remove"
+                        onClick={() => removeBillItem(idx)}
                       >
-                        <option value="">Select item</option>
-                        {billItemsList.map((name) => (
-                          <option key={name} value={name}>
-                            {name}
-                          </option>
-                        ))}
-                      </select>
-                      <img
-                        src={ChevronDown}
-                        alt="dropdown"
-                        className="select-chevron"
-                      />
+                        <img src={RemoveFormIcon} alt="Remove item" />
+                      </button>
                     </div>
-                  </div>
-                  <div
-                    className="service-field-group price-group"
-                    style={{ minWidth: 200, maxWidth: 200, width: 200 }}
-                  >
-                    <label>Base Tariff:</label>
-                    <input
-                      type="text"
-                      value={formatNumberWithCommas(bill.baseTariff)}
-                      onChange={(e) =>
-                        handleBillItemChange(idx, "baseTariff", e.target.value)
-                      }
-                      placeholder=""
-                      style={{ minWidth: 200, maxWidth: 200, width: 200 }}
-                    />
-                  </div>
-                  <div
-                    className="service-field-group price-group"
-                    style={{ minWidth: 200, maxWidth: 200, width: 200 }}
-                  >
-                    <label>Qty:</label>
-                    <input
-                      type="text"
-                      value={bill.qty}
-                      onChange={(e) =>
-                        handleBillItemChange(idx, "qty", e.target.value)
-                      }
-                      placeholder=""
-                      style={{ minWidth: 200, maxWidth: 200, width: 200 }}
-                    />
-                  </div>
-                  <div className="service-field-group price-group">
-                    <label>Amount:</label>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: windowWidth <= 768 ? "stretch" : "center",
-                        gap: 8,
-                        width: "100%",
-                      }}
-                    >
-                      <input
-                        type="text"
-                        value={formatNumberWithCommas(bill.amount)}
-                        onChange={(e) =>
-                          handleBillItemChange(idx, "amount", e.target.value)
-                        }
-                        placeholder=""
-                        style={{ flex: 1 }}
-                      />
-                      <div className="select-dropdown-wrapper">
-                        <select
-                          value={bill.currency}
-                          onChange={(e) =>
-                            handleBillItemChange(
-                              idx,
-                              "currency",
-                              e.target.value
-                            )
+
+                    <div className="bill-item-fields">
+                      <div className="bill-field-group">
+                        <ListBox
+                          label="Item"
+                          options={itemOptions}
+                          selected={
+                            itemOptions.find(
+                              (option) => option.value === bill.item
+                            ) || null
                           }
-                          style={{ minWidth: 100, maxWidth: 100, width: 100 }}
-                        >
-                          <option value="NGN">NGN</option>
-                        </select>
-                        <img
-                          src={ChevronDown}
-                          alt="dropdown"
-                          className="select-chevron"
+                          onChange={(option: ListBoxOption) =>
+                            handleBillItemChange(idx, "item", option)
+                          }
+                          placeholder="Select item"
+                          className="bill-item-listbox"
                         />
                       </div>
-                      <div>
-                        <div
-                          className="bill-creation-option-icon "
-                          tabIndex={-1}
-                          onClick={() => removeBillItem(idx)}
-                        >
-                          <img src={RemoveFormIcon} alt="delete" />
+
+                      <Input
+                        label="Base Tariff"
+                        placeholder="Enter base tariff"
+                        value={formatNumberWithCommas(bill.baseTariff)}
+                        onChange={(e) =>
+                          handleBillItemChange(
+                            idx,
+                            "baseTariff",
+                            e.target.value
+                          )
+                        }
+                      />
+
+                      <Input
+                        label="Quantity"
+                        placeholder="Enter quantity"
+                        value={bill.qty}
+                        onChange={(e) =>
+                          handleBillItemChange(idx, "qty", e.target.value)
+                        }
+                      />
+
+                      <div className="bill-field-group bill-amount-group">
+                        <div className="bill-amount-input-wrapper">
+                          <Input
+                            label="Amount"
+                            placeholder="Enter amount"
+                            value={formatNumberWithCommas(bill.amount)}
+                            onChange={(e) =>
+                              handleBillItemChange(
+                                idx,
+                                "amount",
+                                e.target.value
+                              )
+                            }
+                            className="bill-amount-input"
+                          />
+                          <div className="bill-currency-wrapper">
+                            <ListBox
+                              label="Currency"
+                              options={currencyOptions}
+                              selected={
+                                currencyOptions.find(
+                                  (option) => option.value === bill.currency
+                                ) || currencyOptions[0]
+                              }
+                              onChange={(option: ListBoxOption) =>
+                                handleBillItemChange(idx, "currency", option)
+                              }
+                              placeholder="Currency"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-              <div className="form-row form-row-full">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent:
-                      windowWidth <= 768 ? "flex-end" : "flex-start",
-                  }}
-                >
-                  <BorderButton
-                    text="+ Add More Items"
-                    onClick={addMoreBillItem}
-                    type="button"
-                  />
-                </div>
+                ))}
               </div>
-              <div className="form-actions">
+
+              <div className="bill-creation-actions">
+                <FieldButton
+                  buttons={[
+                    {
+                      text: "+ Add More Items",
+                      onClick: addMoreBillItem,
+                      type: "button",
+                    },
+                  ]}
+                  className="bill-add-items-fieldbutton"
+                />
+              </div>
+
+              <div className="bill-submit-actions">
                 <GradientButton type="submit" fullWidth>
                   GENERATE INVOICE
                 </GradientButton>
@@ -698,7 +710,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                   style={{
                     textAlign: "left",
                     fontWeight: 700,
-                    color: "#222b45",
+                    color: "#000",
                     padding: "10px 8px",
                   }}
                 >
@@ -707,8 +719,9 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 <td
                   style={{
                     fontWeight: 700,
-                    color: "#070600",
+                    color: "#000",
                     padding: "10px 8px",
+                    textAlign: "right",
                   }}
                 >
                   ₦{invoiceTotal}
@@ -765,42 +778,36 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       >
         {selectedBill && (
           <div className="bill-receipt-content">
-            <div className="bill-receipt-cards">
-              <div className="bill-customer-card">
-                <img
-                  src={InvoiceFormIcon}
-                  alt="Receipt Number"
-                  className="bill-customer-icon"
-                />
-                <div className="bill-customer-info-col">
-                  <div className="bill-customer-label">Receipt Number</div>
-                  <div className="bill-customer-value highlight">
+            <div className="bills-receipt-cards">
+              <div className="bills-receipt-card">
+                <div className="bills-receipt-card-icon">
+                  <img src={InvoiceFormIcon} alt="Receipt Number" />
+                </div>
+                <div className="bills-receipt-card-content">
+                  <div className="bills-receipt-card-label">Receipt Number</div>
+                  <div className="bills-receipt-card-value">
                     {selectedBill.billNo}
                   </div>
                 </div>
               </div>
-              <div className="bill-customer-card">
-                <img
-                  src={IdFormIcon}
-                  alt="Customer ID"
-                  className="bill-customer-icon"
-                />
-                <div className="bill-customer-info-col">
-                  <div className="bill-customer-label">Customer ID</div>
-                  <div className="bill-customer-value highlight">
+              <div className="bills-receipt-card">
+                <div className="bills-receipt-card-icon">
+                  <img src={IdFormIcon} alt="Customer ID" />
+                </div>
+                <div className="bills-receipt-card-content">
+                  <div className="bills-receipt-card-label">Customer ID</div>
+                  <div className="bills-receipt-card-value">
                     {customer.idNo}
                   </div>
                 </div>
               </div>
-              <div className="bill-customer-card">
-                <img
-                  src={InvoiceAmountFormIcon}
-                  alt="Amount Paid"
-                  className="bill-customer-icon"
-                />
-                <div className="bill-customer-info-col">
-                  <div className="bill-customer-label">Amount Paid</div>
-                  <div className="bill-customer-value highlight">
+              <div className="bills-receipt-card">
+                <div className="bills-receipt-card-icon">
+                  <img src={InvoiceAmountFormIcon} alt="Amount Paid" />
+                </div>
+                <div className="bills-receipt-card-content">
+                  <div className="bills-receipt-card-label">Amount Paid</div>
+                  <div className="bills-receipt-card-value">
                     {selectedBill.paid}
                   </div>
                 </div>

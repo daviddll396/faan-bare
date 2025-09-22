@@ -1,22 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useLoading } from "../../../contexts/LoadingContext";
-import AddIcon from "../../../../public/icons/add-icon.svg";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
+import AddIcon from "/icons/add-icon.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
-import SearchInput from "../../reusables/SearchInput/SearchInput";
-import ChevronDown from "../../../../public/icons/chevron-down.svg";
+// ChevronDown not used in redesigned form — keep import commented for future use
+// import ChevronDown from "/icons/chevron-down.svg";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import ServicesIcon from "/icons/nav-product-icon.svg";
 import "./ServicesPage.css";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
 import { Edit, Trash2 } from "lucide-react";
 import { FiUserPlus } from "react-icons/fi";
-import CheckCircle from "../../../../public/icons/check-circle.svg";
+import CheckCircle from "/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
+import ServicesGrid from "../../reusables/ServicesGrid/ServicesGrid";
 import SlideIndicator from "../../reusables/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
+import Input from "../../reusables/Input/Input";
+import ListBox, { type ListBoxOption } from "../../reusables/ListBox/ListBox";
+import SolidButton from "../../reusables/SolidButton";
 
 // ITEXPay inline types (local)
 type ItexPayOptions = {
@@ -481,65 +484,45 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     if (bookingFormError) setBookingFormError(null);
   };
 
+  // Helper to set a single booking form field (used by ListBox onChange)
+  const setBookingField = (name: keyof BookingPassenger, value: string) => {
+    setBookingForm((prev) => ({ ...prev, [name]: value }));
+    if (fieldErrors[name])
+      setFieldErrors((prev) => ({ ...prev, [name]: false }));
+    if (bookingFormError) setBookingFormError(null);
+  };
+
   const handleCreateServices = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate that all services have required fields
-    const validServices = services.filter(
-      (service) => service.serviceName && service.price && service.description
-    );
-
-    if (validServices.length === 0) {
-      showToast(
-        "Please fill in all required fields for at least one service",
-        "error"
-      );
+    const service = services[0];
+    if (
+      !service ||
+      !service.serviceName ||
+      !service.price ||
+      !service.description
+    ) {
+      showToast("Please fill in all required fields for the service", "error");
       return;
     }
 
-    showLoading("Creating services...");
+    showLoading("Creating service...");
 
     try {
-      let successCount = 0;
-      let errorCount = 0;
+      const request = {
+        name: service.serviceName,
+        amount: parseFloat(service.price),
+        description: service.description,
+      };
 
-      // Create each service
-      for (const service of validServices) {
-        try {
-          const request = {
-            name: service.serviceName,
-            amount: parseFloat(service.price),
-            description: service.description,
-          };
+      console.log("🚀 Creating service:", request);
+      const response = await createTariff(request);
 
-          console.log("🚀 Creating service:", request);
-          const response = await createTariff(request);
+      if (response && response.status) {
+        showToast("Service created successfully", "success");
 
-          if (response && response.status) {
-            console.log("✅ Service created successfully:", response.data);
-            successCount++;
-          } else {
-            console.error("❌ Failed to create service:", response);
-            errorCount++;
-          }
-        } catch (error) {
-          console.error("💥 Error creating service:", error);
-          errorCount++;
-        }
-      }
-
-      if (successCount > 0) {
-        showToast(
-          `Successfully created ${successCount} service(s)${
-            errorCount > 0 ? `, ${errorCount} failed` : ""
-          }`,
-          "success"
-        );
-
-        // Refresh the services list
+        // Refresh services list
         await getAllTariffs();
-
-        // Also refresh admin services table
         const refreshedTariffsData = await getAllTariffs();
         if (
           refreshedTariffsData &&
@@ -565,15 +548,18 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           setAllServices(refreshedAdminServices);
         }
 
-        // Reset form and close modal
+        // Reset and close
         setServices([{ ...initialService }]);
         setShowAddServiceForm(false);
       } else {
-        showToast("Failed to create any services. Please try again.", "error");
+        showToast(
+          response?.message || "Failed to create service. Please try again.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("💥 Error in handleCreateServices:", error);
-      showToast("An error occurred while creating services", "error");
+      showToast("An error occurred while creating service", "error");
     } finally {
       hideLoading();
     }
@@ -916,7 +902,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       <label className="booking-form-label required">
                         First Name
                       </label>
-                      <input
+                      <Input
                         className={`booking-form-input ${
                           fieldErrors.firstName ? "error" : ""
                         }`}
@@ -929,7 +915,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       <label className="booking-form-label required">
                         Last Name
                       </label>
-                      <input
+                      <Input
                         className={`booking-form-input ${
                           fieldErrors.lastName ? "error" : ""
                         }`}
@@ -939,49 +925,72 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label required">
-                        Designation
-                      </label>
-                      <select
-                        className={`booking-form-input ${
-                          fieldErrors.designation ? "error" : ""
-                        }`}
-                        name="designation"
-                        value={bookingForm.designation}
-                        onChange={handleBookingFormChange}
-                      >
-                        <option value=""></option>
-                        <option value="Mr.">Mr.</option>
-                        <option value="Mrs.">Mrs.</option>
-                        <option value="Miss">Miss</option>
-                        <option value="Dr.">Dr.</option>
-                        <option value="Prof.">Prof.</option>
-                        <option value="Chief">Chief</option>
-                        <option value="Engr.">Engr.</option>
-                      </select>
+                      <ListBox
+                        label={
+                          <span className="booking-form-label required">
+                            Designation
+                          </span>
+                        }
+                        options={[
+                          { id: "", name: "", value: "" },
+                          { id: "mr", name: "Mr.", value: "Mr." },
+                          { id: "mrs", name: "Mrs.", value: "Mrs." },
+                          { id: "miss", name: "Miss", value: "Miss" },
+                          { id: "dr", name: "Dr.", value: "Dr." },
+                          { id: "prof", name: "Prof.", value: "Prof." },
+                          { id: "chief", name: "Chief", value: "Chief" },
+                          { id: "engr", name: "Engr.", value: "Engr." },
+                        ]}
+                        selected={
+                          ([
+                            { id: "mr", name: "Mr.", value: "Mr." },
+                            { id: "mrs", name: "Mrs.", value: "Mrs." },
+                            { id: "miss", name: "Miss", value: "Miss" },
+                            { id: "dr", name: "Dr.", value: "Dr." },
+                            { id: "prof", name: "Prof.", value: "Prof." },
+                            { id: "chief", name: "Chief", value: "Chief" },
+                            { id: "engr", name: "Engr.", value: "Engr." },
+                          ].find(
+                            (o) => o.value === bookingForm.designation
+                          ) as ListBoxOption | null) ?? null
+                        }
+                        onChange={(opt) =>
+                          setBookingField("designation", opt.value)
+                        }
+                        placeholder="Select designation"
+                        className={fieldErrors.designation ? "error" : ""}
+                      />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label required">
-                        Gender
-                      </label>
-                      <select
-                        className={`booking-form-input ${
-                          fieldErrors.gender ? "error" : ""
-                        }`}
-                        name="gender"
-                        value={bookingForm.gender}
-                        onChange={handleBookingFormChange}
-                      >
-                        <option value=""></option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                      </select>
+                      <ListBox
+                        label={
+                          <span className="booking-form-label required">
+                            Gender
+                          </span>
+                        }
+                        options={[
+                          { id: "", name: "", value: "" },
+                          { id: "male", name: "Male", value: "Male" },
+                          { id: "female", name: "Female", value: "Female" },
+                        ]}
+                        selected={
+                          ([
+                            { id: "male", name: "Male", value: "Male" },
+                            { id: "female", name: "Female", value: "Female" },
+                          ].find(
+                            (o) => o.value === bookingForm.gender
+                          ) as ListBoxOption | null) ?? null
+                        }
+                        onChange={(opt) => setBookingField("gender", opt.value)}
+                        placeholder="Select gender"
+                        className={fieldErrors.gender ? "error" : ""}
+                      />
                     </div>
                     <div className="booking-form-field-col">
                       <label className="booking-form-label required">
                         Mobile Number
                       </label>
-                      <input
+                      <Input
                         className={`booking-form-input ${
                           fieldErrors.mobile ? "error" : ""
                         }`}
@@ -991,22 +1000,49 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label required">
-                        Special Requirement
-                      </label>
-                      <select
-                        className={`booking-form-input ${
-                          fieldErrors.specialReq ? "error" : ""
-                        }`}
-                        name="specialReq"
-                        value={bookingForm.specialReq}
-                        onChange={handleBookingFormChange}
-                      >
-                        <option value=""></option>
-                        <option value="none">none</option>
-                        <option value="wheelchair">wheelchair</option>
-                        <option value="assistance">assistance</option>
-                      </select>
+                      <ListBox
+                        label={
+                          <span className="booking-form-label required">
+                            Special Requirement
+                          </span>
+                        }
+                        options={[
+                          { id: "", name: "", value: "" },
+                          { id: "none", name: "none", value: "none" },
+                          {
+                            id: "wheelchair",
+                            name: "wheelchair",
+                            value: "wheelchair",
+                          },
+                          {
+                            id: "assistance",
+                            name: "assistance",
+                            value: "assistance",
+                          },
+                        ]}
+                        selected={
+                          ([
+                            { id: "none", name: "none", value: "none" },
+                            {
+                              id: "wheelchair",
+                              name: "wheelchair",
+                              value: "wheelchair",
+                            },
+                            {
+                              id: "assistance",
+                              name: "assistance",
+                              value: "assistance",
+                            },
+                          ].find(
+                            (o) => o.value === bookingForm.specialReq
+                          ) as ListBoxOption) ?? null
+                        }
+                        onChange={(opt) =>
+                          setBookingField("specialReq", opt.value)
+                        }
+                        placeholder="Select requirement"
+                        className={fieldErrors.specialReq ? "error" : ""}
+                      />
                     </div>
                   </div>
                 ) : (
@@ -1015,7 +1051,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       <label className="booking-form-label required">
                         First Name
                       </label>
-                      <input
+                      <Input
                         className={`booking-form-input ${
                           fieldErrors.firstName ? "error" : ""
                         }`}
@@ -1024,11 +1060,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         onChange={handleBookingFormChange}
                       />
                     </div>
+
                     <div className="booking-form-field-col-mobile">
                       <label className="booking-form-label required">
                         Last Name
                       </label>
-                      <input
+                      <Input
                         className={`booking-form-input ${
                           fieldErrors.lastName ? "error" : ""
                         }`}
@@ -1037,50 +1074,74 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         onChange={handleBookingFormChange}
                       />
                     </div>
+
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label required">
-                        Designation
-                      </label>
-                      <select
-                        className={`booking-form-input ${
-                          fieldErrors.designation ? "error" : ""
-                        }`}
-                        name="designation"
-                        value={bookingForm.designation}
-                        onChange={handleBookingFormChange}
-                      >
-                        <option value=""></option>
-                        <option value="Mr.">Mr.</option>
-                        <option value="Mrs.">Mrs.</option>
-                        <option value="Miss">Miss</option>
-                        <option value="Dr.">Dr.</option>
-                        <option value="Prof.">Prof.</option>
-                        <option value="Chief">Chief</option>
-                        <option value="Engr.">Engr.</option>
-                      </select>
+                      <ListBox
+                        label={
+                          <span className="booking-form-label required">
+                            Designation
+                          </span>
+                        }
+                        options={[
+                          { id: "mr", name: "Mr.", value: "Mr." },
+                          { id: "mrs", name: "Mrs.", value: "Mrs." },
+                          { id: "miss", name: "Miss", value: "Miss" },
+                          { id: "dr", name: "Dr.", value: "Dr." },
+                          { id: "prof", name: "Prof.", value: "Prof." },
+                          { id: "chief", name: "Chief", value: "Chief" },
+                          { id: "engr", name: "Engr.", value: "Engr." },
+                        ]}
+                        selected={
+                          ([
+                            { id: "mr", name: "Mr.", value: "Mr." },
+                            { id: "mrs", name: "Mrs.", value: "Mrs." },
+                            { id: "miss", name: "Miss", value: "Miss" },
+                            { id: "dr", name: "Dr.", value: "Dr." },
+                            { id: "prof", name: "Prof.", value: "Prof." },
+                            { id: "chief", name: "Chief", value: "Chief" },
+                            { id: "engr", name: "Engr.", value: "Engr." },
+                          ].find(
+                            (o) => o.value === bookingForm.designation
+                          ) as any) ?? null
+                        }
+                        onChange={(opt) =>
+                          setBookingField("designation", opt.value)
+                        }
+                        placeholder="Select designation"
+                        className={fieldErrors.designation ? "error" : ""}
+                      />
                     </div>
+
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label required">
-                        Gender
-                      </label>
-                      <select
-                        className={`booking-form-input ${
-                          fieldErrors.gender ? "error" : ""
-                        }`}
-                        name="gender"
-                        value={bookingForm.gender}
-                        onChange={handleBookingFormChange}
-                      >
-                        <option value=""></option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                      </select>
+                      <ListBox
+                        label={
+                          <span className="booking-form-label required">
+                            Gender
+                          </span>
+                        }
+                        options={[
+                          { id: "male", name: "Male", value: "Male" },
+                          { id: "female", name: "Female", value: "Female" },
+                        ]}
+                        selected={
+                          ([
+                            { id: "male", name: "Male", value: "Male" },
+                            { id: "female", name: "Female", value: "Female" },
+                          ].find(
+                            (o) => o.value === bookingForm.gender
+                          ) as any) ?? null
+                        }
+                        onChange={(opt) => setBookingField("gender", opt.value)}
+                        placeholder="Select gender"
+                        className={fieldErrors.gender ? "error" : ""}
+                      />
                     </div>
+
                     <div className="booking-form-field-col-mobile">
                       <label className="booking-form-label required">
                         Mobile Number
                       </label>
-                      <input
+                      <Input
                         className={`booking-form-input ${
                           fieldErrors.mobile ? "error" : ""
                         }`}
@@ -1089,23 +1150,50 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         onChange={handleBookingFormChange}
                       />
                     </div>
+
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label required">
-                        Special Requirement
-                      </label>
-                      <select
-                        className={`booking-form-input ${
-                          fieldErrors.specialReq ? "error" : ""
-                        }`}
-                        name="specialReq"
-                        value={bookingForm.specialReq}
-                        onChange={handleBookingFormChange}
-                      >
-                        <option value=""></option>
-                        <option value="none">none</option>
-                        <option value="wheelchair">wheelchair</option>
-                        <option value="assistance">assistance</option>
-                      </select>
+                      <ListBox
+                        label={
+                          <span className="booking-form-label required">
+                            Special Requirement
+                          </span>
+                        }
+                        options={[
+                          { id: "none", name: "none", value: "none" },
+                          {
+                            id: "wheelchair",
+                            name: "wheelchair",
+                            value: "wheelchair",
+                          },
+                          {
+                            id: "assistance",
+                            name: "assistance",
+                            value: "assistance",
+                          },
+                        ]}
+                        selected={
+                          ([
+                            { id: "none", name: "none", value: "none" },
+                            {
+                              id: "wheelchair",
+                              name: "wheelchair",
+                              value: "wheelchair",
+                            },
+                            {
+                              id: "assistance",
+                              name: "assistance",
+                              value: "assistance",
+                            },
+                          ].find(
+                            (o) => o.value === bookingForm.specialReq
+                          ) as any) ?? null
+                        }
+                        onChange={(opt) =>
+                          setBookingField("specialReq", opt.value)
+                        }
+                        placeholder="Select requirement"
+                        className={fieldErrors.specialReq ? "error" : ""}
+                      />
                     </div>
                   </div>
                 )}
@@ -1116,14 +1204,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   </div>
                 )}
                 <div className="booking-add-passenger-row">
-                  <button
-                    className="booking-add-passenger-btn"
+                  <SolidButton
                     type="button"
                     onClick={handleAddPassenger}
+                    size="medium"
+                    variant="primary"
+                    rounded={false}
                     style={{ marginTop: 12, marginBottom: 0 }}
                   >
                     + Add New Passenger
-                  </button>
+                  </SolidButton>
                 </div>
               </>
             )}
@@ -1134,27 +1224,42 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <>
                     <div className="booking-form-fields-row">
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label required">
-                          Airport
-                        </label>
-                        <select
-                          className={`booking-form-input ${
-                            fieldErrors.airport ? "error" : ""
-                          }`}
-                          name="airport"
-                          value={bookingForm.airport}
-                          onChange={handleBookingFormChange}
-                        >
-                          <option value=""></option>
-                          <option value="MMIA">MMIA (INTERNATIONAL)</option>
-                          <option value="ABV">ABV (ABUJA)</option>
-                        </select>
+                        <ListBox
+                          label={
+                            <span className="booking-form-label required">
+                              Airport
+                            </span>
+                          }
+                          options={[
+                            { id: "", name: "", value: "" },
+                            {
+                              id: "mmia",
+                              name: "MMIA (INTERNATIONAL)",
+                              value: "MMIA",
+                            },
+                            { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                          ]}
+                          selected={
+                            ([
+                              {
+                                id: "mmia",
+                                name: "MMIA (INTERNATIONAL)",
+                                value: "MMIA",
+                              },
+                              { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                            ].find(
+                              (o) => o.value === bookingForm.airport
+                            ) as ListBoxOption | null) ?? null
+                          }
+                          onChange={(opt) =>
+                            setBookingField("airport", opt.value)
+                          }
+                          placeholder="Select airport"
+                          className={fieldErrors.airport ? "error" : ""}
+                        />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label required">
-                          Travel Date
-                        </label>
-                        <input
+                        <Input
                           className={`booking-form-input ${
                             fieldErrors.travelDate ? "error" : ""
                           }`}
@@ -1162,13 +1267,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.travelDate}
                           onChange={handleBookingFormChange}
                           type="date"
+                          label="Travel Date"
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label required">
-                          Flight Number
-                        </label>
-                        <input
+                        <Input
+                          label="Flight Number"
                           className={`booking-form-input ${
                             fieldErrors.flightNumber ? "error" : ""
                           }`}
@@ -1178,10 +1282,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label required">
-                          Airport Time
-                        </label>
-                        <input
+                        <Input
                           className={`booking-form-input ${
                             fieldErrors.airportTime ? "error" : ""
                           }`}
@@ -1189,47 +1290,60 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.airportTime}
                           onChange={handleBookingFormChange}
                           type="time"
+                          label="Airport Time"
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label required">
-                          Airline
-                        </label>
-                        <select
-                          className={`booking-form-input ${
-                            fieldErrors.airline ? "error" : ""
-                          }`}
-                          name="airline"
-                          value={bookingForm.airline}
-                          onChange={handleBookingFormChange}
-                        >
-                          <option value=""></option>
-                          {airlineOptions.map((al) => (
-                            <option key={al} value={al}>
-                              {al}
-                            </option>
-                          ))}
-                        </select>
+                        <ListBox
+                          label={
+                            <span className="booking-form-label required">
+                              Airline
+                            </span>
+                          }
+                          options={airlineOptions.map((al, i) => ({
+                            id: i,
+                            name: al,
+                            value: al,
+                          }))}
+                          selected={
+                            (airlineOptions
+                              .map((al, i) => ({ id: i, name: al, value: al }))
+                              .find(
+                                (o) => o.value === bookingForm.airline
+                              ) as ListBoxOption | null) ?? null
+                          }
+                          onChange={(opt) =>
+                            setBookingField("airline", opt.value)
+                          }
+                          placeholder="Select airline"
+                          className={fieldErrors.airline ? "error" : ""}
+                        />
                       </div>
                       <div className="booking-form-field-col">
-                        <label className="booking-form-label required">
-                          Destination
-                        </label>
-                        <select
-                          className={`booking-form-input ${
-                            fieldErrors.destination ? "error" : ""
-                          }`}
-                          name="destination"
-                          value={bookingForm.destination}
-                          onChange={handleBookingFormChange}
-                        >
-                          <option value=""></option>
-                          {destinationOptions.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
-                          ))}
-                        </select>
+                        <ListBox
+                          label={
+                            <span className="booking-form-label required">
+                              Destination
+                            </span>
+                          }
+                          options={destinationOptions.map((d, i) => ({
+                            id: i,
+                            name: d,
+                            value: d,
+                          }))}
+                          selected={
+                            (destinationOptions
+                              .map((d, i) => ({ id: i, name: d, value: d }))
+                              .find(
+                                (o) => o.value === bookingForm.destination
+                              ) as ListBoxOption | null) ?? null
+                          }
+                          onChange={(opt) =>
+                            setBookingField("destination", opt.value)
+                          }
+                          placeholder="Select destination"
+                          className={fieldErrors.destination ? "error" : ""}
+                        />
                       </div>
                     </div>
                   </>
@@ -1237,27 +1351,43 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <>
                     <div className="booking-form-fields-row-mobile">
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label required">
-                          Airport
-                        </label>
-                        <select
-                          className={`booking-form-input ${
-                            fieldErrors.airport ? "error" : ""
-                          }`}
-                          name="airport"
-                          value={bookingForm.airport}
-                          onChange={handleBookingFormChange}
-                        >
-                          <option value=""></option>
-                          <option value="MMIA">MMIA (INTERNATIONAL)</option>
-                          <option value="ABV">ABV (ABUJA)</option>
-                        </select>
+                        <ListBox
+                          label={
+                            <span className="booking-form-label required">
+                              Airport
+                            </span>
+                          }
+                          options={[
+                            { id: "", name: "", value: "" },
+                            {
+                              id: "mmia",
+                              name: "MMIA (INTERNATIONAL)",
+                              value: "MMIA",
+                            },
+                            { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                          ]}
+                          selected={
+                            ([
+                              {
+                                id: "mmia",
+                                name: "MMIA (INTERNATIONAL)",
+                                value: "MMIA",
+                              },
+                              { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                            ].find(
+                              (o) => o.value === bookingForm.airport
+                            ) as any) ?? null
+                          }
+                          onChange={(opt) =>
+                            setBookingField("airport", opt.value)
+                          }
+                          placeholder="Select airport"
+                          className={fieldErrors.airport ? "error" : ""}
+                        />
                       </div>
+
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label required">
-                          Travel Date
-                        </label>
-                        <input
+                        <Input
                           className={`booking-form-input ${
                             fieldErrors.travelDate ? "error" : ""
                           }`}
@@ -1265,13 +1395,13 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.travelDate}
                           onChange={handleBookingFormChange}
                           type="date"
+                          label="Travel Date"
                         />
                       </div>
+
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label required">
-                          Flight Number
-                        </label>
-                        <input
+                        <Input
+                          label="Flight Number"
                           className={`booking-form-input ${
                             fieldErrors.flightNumber ? "error" : ""
                           }`}
@@ -1280,11 +1410,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           onChange={handleBookingFormChange}
                         />
                       </div>
+
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label required">
-                          Airport Time
-                        </label>
-                        <input
+                        <Input
                           className={`booking-form-input ${
                             fieldErrors.airportTime ? "error" : ""
                           }`}
@@ -1292,47 +1420,62 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.airportTime}
                           onChange={handleBookingFormChange}
                           type="time"
+                          label="Airport Time"
                         />
                       </div>
+
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label required">
-                          Airline
-                        </label>
-                        <select
-                          className={`booking-form-input ${
-                            fieldErrors.airline ? "error" : ""
-                          }`}
-                          name="airline"
-                          value={bookingForm.airline}
-                          onChange={handleBookingFormChange}
-                        >
-                          <option value=""></option>
-                          {airlineOptions.map((al) => (
-                            <option key={al} value={al}>
-                              {al}
-                            </option>
-                          ))}
-                        </select>
+                        <ListBox
+                          label={
+                            <span className="booking-form-label required">
+                              Airline
+                            </span>
+                          }
+                          options={airlineOptions.map((al, i) => ({
+                            id: i,
+                            name: al,
+                            value: al,
+                          }))}
+                          selected={
+                            (airlineOptions
+                              .map((al, i) => ({ id: i, name: al, value: al }))
+                              .find(
+                                (o) => o.value === bookingForm.airline
+                              ) as any) ?? null
+                          }
+                          onChange={(opt) =>
+                            setBookingField("airline", opt.value)
+                          }
+                          placeholder="Select airline"
+                          className={fieldErrors.airline ? "error" : ""}
+                        />
                       </div>
+
                       <div className="booking-form-field-col-mobile">
-                        <label className="booking-form-label required">
-                          Destination
-                        </label>
-                        <select
-                          className={`booking-form-input ${
-                            fieldErrors.destination ? "error" : ""
-                          }`}
-                          name="destination"
-                          value={bookingForm.destination}
-                          onChange={handleBookingFormChange}
-                        >
-                          <option value=""></option>
-                          {destinationOptions.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
-                          ))}
-                        </select>
+                        <ListBox
+                          label={
+                            <span className="booking-form-label required">
+                              Destination
+                            </span>
+                          }
+                          options={destinationOptions.map((d, i) => ({
+                            id: i,
+                            name: d,
+                            value: d,
+                          }))}
+                          selected={
+                            (destinationOptions
+                              .map((d, i) => ({ id: i, name: d, value: d }))
+                              .find(
+                                (o) => o.value === bookingForm.destination
+                              ) as any) ?? null
+                          }
+                          onChange={(opt) =>
+                            setBookingField("destination", opt.value)
+                          }
+                          placeholder="Select destination"
+                          className={fieldErrors.destination ? "error" : ""}
+                        />
                       </div>
                     </div>
                   </>
@@ -1697,25 +1840,25 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       }</title>
                       <style>
                         @page { margin: 10mm; }
-                        body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#111827}
-                        .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#111827}
+                        body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
+                        .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
                         .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
                         .receipt-head{text-align:center;margin:8px 0}
-                        .receipt-brand{font-weight:700;color:#374151;font-size:14px}
-                        .receipt-title{font-size:16px;font-weight:800;color:#111827;letter-spacing:0.06em;margin-top:2px}
-                        .receipt-sub{font-size:12px;color:#6b7280;margin-top:2px}
+                        .receipt-brand{font-weight:700;color:#000;font-size:14px}
+                        .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
+                        .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
                         .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
                         .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
                         .receipt-meta .meta-row:last-child{border-bottom:none}
-                        .receipt-meta .meta-row span:first-child{color:#6b7280;font-size:12px}
+                        .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
                         .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
                         .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
                         .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
-                        .receipt-items .thead{color:#6b7280;font-size:12px}
+                        .receipt-items .thead{color:#969696;font-size:12px}
                         .receipt-items .row{border-top:1px dashed #e5e7eb}
                         .right{text-align:right}
                         .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}
-                        .receipt-foot{margin-top:10px;color:#6b7280;font-size:12px;text-align:center}
+                        .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
                       </style>
                       </head><body>
                         <div class='receipt-paper'>
@@ -1779,87 +1922,71 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
           onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
         />
         <div className="page-header">
-          <PageTitle icon={ServicesIcon} title="Services" />
-        </div>
-        <div className="services-customer-header">
-          <FieldButton
-            inputs={[
-              {
-                placeholder: "Search services",
-                value: customerSearchName,
-                onChange: (
-                  e:
-                    | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                    | { target: { value: string } }
-                ) => {
-                  const maybeChange = e as React.ChangeEvent<
-                    HTMLInputElement | HTMLSelectElement
-                  >;
-                  if (
-                    maybeChange &&
-                    maybeChange.target &&
-                    typeof maybeChange.target.value === "string"
-                  ) {
-                    setCustomerSearchName(maybeChange.target.value);
-                    return;
-                  }
-
-                  const fallback = e as { target: { value: string } };
-                  setCustomerSearchName(fallback.target.value);
-                },
-              },
-            ]}
-            buttons={[
-              {
-                text: "Search",
-                onClick: handleCustomerSearch,
-                className: "border-button-userspage",
-              },
-              {
-                text: "Clear",
-                onClick: handleCustomerClearSearch,
-                className: "border-button-userspage",
-              },
-            ]}
+          <PageTitle
+            icon={ServicesIcon}
+            title="Services"
+            subtitle={
+              "Find services available to customers. Use the search below to filter by service name."
+            }
           />
         </div>
+        <div className="services-customer-header">
+          <div className="services-customer-search-section">
+            <div className="services-customer-search-inputs">
+              <FieldButton
+                inputs={[
+                  {
+                    placeholder: "Search services",
+                    value: customerSearchName,
+                    onChange: (
+                      e:
+                        | React.ChangeEvent<
+                            HTMLInputElement | HTMLSelectElement
+                          >
+                        | { target: { value: string } }
+                    ) => {
+                      const maybeChange = e as React.ChangeEvent<
+                        HTMLInputElement | HTMLSelectElement
+                      >;
+                      if (
+                        maybeChange &&
+                        maybeChange.target &&
+                        typeof maybeChange.target.value === "string"
+                      ) {
+                        setCustomerSearchName(maybeChange.target.value);
+                        return;
+                      }
 
-        {/* Show services */}
-        <div className="services-customer-grid">
-          {customerFilteredServices.map((service) => (
-            <div className="service-card" key={service.id}>
-              <div className="service-card-img-wrap">
-                <img
-                  src={service.image}
-                  alt={service.name}
-                  className="service-card-img"
-                />
-              </div>
-
-              <div className="service-card-body">
-                <div className="service-card-top">
-                  <div className="service-card-name">{service.name}</div>
-                  <div className="service-card-price">₦{service.price}</div>
-                </div>
-
-                <div className="service-card-desc">
-                  {service.description && service.description.length > 0
-                    ? service.description
-                    : "Description not available"}
-                </div>
-
-                <div className="service-card-meta">
-                  <button
-                    type="button"
-                    className="service-card-action-text"
-                    onClick={() => setSelectedService(service)}
-                  >
-                    Book Service
-                  </button>
-                </div>
-              </div>
+                      const fallback = e as { target: { value: string } };
+                      setCustomerSearchName(fallback.target.value);
+                    },
+                  },
+                ]}
+                buttons={[
+                  { text: "Search", onClick: handleCustomerSearch },
+                  { text: "Clear", onClick: handleCustomerClearSearch },
+                ]}
+                className="services-customer-search-fieldbutton services-customer-actions-fieldbutton"
+              />
             </div>
-          ))}
+
+            {/* Show services inside the search container */}
+            <ServicesGrid
+              className="services-customer-grid"
+              items={customerFilteredServices.map((s) => ({
+                id: s.id,
+                image: s.image,
+                name: s.name,
+                price: `₦${s.price}`,
+                description: s.description,
+              }))}
+              actionText="Book Service"
+              onAction={(id) => {
+                const svc = customerFilteredServices.find((c) => c.id === id);
+                if (svc) setSelectedService(svc as CustomerService);
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -1868,180 +1995,207 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   return (
     <div className="services-page">
       <div className="page-content">
-        {!showAddServiceForm ? (
-          <>
-            {windowWidth <= 768 && (
-              <PageTitle title="Services" icon={ServicesIcon} />
-            )}
+        <>
+          {windowWidth <= 768 && (
+            <PageTitle
+              title="Services"
+              icon={ServicesIcon}
+              subtitle={
+                "Find services available to customers. Use the search below to filter by service name."
+              }
+            />
+          )}
 
-            <div className="page-header-bottom">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: windowWidth <= 768 ? "100%" : "auto",
-                  gap: 12,
-                  justifyContent: "space-between",
-                }}
-              >
-                <SearchInput
-                  placeholder="Search name"
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
+          <div className="page-header-bottom">
+            <div className="servicespage-search-section">
+              <PageTitle
+                title="Search & Manage Services"
+                subtitle={
+                  "Find services by name or manage your service catalog. Use the search below to filter services."
+                }
+              />
+
+              <div className="servicespage-search-inputs servicespage-action-buttons">
+                <FieldButton
+                  inputs={[
+                    {
+                      placeholder: "Search by service name",
+                      value: searchName,
+                      onChange: (e) => setSearchName(e.target.value),
+                    },
+                  ]}
+                  buttons={[
+                    {
+                      text: "Search",
+                      onClick: handleSearch,
+                    },
+                    {
+                      text: "Clear",
+                      onClick: handleClearSearch,
+                    },
+                  ]}
+                  className="servicespage-search-fieldbutton servicespage-actions-fieldbutton"
                 />
-                <div style={{ display: "flex", gap: 12 }}>
-                  <BorderButton
-                    text="Search"
-                    onClick={handleSearch}
-                    className="border-button-servicespage"
-                  />
-                  <BorderButton
-                    text="Clear"
-                    onClick={handleClearSearch}
-                    className="border-button-servicespage"
+
+                <div className="servicespage-add-action">
+                  <FieldButton
+                    buttons={[
+                      {
+                        text: "Add New Service",
+                        icon: AddIcon,
+                        onClick: () => setShowAddServiceForm(true),
+                      },
+                    ]}
+                    className="servicespage-add-fieldbutton"
                   />
                 </div>
               </div>
-              <div>
-                <BorderButton
-                  text="Add New Service"
-                  icon={AddIcon}
-                  onClick={() => setShowAddServiceForm(true)}
-                  className="border-button-servicespage"
-                />
-              </div>
+
+              <DataTable
+                headers={[
+                  "ID",
+                  "Service Name",
+                  "Description",
+                  "Price",
+                  "Actions",
+                ]}
+                data={filteredServices.map((service) => [
+                  service.id,
+                  <span key={`n-${service.id}`} className="max-td-width-mobile">
+                    {service.name}
+                  </span>,
+                  <span key={`d-${service.id}`} className="max-td-width-mobile">
+                    {service.description}
+                  </span>,
+                  `₦${service.price}`,
+                  <div key={`a-${service.id}`}>
+                    <button className="action-btn-table edit">
+                      <Edit size={16} /> Edit
+                    </button>
+                    <button className="action-btn-table delete">
+                      <Trash2 size={16} /> Delete
+                    </button>
+                  </div>,
+                ])}
+                className="services-admin-table"
+              />
             </div>
+          </div>
 
-            <DataTable
-              headers={[
-                "ID",
-                "Service Name",
-                "Description",
-                "Price",
-                "Actions",
-              ]}
-              data={filteredServices.map((service) => [
-                service.id,
-                <span key={`n-${service.id}`} className="max-td-width-mobile">
-                  {service.name}
-                </span>,
-                <span key={`d-${service.id}`} className="max-td-width-mobile">
-                  {service.description}
-                </span>,
-                `₦${service.price}`,
-                <div key={`a-${service.id}`}>
-                  <button className="action-btn-table edit">
-                    <Edit size={16} /> Edit
-                  </button>
-                  <button className="action-btn-table delete">
-                    <Trash2 size={16} /> Delete
-                  </button>
-                </div>,
-              ])}
-              className="services-admin-table"
-            />
+          {windowWidth <= 768 && <SlideIndicator />}
+        </>
 
-            {windowWidth <= 768 && <SlideIndicator />}
-          </>
-        ) : (
-          <>
-            {windowWidth <= 768 && (
-              <PageTitle title="Add New Service" icon={AddIcon} />
-            )}
-            <div className="add-service-form-card">
-              <h2 className="add-user-title">Add New Service</h2>
-              <p className="add-user-helper">
-                Please input all required details to add a new service.
-              </p>
-              <form className="user-form-list" onSubmit={handleCreateServices}>
-                {services.map((service, idx) => (
-                  <div className="service-form-row" key={idx}>
-                    {/* <div className="service-index-circle">{idx + 1}.</div> */}
+        {showAddServiceForm && (
+          <Modal
+            isOpen={showAddServiceForm}
+            onClose={() => setShowAddServiceForm(false)}
+            showHeader={true}
+            showLogo={false}
+            headerTitle={"Add New Service"}
+            className="add-service-modal"
+            
+          >
+            <div className="service-creation-section">
+            <div className="modal-form-header">
+                <p className="modal-form-helper">
+                Create a new service quickly. Provide a concise name, set the price and currency, and add a short description.
+                </p>
+              </div>
+
+              <form
+                className="service-creation-form"
+                onSubmit={handleCreateServices}
+              >
+                <div className="service-grid">
+                  <div className="service-form-card">
                     <div className="service-form-body">
-                      <div className="service-row-top">
-                        <div className="service-field-group service-name-group">
-                          <label>Service Name:</label>
-                          <input
-                            type="text"
-                            value={service.serviceName}
-                            onChange={(e) => {
+                      <div className="service-row">
+                        <div className="service-col">
+                          <Input
+                            label="Service Name"
+                            placeholder="e.g. VIP Lounge - International"
+                            value={services[0].serviceName}
+                            onChange={(e) =>
                               handleServiceChange(
-                                idx,
+                                0,
                                 "serviceName",
                                 e.target.value
-                              );
-                            }}
-                            placeholder="Enter service name"
-                            className="service-name-input"
-                          />
-                        </div>
-                        <div className="service-field-group currency-group">
-                          <label>Currency:</label>
-                          <div className="services-select-dropdown-wrapper">
-                            <select
-                              value={service.currency}
-                              onChange={(e) =>
-                                handleServiceChange(
-                                  idx,
-                                  "currency",
-                                  e.target.value
-                                )
-                              }
-                            >
-                              <option value="NGR">NGR</option>
-                            </select>
-                            <img
-                              src={ChevronDown}
-                              alt="dropdown"
-                              className="services-select-chevron"
-                            />
-                          </div>
-                        </div>
-                        <div className="service-field-group price-group">
-                          <label>Price:</label>
-                          <input
-                            type="text"
-                            value={service.price}
-                            onChange={(e) =>
-                              handleServiceChange(idx, "price", e.target.value)
+                              )
                             }
+                            className="service-input"
                           />
                         </div>
                       </div>
-                      <div className="service-field-group description-group">
-                        <label>Description:</label>
-                        <textarea
-                          value={service.description}
-                          onChange={(e) =>
-                            handleServiceChange(
-                              idx,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          rows={3}
-                        />
+
+                      <div
+                        className="service-price-row"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ flex: "0 0 65%", maxWidth: "65%" }}>
+                          <Input
+                            label="Price"
+                            placeholder="0"
+                            value={services[0].price}
+                            onChange={(e) =>
+                              handleServiceChange(0, "price", e.target.value)
+                            }
+                            className="service-input service-price-input"
+                          />
+                        </div>
+
+                        <div style={{ flex: "0 0 120px", marginLeft: 8 }}>
+                          <ListBox
+                            options={[{ id: "ngn", name: "NGN", value: "NGR" }]}
+                            selected={{
+                              id: "ngn",
+                              name: "NGN",
+                              value: services[0].currency,
+                            }}
+                            onChange={(opt) =>
+                              handleServiceChange(0, "currency", opt.value)
+                            }
+                            placeholder="Currency"
+                            className="service-select-listbox"
+                            label="Currency"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="service-row">
+                        <div className="service-col full">
+                          <Input
+                            label="Short Description"
+                            placeholder="One-line summary for customers"
+                            value={services[0].description}
+                            onChange={(e) =>
+                              handleServiceChange(
+                                0,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            className="service-textarea-input"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                ))}
-                {/* <div className="form-row form-row-full">
-                  <button
-                    type="button"
-                    className="add-more-items-btn"
-                    onClick={addMoreService}
-                  >
-                    + Add New Service
-                  </button>
-                </div> */}
-                <div className="form-actions">
-                  <GradientButton type="submit" fullWidth>
-                    SAVE SERVICE
-                  </GradientButton>
+                </div>
+
+                <div className="service-actions-row">
+                  <div className="service-submit-actions">
+                    <GradientButton type="submit" fullWidth>
+                      Save Service
+                    </GradientButton>
+                  </div>
                 </div>
               </form>
             </div>
-          </>
+          </Modal>
         )}
       </div>
     </div>

@@ -88,7 +88,7 @@
 
 .auth-image-text {
   color: white;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 23px;
   font-weight: 500;
   line-height: 1.4;
@@ -125,7 +125,7 @@
 .auth-card-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #222b45;
+  color: #000;
   margin-bottom: 2px;
 }
 
@@ -169,13 +169,13 @@
 }
 
 .form-input {
-  border: 1px solid #d9d9d9;
+  border: 1px solid #f0f0f0;
   border-radius: 8px;
   padding: 5px 8px;
   font-size: 11px;
   font-family: inherit;
   background: #fff;
-  color: #222b45;
+  color: #000;
   outline: none;
   transition: border 0.2s;
 }
@@ -201,7 +201,7 @@
 }
 
 .auth-form-error {
-  background: #fef2f2;
+ 
   color: #dc2626;
   padding: 12px 16px;
   border-radius: 8px;
@@ -247,7 +247,7 @@
   margin-top: 12px;
 }
 .form-input {
-  border: 1px solid #d9d9d9;
+  border: 1px solid #f0f0f0;
   border-radius: 12px;
   padding: 8px 10px;
   font-size: 13px;
@@ -310,7 +310,7 @@
   flex-direction: column;
   gap: 0;
   align-items: stretch;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
   /* Removed zoom-based scaling to keep uniform sizing */
 }
 
@@ -324,7 +324,7 @@
 
 .auth-form-subtitle-modern {
   color: #969696;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 400;
   margin-bottom: 20px;
 }
@@ -347,22 +347,6 @@
   width: 100%;
 }
 
-.form-input-modern {
-  border: 1px solid #d9d9d9;
-  border-radius: 10px;
-  padding: 13px;
-  font-size: 13px;
-  font-weight: 500;
-  background: var(--bg-color);
-  color: #070600;
-  outline: none;
-  transition: border 0.2s;
-  font-family: "Archivo", sans-serif;
-}
-.form-input-modern:focus {
-  border-color: #007948;
-}
-
 .login-btn-modern {
   width: 100%;
   background: linear-gradient(180deg, #15976c 0%, #007948 100%);
@@ -378,7 +362,7 @@
   transition: background 0.2s;
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .login-btn-modern:disabled {
   background: #b3b3b3;
@@ -390,14 +374,14 @@
   font-size: 0.93rem;
   text-align: center;
   color: #18181b;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .auth-form-link-modern {
   color: #007948;
   text-decoration: none;
   font-weight: 500;
   margin-left: 4px;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 .auth-form-link-modern:hover {
   text-decoration: underline;
@@ -422,9 +406,7 @@
   .auth-form-side {
     zoom: 0.97;
   }
-  .auth-form-modern {
-    zoom: 0.1;
-  }
+
 }
 @media (max-width: 1600px) {
   .auth-form-side {
@@ -630,12 +612,6 @@
     margin-bottom: 20px;
   }
 
-  /* Ensure inputs are properly sized for mobile */
-  .form-input-modern {
-    font-size: 16px; /* Prevent zoom on iOS */
-    padding: 12px 14px;
-  }
-
   /* Adjust button for better mobile touch target */
   .login-btn-modern {
     padding: 16px 0;
@@ -687,25 +663,13 @@
     align-self: flex-start;
     margin-top: var(--mobile-margin-top);
   }
-  .form-input-modern {
-    font-size: 13px; /* Prevent zoom on iOS */
-    padding: 10px 12px;
-    height: auto;
-  }
-  .form-input-modern::placeholder {
-    font-size: 13px; /* Prevent zoom on iOS */
-  }
+
   .validation-error {
     font-size: 11px;
   }
   .password-toggle-btn {
     height: 30px;
     width: 30px;
-  }
-  select.form-input-modern {
-    font-size: 13px;
-    padding: 10px 12px;
-    height: auto;
   }
 
   .auth-form-side::after {

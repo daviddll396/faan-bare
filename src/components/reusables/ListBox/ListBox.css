@@ -1,0 +1,431 @@
+/* ListBox Component Styles */
+.listbox-container {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.listbox-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6c7278;
+  margin-bottom: 8px;
+}
+
+.listbox-wrapper {
+  position: relative;
+}
+
+/* Use shared form control height variable when available */
+.listbox-button {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 0 12px 0 12px;
+  height: var(--form-control-height, 56px); /* default to shared variable */
+  min-height: var(--form-control-height, 56px);
+  box-sizing: border-box;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+.listbox-button:hover {
+  border-color: #10b981;
+}
+
+.listbox-button:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.listbox-button:disabled {
+  background: #f9f9f9;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.listbox-button-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #626262;
+  text-align: left;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.listbox-button-text.has-value {
+  color: #000; /* darker when a value is selected */
+  font-weight: 600;
+}
+.listbox-button-text,
+.listbox-button-icon {
+  display: inline-flex;
+  align-items: center;
+  height: var(--form-control-height, 56px);
+  line-height: var(--form-control-height, 56px);
+}
+
+.listbox-button-icon {
+  color: #9ca3af;
+  font-size: 12px;
+  margin-left: 8px;
+  flex-shrink: 0;
+  transform: rotate(0deg);
+  transition: transform 0.18s ease;
+}
+
+/* rotate chevron when dropdown is open */
+.listbox-button.open .listbox-button-icon,
+.listbox-button-icon.rotated {
+  transform: rotate(180deg);
+}
+
+.listbox-options {
+  position: absolute;
+  z-index: 50;
+  margin-top: 4px;
+  max-height: 260px;
+  width: 100%;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+}
+
+/* Custom scrollbar styling for ListBox options */
+.listbox-options::-webkit-scrollbar {
+  width: 8px;
+  background: #fff;
+}
+
+.listbox-options::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 4px;
+}
+
+.listbox-options::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 4px;
+  border: 1px solid #d0d0d0;
+}
+
+.listbox-options::-webkit-scrollbar-thumb:hover {
+  background: #d0d0d0;
+}
+
+/* Firefox scrollbar styling */
+.listbox-options {
+  scrollbar-width: thin;
+  scrollbar-color: #e0e0e0 #fff;
+}
+
+.listbox-option {
+  position: relative;
+  cursor: pointer;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.listbox-option:hover,
+.listbox-option.focused {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.listbox-option.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  background: #f9f9f9;
+}
+
+.listbox-option-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+  flex: 1;
+}
+
+.listbox-option-text.selected {
+  font-weight: 600;
+  color: #059669;
+}
+
+.listbox-option-check {
+  color: #059669;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.listbox-error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* Visual error state for the control wrapper */
+.listbox-wrapper.error .listbox-button {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
+}
+
+/* Responsive Styles */
+@media (max-width: 1450px) {
+  .listbox-button {
+    height: 48px; /* keep in sync with reusable Input at this breakpoint */
+    min-width: 180px;
+    padding: 0 10px;
+    border-radius: 10px;
+  }
+  .listbox-button-text {
+    font-size: 14px;
+  }
+  .listbox-option {
+    padding: 10px 14px;
+  }
+  .listbox-option-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .listbox-button {
+    height: 44px; /* keep in sync with reusable Input */
+    min-width: 140px;
+    padding: 0 8px;
+    border-radius: 8px;
+  }
+  .listbox-button-text {
+    font-size: 13px;
+  }
+  .listbox-option {
+    padding: 8px 12px;
+  }
+  .listbox-option-text {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 991px) {
+  .listbox-button {
+    height: 40px; /* keep in sync */
+    min-width: 120px;
+    padding: 0 6px;
+    border-radius: 6px;
+  }
+  .listbox-button-text {
+    font-size: 12px;
+  }
+  .listbox-option {
+    padding: 6px 10px;
+  }
+  .listbox-option-text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .listbox-button {
+    height: 38px; /* mobile height to match Input */
+    min-width: 100%;
+    padding: 0 8px;
+    border-radius: 6px;
+  }
+  .listbox-button-text {
+    font-size: 12px;
+  }
+  .listbox-option {
+    padding: 8px 12px;
+  }
+  .listbox-option-text {
+    font-size: 12px;
+  }
+}
+.listbox-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6c7278;
+  margin-bottom: 8px;
+}
+
+.listbox-wrapper {
+  position: relative;
+}
+
+.listbox-options {
+  position: absolute;
+  z-index: 50;
+  margin-top: 4px;
+  max-height: 200px;
+  width: 100%;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+}
+
+/* Custom scrollbar styling for ListBox options */
+.listbox-options::-webkit-scrollbar {
+  width: 8px;
+  background: #fff;
+}
+
+.listbox-options::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 4px;
+}
+
+.listbox-options::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 4px;
+  border: 1px solid #d0d0d0;
+}
+
+.listbox-options::-webkit-scrollbar-thumb:hover {
+  background: #d0d0d0;
+}
+
+/* Firefox scrollbar styling */
+.listbox-options {
+  scrollbar-width: thin;
+  scrollbar-color: #e0e0e0 #fff;
+}
+
+.listbox-option {
+  position: relative;
+  cursor: pointer;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.listbox-option:hover,
+.listbox-option.focused {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.listbox-option.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  background: #f9f9f9;
+}
+
+.listbox-option-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+  flex: 1;
+}
+
+.listbox-option-text.selected {
+  font-weight: 600;
+  color: #059669;
+}
+
+.listbox-option-check {
+  color: #059669;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.listbox-error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* Responsive Styles */
+@media (max-width: 1450px) {
+  .listbox-button {
+    height: 40px;
+    min-width: 180px;
+    padding: 0 10px;
+    border-radius: 10px;
+  }
+  .listbox-button-text {
+    font-size: 14px;
+  }
+  .listbox-option {
+    padding: 10px 14px;
+  }
+  .listbox-option-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .listbox-button {
+    height: 36px;
+    min-width: 140px;
+    padding: 0 8px;
+    border-radius: 8px;
+  }
+  .listbox-button-text {
+    font-size: 13px;
+  }
+  .listbox-option {
+    padding: 8px 12px;
+  }
+  .listbox-option-text {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 991px) {
+  .listbox-button {
+    height: 34px;
+    min-width: 120px;
+    padding: 0 6px;
+    border-radius: 6px;
+  }
+  .listbox-button-text {
+    font-size: 12px;
+  }
+  .listbox-option {
+    padding: 6px 10px;
+  }
+  .listbox-option-text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .listbox-button {
+    height: 32px;
+    min-width: 100%;
+    padding: 0 8px;
+    border-radius: 6px;
+  }
+  .listbox-button-text {
+    font-size: 12px;
+  }
+  .listbox-option {
+    padding: 8px 12px;
+  }
+  .listbox-option-text {
+    font-size: 12px;
+  }
+}

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import Input from "../../reusables/Input/Input";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/boarding1.jpg";
 import "./OneTimeOnboardingPage.css";
@@ -213,93 +214,79 @@ const OneTimeOnboardingPage: React.FC = () => {
 
           <div className="form-row-side-by-side">
             <div className="form-row-modern">
-              <label htmlFor="firstName">First Name</label>
-              <input
-                type="text"
+              <Input
+                label="First Name"
                 id="firstName"
                 name="firstName"
-                className={`form-input-modern ${
-                  formValidation.errors.firstName ? "error" : ""
-                }`}
                 value={formData.firstName}
                 onChange={handleInputChange}
                 placeholder="Enter your first name"
                 disabled={isSubmitting}
                 required
+                error={
+                  touchedFields.firstName
+                    ? formValidation.errors.firstName || false
+                    : false
+                }
               />
-              {formValidation.errors.firstName && (
-                <span className="validation-error">
-                  {formValidation.errors.firstName}
-                </span>
-              )}
             </div>
 
             <div className="form-row-modern">
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
+              <Input
+                label="Last Name"
                 id="lastName"
                 name="lastName"
-                className={`form-input-modern ${
-                  formValidation.errors.lastName ? "error" : ""
-                }`}
                 value={formData.lastName}
                 onChange={handleInputChange}
                 placeholder="Enter your last name"
                 disabled={isSubmitting}
                 required
+                error={
+                  touchedFields.lastName
+                    ? formValidation.errors.lastName || false
+                    : false
+                }
               />
-              {formValidation.errors.lastName && (
-                <span className="validation-error">
-                  {formValidation.errors.lastName}
-                </span>
-              )}
             </div>
           </div>
 
           <div className="form-row-side-by-side">
             <div className="form-row-modern">
-              <label htmlFor="email">Email</label>
-              <input
+              <Input
+                label="Email"
                 type="email"
                 id="email"
                 name="email"
-                className={`form-input-modern ${
-                  formValidation.errors.email ? "error" : ""
-                }`}
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="example@gmail.com"
                 disabled={isSubmitting}
                 required
+                error={
+                  touchedFields.email
+                    ? formValidation.errors.email || false
+                    : false
+                }
               />
-              {formValidation.errors.email && (
-                <span className="validation-error">
-                  {formValidation.errors.email}
-                </span>
-              )}
             </div>
 
             <div className="form-row-modern">
-              <label htmlFor="phoneNumber">Phone Number</label>
-              <input
+              <Input
+                label="Phone Number"
                 type="tel"
                 id="phoneNumber"
                 name="phoneNumber"
-                className={`form-input-modern ${
-                  formValidation.errors.phoneNumber ? "error" : ""
-                }`}
                 value={formData.phoneNumber}
                 onChange={handleInputChange}
-                placeholder="+234 801 234 5678"
+                placeholder="+234 700 000 0000"
                 disabled={isSubmitting}
                 required
+                error={
+                  touchedFields.phoneNumber
+                    ? formValidation.errors.phoneNumber || false
+                    : false
+                }
               />
-              {formValidation.errors.phoneNumber && (
-                <span className="validation-error">
-                  {formValidation.errors.phoneNumber}
-                </span>
-              )}
             </div>
           </div>
 

@@ -19,7 +19,7 @@
 .table-sub {
   margin: 4px 0 0 0;
   font-size: 13px;
-  color: #6b7280;
+  color: #969696;
 }
 
 .table-header-actions {
@@ -160,7 +160,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #070600;
+  color: #000;
   font-size: 20px;
   font-weight: 500;
 }
@@ -168,7 +168,7 @@
 .table-title h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
+  color: #000;
   margin: 0;
 }
 
@@ -186,17 +186,17 @@
   padding: 0px;
   font-size: 12px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e4e4e4;
   padding-bottom: 10px;
   background: #fff;
 }
 
 .transactions-table .table-container td {
   padding: 12px 0px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f0f0f0;
   font-size: 14px;
   color: #475569;
   font-weight: 600;
@@ -227,7 +227,7 @@
 .transaction-icon-wrap {
   width: 40px;
   height: 40px;
-  background: #f1f5f9;
+  background: #f0f0f0;
   border-radius: 10px;
   display: inline-flex;
   align-items: center;
@@ -241,12 +241,12 @@
 
 .service-name {
   font-weight: 700;
-  color: #0f172a;
+  color: #000;
 }
 
 .service-sub {
   font-size: 12px;
-  color: #64748b;
+  color: #969696;
 }
 
 .transaction-amount-cell {
@@ -308,7 +308,7 @@
 
 .gap-col {
   background: transparent !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e4e4e4 !important;
   padding: 0 !important;
 }
 
@@ -330,6 +330,40 @@
 
 .no-top-padding {
   padding-top: 0 !important;
+}
+
+/* Empty state styles */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  margin-bottom: 24px;
+  opacity: 0.3;
+}
+
+.empty-state-icon img {
+  filter: grayscale(100%) brightness(0.7);
+}
+
+.empty-state-content h4 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+}
+
+.empty-state-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #969696;
+  line-height: 1.5;
+  max-width: 400px;
 }
 
 /* ======================================== */

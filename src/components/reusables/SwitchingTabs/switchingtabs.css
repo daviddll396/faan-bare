@@ -1,0 +1,35 @@
+.switching-tabs {
+  display: flex;
+  gap: 12px;
+  border-bottom: 2px solid #e4e4e4;
+  margin: 24px 0 16px 0;
+  padding-left: 2px;
+}
+.switching-tab {
+  font-size: 18px;
+  font-weight: 600;
+  color: #969696;
+  padding: 0 7px 10px 7px;
+  margin-right: 8px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  position: relative;
+  transition: color 0.15s ease;
+}
+.switching-tab.active {
+  color: #007948;
+}
+.switching-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: #007948;
+  border-radius: 2px;
+}
+
+/* Also add these styles to Dashboard.css for global availability (kept here for component-local use) */

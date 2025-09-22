@@ -1,7 +1,7 @@
 import React from "react";
 import "./pagetitle.css";
-import ChevronRight from "/icons/chevron-right.svg";
-import { ChevronLeft } from "lucide-react";
+
+import { ArrowLeft } from "lucide-react";
 
 interface BreadcrumbItem {
   label: string;
@@ -9,8 +9,9 @@ interface BreadcrumbItem {
 }
 
 interface PageTitleProps {
-  icon: string;
+  icon?: string;
   title: string;
+  subtitle?: string;
   className?: string;
   breadcrumb?: BreadcrumbItem[];
   onBreadcrumbClick?: (idx: number) => void;
@@ -18,75 +19,62 @@ interface PageTitleProps {
 }
 
 const PageTitle: React.FC<PageTitleProps> = ({
-  icon,
   title,
+  subtitle,
   className = "",
   breadcrumb,
   onBreadcrumbClick,
   onBackClick,
 }) => {
-  return (
-    <div className={`page-title-section ${className}`}>
-      {/* Mobile Back Button */}
-      {onBackClick && (
-        <button
-          className="mobile-back-btn"
-          onClick={onBackClick}
-          aria-label="Go back"
-        >
-          <ChevronLeft size={20} />
-        </button>
-      )}
+  // showBack when we're in a subpage (breadcrumb exists) or an explicit onBackClick is provided
+  const showBack =
+    Boolean(onBackClick) || (breadcrumb && breadcrumb.length > 0);
 
-      {breadcrumb && breadcrumb.length > 0 ? (
-        <div className="breadcrumb-trail">
-          {breadcrumb.map((item, idx) => (
-            <span className="breadcrumb-item" key={idx}>
-              {idx < breadcrumb.length - 1 ? (
-                <button
-                  className="breadcrumb-link"
-                  type="button"
-                  onClick={() => onBreadcrumbClick && onBreadcrumbClick(idx)}
-                >
-                  {item.icon && (
-                    <img
-                      src={item.icon}
-                      alt={item.label}
-                      className="breadcrumb-icon breadcrumb-icon-previous"
-                    />
-                  )}
-                  <span className="breadcrumb-label breadcrumb-label-previous">
-                    {item.label}
-                  </span>
-                </button>
-              ) : (
-                <>
-                  {item.icon && (
-                    <img
-                      src={item.icon}
-                      alt={item.label}
-                      className="breadcrumb-icon"
-                    />
-                  )}
-                  <span className="breadcrumb-label">{item.label}</span>
-                </>
-              )}
-              {idx < breadcrumb.length - 1 && (
-                <img
-                  src={ChevronRight}
-                  alt="chevron"
-                  className="breadcrumb-chevron-icon"
-                />
-              )}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <>
-          <img src={icon} alt={title} className="desktop-only" />
-          <h2>{title}</h2>
-        </>
-      )}
+  const handleBack = () => {
+    if (onBackClick) return onBackClick();
+
+    // If breadcrumb click handler exists, navigate to the parent breadcrumb (one level up)
+    if (onBreadcrumbClick && breadcrumb && breadcrumb.length > 0) {
+      const parentIdx = breadcrumb.length > 1 ? breadcrumb.length - 2 : 0;
+      try {
+        return onBreadcrumbClick(parentIdx);
+      } catch (err) {
+        // ignore and fallthrough to history.back
+      }
+    }
+
+    // fallback: navigate back in history
+    if (typeof window !== "undefined") window.history.back();
+  };
+
+  // Determine title/subtitle using breadcrumb when available
+  let renderTitle = title;
+  let renderSubtitle = subtitle;
+  if (breadcrumb && breadcrumb.length > 0) {
+    renderTitle = breadcrumb[0].label || title;
+    if (!subtitle && breadcrumb.length > 1) {
+      renderSubtitle = breadcrumb[breadcrumb.length - 1].label;
+    }
+  }
+
+  return (
+    <div className={`page-title-header ${className}`}>
+      <div>
+        <h2 className="page-title">
+          {" "}
+          {showBack && (
+            <button
+              className="mobile-back-btn"
+              onClick={handleBack}
+              aria-label="Go back"
+            >
+              <ArrowLeft size={30} />
+            </button>
+          )}
+          {renderTitle}
+        </h2>
+        {renderSubtitle && <p className="page-subtitle">{renderSubtitle}</p>}
+      </div>
     </div>
   );
 };

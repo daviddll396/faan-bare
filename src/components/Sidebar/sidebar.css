@@ -1,8 +1,8 @@
 /* Sidebar Styles */
 .sidebar {
   width: 345px;
-  background: #fcfbfe;
-  color: #007948;
+  background: #007948;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -19,11 +19,7 @@
 
 /* Responsive zoom scaling for the sidebar to handle different desktop sizes and scaling */
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .sidebar {
-    zoom: 0.1;
-  }
-}
+
 
 @media (max-width: 1800px) {
   .sidebar {
@@ -165,7 +161,7 @@
   .collapse-button {
     background: none;
     border: none;
-    color: #007948;
+    color: #ffffff;
     padding: 8px;
     margin: 10px 0 0 20px; /* Always position on the left */
     cursor: pointer;
@@ -176,10 +172,11 @@
     justify-content: center;
     width: 32px;
     height: 32px;
+    transform: rotate(180deg);
   }
 
   .collapse-button:hover {
-    background: rgba(0, 121, 72, 0.1);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .chevron-icon {
@@ -197,8 +194,8 @@
 .logo-icon {
   width: 48px;
   height: 48px;
-  background: white;
-  color: #059669;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -234,18 +231,18 @@
   width: 241px;
   margin-left: 52px;
   font-weight: 500;
-  color: #a3a3a3;
+  color: #ffffff;
   border-radius: 12px;
 }
 
 .nav-item:hover {
-  background: rgba(0, 121, 72, 0.1);
-  color: #007948;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .nav-item.active {
-  background: #007948;
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 /* Collapsed navigation items - only for desktop */
@@ -267,33 +264,33 @@
 
 .sidebar-footer {
   padding: 20px 0;
-  border-top: 1px solid rgba(0, 121, 72, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .nav-item.logout {
-  color: #a3a3a3;
+  color: #ffffff;
 }
 
 .nav-item.logout:hover {
-  color: #007948;
+  color: #ffffff;
 }
 
 .nav-item img {
-  filter: brightness(0) saturate(100%) invert(64%) sepia(0%) saturate(0%)
-    hue-rotate(0deg) brightness(90%) contrast(90%);
-  transition: all 2s ease;
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
+    hue-rotate(0deg) brightness(100%) contrast(100%);
+  transition: all 0.2s ease;
 }
 
 .nav-item:hover img {
-  filter: brightness(0) saturate(100%) invert(25%) sepia(98%) saturate(1234%)
-    hue-rotate(118deg) brightness(95%) contrast(101%);
-  transition: all 2s ease;
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
+    hue-rotate(0deg) brightness(100%) contrast(100%);
+  transition: all 0.2s ease;
 }
 
 .nav-item.active img {
   filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%)
     hue-rotate(0deg) brightness(100%) contrast(100%);
-  transition: all 2s ease;
+  transition: all 0.2s ease;
 }
 
 /* Desktop vs Mobile Icon/Label Visibility - Desktop */
@@ -326,8 +323,8 @@
     transform: translateX(-50%);
     max-width: 90%;
     height: 60px;
-    background: white !important; /* Override desktop styles */
-    color: #979797 !important; /* Override desktop styles */
+    background: white !important; /* Revert to original white background */
+    color: #979797 !important; /* Revert to original gray text */
     width: auto !important; /* Override desktop width */
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -401,12 +398,13 @@
   }
 
   /* Hover state for mobile */
-  /* .nav-item:hover {
+  .nav-item:hover {
     background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;
-  } */
+  }
 
-  Active hover state .nav-item.active:hover {
+  /* Active hover state */
+  .nav-item.active:hover {
     background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;
   }
@@ -462,9 +460,6 @@
   /* Active mobile icon styling */
   .nav-item.active .mobile-icon svg {
     stroke: white;
-  }
-  .nav-item:hover {
-    color: #979797;
   }
 
   /* Add safe area padding for devices with home indicators */

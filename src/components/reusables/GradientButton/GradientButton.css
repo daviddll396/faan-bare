@@ -3,7 +3,7 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
   letter-spacing: 1px;
   position: relative;
@@ -28,10 +28,6 @@
   transition: opacity 0.2s ease;
   border-radius: 10px;
   z-index: -1;
-}
-
-.gradient-button:hover {
-  transform: translateY(-1px);
 }
 
 .gradient-button:hover::before {

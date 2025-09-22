@@ -143,21 +143,21 @@ const IndemnityFormPage: React.FC = () => {
       const requestBody: Record<string, string | boolean | null> = {
         firstName: customerData!.firstName,
         lastName: customerData!.lastName,
-        email: customerData!.email,
-        password: customerData!.password,
+        dob: customerData!.dob || "",
         phoneNumber: customerData!.phoneNumber,
         address: customerData!.address,
+        password: customerData!.password,
+        email: customerData!.email,
+        nin: customerData!.nin || "",
+        userType: "CUSTOMER", // Set userType for all customer registrations
+        creationType: "CUSTOMER", // Set creationType for customer registration
         customerType: customerData!.customerType,
       };
 
       // Add type-specific fields
       if (customerData!.customerType === "INDIVIDUAL") {
-        requestBody.nin = customerData!.nin;
-        requestBody.dob = customerData!.dob;
         requestBody.cacNumber = null;
       } else if (customerData!.customerType === "CORPORATE") {
-        requestBody.nin = "";
-        requestBody.dob = "";
         requestBody.cacNumber = customerData!.cacNumber;
         // Add corporate-specific fields if needed
         if (customerData!.businessName)
@@ -171,8 +171,6 @@ const IndemnityFormPage: React.FC = () => {
         if (customerData!.registrationNumber)
           requestBody.registrationNumber = customerData!.registrationNumber;
       } else if (customerData!.customerType === "GOVERNMENT") {
-        requestBody.nin = "";
-        requestBody.dob = "";
         requestBody.cacNumber = null;
         // Add government-specific fields if needed
         if (customerData!.officeName)
@@ -183,8 +181,6 @@ const IndemnityFormPage: React.FC = () => {
         if (customerData!.serviceType)
           requestBody.serviceType = customerData!.serviceType;
       } else if (customerData!.customerType === "FAMILY") {
-        requestBody.nin = customerData!.nin;
-        requestBody.dob = customerData!.dob;
         requestBody.cacNumber = null;
         // Add family-specific fields if needed
         if (customerData!.gender) requestBody.gender = customerData!.gender;

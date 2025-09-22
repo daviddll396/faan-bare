@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
-import CheckCircle from "../../../../public/icons/check-circle.svg";
+import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { useLoading } from "../../../contexts/LoadingContext";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./customerspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
+import SwitchingTabs from "../../reusables/SwitchingTabs/SwitchingTabs";
+import Card from "../../reusables/Card/Card";
 import CustomersIcon from "/icons/nav-customer-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
+import Input from "../../reusables/Input/Input";
+import ListBox from "../../reusables/ListBox/ListBox";
 
 interface CustomersPageProps {
   role?: string;
@@ -18,7 +23,12 @@ interface CustomersPageProps {
 
 const CustomersPage: React.FC<CustomersPageProps> = () => {
   const { showLoading, hideLoading } = useLoading();
-  const { searchCustomers, getAllCustomers, changeCustomerStatus } = useAuth();
+  const {
+    searchCustomers,
+    getAllCustomers,
+    changeCustomerStatus,
+    createCustomer,
+  } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
   const [fetched, setFetched] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -30,13 +40,16 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       id: number;
       firstName: string;
       lastName: string;
-      idNo: string;
-      phone: string;
+      customerId: string;
+      phoneNumber: string;
       email: string;
       address?: string;
       nin?: string;
-      status: string;
+      customerStatus: string;
       createdAt: string;
+      creationType?: string;
+      customerType?: string;
+      dob?: string;
     }>
   >([]);
   const [allCustomersFetched, setAllCustomersFetched] = useState(false);
@@ -114,11 +127,28 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    phone: "",
-    email: "",
+    dob: "",
+    phoneNumber: "",
     address: "",
+    password: "",
+    email: "",
     nin: "",
+    userType: "CUSTOMER",
+    creationType: "ADMIN",
+    customerType: "INDIVIDUAL",
   });
+
+  const customerTypeOptions = [
+    { id: "individual", name: "Individual", value: "INDIVIDUAL" },
+    { id: "corporate", name: "Corporate", value: "CORPORATE" },
+    { id: "government", name: "Government", value: "GOVERNMENT" },
+    { id: "family", name: "Family", value: "FAMILY" },
+  ];
+
+  const userTypeOptions = [
+    { id: "customer", name: "Customer", value: "CUSTOMER" },
+    { id: "admin", name: "Admin", value: "ADMIN" },
+  ];
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<{
@@ -132,13 +162,12 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     nin?: string;
   } | null>(null);
 
-  const handleFetch = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleFetch = async () => {
     // Validate that at least one search parameter is provided
     if (!searchForm.firstName && !searchForm.lastName && !searchForm.nin) {
-      alert(
-        "Please provide at least one search parameter (First Name, Last Name, or NIN)"
+      showToastMessage(
+        "Please provide at least one search parameter (First Name, Last Name, or NIN)",
+        "error"
       );
       return;
     }
@@ -157,18 +186,31 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
         console.log("✅ Customer search successful:", searchResult.data);
         setFetchedCustomers(searchResult.data);
         setFetched(true);
+        showToastMessage("Customer search completed successfully", "success");
       } else {
         console.log("⚠️ No customers found or search failed");
         setFetchedCustomers([]);
         setFetched(true);
+        showToastMessage("No customers found matching your criteria", "error");
       }
     } catch (error) {
       console.error("💥 Error searching customers:", error);
       setFetchedCustomers([]);
       setFetched(true);
+      showToastMessage("Error searching customers", "error");
     } finally {
       hideLoading();
     }
+  };
+
+  const handleClearSearch = () => {
+    setSearchForm({
+      firstName: "",
+      lastName: "",
+      nin: "",
+    });
+    setFetchedCustomers([]);
+    setFetched(false);
   };
 
   const handleFetchAllCustomers = async (status: string) => {
@@ -234,8 +276,8 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       id: customer.id,
       firstName: customer.firstName,
       lastName: customer.lastName,
-      idNo: customer.idNo,
-      phone: customer.phone,
+      idNo: "customerId" in customer ? customer.customerId : customer.idNo,
+      phone: "phoneNumber" in customer ? customer.phoneNumber : customer.phone,
       email: customer.email,
       address: customer.address,
       nin: customer.nin,
@@ -249,101 +291,207 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     setSelectedCustomer(null);
   };
 
-  const handleCreateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCreateChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchForm({ ...searchForm, [e.target.name]: e.target.value });
+  const validateForm = () => {
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "dob",
+      "phoneNumber",
+      "address",
+      "password",
+      "email",
+      "nin",
+    ];
+    const missingFields = requiredFields.filter(
+      (field) => !form[field as keyof typeof form]
+    );
+
+    if (missingFields.length > 0) {
+      showToastMessage(
+        `Please fill in all required fields: ${missingFields.join(", ")}`,
+        "error"
+      );
+      return false;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      showToastMessage("Please enter a valid email address", "error");
+      return false;
+    }
+
+    // Basic phone number validation (Nigerian format)
+    const phoneRegex = /^0[789][01]\d{8}$/;
+    if (!phoneRegex.test(form.phoneNumber)) {
+      showToastMessage(
+        "Please enter a valid Nigerian phone number (e.g., 08012345678)",
+        "error"
+      );
+      return false;
+    }
+
+    return true;
   };
 
-  const handleCreateSubmit = (e: React.FormEvent) => {
+  const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     showLoading("Creating new customer...");
-    setTimeout(() => {
+
+    try {
+      // Prepare the customer data
+      const customerData = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        dob: form.dob,
+        phoneNumber: form.phoneNumber,
+        address: form.address,
+        password: form.password,
+        email: form.email,
+        nin: form.nin,
+        userType: form.userType as "CUSTOMER" | "ADMIN",
+        creationType: form.creationType as "ADMIN" | "CUSTOMER",
+        customerType: form.customerType as
+          | "INDIVIDUAL"
+          | "CORPORATE"
+          | "GOVERNMENT"
+          | "FAMILY",
+      };
+
+      const result = await createCustomer(customerData);
+
+      if (result && result.status) {
+        showToastMessage("Customer created successfully!", "success");
+        setShowSuccess(true);
+
+        // Reset form
+        setForm({
+          firstName: "",
+          lastName: "",
+          dob: "",
+          phoneNumber: "",
+          address: "",
+          password: "",
+          email: "",
+          nin: "",
+          userType: "CUSTOMER",
+          creationType: "ADMIN",
+          customerType: "INDIVIDUAL",
+        });
+      } else {
+        // Handle error response
+        const errorMessage = result?.message || "Failed to create customer";
+        showToastMessage(errorMessage, "error");
+      }
+    } catch (error) {
+      console.error("💥 Error creating customer:", error);
+      showToastMessage("Error creating customer. Please try again.", "error");
+    } finally {
       hideLoading();
-      setShowSuccess(true);
-    }, 2000);
+    }
   };
 
   return (
     <div className="customers-page-bg">
-      {windowWidth <= 768 && (
-        <PageTitle icon={CustomersIcon} title="Customers" />
-      )}
+      <PageTitle
+        icon={CustomersIcon}
+        title="Customers"
+        subtitle={"Manage and search customers by name, NIN or ID."}
+      />
       <div className="customer-tabs">
-        <button
-          className={`customer-tab${activeTab === "create" ? " active" : ""}`}
-          onClick={() => setActiveTab("create")}
-        >
-          Create New Customer
-        </button>
-        <button
-          className={`customer-tab${activeTab === "fetch" ? " active" : ""}`}
-          onClick={() => setActiveTab("fetch")}
-        >
-          Fetch Customer Info
-        </button>
-        <button
-          className={`customer-tab${activeTab === "all" ? " active" : ""}`}
-          onClick={() => {
-            setActiveTab("all");
-            if (!allCustomersFetched) {
+        {/* use reusable SwitchingTabs component */}
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
+        <SwitchingTabs
+          items={[
+            { id: "create", label: "Create New Customer" },
+            { id: "fetch", label: "Fetch Customer Info" },
+            { id: "all", label: "All Customers" },
+          ]}
+          activeId={activeTab}
+          onChange={(id) => {
+            setActiveTab(id);
+            if (id === "all" && !allCustomersFetched) {
               handleFetchAllCustomers(allCustomersStatus);
             }
           }}
-        >
-          All Customers
-        </button>
+        />
       </div>
       {activeTab === "fetch" && !fetched && (
-        <div className="customer-card">
-          <h2 className="customer-card-title">Input Customer Details</h2>
-          <p className="customer-card-helper">
-            Please input all required customer details to know if the customer
-            is already registered.
-          </p>
-          <form className="customer-form-grid" onSubmit={handleFetch}>
-            <div className="customer-form-row">
-              <div className="customer-form-group">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={searchForm.firstName}
-                  onChange={handleSearchChange}
-                  placeholder="Enter first name"
-                />
-              </div>
-              <div className="customer-form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={searchForm.lastName}
-                  onChange={handleSearchChange}
-                  placeholder="Enter last name"
-                />
-              </div>
+        <div className="customer-search-section">
+          <div
+            className="page-title-header"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              justifyContent: "center",
+              alignItems: "flex-start",
+            }}
+          >
+            <h3 className="customer-search-title">Search Customers</h3>
+            <p className="customer-search-subtitle">
+              Find customers by First Name, Last Name, or NIN. Use the search
+              below to filter customers.
+            </p>
+          </div>
+
+          <div className="customer-search-inputs">
+            <div style={{ display: "flex", gap: 12, flex: 1 }}>
+              <Input
+                placeholder="First name"
+                value={searchForm.firstName}
+                onChange={(e) =>
+                  setSearchForm((prev) => ({
+                    ...prev,
+                    firstName: e.target.value,
+                  }))
+                }
+              />
+              <Input
+                placeholder="Last name"
+                value={searchForm.lastName}
+                onChange={(e) =>
+                  setSearchForm((prev) => ({
+                    ...prev,
+                    lastName: e.target.value,
+                  }))
+                }
+              />
+              <Input
+                placeholder="NIN number"
+                value={searchForm.nin}
+                onChange={(e) =>
+                  setSearchForm((prev) => ({ ...prev, nin: e.target.value }))
+                }
+              />
             </div>
-            <div className="customer-form-row">
-              <div className="customer-form-group" style={{ flex: 1 }}>
-                <label>NIN</label>
-                <input
-                  type="text"
-                  name="nin"
-                  value={searchForm.nin}
-                  onChange={handleSearchChange}
-                  placeholder="Enter NIN number"
-                />
-              </div>
+
+            {/* placeholder for future filters (e.g., role/listbox) */}
+          </div>
+
+          <div className="customer-action-buttons">
+            <div className="customer-actions-fieldbutton">
+              <FieldButton
+                buttons={[
+                  { text: "Search", onClick: handleFetch },
+                  { text: "Clear", onClick: handleClearSearch },
+                ]}
+                className="customer-actions-fieldbutton"
+              />
             </div>
-            <div className="customer-success-btn-container">
-              <GradientButton type="submit" fullWidth>
-                SEARCH
-              </GradientButton>
-            </div>
-          </form>
+          </div>
         </div>
       )}
       {activeTab === "fetch" && fetched && (
@@ -385,10 +533,10 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       )}
       {activeTab === "all" && (
         <>
-          {/* Status Sub-tabs */}
-          <div className="customer-status-tabs">
-            <button
-              className={`status-tab${
+          {/* Status Sub-tabs (use booking-tabs-row styles for consistency) */}
+          <div className="booking-tabs-row">
+            <div
+              className={`booking-tab${
                 allCustomersStatus === "PENDING" ? " active" : ""
               }`}
               onClick={() => {
@@ -397,9 +545,9 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
               }}
             >
               PENDING
-            </button>
-            <button
-              className={`status-tab${
+            </div>
+            <div
+              className={`booking-tab${
                 allCustomersStatus === "APPROVED" ? " active" : ""
               }`}
               onClick={() => {
@@ -408,7 +556,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
               }}
             >
               APPROVED
-            </button>
+            </div>
           </div>
 
           {/* All Customers Data Table */}
@@ -431,8 +579,8 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                       `${idx + 1}.`,
                       customer.firstName,
                       customer.lastName,
-                      customer.idNo,
-                      customer.phone,
+                      customer.customerId,
+                      customer.phoneNumber,
                       customer.email,
                       <span
                         className={`status-badge ${
@@ -464,87 +612,144 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
         </>
       )}
       {activeTab === "create" && (
-        <div className="customer-card">
-          <h2 className="customer-card-title">Input Customer Details</h2>
-          <p className="customer-card-helper">
-            Please input all required customer details to register a new
-            customer.
-          </p>
+        <Card
+          title="Input Customer Details"
+          helper={
+            "Please input all required customer details to register a new customer."
+          }
+        >
           <form className="customer-form-grid" onSubmit={handleCreateSubmit}>
             <div className="customer-form-row">
               <div className="customer-form-group">
-                <label>First Name</label>
-                <input
+                <label>First Name *</label>
+                <Input
                   name="firstName"
                   type="text"
                   value={form.firstName}
                   onChange={handleCreateChange}
+                  placeholder="Enter first name"
+                  required
                 />
               </div>
               <div className="customer-form-group">
-                <label>Last Name</label>
-                <input
+                <label>Last Name *</label>
+                <Input
                   name="lastName"
                   type="text"
                   value={form.lastName}
                   onChange={handleCreateChange}
+                  placeholder="Enter last name"
+                  required
                 />
               </div>
             </div>
             <div className="customer-form-row">
               <div className="customer-form-group">
-                <label>Phone Number</label>
-                <input
-                  name="phone"
-                  type="text"
-                  value={form.phone}
+                <label>Date of Birth *</label>
+                <Input
+                  name="dob"
+                  type="date"
+                  value={form.dob}
                   onChange={handleCreateChange}
+                  required
                 />
               </div>
               <div className="customer-form-group">
-                <label>NIN</label>
-                <input
-                  name="nin"
-                  type="text"
-                  value={form.nin}
+                <label>Phone Number *</label>
+                <Input
+                  name="phoneNumber"
+                  type="tel"
+                  value={form.phoneNumber}
                   onChange={handleCreateChange}
+                  placeholder="08012345678"
+                  required
                 />
               </div>
             </div>
             <div className="customer-form-row">
               <div className="customer-form-group">
-                <label>Email Address</label>
-                <input
+                <label>Email Address *</label>
+                <Input
                   name="email"
                   type="email"
                   value={form.email}
                   onChange={handleCreateChange}
+                  placeholder="customer@example.com"
+                  required
                 />
               </div>
               <div className="customer-form-group">
-                <label>Residential Address</label>
-                <input
-                  name="address"
-                  type="text"
-                  value={form.address}
-                  onChange={handleCreateChange}
-                />
-              </div>
-            </div>
-            <div className="customer-form-row">
-              <div className="customer-form-group" style={{ flex: 1 }}>
-                <label>NIN</label>
-                <input
+                <label>NIN *</label>
+                <Input
                   name="nin"
                   type="text"
                   value={form.nin}
                   onChange={handleCreateChange}
+                  placeholder="12345678901"
+                  required
+                />
+              </div>
+            </div>
+            <div className="customer-form-row">
+              <div className="customer-form-group">
+                <label>Residential Address *</label>
+                <Input
+                  name="address"
+                  type="text"
+                  value={form.address}
+                  onChange={handleCreateChange}
+                  placeholder="123 Allen Avenue, Ikeja, Lagos"
+                  required
+                />
+              </div>
+              <div className="customer-form-group">
+                <label>Password *</label>
+                <Input
+                  name="password"
+                  type="password"
+                  value={form.password}
+                  onChange={handleCreateChange}
+                  placeholder="Enter password"
+                  required
+                />
+              </div>
+            </div>
+            <div className="customer-form-row">
+              <div className="customer-form-group">
+                <label>Customer Type</label>
+                <ListBox
+                  options={customerTypeOptions}
+                  selected={
+                    customerTypeOptions.find(
+                      (o) => o.value === form.customerType
+                    ) ?? null
+                  }
+                  onChange={(opt) =>
+                    setForm((prev) => ({ ...prev, customerType: opt.value }))
+                  }
+                  placeholder="Select customer type"
+                  className="customer-type-listbox"
+                />
+              </div>
+              <div className="customer-form-group">
+                <label>User Type</label>
+                <ListBox
+                  options={userTypeOptions}
+                  selected={
+                    userTypeOptions.find((o) => o.value === form.userType) ??
+                    null
+                  }
+                  onChange={(opt) =>
+                    setForm((prev) => ({ ...prev, userType: opt.value }))
+                  }
+                  placeholder="Select user type"
+                  className="user-type-listbox"
                 />
               </div>
             </div>
             <div className="customer-success-btn-container">
               <GradientButton type="submit" fullWidth>
-                SAVE
+                CREATE CUSTOMER
               </GradientButton>
             </div>
           </form>
@@ -564,16 +769,16 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 />
               </div>
               <div className="customer-success-title">
-                New Customer
+                Customer
                 <br />
                 Successfully Created!
               </div>
               <div className="customer-success-desc">
-                You can proceed to create a bill for the customer.
+                The customer has been registered and can now access the system.
               </div>
               <div className="customer-success-actions">
                 <GradientButton variant="primary" size="medium">
-                  CREATE BILL
+                  VIEW CUSTOMERS
                 </GradientButton>
                 <GradientButton
                   variant="close"
@@ -585,7 +790,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
               </div>
             </div>
           </Modal>
-        </div>
+        </Card>
       )}
       {/* Customer Details Modal */}
       <Modal

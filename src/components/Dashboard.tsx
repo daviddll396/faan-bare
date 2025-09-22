@@ -69,6 +69,7 @@ const Dashboard: React.FC = () => {
           "bills",
           "audit-trail",
           "reports",
+          "invoices" /* allow admins access to invoices */,
           "payment",
           "logout",
           "profile",

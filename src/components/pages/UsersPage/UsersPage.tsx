@@ -1,16 +1,19 @@
 import React from "react";
 import { Edit, Trash2 } from "lucide-react";
-import AddIcon from "../../../../public/icons/add-icon.svg";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
+import AddIcon from "/icons/add-icon.svg";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
-import UsersIcon from "../../../../public/icons/users-icon.svg";
+// Card wrapper removed for modal-based add/edit UX
+import Input from "../../reusables/Input/Input";
+import UsersIcon from "/icons/users-icon.svg";
 import { useLoading } from "../../../contexts/LoadingContext";
 import ConfirmationModal from "../../reusables/ConfirmationModal/ConfirmationModal";
 import "./userspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
-import SearchInput from "../../reusables/SearchInput/SearchInput";
+import Modal from "../../reusables/Modal/Modal";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
+import ListBox, { type ListBoxOption } from "../../reusables/ListBox/ListBox";
 
 // Add User type for local state
 interface LocalUser {
@@ -112,8 +115,16 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   // Search state
   const [searchName, setSearchName] = React.useState("");
   const [searchEmail, setSearchEmail] = React.useState("");
-  const [selectedRole, setSelectedRole] = React.useState("");
+  const [selectedRole, setSelectedRole] = React.useState<ListBoxOption | null>(
+    null
+  );
   const [filteredUsers, setFilteredUsers] = React.useState(allUsers);
+
+  // Role options for ListBox
+  const roleOptions: ListBoxOption[] = [
+    { id: "admin", name: "Admin", value: "Admin" },
+    { id: "officer", name: "Officer", value: "Officer" },
+  ];
 
   // UI state
   const [showAddUserForm, setShowAddUserForm] = React.useState(false);
@@ -143,11 +154,6 @@ const UsersPage: React.FC<UsersPageProps> = () => {
     role: "",
   });
 
-  // Update filtered users when allUsers changes
-  React.useEffect(() => {
-    handleSearch();
-  }, [allUsers]);
-
   // Helper function to get current date
   const getCurrentDate = () => {
     const now = new Date();
@@ -157,7 +163,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
   };
 
   // Search function
-  const handleSearch = () => {
+  const handleSearch = React.useCallback(() => {
     let filtered = allUsers;
 
     // Filter by name (firstName or lastName)
@@ -178,24 +184,22 @@ const UsersPage: React.FC<UsersPageProps> = () => {
 
     // Filter by role
     if (selectedRole) {
-      filtered = filtered.filter((user) => user.role === selectedRole);
+      filtered = filtered.filter((user) => user.role === selectedRole.value);
     }
 
     setFilteredUsers(filtered);
-  };
+  }, [allUsers, searchName, searchEmail, selectedRole]);
 
-  // Auto-run search when role selection changes so switching role filters immediately
+  // Update filtered users when dependencies change
   React.useEffect(() => {
-    // Only run when a role is selected; empty string means no filter
     handleSearch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRole]);
+  }, [handleSearch]);
 
   // Clear search filters
   const handleClearSearch = () => {
     setSearchName("");
     setSearchEmail("");
-    setSelectedRole("");
+    setSelectedRole(null);
     setFilteredUsers(allUsers);
   };
 
@@ -325,239 +329,217 @@ const UsersPage: React.FC<UsersPageProps> = () => {
     <div className="users-page">
       <div className="page-content">
         <div className="page-header">
-          {!showAddUserForm ? (
-            <PageTitle icon={UsersIcon} title="Users" />
-          ) : window.innerWidth > 768 ? (
-            <PageTitle
-              icon={UsersIcon}
-              title="Users"
-              breadcrumb={[
-                { label: "Users", icon: UsersIcon },
-                { label: editingUser ? "Edit User" : "Add User" },
-              ]}
-              onBreadcrumbClick={(idx) => {
-                if (idx === 0) setShowAddUserForm(false);
-              }}
-            />
-          ) : (
-            <PageTitle icon={UsersIcon} title="Add New User" />
-          )}
+          <PageTitle
+            icon={UsersIcon}
+            title="Users"
+            subtitle={
+              "Find users by name, email, or role. Use the filters below to narrow down your search."
+            }
+          />
         </div>
 
-        {!showAddUserForm ? (
-          <>
-            <div className="page-header-bottom">
-              {/* Responsive search layout */}
-              {window.innerWidth <= 768 ? (
-                <>
-                  <div className="userspage-search-row">
-                    <SearchInput
-                      placeholder="Search name"
-                      value={searchName}
-                      onChange={(e) => setSearchName(e.target.value)}
-                    />
-                    <SearchInput
-                      placeholder="Email address"
-                      value={searchEmail}
-                      onChange={(e) => setSearchEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="userspage-actions-row">
-                    <BorderButton
-                      text="Search"
-                      onClick={handleSearch}
-                      className="border-button-userspage"
-                    />
-                    <BorderButton
-                      text="Clear"
-                      onClick={handleClearSearch}
-                      className="border-button-userspage"
-                    />
-                    <BorderButton
-                      text="Add New User"
-                      icon={AddIcon}
-                      onClick={handleAddNewUser}
-                      className="border-button-userspage"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div style={{ display: "flex", gap: 24 }}>
-                    <SearchInput
-                      placeholder="Search name"
-                      value={searchName}
-                      onChange={(e) => setSearchName(e.target.value)}
-                    />
-                    <SearchInput
-                      placeholder="Email address"
-                      value={searchEmail}
-                      onChange={(e) => setSearchEmail(e.target.value)}
-                    />
-                    <SearchInput
-                      placeholder="Role"
-                      withDropdown
-                      options={["Admin", "Officer"]}
-                      value={selectedRole}
-                      onChange={(e) => setSelectedRole(e.target.value)}
-                    />
-                  </div>
-                  <div style={{ display: "flex", gap: 12 }}>
-                    <BorderButton
-                      text="Search"
-                      onClick={handleSearch}
-                      className="border-button-userspage"
-                    />
-                    <BorderButton
-                      text="Clear"
-                      onClick={handleClearSearch}
-                      className="border-button-userspage"
-                    />
-                    <BorderButton
-                      text="Add New User"
-                      icon={AddIcon}
-                      onClick={handleAddNewUser}
-                      className="border-button-userspage"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
+        <>
+          <div className="page-header-bottom">
+            <div className="userspage-search-section">
+              <div className="userspage-search-inputs">
+                <FieldButton
+                  inputs={[
+                    {
+                      placeholder: "Search by name",
+                      value: searchName,
+                      onChange: (e) => setSearchName(e.target.value),
+                    },
+                    {
+                      placeholder: "Search by email",
+                      value: searchEmail,
+                      onChange: (e) => setSearchEmail(e.target.value),
+                    },
+                  ]}
+                  buttons={[
+                    { text: "Search", onClick: handleSearch },
+                    { text: "Clear", onClick: handleClearSearch },
+                  ]}
+                  className="userspage-search-fieldbutton"
+                />
+                {windowWidth > 768 && (
+                  <ListBox
+                    options={roleOptions}
+                    selected={selectedRole}
+                    onChange={setSelectedRole}
+                    placeholder="All Roles"
+                    className="userspage-role-listbox"
+                  />
+                )}
 
-            <DataTable
-              headers={[
-                "S/N",
-                "First Name",
-                "Last Name",
-                "Email",
-                "Role",
-                "Status",
-                "Date Modified",
-                "Actions",
-              ]}
-              data={filteredUsers.map((user, idx) => [
-                `${idx + 1}.`,
-                user.firstName,
-                user.lastName,
-                user.email,
-                <span key={`r-${user.id}`} className="role-badge-table">
-                  {user.role}
-                </span>,
-                <span
-                  key={`s-${user.id}`}
-                  className={`status-badge-table ${user.status.toLowerCase()}`}
-                >
-                  {user.status}
-                </span>,
-                user.dateModified,
-                <div key={`a-${user.id}`}>
-                  <button
-                    className="action-btn-table edit"
-                    onClick={() => handleEdit(user)}
+                {/* Add New User action (matches ServicesPage pattern) */}
+                <div className="userspage-add-action">
+                  <FieldButton
+                    buttons={[
+                      {
+                        text: "Add New User",
+                        icon: AddIcon,
+                        onClick: handleAddNewUser,
+                      },
+                    ]}
+                    className="userspage-add-fieldbutton"
+                  />
+                </div>
+              </div>
+
+              <DataTable
+                headers={[
+                  "S/N",
+                  "First Name",
+                  "Last Name",
+                  "Email",
+                  "Role",
+                  "Status",
+                  "Date Modified",
+                  "Actions",
+                ]}
+                data={filteredUsers.map((user, idx) => [
+                  `${idx + 1}.`,
+                  user.firstName,
+                  user.lastName,
+                  user.email,
+                  <span key={`r-${user.id}`} className="role-badge-table">
+                    {user.role}
+                  </span>,
+                  <span
+                    key={`s-${user.id}`}
+                    className={`status-badge-table ${user.status.toLowerCase()}`}
                   >
-                    <Edit size={16} /> Edit
-                  </button>
-                  <button
-                    className="action-btn-table delete"
-                    onClick={() => handleDelete(user)}
-                  >
-                    <Trash2 size={16} /> Delete
-                  </button>
-                </div>,
-              ])}
-              className="users-admin-table"
-            />
-            {windowWidth <= 768 && <SlideIndicator />}
-          </>
-        ) : (
-          <div className="add-user-form-card">
-            <h2 className="add-user-title">
-              {editingUser ? "Edit User" : "Add User"}
-            </h2>
-            <p className="add-user-helper">
-              Please input all required customer details to{" "}
-              {editingUser ? "update the" : "add a new"} user.
-            </p>
-            <form className="user-form-grid" onSubmit={handleFormSubmit}>
-              <div className="form-row-pair">
-                <div className="form-row">
-                  <label>First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-row">
-                  <label>Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="form-row-pair">
-                <div className="form-row">
-                  <label>Middle Name</label>
-                  <input
-                    type="text"
-                    name="middleName"
-                    value={formData.middleName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-row">
-                  <label>User Name</label>
-                  <input
-                    type="text"
-                    name="userName"
-                    value={formData.userName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="form-row-pair">
-                <div className="form-row">
-                  <label>Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-row">
-                  <label>Phone Number</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="form-row">
-                <label>Role</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select role</option>
-                  <option value="Admin">Admin</option>
-                  <option value="Officer">Officer</option>
-                </select>
-              </div>
-              <div className="form-actions">
-                <GradientButton type="submit" fullWidth>
-                  {editingUser ? "UPDATE" : "SAVE"}
-                </GradientButton>
-              </div>
-            </form>
+                    {user.status}
+                  </span>,
+                  user.dateModified,
+                  <div key={`a-${user.id}`}>
+                    <button
+                      className="action-btn-table edit"
+                      onClick={() => handleEdit(user)}
+                    >
+                      <Edit size={16} /> Edit
+                    </button>
+                    <button
+                      className="action-btn-table delete"
+                      onClick={() => handleDelete(user)}
+                    >
+                      <Trash2 size={16} /> Delete
+                    </button>
+                  </div>,
+                ])}
+                className="users-admin-table"
+              />
+            </div>
           </div>
+          {windowWidth <= 768 && <SlideIndicator />}
+        </>
+
+        {showAddUserForm && (
+          <Modal
+            isOpen={showAddUserForm}
+            onClose={() => setShowAddUserForm(false)}
+            showHeader={true}
+            showLogo={false}
+            headerTitle={editingUser ? "Edit User" : "Add User"}
+            className="add-user-modal"
+          >
+            <div className="add-user-modal-body">
+              <div className="modal-form-header">
+                <p className="modal-form-helper">
+                  {editingUser
+                    ? "Please update the user details."
+                    : "Please input all required customer details to add a new user."}
+                </p>
+              </div>
+              <form className="user-form-grid" onSubmit={handleFormSubmit}>
+                <div className="form-row-pair">
+                
+                   
+                    <Input
+                      label="First Name"
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                    />
+                 
+                
+                      
+                    <Input
+                      label="Last Name"
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                    />
+              
+                </div>
+                <div className="form-row-pair">
+                
+                    <Input
+                      label="Middle Name"
+                      type="text"
+                      name="middleName"
+                      value={formData.middleName}
+                      onChange={handleInputChange}
+                    />
+               
+               
+                  
+                  
+                    <Input
+                      label="User Name"
+                      type="text"
+                      name="userName"
+                      value={formData.userName}
+                      onChange={handleInputChange}
+                    />
+                  
+                </div>
+                <div className="form-row-pair">
+                 
+                    
+                    <Input
+                      label="Email Address"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
+                
+                 
+                   
+                    <Input
+                      label="Phone Number"
+                      type="text"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                
+                </div>
+                
+                 
+                  
+                  <ListBox
+                    options={roleOptions}
+                    selected={
+                      roleOptions.find((o) => o.value === formData.role) ?? null
+                    }
+                    onChange={(opt) =>
+                      setFormData((prev) => ({ ...prev, role: opt.value }))
+                    }
+                    placeholder="Select role"
+                  />
+               
+                <div className="form-actions">
+                  <GradientButton type="submit" fullWidth>
+                    {editingUser ? "UPDATE" : "SAVE"}
+                  </GradientButton>
+                </div>
+              </form>
+            </div>
+          </Modal>
         )}
       </div>
 

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import Input from "../../reusables/Input/Input";
+import ListBox, { type ListBoxOption } from "../../reusables/ListBox/ListBox";
 import Modal from "../../reusables/Modal/Modal";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/boarding1.jpg";
@@ -254,9 +256,8 @@ const RegisterPage: React.FC = () => {
   const [governmentFormErrors, setGovernmentFormErrors] = useState<{
     [key: string]: string;
   }>({});
-  const [showCorporatePassword, setShowCorporatePassword] = useState(false);
-  const [showCorporateConfirmPassword, setShowCorporateConfirmPassword] =
-    useState(false);
+  // password visibility handled inside reusable `Input` via `passwordToggle`
+  // removed per-form showPassword states
   const [showGovernmentPassword, setShowGovernmentPassword] = useState(false);
   const [showGovernmentConfirmPassword, setShowGovernmentConfirmPassword] =
     useState(false);
@@ -486,30 +487,32 @@ const RegisterPage: React.FC = () => {
       customerData = {
         firstName: individualForm.firstName,
         lastName: individualForm.lastName,
-        email: individualForm.email,
+        dob: individualForm.dob,
         phoneNumber: individualForm.phoneNumber,
         address: individualForm.address,
-        customerType: "INDIVIDUAL",
         password: password,
+        email: individualForm.email,
         nin: individualForm.idNumber,
-        dob: individualForm.dob,
-        cacNumber: null,
+        userType: "CUSTOMER", // Set userType for individual customers
+        creationType: "CUSTOMER", // Set creationType for customer registration
+        customerType: "INDIVIDUAL",
       };
     } else if (selectedRole === "FAMILY") {
       customerData = {
         firstName: familyForm.firstName,
         lastName: familyForm.lastName,
-        email: familyForm.email,
+        dob: familyForm.dob,
         phoneNumber: familyForm.phoneNumber,
         address: familyForm.address,
-        customerType: "FAMILY",
         password: password,
+        email: familyForm.email,
         nin: familyForm.idNumber,
-        dob: familyForm.dob,
+        userType: "CUSTOMER", // Set userType for family customers
+        creationType: "CUSTOMER", // Set creationType for customer registration
+        customerType: "FAMILY",
         gender: familyForm.gender,
         isStudent: familyForm.isStudent,
         meansOfId: familyForm.meansOfId,
-        cacNumber: null,
       };
     }
 
@@ -518,7 +521,10 @@ const RegisterPage: React.FC = () => {
     try {
       // Encrypt and POST to register endpoint (same approach used on Indemnity page)
       const payload = JSON.stringify(customerData);
+      console.log("📝 Registration payload (before encryption):", customerData);
+      console.log("📝 Registration payload (JSON string):", payload);
       const encryptedPayload = encryptAESCBC(payload, AES_SECRET_KEY, AES_IV);
+      console.log("🔐 Encrypted payload length:", encryptedPayload.length);
 
       const resp = await fetch("/auth/faan/register", {
         method: "POST",
@@ -561,6 +567,11 @@ const RegisterPage: React.FC = () => {
 
       // If server returned non-OK HTTP, surface error (use decrypted message if available)
       if (!resp.ok) {
+        console.error("🚨 Registration failed - HTTP Status:", resp.status);
+        console.error("🚨 Raw response text:", rawResponseText);
+        console.error("🚨 Decrypted response:", decryptedResponse);
+        console.error("🚨 Parsed response data:", responseData);
+
         const errMsg = String(
           responseData?.message ?? rawResponseText ?? `HTTP ${resp.status}`
         );
@@ -1027,14 +1038,14 @@ const RegisterPage: React.FC = () => {
             </div>
             <div className="register-individual-grid">
               <div className="form-row-modern">
-                <label>First Name</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="First Name"
                   name="firstName"
                   value={individualForm.firstName}
                   onChange={handleIndividualChange}
                   placeholder="First Name"
                   autoComplete="off"
+                  className={formErrors.firstName ? "error" : ""}
                 />
                 {formErrors.firstName && (
                   <span className="validation-error">
@@ -1043,14 +1054,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Last Name</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Last Name"
                   name="lastName"
                   value={individualForm.lastName}
                   onChange={handleIndividualChange}
                   placeholder="Last Name"
                   autoComplete="off"
+                  className={formErrors.lastName ? "error" : ""}
                 />
                 {formErrors.lastName && (
                   <span className="validation-error">
@@ -1059,28 +1070,28 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Email</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Email"
                   name="email"
                   value={individualForm.email}
                   onChange={handleIndividualChange}
                   placeholder="Email"
                   autoComplete="off"
+                  className={formErrors.email ? "error" : ""}
                 />
                 {formErrors.email && (
                   <span className="validation-error">{formErrors.email}</span>
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Phone Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Phone Number"
                   name="phoneNumber"
                   value={individualForm.phoneNumber}
                   onChange={handleIndividualChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  className={formErrors.phoneNumber ? "error" : ""}
                 />
                 {formErrors.phoneNumber && (
                   <span className="validation-error">
@@ -1089,29 +1100,39 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Means of Identification</label>
-                <select
-                  className="form-input-modern"
-                  name="meansOfId"
-                  value={individualForm.meansOfId}
-                  onChange={handleIndividualChange}
-                >
-                  {meansOfIdOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Means of Identification"
+                  options={meansOfIdOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (meansOfIdOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === individualForm.meansOfId
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setIndividualForm((prev) => ({
+                      ...prev,
+                      meansOfId: opt.value,
+                    }))
+                  }
+                  placeholder="Select item"
+                  className="bill-item-listbox"
+                />
               </div>
               <div className="form-row-modern">
-                <label>Identification Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Identification Number"
                   name="idNumber"
                   value={individualForm.idNumber}
                   onChange={handleIndividualChange}
                   placeholder="Identification Number"
                   autoComplete="off"
+                  className={formErrors.idNumber ? "error" : ""}
                 />
                 {formErrors.idNumber && (
                   <span className="validation-error">
@@ -1120,51 +1141,69 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Address</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Address"
                   name="address"
                   value={individualForm.address}
                   onChange={handleIndividualChange}
                   placeholder="Address"
                   autoComplete="off"
+                  className={formErrors.address ? "error" : ""}
                 />
                 {formErrors.address && (
                   <span className="validation-error">{formErrors.address}</span>
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Gender</label>
-                <select
-                  className="form-input-modern"
-                  name="gender"
-                  value={individualForm.gender}
-                  onChange={handleIndividualChange}
-                >
-                  {genderOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Gender"
+                  options={genderOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (genderOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === individualForm.gender
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setIndividualForm((prev) => ({
+                      ...prev,
+                      gender: opt.value,
+                    }))
+                  }
+                  className="bill-item-listbox"
+                />
                 {formErrors.gender && (
                   <span className="validation-error">{formErrors.gender}</span>
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Are you a Student?</label>
-                <select
-                  className="form-input-modern"
-                  name="isStudent"
-                  value={individualForm.isStudent}
-                  onChange={handleIndividualChange}
-                >
-                  {studentOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Are you a Student?"
+                  options={studentOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (studentOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === individualForm.isStudent
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setIndividualForm((prev) => ({
+                      ...prev,
+                      isStudent: opt.value,
+                    }))
+                  }
+                  className="bill-item-listbox"
+                />
                 {formErrors.isStudent && (
                   <span className="validation-error">
                     {formErrors.isStudent}
@@ -1172,18 +1211,15 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Date of Birth</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Date of Birth"
                   name="dob"
                   type="date"
                   value={individualForm.dob}
                   onChange={handleIndividualChange}
                   autoComplete="off"
+                  error={formErrors.dob || false}
                 />
-                {formErrors.dob && (
-                  <span className="validation-error">{formErrors.dob}</span>
-                )}
               </div>
             </div>
             <GradientButton
@@ -1257,8 +1293,7 @@ const RegisterPage: React.FC = () => {
                 style={{ gridColumn: "1 / span 2" }}
               >
                 <label>Email</label>
-                <input
-                  className="form-input-modern"
+                <Input
                   name="email"
                   value={individualForm.email}
                   disabled
@@ -1266,41 +1301,29 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               <div className="form-row-modern">
-                <label>Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="form-input-modern"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setPassword(value);
-                      setCredentialsErrors((prev) => ({
-                        ...prev,
-                        password: validateField("password", value),
-                        confirmPassword: !confirmPassword
-                          ? "Confirm your password"
-                          : value !== confirmPassword
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setPassword(value);
+                    setCredentialsErrors((prev) => ({
+                      ...prev,
+                      password: validateField("password", value),
+                      confirmPassword: !confirmPassword
+                        ? "Confirm your password"
+                        : value !== confirmPassword
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  className={credentialsErrors.password ? "error" : ""}
+                />
                 {credentialsErrors.password && (
                   <span className="validation-error">
                     {credentialsErrors.password}
@@ -1308,44 +1331,28 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Confirm Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="form-input-modern"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setConfirmPassword(value);
-                      setCredentialsErrors((prev) => ({
-                        ...prev,
-                        confirmPassword: !value
-                          ? "Confirm your password"
-                          : value !== password
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Confirm Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowConfirmPassword((v) => !v)}
-                    aria-label={
-                      showConfirmPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setConfirmPassword(value);
+                    setCredentialsErrors((prev) => ({
+                      ...prev,
+                      confirmPassword: !value
+                        ? "Confirm your password"
+                        : value !== password
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Confirm Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  className={credentialsErrors.confirmPassword ? "error" : ""}
+                />
                 {credentialsErrors.confirmPassword && (
                   <span className="validation-error">
                     {credentialsErrors.confirmPassword}
@@ -1441,14 +1448,14 @@ const RegisterPage: React.FC = () => {
             </div>
             <div className="register-individual-grid">
               <div className="form-row-modern">
-                <label>Business Name</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Business Name"
                   name="businessName"
                   value={corporateForm.businessName}
                   onChange={handleCorporateChange}
                   placeholder="Business Name"
                   autoComplete="off"
+                  className={corporateFormErrors.businessName ? "error" : ""}
                 />
                 {corporateFormErrors.businessName && (
                   <span className="validation-error">
@@ -1457,19 +1464,27 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Nature of Business</label>
-                <select
-                  className="form-input-modern"
-                  name="natureOfBusiness"
-                  value={corporateForm.natureOfBusiness}
-                  onChange={handleCorporateChange}
-                >
-                  {natureOfBusinessOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Nature of Business"
+                  options={natureOfBusinessOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (natureOfBusinessOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === corporateForm.natureOfBusiness
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setCorporateForm((prev) => ({
+                      ...prev,
+                      natureOfBusiness: opt.value,
+                    }))
+                  }
+                />
                 {corporateFormErrors.natureOfBusiness && (
                   <span className="validation-error">
                     {corporateFormErrors.natureOfBusiness}
@@ -1477,19 +1492,27 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Service Type</label>
-                <select
-                  className="form-input-modern"
-                  name="serviceType"
-                  value={corporateForm.serviceType}
-                  onChange={handleCorporateChange}
-                >
-                  {serviceTypeOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Service Type"
+                  options={serviceTypeOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (serviceTypeOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === corporateForm.serviceType
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setCorporateForm((prev) => ({
+                      ...prev,
+                      serviceType: opt.value,
+                    }))
+                  }
+                />
                 {corporateFormErrors.serviceType && (
                   <span className="validation-error">
                     {corporateFormErrors.serviceType}
@@ -1497,14 +1520,16 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Year of Incorporation</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Year of Incorporation"
                   name="yearOfIncorporation"
                   value={corporateForm.yearOfIncorporation}
                   onChange={handleCorporateChange}
                   placeholder="Year of Incorporation"
                   autoComplete="off"
+                  className={
+                    corporateFormErrors.yearOfIncorporation ? "error" : ""
+                  }
                 />
                 {corporateFormErrors.yearOfIncorporation && (
                   <span className="validation-error">
@@ -1513,14 +1538,16 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Registered Address</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Registered Address"
                   name="registeredAddress"
                   value={corporateForm.registeredAddress}
                   onChange={handleCorporateChange}
                   placeholder="Registered Address"
                   autoComplete="off"
+                  className={
+                    corporateFormErrors.registeredAddress ? "error" : ""
+                  }
                 />
                 {corporateFormErrors.registeredAddress && (
                   <span className="validation-error">
@@ -1529,14 +1556,16 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Registration Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Registration Number"
                   name="registrationNumber"
                   value={corporateForm.registrationNumber}
                   onChange={handleCorporateChange}
                   placeholder="Registration Number"
                   autoComplete="off"
+                  className={
+                    corporateFormErrors.registrationNumber ? "error" : ""
+                  }
                 />
                 {corporateFormErrors.registrationNumber && (
                   <span className="validation-error">
@@ -1545,14 +1574,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Email</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Email"
                   name="email"
                   value={corporateForm.email}
                   onChange={handleCorporateChange}
                   placeholder="Email"
                   autoComplete="off"
+                  className={corporateFormErrors.email ? "error" : ""}
                 />
                 {corporateFormErrors.email && (
                   <span className="validation-error">
@@ -1561,14 +1590,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Phone Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Phone Number"
                   name="phoneNumber"
                   value={corporateForm.phoneNumber}
                   onChange={handleCorporateChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  className={corporateFormErrors.phoneNumber ? "error" : ""}
                 />
                 {corporateFormErrors.phoneNumber && (
                   <span className="validation-error">
@@ -1577,48 +1606,29 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="form-input-modern"
-                    name="password"
-                    type={showCorporatePassword ? "text" : "password"}
-                    value={corporateForm.password}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setCorporateForm((prev) => ({
-                        ...prev,
-                        password: value,
-                      }));
-                      setCorporateFormErrors((prev) => ({
-                        ...prev,
-                        password: validateField("password", value),
-                        confirmPassword: !corporateForm.confirmPassword
-                          ? "Confirm your password"
-                          : value !== corporateForm.confirmPassword
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowCorporatePassword((v) => !v)}
-                    aria-label={
-                      showCorporatePassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showCorporatePassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={corporateForm.password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setCorporateForm((prev) => ({ ...prev, password: value }));
+                    setCorporateFormErrors((prev) => ({
+                      ...prev,
+                      password: validateField("password", value),
+                      confirmPassword: !corporateForm.confirmPassword
+                        ? "Confirm your password"
+                        : value !== corporateForm.confirmPassword
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  className={corporateFormErrors.password ? "error" : ""}
+                />
                 {corporateFormErrors.password && (
                   <span className="validation-error">
                     {corporateFormErrors.password}
@@ -1626,49 +1636,31 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Confirm Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="form-input-modern"
-                    name="confirmPassword"
-                    type={showCorporateConfirmPassword ? "text" : "password"}
-                    value={corporateForm.confirmPassword}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setCorporateForm((prev) => ({
-                        ...prev,
-                        confirmPassword: value,
-                      }));
-                      setCorporateFormErrors((prev) => ({
-                        ...prev,
-                        confirmPassword: !value
-                          ? "Confirm your password"
-                          : value !== corporateForm.password
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Confirm Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowCorporateConfirmPassword((v) => !v)}
-                    aria-label={
-                      showCorporateConfirmPassword
-                        ? "Hide password"
-                        : "Show password"
-                    }
-                  >
-                    {showCorporateConfirmPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  value={corporateForm.confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setCorporateForm((prev) => ({
+                      ...prev,
+                      confirmPassword: value,
+                    }));
+                    setCorporateFormErrors((prev) => ({
+                      ...prev,
+                      confirmPassword: !value
+                        ? "Confirm your password"
+                        : value !== corporateForm.password
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Confirm Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  className={corporateFormErrors.confirmPassword ? "error" : ""}
+                />
                 {corporateFormErrors.confirmPassword && (
                   <span className="validation-error">
                     {corporateFormErrors.confirmPassword}
@@ -1886,7 +1878,7 @@ const RegisterPage: React.FC = () => {
                           style={{
                             fontWeight: 600,
                             fontSize: 15,
-                            color: "#222b45",
+                            color: "#000",
                           }}
                         >
                           {file.name}
@@ -2037,14 +2029,14 @@ const RegisterPage: React.FC = () => {
             </div>
             <div className="register-individual-grid">
               <div className="form-row-modern">
-                <label>Government Office Name</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Government Office Name"
                   name="officeName"
                   value={governmentForm.officeName}
                   onChange={handleGovernmentChange}
                   placeholder="Government Office Name"
                   autoComplete="off"
+                  className={governmentFormErrors.officeName ? "error" : ""}
                 />
                 {governmentFormErrors.officeName && (
                   <span className="validation-error">
@@ -2053,14 +2045,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Address</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Address"
                   name="address"
                   value={governmentForm.address}
                   onChange={handleGovernmentChange}
                   placeholder="Address"
                   autoComplete="off"
+                  className={governmentFormErrors.address ? "error" : ""}
                 />
                 {governmentFormErrors.address && (
                   <span className="validation-error">
@@ -2069,14 +2061,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Email</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Email"
                   name="email"
                   value={governmentForm.email}
                   onChange={handleGovernmentChange}
                   placeholder="Email"
                   autoComplete="off"
+                  className={governmentFormErrors.email ? "error" : ""}
                 />
                 {governmentFormErrors.email && (
                   <span className="validation-error">
@@ -2085,14 +2077,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Phone Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Phone Number"
                   name="phoneNumber"
                   value={governmentForm.phoneNumber}
                   onChange={handleGovernmentChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  className={governmentFormErrors.phoneNumber ? "error" : ""}
                 />
                 {governmentFormErrors.phoneNumber && (
                   <span className="validation-error">
@@ -2101,48 +2093,29 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="form-input-modern"
-                    name="password"
-                    type={showGovernmentPassword ? "text" : "password"}
-                    value={governmentForm.password}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setGovernmentForm((prev) => ({
-                        ...prev,
-                        password: value,
-                      }));
-                      setGovernmentFormErrors((prev) => ({
-                        ...prev,
-                        password: validateField("password", value),
-                        confirmPassword: !governmentForm.confirmPassword
-                          ? "Confirm your password"
-                          : value !== governmentForm.confirmPassword
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowGovernmentPassword((v) => !v)}
-                    aria-label={
-                      showGovernmentPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showGovernmentPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={governmentForm.password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setGovernmentForm((prev) => ({ ...prev, password: value }));
+                    setGovernmentFormErrors((prev) => ({
+                      ...prev,
+                      password: validateField("password", value),
+                      confirmPassword: !governmentForm.confirmPassword
+                        ? "Confirm your password"
+                        : value !== governmentForm.confirmPassword
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  className={governmentFormErrors.password ? "error" : ""}
+                />
                 {governmentFormErrors.password && (
                   <span className="validation-error">
                     {governmentFormErrors.password}
@@ -2150,49 +2123,33 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Confirm Password</label>
-                <div className="password-input-container">
-                  <input
-                    className="form-input-modern"
-                    name="confirmPassword"
-                    type={showGovernmentConfirmPassword ? "text" : "password"}
-                    value={governmentForm.confirmPassword}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setGovernmentForm((prev) => ({
-                        ...prev,
-                        confirmPassword: value,
-                      }));
-                      setGovernmentFormErrors((prev) => ({
-                        ...prev,
-                        confirmPassword: !value
-                          ? "Confirm your password"
-                          : value !== governmentForm.password
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Confirm Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowGovernmentConfirmPassword((v) => !v)}
-                    aria-label={
-                      showGovernmentConfirmPassword
-                        ? "Hide password"
-                        : "Show password"
-                    }
-                  >
-                    {showGovernmentConfirmPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  value={governmentForm.confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setGovernmentForm((prev) => ({
+                      ...prev,
+                      confirmPassword: value,
+                    }));
+                    setGovernmentFormErrors((prev) => ({
+                      ...prev,
+                      confirmPassword: !value
+                        ? "Confirm your password"
+                        : value !== governmentForm.password
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Confirm Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  className={
+                    governmentFormErrors.confirmPassword ? "error" : ""
+                  }
+                />
                 {governmentFormErrors.confirmPassword && (
                   <span className="validation-error">
                     {governmentFormErrors.confirmPassword}
@@ -2200,19 +2157,27 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Select Office Type</label>
-                <select
-                  className="form-input-modern"
-                  name="officeType"
-                  value={governmentForm.officeType}
-                  onChange={handleGovernmentChange}
-                >
-                  {officeTypeOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Office Type"
+                  options={officeTypeOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (officeTypeOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === governmentForm.officeType
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setGovernmentForm((prev) => ({
+                      ...prev,
+                      officeType: opt.value,
+                    }))
+                  }
+                />
                 {governmentFormErrors.officeType && (
                   <span className="validation-error">
                     {governmentFormErrors.officeType}
@@ -2220,19 +2185,24 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Select State</label>
-                <select
-                  className="form-input-modern"
-                  name="state"
-                  value={governmentForm.state}
-                  onChange={handleGovernmentChange}
-                >
-                  {nigerianStates.map((state) => (
-                    <option key={state} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="State"
+                  options={nigerianStates.map((s, i) => ({
+                    id: i,
+                    name: s,
+                    value: s,
+                  }))}
+                  selected={
+                    (nigerianStates
+                      .map((s, i) => ({ id: i, name: s, value: s }))
+                      .find(
+                        (opt) => opt.value === governmentForm.state
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setGovernmentForm((prev) => ({ ...prev, state: opt.value }))
+                  }
+                />
                 {governmentFormErrors.state && (
                   <span className="validation-error">
                     {governmentFormErrors.state}
@@ -2243,19 +2213,27 @@ const RegisterPage: React.FC = () => {
                 className="form-row-modern"
                 style={{ gridColumn: "1 / span 2" }}
               >
-                <label>Select Service Type</label>
-                <select
-                  className="form-input-modern"
-                  name="serviceType"
-                  value={governmentForm.serviceType}
-                  onChange={handleGovernmentChange}
-                >
-                  {serviceTypeOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Service Type"
+                  options={serviceTypeOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (serviceTypeOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === governmentForm.serviceType
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setGovernmentForm((prev) => ({
+                      ...prev,
+                      serviceType: opt.value,
+                    }))
+                  }
+                />
                 {governmentFormErrors.serviceType && (
                   <span className="validation-error">
                     {governmentFormErrors.serviceType}
@@ -2331,7 +2309,6 @@ const RegisterPage: React.FC = () => {
               >
                 <label>Email</label>
                 <input
-                  className="form-input-modern"
                   name="email"
                   value={governmentForm.email}
                   disabled
@@ -2342,7 +2319,6 @@ const RegisterPage: React.FC = () => {
                 <label>Password</label>
                 <div className="password-input-container">
                   <input
-                    className="form-input-modern"
                     name="password"
                     type={showGovernmentPassword ? "text" : "password"}
                     value={governmentForm.password}
@@ -2391,7 +2367,6 @@ const RegisterPage: React.FC = () => {
                 <label>Confirm Password</label>
                 <div className="password-input-container">
                   <input
-                    className="form-input-modern"
                     name="confirmPassword"
                     type={showGovernmentConfirmPassword ? "text" : "password"}
                     value={governmentForm.confirmPassword}
@@ -2530,14 +2505,14 @@ const RegisterPage: React.FC = () => {
             </div>
             <div className="register-individual-grid">
               <div className="form-row-modern">
-                <label>First Name</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="First Name"
                   name="firstName"
                   value={familyForm.firstName}
                   onChange={handleFamilyChange}
                   placeholder="First Name"
                   autoComplete="off"
+                  className={familyFormErrors.firstName ? "error" : ""}
                 />
                 {familyFormErrors.firstName && (
                   <span className="validation-error">
@@ -2546,14 +2521,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Last Name</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Last Name"
                   name="lastName"
                   value={familyForm.lastName}
                   onChange={handleFamilyChange}
                   placeholder="Last Name"
                   autoComplete="off"
+                  className={familyFormErrors.lastName ? "error" : ""}
                 />
                 {familyFormErrors.lastName && (
                   <span className="validation-error">
@@ -2562,14 +2537,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Email</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Email"
                   name="email"
                   value={familyForm.email}
                   onChange={handleFamilyChange}
                   placeholder="Email"
                   autoComplete="off"
+                  className={familyFormErrors.email ? "error" : ""}
                 />
                 {familyFormErrors.email && (
                   <span className="validation-error">
@@ -2578,14 +2553,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Phone Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Phone Number"
                   name="phoneNumber"
                   value={familyForm.phoneNumber}
                   onChange={handleFamilyChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  className={familyFormErrors.phoneNumber ? "error" : ""}
                 />
                 {familyFormErrors.phoneNumber && (
                   <span className="validation-error">
@@ -2594,29 +2569,34 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Means of Identification</label>
-                <select
-                  className="form-input-modern"
-                  name="meansOfId"
-                  value={familyForm.meansOfId}
-                  onChange={handleFamilyChange}
-                >
-                  {meansOfIdOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Means of Identification"
+                  options={meansOfIdOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (meansOfIdOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === familyForm.meansOfId
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setFamilyForm((prev) => ({ ...prev, meansOfId: opt.value }))
+                  }
+                />
               </div>
               <div className="form-row-modern">
-                <label>Identification Number</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Identification Number"
                   name="idNumber"
                   value={familyForm.idNumber}
                   onChange={handleFamilyChange}
                   placeholder="Identification Number"
                   autoComplete="off"
+                  className={familyFormErrors.idNumber ? "error" : ""}
                 />
                 {familyFormErrors.idNumber && (
                   <span className="validation-error">
@@ -2625,14 +2605,14 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Address</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Address"
                   name="address"
                   value={familyForm.address}
                   onChange={handleFamilyChange}
                   placeholder="Address"
                   autoComplete="off"
+                  className={familyFormErrors.address ? "error" : ""}
                 />
                 {familyFormErrors.address && (
                   <span className="validation-error">
@@ -2641,19 +2621,24 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Gender</label>
-                <select
-                  className="form-input-modern"
-                  name="gender"
-                  value={familyForm.gender}
-                  onChange={handleFamilyChange}
-                >
-                  {genderOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Gender"
+                  options={genderOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (genderOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === familyForm.gender
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setFamilyForm((prev) => ({ ...prev, gender: opt.value }))
+                  }
+                />
                 {familyFormErrors.gender && (
                   <span className="validation-error">
                     {familyFormErrors.gender}
@@ -2661,19 +2646,24 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Are you a Student?</label>
-                <select
-                  className="form-input-modern"
-                  name="isStudent"
-                  value={familyForm.isStudent}
-                  onChange={handleFamilyChange}
-                >
-                  {studentOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <ListBox
+                  label="Are you a Student?"
+                  options={studentOptions.map((o, i) => ({
+                    id: i,
+                    name: o.label,
+                    value: o.value,
+                  }))}
+                  selected={
+                    (studentOptions
+                      .map((o, i) => ({ id: i, name: o.label, value: o.value }))
+                      .find(
+                        (opt) => opt.value === familyForm.isStudent
+                      ) as ListBoxOption) ?? null
+                  }
+                  onChange={(opt) =>
+                    setFamilyForm((prev) => ({ ...prev, isStudent: opt.value }))
+                  }
+                />
                 {familyFormErrors.isStudent && (
                   <span className="validation-error">
                     {familyFormErrors.isStudent}
@@ -2681,20 +2671,15 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
               <div className="form-row-modern">
-                <label>Date of Birth</label>
-                <input
-                  className="form-input-modern"
+                <Input
+                  label="Date of Birth"
                   name="dob"
                   type="date"
                   value={familyForm.dob}
                   onChange={handleFamilyChange}
                   autoComplete="off"
+                  error={familyFormErrors.dob || false}
                 />
-                {familyFormErrors.dob && (
-                  <span className="validation-error">
-                    {familyFormErrors.dob}
-                  </span>
-                )}
               </div>
             </div>
             <GradientButton
@@ -2769,7 +2754,6 @@ const RegisterPage: React.FC = () => {
               >
                 <label>Email</label>
                 <input
-                  className="form-input-modern"
                   name="email"
                   value={familyForm.email}
                   disabled
@@ -2780,7 +2764,6 @@ const RegisterPage: React.FC = () => {
                 <label>Password</label>
                 <div className="password-input-container">
                   <input
-                    className="form-input-modern"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -2822,7 +2805,6 @@ const RegisterPage: React.FC = () => {
                 <label>Confirm Password</label>
                 <div className="password-input-container">
                   <input
-                    className="form-input-modern"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
@@ -2906,7 +2888,7 @@ const RegisterPage: React.FC = () => {
               style={{
                 fontWeight: 600,
                 fontSize: 22,
-                color: "#222b45",
+                color: "#000",
                 marginBottom: 18,
               }}
             >

@@ -2,10 +2,13 @@ import React from "react";
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 // We intentionally avoid using BorderButton/SearchInput here so FieldButton styles everything directly
 import "./fieldbutton.css";
+import SolidButton from "../SolidButton";
 
 interface FieldInputConfig {
   placeholder?: string;
   value?: string;
+  /** input type (e.g. "text", "date") */
+  type?: string;
   onChange?: (
     e:
       | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -13,6 +16,7 @@ interface FieldInputConfig {
   ) => void;
   options?: string[];
   withDropdown?: boolean;
+  hideIcon?: boolean;
 }
 
 interface FieldButtonProps {
@@ -20,6 +24,7 @@ interface FieldButtonProps {
   buttons?: Array<{
     text?: string;
     icon?: string; // optional svg path
+    iconClassName?: string; // optional custom class for icon styling
     onClick?: () => void;
     className?: string; // optional extra class for custom overrides
     type?: "button" | "submit" | "reset";
@@ -44,7 +49,9 @@ const FieldButton: React.FC<FieldButtonProps> = ({
                 cfg.options ? "fieldbutton-search-dropdown-wrapper" : ""
               }`}
             >
-              <FiSearch className="fieldbutton-search-icon" color="#626262" />
+              {!cfg.hideIcon && (
+                <FiSearch className="fieldbutton-search-icon" color="#626262" />
+              )}
               {cfg.options ? (
                 <select
                   className="fieldbutton-search-select"
@@ -68,7 +75,7 @@ const FieldButton: React.FC<FieldButtonProps> = ({
               ) : (
                 <input
                   className="fieldbutton-search-input"
-                  type="text"
+                  type={cfg.type ?? "text"}
                   placeholder={cfg.placeholder ?? "Search"}
                   value={cfg.value}
                   onChange={(e) =>
@@ -90,21 +97,25 @@ const FieldButton: React.FC<FieldButtonProps> = ({
 
         {/* render buttons immediately after inputs so they sit next to them */}
         {buttons.map((btn, idx) => (
-          <button
+          <SolidButton
             key={`inline-btn-${idx}`}
             type={btn.type ?? "button"}
-            className={`fieldbutton-btn `}
             onClick={btn.onClick}
+            text={btn.text}
+            size="medium"
+            variant="secondary"
+            rounded={false}
+            className={btn.className}
+            style={{ height: "50px" }}
           >
             {btn.icon && (
               <img
                 src={btn.icon}
                 alt={btn.text}
-                className="fieldbutton-btn-icon"
+                className={`fieldbutton-btn-icon ${btn.iconClassName || ""}`}
               />
             )}
-            {btn.text ?? "Button"}
-          </button>
+          </SolidButton>
         ))}
       </div>
     </div>

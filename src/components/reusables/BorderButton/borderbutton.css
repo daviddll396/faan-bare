@@ -2,7 +2,7 @@
   background: #f7f9fc;
   border: 1px solid #007948;
   border-radius: 12px;
-  padding: 9px 12px;
+  padding: 9px 8px;
   color: #007948;
   font-size: 15px;
   font-weight: 500;
@@ -10,7 +10,9 @@
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  height: 48px; /* Match SearchInput default height */
+  box-sizing: border-box;
 }
 
 .border-button:hover {
@@ -22,18 +24,66 @@
   height: 14px;
 }
 
-@media (max-width: 1450px) {
+/* ======================================== */
+/* RESPONSIVE STYLING - MEDIA QUERIES */
+/* ======================================== */
+
+/* Desktop (1200px - 1399px) */
+@media (max-width: 1399px) {
   .border-button {
-    padding: 8px 15px;
-    font-size: 12px;
-    border-radius: 5px;
+    height: 44px; /* Match SearchInput height */
+    padding: 7px 6px;
+    font-size: 14px;
+    border-radius: 10px;
+    gap: 3px;
+  }
+  .button-icon {
+    width: 20px;
+    height: 20px;
   }
 }
 
+/* Large Tablet (992px - 1199px) */
+@media (max-width: 1199px) {
+  .border-button {
+    height: 40px; /* Match SearchInput height */
+    padding: 6px 5px;
+    font-size: 13px;
+    border-radius: 9px;
+    gap: 3px;
+  }
+  .button-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+  .border-button {
+    height: 36px; /* Match SearchInput height */
+    padding: 5px 4px;
+    font-size: 12px;
+    border-radius: 8px;
+    gap: 2px;
+  }
+  .button-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Mobile (768px and below) */
 @media (max-width: 768px) {
   .border-button {
-    padding: 8px 15px;
-    font-size: 12px;
-    border-radius: 5px;
+    height: 34px; /* Match SearchInput height */
+    padding: 4px 3px;
+    font-size: 11px;
+    border-radius: 7px;
+    gap: 2px;
+  }
+  .button-icon {
+    width: 14px;
+    height: 14px;
   }
 }

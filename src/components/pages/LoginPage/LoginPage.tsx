@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import Input from "../../reusables/Input/Input";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/boarding1.jpg";
 import "./LoginPage.css";
@@ -11,7 +11,7 @@ import "./LoginPage.css";
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+
   const [validationErrors, setValidationErrors] = useState({
     email: "",
     password: "",
@@ -157,52 +157,33 @@ const LoginPage: React.FC = () => {
             Enter your email and password details to log in
           </p>
           <div className="form-row-modern">
-            <label htmlFor="email">Email</label>
-            <input
+            <Input
+              label="Email"
               type="email"
               id="email"
-              className={`form-input-modern ${
-                validationErrors.email ? "error" : ""
-              }`}
+              className={`${validationErrors.email ? "error" : ""}`}
               value={email}
               onChange={handleEmailChange}
               placeholder="example@gmail.com"
               disabled={isSubmitting}
               required
             />
-            {validationErrors.email && (
-              <span className="validation-error">{validationErrors.email}</span>
-            )}
+        
           </div>
           <div className="form-row-modern">
-            <label htmlFor="password">Password</label>
-            <div className="password-input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                className={`form-input-modern ${
-                  validationErrors.password ? "error" : ""
-                }`}
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="********"
-                disabled={isSubmitting}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle-btn"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {validationErrors.password && (
-              <span className="validation-error">
-                {validationErrors.password}
-              </span>
-            )}
+            <Input
+              label="Password"
+              type="password"
+              id="password"
+              className={`${validationErrors.password ? "error" : ""}`}
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="********"
+              disabled={isSubmitting}
+              required
+              passwordToggle
+            />
+         
           </div>
           <div className="form-row-modern form-row-remember">
             <Link to="/forgot-password" className="forgot-link">

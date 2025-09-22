@@ -1,5 +1,5 @@
 import { useAuth } from "../../../contexts/AuthContext";
-import GradientButton from "../../reusables/GradientButton/GradientButton";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import "./logoutpage.css";
 
 const LogoutPage = () => {
@@ -34,14 +34,24 @@ const LogoutPage = () => {
         <div className="logout-title">Log Out</div>
         <div className="logout-text">Are you sure you want to Log Out?</div>
         <div style={{ width: "100%", marginBottom: 14 }}>
-          <GradientButton onClick={handleLogout} fullWidth>
-          YES, LOG OUT
-          </GradientButton>
+          <SolidButton
+            onClick={handleLogout}
+            fullWidth
+            variant="primary"
+            size="medium"
+          >
+            YES, LOG OUT
+          </SolidButton>
         </div>
         <div style={{ width: "100%" }}>
-          <GradientButton variant="close" onClick={handleCancel} fullWidth>
-          CANCEL
-          </GradientButton>
+          <SolidButton
+            onClick={handleCancel}
+            fullWidth
+            variant="secondary"
+            size="medium"
+          >
+            CANCEL
+          </SolidButton>
         </div>
       </div>
     </div>

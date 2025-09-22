@@ -68,13 +68,13 @@
 .login-title {
   font-size: 28px;
   font-weight: 700;
-  color: #0f172a;
+  color: #000;
   margin-bottom: 8px;
   text-align: center;
 }
 
 .login-subtitle {
-  color: #6b7280;
+  color: #969696;
   font-size: 15px;
   font-weight: 400;
   text-align: center;
@@ -88,7 +88,7 @@
 }
 
 .login-error {
-  background: #fef2f2;
+  
   color: #dc2626;
   padding: 12px 16px;
   border-radius: 8px;
@@ -161,22 +161,6 @@
   gap: 0;
   width: 100%;
   animation: slideInUp 0.4s ease-out 0.4s both;
-}
-
-/* form-input-modern styles centralized in auth-common.css */
-
-/* Override form input styles locally to match new aesthetic */
-.form-input-modern {
-  border: 1.5px solid #eef2f7;
-  border-radius: 12px;
-  padding: 14px 16px;
-  font-size: 15px;
-  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.02);
-}
-.form-input-modern:focus {
-  border-color: #10b981;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
-  outline: none;
 }
 
 .login-btn-modern {
@@ -264,7 +248,6 @@
 /* duplicate removed: labels, using auth-common.css */
 
 .auth-form-modern,
-.form-input-modern,
 .login-btn-modern,
 .auth-form-title-modern,
 .auth-form-subtitle-modern,
@@ -273,38 +256,20 @@
 .remember-label,
 .auth-form-footer-modern,
 .auth-form-link-modern {
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
-/* Validation error styling */
-.validation-error {
-  color: #dc2626;
-  font-size: 12px;
-  font-weight: 500;
-  margin-top: 4px;
-  margin-left: 2px;
-  font-family: "Archivo", sans-serif;
-}
 
-/* Error state for inputs */
-.form-input-modern.error {
-  border-color: #dc2626;
-  background-color: #fef2f2;
-}
 
-.form-input-modern.error:focus {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
-}
 
-/* Password input container with toggle button */
+/* Password input container with toggle button (targets reusable input) */
 .password-input-container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.password-input-container .form-input-modern {
+.password-input-container .reusable-input {
   padding-right: 45px; /* Make space for the toggle button */
   width: 100%;
 }
@@ -380,7 +345,7 @@
     font-size: 22px;
   }
 
-  .form-input-modern {
+  .reusable-input {
     padding: 14px 16px;
   }
 }
@@ -406,7 +371,7 @@
 }
 
 .one-time-text {
-  color: #6b7280;
+  color: #969696;
   font-size: 14px;
   margin-bottom: 12px;
   line-height: 1.4;

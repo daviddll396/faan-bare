@@ -5,7 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
-  pageTitle: string;
+  pageTitle?: string;
   onPageChange?: (page: string) => void;
 }
 
@@ -30,7 +30,9 @@ const Header: React.FC<HeaderProps> = ({ pageTitle, onPageChange }) => {
     <>
       {/* Desktop Header - Only visible above 768px */}
       <div className="header desktop-only-header">
-        <h1 className="page-title">{pageTitle}</h1>
+        <h1 className="page-title">
+          {pageTitle ? pageTitle : `Hi, ${user?.name ?? "Guest User"}`}
+        </h1>
         <div
           className={`user-profile ${open ? "open" : ""}`}
           ref={containerRef}

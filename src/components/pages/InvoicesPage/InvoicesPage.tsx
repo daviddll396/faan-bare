@@ -3,11 +3,12 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { useLoading } from "../../../contexts/LoadingContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
+import SolidButton from "../../reusables/SolidButton";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import "./InvoicesPage.css";
+import ServicesGrid from "../../reusables/ServicesGrid/ServicesGrid";
 
 // helper to map service names to images (reuses same assets as ServicesPage)
 const getImageForService = (serviceName: string): string => {
@@ -369,6 +370,32 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     }
   }, [searchQuery, invoices]);
 
+  // Explicit search and clear handlers (used by Search / Clear buttons)
+  const handleSearch = () => {
+    if (searchQuery.trim() === "") {
+      setFilteredInvoices(invoices);
+      return;
+    }
+
+    const filtered = invoices.filter(
+      (invoice) =>
+        invoice.invoiceNumber
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        invoice.customerName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        invoice.status.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setFilteredInvoices(filtered);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setFilteredInvoices(invoices);
+  };
+
   // Handle service selection for invoice
   const handleServiceSelection = (service: {
     id: number;
@@ -627,6 +654,9 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           <PageTitle
             icon="/icons/nav-bill-icon.svg"
             title="Create Invoice"
+            subtitle={
+              "Create and manage invoices by selecting services and generating invoices for customers."
+            }
             breadcrumb={[
               { label: "Invoices", icon: "/icons/nav-bill-icon.svg" },
               { label: "Create Invoice" },
@@ -640,101 +670,81 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
             }}
           />
         ) : (
-          <PageTitle icon="/icons/nav-bill-icon.svg" title="Invoices" />
+          <PageTitle
+            icon="/icons/nav-bill-icon.svg"
+            title="Invoices"
+            subtitle={"Search & Manage Invoices"}
+          />
         )}
       </div>
       {!showCreateInvoicePage && (
         <div className="page-actions">
-          <FieldButton
-            inputs={[
-              {
-                placeholder: "Search invoices...",
-                value: searchQuery,
-                onChange: (
-                  e:
-                    | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                    | { target: { value: string } }
-                ) => {
-                  const change = e as React.ChangeEvent<
-                    HTMLInputElement | HTMLSelectElement
-                  >;
-                  if (change && (change.currentTarget || change.nativeEvent)) {
-                    setSearchQuery(change.currentTarget.value);
-                    return;
-                  }
-                  const fallback = e as { target: { value: string } };
-                  setSearchQuery(fallback.target.value);
-                },
-              },
-            ]}
-            buttons={[
-              {
-                text: "Create New Invoice",
-                onClick: () => setShowCreateInvoicePage(true),
-                className: "border-button-invoicespage",
-              },
-            ]}
-          />
+          <div className="invoices-search-section">
+            <div className="invoices-search-inputs invoices-action-buttons">
+              <FieldButton
+                inputs={[
+                  {
+                    placeholder: "Search invoices...",
+                    value: searchQuery,
+                    onChange: (
+                      e:
+                        | React.ChangeEvent<
+                            HTMLInputElement | HTMLSelectElement
+                          >
+                        | { target: { value: string } }
+                    ) => {
+                      const change = e as React.ChangeEvent<
+                        HTMLInputElement | HTMLSelectElement
+                      >;
+                      if (
+                        change &&
+                        (change.currentTarget || change.nativeEvent)
+                      ) {
+                        setSearchQuery(change.currentTarget.value);
+                        return;
+                      }
+                      const fallback = e as { target: { value: string } };
+                      setSearchQuery(fallback.target.value);
+                    },
+                  },
+                ]}
+                buttons={[
+                  { text: "Search", onClick: handleSearch },
+                  { text: "Clear", onClick: handleClearSearch },
+                  ...(user?.role === "Admin"
+                    ? []
+                    : [
+                        {
+                          text: "Create New Invoice",
+                          onClick: () => setShowCreateInvoicePage(true),
+                          className: "border-button-invoicespage",
+                        },
+                      ]),
+                ]}
+                className="invoices-search-fieldbutton invoices-actions-fieldbutton"
+              />
+            </div>
+          </div>
         </div>
       )}
       {showCreateInvoicePage && (
         <div className="create-invoice-subpage">
-          <div
-            className="all-transactions-header"
-            style={{ justifyContent: "space-between", alignItems: "center" }}
-          >
-            {" "}
-            <BorderButton
-              text="Back to Invoices"
-              onClick={() => {
-                setShowCreateInvoicePage(false);
-                setSelectedServices([]);
-              }}
-              className="back-to-dashboard-btn"
-            />{" "}
-            <h2 className="all-transactions-title">Create New Invoice</h2>
-          </div>
-
           <div className="services-selection">
-            <p className="services-selection-subtitle">
-              Select Services to add to invoice.
-            </p>
-            <div className="available-services">
-              {availableServices.map((service) => (
-                <div key={service.id} className="service-card">
-                  <div className="service-card-img-wrap">
-                    <img
-                      src={getImageForService(service.name)}
-                      alt={service.name}
-                      className="service-card-img"
-                    />
-                  </div>
-
-                  <div className="service-card-body">
-                    <div className="service-card-top">
-                      <div className="service-card-name">{service.name}</div>
-                      <div className="service-card-price">
-                        ₦{service.amount.toLocaleString()}
-                      </div>
-                    </div>
-
-                    <div className="service-card-desc">
-                      {service.description || "Description not available"}
-                    </div>
-
-                    <div className="service-card-meta">
-                      <button
-                        type="button"
-                        className="service-card-action-text"
-                        onClick={() => handleServiceSelection(service)}
-                      >
-                        Add to Invoice
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ServicesGrid
+              className="available-services"
+              items={availableServices.map((s) => ({
+                id: s.id,
+                image: getImageForService(s.name),
+                name: s.name,
+                price: s.amount,
+                description: s.description,
+              }))}
+              actionText="Add to Invoice"
+              onAction={(id) => {
+                const svc = availableServices.find((a) => a.id === id);
+                if (svc) handleServiceSelection(svc);
+              }}
+            />
           </div>
 
           {selectedServices.length > 0 && (
@@ -789,9 +799,27 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
         <div className="invoices-container">
           {filteredInvoices.length === 0 ? (
             <div className="no-invoices">
-              <p>
-                No invoices found. Create your first invoice to get started.
-              </p>
+              <div className="no-invoices-icon">
+                <img
+                  src="/icons/airplane-icon.svg"
+                  alt="No invoices"
+                  width={48}
+                  height={48}
+                  className="desktop-icon"
+                />
+                <img
+                  src="/icons/airplane-icon.svg"
+                  alt="No invoices"
+                  width={36}
+                  height={36}
+                  className="mobile-icon"
+                />
+              </div>
+
+              <div className="no-invoices-title">No invoices found</div>
+              <div className="no-invoices-message">
+                Create your first invoice to get started.
+              </div>
             </div>
           ) : (
             <div className="invoices-grid">
@@ -857,19 +885,21 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
                   <div className="invoice-actions">
                     {invoice.status === "pending" && (
-                      <GradientButton
+                      <SolidButton
                         onClick={() => handlePayment(invoice)}
                         size="small"
+                        variant="primary"
                       >
                         Pay Now
-                      </GradientButton>
+                      </SolidButton>
                     )}
-                    <button
-                      className="view-details-btn"
+                    <SolidButton
                       onClick={() => handleViewDetails(invoice)}
+                      size="small"
+                      variant="secondary"
                     >
                       View Details
-                    </button>
+                    </SolidButton>
                   </div>
                 </div>
               ))}
@@ -885,7 +915,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
         className="invoice-summary-modal"
       >
         <div className="modal-content">
-          <h2 style={{ color: "#111827" }}>Invoice Summary</h2>
+          <h2 style={{ color: "#000" }}>Invoice Summary</h2>
 
           {selectedInvoice && (
             <div
@@ -894,18 +924,18 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
             >
               {selectedInvoice.services.map((s) => (
                 <div key={s.id} className="booking-summary-row">
-                  <span style={{ color: "#111827" }}>
+                  <span style={{ color: "#000" }}>
                     {s.name} x{s.quantity}
                   </span>
-                  <span style={{ color: "#111827" }}>
+                  <span style={{ color: "#000" }}>
                     ₦{(s.amount * s.quantity).toLocaleString()}
                   </span>
                 </div>
               ))}
 
               <div className="booking-summary-row">
-                <span style={{ color: "#6b7280" }}>SUB-TOTAL</span>
-                <span style={{ color: "#111827" }}>
+                <span style={{ color: "#969696" }}>SUB-TOTAL</span>
+                <span style={{ color: "#000" }}>
                   ₦
                   {invoiceBreakdown
                     ? invoiceBreakdown.subtotal.toLocaleString()
@@ -914,13 +944,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               </div>
 
               <div className="booking-summary-row">
-                <span style={{ color: "#6b7280" }}>
+                <span style={{ color: "#969696" }}>
                   VAT{" "}
                   {invoiceBreakdown
                     ? `(${(invoiceBreakdown.vatRate * 100).toFixed(2)}%)`
                     : ""}
                 </span>
-                <span style={{ color: "#111827" }}>
+                <span style={{ color: "#000" }}>
                   ₦
                   {invoiceBreakdown
                     ? invoiceBreakdown.vatAmount.toLocaleString()
@@ -929,13 +959,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               </div>
 
               <div className="booking-summary-row">
-                <span style={{ color: "#6b7280" }}>OTHER CHARGES</span>
-                <span style={{ color: "#111827" }}>₦0</span>
+                <span style={{ color: "#969696" }}>OTHER CHARGES</span>
+                <span style={{ color: "#000" }}>₦0</span>
               </div>
 
               <div className="booking-summary-row total">
-                <span style={{ color: "#111827" }}>TOTAL</span>
-                <span style={{ color: "#111827" }}>
+                <span style={{ color: "#000" }}>TOTAL</span>
+                <span style={{ color: "#000" }}>
                   ₦
                   {invoiceBreakdown
                     ? invoiceBreakdown.total.toLocaleString()
@@ -943,21 +973,21 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                 </span>
               </div>
 
-              <div style={{ marginTop: 12, fontSize: 13, color: "#6b7280" }}>
-                <strong style={{ color: "#374151" }}>Invoice:</strong>{" "}
+              <div style={{ marginTop: 12, fontSize: 13, color: "#969696" }}>
+                <strong style={{ color: "#000" }}>Invoice:</strong>{" "}
                 {selectedInvoice.invoiceNumber}
               </div>
 
-              <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
-                <strong style={{ color: "#374151" }}>Customer:</strong>{" "}
+              <div style={{ marginTop: 6, fontSize: 13, color: "#969696" }}>
+                <strong style={{ color: "#000" }}>Customer:</strong>{" "}
                 {selectedInvoice.customerName}
               </div>
 
-              <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
-                <strong style={{ color: "#374151" }}>Created:</strong>{" "}
+              <div style={{ marginTop: 6, fontSize: 13, color: "#969696" }}>
+                <strong style={{ color: "#000" }}>Created:</strong>{" "}
                 {selectedInvoice.createdAt.toLocaleDateString()}
                 {/* •
-                <strong style={{ color: "#374151", marginLeft: 8 }}>
+                <strong style={{ color: "#000", marginLeft: 8 }}>
                   Due:
                 </strong>{" "}
                 {selectedInvoice.dueDate.toLocaleDateString()} */}
@@ -1065,25 +1095,25 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                   }</title>
                   <style>
                     @page { margin: 10mm; }
-                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#111827}
-                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#111827}
+                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
+                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
                     .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
                     .receipt-head{text-align:center;margin:8px 0}
-                    .receipt-brand{font-weight:700;color:#374151;font-size:14px}
-                    .receipt-title{font-size:16px;font-weight:800;color:#111827;letter-spacing:0.06em;margin-top:2px}
-                    .receipt-sub{font-size:12px;color:#6b7280;margin-top:2px}
+                    .receipt-brand{font-weight:700;color:#000;font-size:14px}
+                    .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
+                    .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
                     .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
                     .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
                     .receipt-meta .meta-row:last-child{border-bottom:none}
-                    .receipt-meta .meta-row span:first-child{color:#6b7280;font-size:12px}
+                    .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
                     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
                     .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
                     .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
-                    .receipt-items .thead{color:#6b7280;font-size:12px}
+                    .receipt-items .thead{color:#969696;font-size:12px}
                     .receipt-items .row{border-top:1px dashed #e5e7eb}
                     .right{text-align:right}
                     .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}
-                    .receipt-foot{margin-top:10px;color:#6b7280;font-size:12px;text-align:center}
+                    .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
                   </style>
                   </head><body>
                     <div class='receipt-paper'>

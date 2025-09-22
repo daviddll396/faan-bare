@@ -48,7 +48,6 @@
   display: flex;
   flex-direction: row-reverse;
   border: none;
- 
 }
 
 /* Responsive zoom scaling for the wallet card to handle different desktop sizes and scaling */
@@ -108,20 +107,7 @@
   transform: scale(0.95);
 }
 
-.fund-wallet-btn {
-  border: 1.5px solid #007948;
-  background: #fff;
-  color: #007948;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 10px 28px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.fund-wallet-btn:hover {
-  background: #eafaf3;
-}
+
 .booking-cards-row {
   display: flex;
   gap: 24px;
@@ -148,7 +134,7 @@
 .booking-value {
   font-size: 24px;
   font-weight: 700;
-  color: #070600;
+  color: #000;
 }
 .booking-card.completed .booking-value {
   color: #22c55e;
@@ -183,7 +169,7 @@
 .fund-wallet-title {
   font-weight: 700;
   font-size: 22px;
-  color: #222b45;
+  color: #000;
   margin-bottom: 10px;
   text-align: left;
   width: 100%;
@@ -235,7 +221,7 @@
   font-size: 22px;
   font-family: inherit;
   background: #fff;
-  color: #222b45;
+  color: #000;
   outline: none;
   font-weight: 600;
   box-sizing: border-box;
@@ -311,7 +297,7 @@
 .fund-wallet-success-title {
   font-size: 28px;
   font-weight: 800;
-  color: #222b45;
+  color: #000;
   text-align: center;
   margin-bottom: 10px;
   margin-top: 0;
@@ -510,7 +496,7 @@
 .all-transactions-title {
   font-size: 22px;
   font-weight: 500;
-  color: #070600;
+  color: #000;
 
   margin: 0;
 }
@@ -535,7 +521,7 @@
 .funding-records-title {
   font-size: 18px;
   font-weight: 700;
-  color: #070600;
+  color: #000;
   margin: 0 0 12px 0;
 }
 .funding-records-table .status-badge {
@@ -548,7 +534,6 @@
 }
 
 /* Status Badge Styling - Identical to PaymentPage */
-
 
 .all-transactions-table .status-badge.cancelled {
   background: #fdeaea;

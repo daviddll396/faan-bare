@@ -117,7 +117,7 @@
 .confirmation-modal-title {
   font-size: 24px;
   font-weight: 700;
-  color: #222b45;
+  color: #000;
   text-align: center;
   margin-bottom: 12px;
   margin-top: 0;
@@ -295,4 +295,3 @@
     width: 100%;
   }
 }
- 

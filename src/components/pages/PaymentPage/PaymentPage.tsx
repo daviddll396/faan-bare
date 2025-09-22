@@ -12,6 +12,7 @@ import "./paymentpage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import PaymentsIcon from "/icons/nav-payment-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
+import SwitchingTabs from "../../reusables/SwitchingTabs/SwitchingTabs";
 
 const tabs = ["All", "Pending", "Completed", "Cancelled/Abandoned"];
 
@@ -270,76 +271,103 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     <div className="payment-page">
       <LoadingSpinner isVisible={isLoading} message="Loading transactions..." />
       {/* Mobile PageTitle for 768px and below */}
-      {isMobile && <PageTitle icon={PaymentsIcon} title="Payments" />}
+      {isMobile && (
+        <PageTitle
+          icon={PaymentsIcon}
+          title="Payments"
+          subtitle={
+            "Find transactions by service name or bill number and filter by status using the tabs below."
+          }
+        />
+      )}
+
+      {/* Search header moved above tabs */}
+      {windowWidth > 768 && (
+        <PageTitle
+          icon={PaymentsIcon}
+          title="Payments"
+          subtitle={
+            "Find transactions by service name or bill number and filter by status using the tabs below."
+          }
+        />
+      )}
+
       {/* Tabs row only for desktop/tablet */}
       {windowWidth > 768 && (
         <div className="payment-tabs-row">
-          {tabs.map((tab) => (
-            <div
-              key={tab}
-              className={`payment-tab${activeTab === tab ? " active" : ""}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </div>
-          ))}
+          <SwitchingTabs
+            items={tabs.map((t) => ({ id: t, label: t }))}
+            activeId={activeTab}
+            onChange={(id: string) => setActiveTab(id)}
+          />
         </div>
       )}
       <div className="payment-search-row">
-        <FieldButton
-          inputs={[
-            {
-              placeholder: "Search name",
-              value: searchName,
-              onChange: (
-                e:
-                  | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                  | { target: { value: string } }
-              ) => {
-                const change = e as React.ChangeEvent<
-                  HTMLInputElement | HTMLSelectElement
-                >;
-                if (change && (change.currentTarget || change.nativeEvent)) {
-                  setSearchName(change.currentTarget.value);
-                  return;
-                }
-                const fallback = e as { target: { value: string } };
-                setSearchName(fallback.target.value);
-              },
-            },
-            {
-              placeholder: "Bill No.",
-              value: searchBillNo,
-              onChange: (
-                e:
-                  | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                  | { target: { value: string } }
-              ) => {
-                const change = e as React.ChangeEvent<
-                  HTMLInputElement | HTMLSelectElement
-                >;
-                if (change && (change.currentTarget || change.nativeEvent)) {
-                  setSearchBillNo(change.currentTarget.value);
-                  return;
-                }
-                const fallback = e as { target: { value: string } };
-                setSearchBillNo(fallback.target.value);
-              },
-            },
-          ]}
-          buttons={[
-            {
-              text: "Search",
-              onClick: handleSearch,
-              className: "border-button-paymentpage",
-            },
-            {
-              text: "Clear",
-              onClick: handleClearSearch,
-              className: "border-button-paymentpage",
-            },
-          ]}
-        />
+        <div className="payment-search-section">
+          <div className="payment-search-inputs payment-action-buttons">
+            <FieldButton
+              inputs={[
+                {
+                  placeholder: "Search name",
+                  value: searchName,
+                  onChange: (
+                    e:
+                      | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                      | { target: { value: string } }
+                  ) => {
+                    const change = e as React.ChangeEvent<
+                      HTMLInputElement | HTMLSelectElement
+                    >;
+                    if (
+                      change &&
+                      (change.currentTarget || change.nativeEvent)
+                    ) {
+                      setSearchName(change.currentTarget.value);
+                      return;
+                    }
+                    const fallback = e as { target: { value: string } };
+                    setSearchName(fallback.target.value);
+                  },
+                },
+                {
+                  placeholder: "Bill No.",
+                  value: searchBillNo,
+                  onChange: (
+                    e:
+                      | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                      | { target: { value: string } }
+                  ) => {
+                    const change = e as React.ChangeEvent<
+                      HTMLInputElement | HTMLSelectElement
+                    >;
+                    if (
+                      change &&
+                      (change.currentTarget || change.nativeEvent)
+                    ) {
+                      setSearchBillNo(change.currentTarget.value);
+                      return;
+                    }
+                    const fallback = e as { target: { value: string } };
+                    setSearchBillNo(fallback.target.value);
+                  },
+                },
+              ]}
+              buttons={[
+                {
+                  text: "Search",
+                  onClick: handleSearch,
+                  className: "border-button-paymentpage",
+                },
+                {
+                  text: "Clear",
+                  onClick: handleClearSearch,
+                  className: "border-button-paymentpage",
+                },
+              ]}
+              className="payment-search-fieldbutton payment-actions-fieldbutton"
+            />
+          </div>
+        </div>
       </div>
       {!isLoading && (
         <DataTable
@@ -428,7 +456,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       >
         {modal?.type === "invoice" && (
           <div className="modal-content">
-            <h2 style={{ color: "#111827" }}>Invoice Summary</h2>
+            <h2 style={{ color: "#000" }}>Invoice Summary</h2>
 
             {modal.data && (
               <div
@@ -437,10 +465,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               >
                 {/* single-line item (payment page uses single service per item) */}
                 <div className="booking-summary-row">
-                  <span style={{ color: "#111827" }}>
-                    {modal.data.service} x1
-                  </span>
-                  <span style={{ color: "#111827" }}>{modal.data.amount}</span>
+                  <span style={{ color: "#000" }}>{modal.data.service} x1</span>
+                  <span style={{ color: "#000" }}>{modal.data.amount}</span>
                 </div>
 
                 {/* parse amount and compute VAT */}
@@ -456,26 +482,26 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   return (
                     <>
                       <div className="booking-summary-row">
-                        <span style={{ color: "#6b7280" }}>SUB-TOTAL</span>
-                        <span style={{ color: "#111827" }}>
+                        <span style={{ color: "#969696" }}>SUB-TOTAL</span>
+                        <span style={{ color: "#000" }}>
                           ₦{subtotal.toLocaleString()}
                         </span>
                       </div>
                       <div className="booking-summary-row">
-                        <span style={{ color: "#6b7280" }}>
+                        <span style={{ color: "#969696" }}>
                           VAT ({(vatRate * 100).toFixed(2)}%)
                         </span>
-                        <span style={{ color: "#111827" }}>
+                        <span style={{ color: "#000" }}>
                           ₦{vatAmount.toLocaleString()}
                         </span>
                       </div>
                       <div className="booking-summary-row">
-                        <span style={{ color: "#6b7280" }}>OTHER CHARGES</span>
-                        <span style={{ color: "#111827" }}>₦0</span>
+                        <span style={{ color: "#969696" }}>OTHER CHARGES</span>
+                        <span style={{ color: "#000" }}>₦0</span>
                       </div>
                       <div className="booking-summary-row total">
-                        <span style={{ color: "#111827" }}>TOTAL</span>
-                        <span style={{ color: "#111827" }}>
+                        <span style={{ color: "#000" }}>TOTAL</span>
+                        <span style={{ color: "#000" }}>
                           ₦{total.toLocaleString()}
                         </span>
                       </div>
@@ -483,20 +509,20 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   );
                 })()}
 
-                <div style={{ marginTop: 12, fontSize: 13, color: "#6b7280" }}>
-                  <strong style={{ color: "#374151" }}>Invoice:</strong>{" "}
+                <div style={{ marginTop: 12, fontSize: 13, color: "#969696" }}>
+                  <strong style={{ color: "#000" }}>Invoice:</strong>{" "}
                   {modal.data.billNo}
                 </div>
 
                 {modal.data.customerName && (
-                  <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
-                    <strong style={{ color: "#374151" }}>Customer:</strong>{" "}
+                  <div style={{ marginTop: 6, fontSize: 13, color: "#969696" }}>
+                    <strong style={{ color: "#000" }}>Customer:</strong>{" "}
                     {modal.data.customerName}
                   </div>
                 )}
 
-                <div style={{ marginTop: 6, fontSize: 13, color: "#6b7280" }}>
-                  <strong style={{ color: "#374151" }}>Created:</strong>{" "}
+                <div style={{ marginTop: 6, fontSize: 13, color: "#969696" }}>
+                  <strong style={{ color: "#000" }}>Created:</strong>{" "}
                   {new Date().toLocaleDateString()}
                 </div>
               </div>
@@ -571,21 +597,21 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   }</title>
                   <style>
                     @page { margin: 10mm; }
-                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#111827}
-                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#111827}
+                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
+                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
                     .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
                     .receipt-head{text-align:center;margin:8px 0}
-                    .receipt-brand{font-weight:700;color:#374151;font-size:14px}
-                    .receipt-title{font-size:16px;font-weight:800;color:#111827;letter-spacing:0.06em;margin-top:2px}
-                    .receipt-sub{font-size:12px;color:#6b7280;margin-top:2px}
+                    .receipt-brand{font-weight:700;color:#000;font-size:14px}
+                    .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
+                    .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
                     .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
                     .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
                     .receipt-meta .meta-row:last-child{border-bottom:none}
-                    .receipt-meta .meta-row span:first-child{color:#6b7280;font-size:12px}
+                    .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
                     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
                     .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
                     .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
-                    .receipt-items .thead{color:#6b7280;font-size:12px}
+                    .receipt-items .thead{color:#969696;font-size:12px}
                     .receipt-items .row{border-top:1px dashed #e5e7eb}
                     .right{text-align:right}
                     .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}

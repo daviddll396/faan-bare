@@ -8,12 +8,6 @@
   animation: slideInUp 0.6s ease-out;
 }
 
-/* Page Header */
-.page-header {
-  margin-bottom: 24px;
-  animation: slideInUp 0.6s ease-out 0.1s both;
-}
-
 /* Page Actions */
 .page-actions {
   display: flex;
@@ -28,41 +22,128 @@
   max-width: 400px;
 }
 
+/* Invoices search card to match other pages */
+.invoices-search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  background: transparent;
+  border-radius: 12px;
+  padding: 0;
+}
+
+.invoices-search-inputs {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.invoices-search-fieldbutton {
+  width: 100%;
+}
+
+.invoices-actions-fieldbutton {
+  display: flex;
+  gap: 8px;
+}
+
+.invoices-search-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #000;
+}
+
+.invoices-search-subtitle {
+  font-size: 14px;
+  color: #969696;
+  margin: 0;
+}
+
 /* Invoices Container */
 .invoices-container {
   animation: slideInUp 0.6s ease-out 0.3s both;
 }
 
 .no-invoices {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
   text-align: center;
-  padding: 60px 20px;
-  color: #6b7280;
-  font-size: 16px;
+  min-height: 240px;
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e4e4e4;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
 }
 
-/* Invoices Grid */
+.no-invoices-icon {
+  margin-bottom: 20px;
+  opacity: 0.4;
+}
+
+.no-invoices-icon img {
+  filter: grayscale(100%) brightness(0.6);
+}
+
+.no-invoices-icon .mobile-icon {
+  display: none;
+}
+
+.no-invoices-icon .desktop-icon {
+  display: block;
+}
+
+.no-invoices-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 12px;
+}
+
+.no-invoices-message {
+  font-size: 15px;
+  color: #969696;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+/* Enhanced Responsive Invoices Grid */
 .invoices-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
   width: 100%;
+}
+
+/* When there's only one invoice card, limit its maximum width and center it */
+.invoices-grid > .invoice-card:only-child {
+  max-width: 980px; /* prevents single card from stretching full container */
+  width: 100%;
+  justify-self: start; /* align single card to the left */
 }
 
 /* Invoice Card */
 .invoice-card {
   background: #fff;
   border-radius: 14px;
-  border: none;
+  border: 1px solid #f0f0f0;
+  
   padding: 22px;
   animation: slideInUp 0.6s ease-out both;
   position: relative; /* For absolute positioned expiry warning */
   display: flex;
   flex-direction: column;
   height: 100%;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08);
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.033);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.invoice-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(16, 24, 40, 0.12);
 }
 
 /* very subtle colored tint in the card shadow based on status */
@@ -149,7 +230,7 @@
 .invoice-number {
   font-size: 18px;
   font-weight: 700;
-  color: #070600;
+  color: #000;
   font-family: monospace;
 }
 
@@ -187,11 +268,11 @@
 .invoice-details > div {
   margin-bottom: 8px;
   font-size: 14px;
-  color: #6b7280;
+  color: #969696;
 }
 
 .invoice-details strong {
-  color: #374151;
+  color: #000;
 }
 
 /* Invoice Services */
@@ -204,13 +285,13 @@
 .invoice-services > strong {
   display: block;
   margin-bottom: 8px;
-  color: #374151;
+  color: #000;
   font-size: 14px;
 }
 
 .service-item {
   font-size: 13px;
-  color: #6b7280;
+  color: #969696;
   margin-bottom: 4px;
   padding: 4px 0;
 }
@@ -223,7 +304,7 @@
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
-  color: #070600;
+  color: #000;
   text-align: center;
 }
 
@@ -242,40 +323,6 @@
   margin-top: auto; /* Push to bottom */
 }
 
-/* Custom View Details Button */
-.view-details-btn {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 100px;
-}
-
-.view-details-btn:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #334155;
-  transform: translateY(-1px);
-}
-
-.view-details-btn:active {
-  transform: translateY(0);
-}
-
-.view-details-btn:focus {
-  outline: none;
-  border-color: #007948;
-}
-
 /* Create Invoice Modal */
 .create-invoice-modal .modal-content {
   max-height: 80vh;
@@ -283,7 +330,7 @@
 }
 
 .create-invoice-title {
-  color: #070600;
+  color: #000;
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 14px;
@@ -291,7 +338,7 @@
   padding-left: 10px;
 }
 .services-selection-title {
-  color: #222b45;
+  color: #000;
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 14px;
@@ -314,15 +361,8 @@
 .services-selection h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   margin-bottom: 16px;
-}
-
-.available-services {
-  display: grid;
-  /* Fixed 4 columns layout on desktop to match Services page */
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 25px;
 }
 
 /* Entry animation for service cards on Create Invoice page */
@@ -371,30 +411,11 @@
 }
 
 @media (max-width: 1550px) {
-  .available-services {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-  }
   .services-selection-title {
     font-size: 20px;
   }
   .services-selection-subtitle {
     font-size: 14px;
-  }
-  .services-selection h3{}
-}
-
-@media (max-width: 1000px) {
-  .available-services {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-}
-
-@media (max-width: 600px) {
-  .available-services {
-    grid-template-columns: 1fr;
-    gap: 12px;
   }
 }
 
@@ -423,13 +444,13 @@
 .service-name {
   font-size: 16px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   margin-bottom: 4px;
 }
 
 .service-description {
   font-size: 14px;
-  color: #6b7280;
+  color: #969696;
   margin-bottom: 8px;
 }
 
@@ -450,7 +471,7 @@
 .selected-services h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   margin-bottom: 16px;
 }
 
@@ -473,7 +494,7 @@
 .service-details .service-name {
   font-size: 14px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   margin: 0;
 }
 
@@ -498,7 +519,7 @@
   border-radius: 6px;
   font-size: 18px;
   font-weight: 600;
-  color: #374151;
+  color: #000;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -512,7 +533,7 @@
 .quantity {
   font-size: 16px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   min-width: 20px;
   text-align: center;
 }
@@ -537,7 +558,7 @@
 .payment-methods h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #070600;
+  color: #000;
   margin-bottom: 16px;
 }
 
@@ -562,7 +583,7 @@
 /* Wallet note shown in invoice summary modal */
 .wallet-note {
   font-size: 14px;
-  color: #374151;
+  color: #000;
   margin-top: 12px;
   text-align: center;
 }
@@ -602,7 +623,7 @@
 .payment-option label {
   font-size: 16px;
   font-weight: 500;
-  color: #070600;
+  color: #000;
   cursor: pointer;
   margin: 0;
   flex: 1;
@@ -625,7 +646,7 @@
 .view-details-modal h2 {
   font-size: 24px;
   font-weight: 700;
-  color: #070600;
+  color: #000;
   margin-bottom: 24px;
   text-align: center;
 }
@@ -639,12 +660,12 @@
 .invoice-details-content > div {
   margin-bottom: 16px;
   font-size: 14px;
-  color: #374151;
+  color: #000;
   line-height: 1.5;
 }
 
 .invoice-details-content strong {
-  color: #070600;
+  color: #000;
   font-weight: 600;
   margin-right: 8px;
 }
@@ -680,7 +701,7 @@
 
 .invoice-details-content li {
   margin-bottom: 4px;
-  color: #374151;
+  color: #000;
 }
 
 .payment-summary,
@@ -695,7 +716,7 @@
 .invoice-modal-summary .booking-summary-title {
   font-size: 18px;
   font-weight: 700;
-  color: #070600;
+  color: #000;
   margin-bottom: 12px;
 }
 
@@ -703,12 +724,12 @@
 .invoice-modal-summary .booking-summary-row span {
   margin-bottom: 8px;
   font-size: 14px;
-  color: #111827; /* ensure default readable text color */
+  color: #000; /* ensure default readable text color */
 }
 
 .invoice-summary-details strong,
 .invoice-modal-summary .booking-summary-row strong {
-  color: #374151;
+  color: #000;
 }
 
 /* Make sure booking-summary-card (reused) has readable text */
@@ -717,13 +738,13 @@
   border-radius: 12px;
   padding: 18px;
   box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
-  color: #111827;
+  color: #000;
 }
 
 .booking-summary-title {
   font-size: 14px;
   font-weight: 700;
-  color: #374151;
+  color: #000;
   margin-bottom: 12px;
 }
 
@@ -754,7 +775,132 @@
   }
 }
 
-/* Responsive Design */
+/* ======================================== */
+/* RESPONSIVE DESIGN BREAKPOINTS */
+/* ======================================== */
+
+/* Large Desktop (1400px+) */
+@media (min-width: 1400px) {
+  .invoices-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+  }
+}
+
+/* Desktop (1200px - 1399px) */
+@media (max-width: 1399px) and (min-width: 1200px) {
+  .invoices-grid {
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 22px;
+  }
+}
+
+/* Large Tablet (992px - 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .invoices-page {
+    padding: 0 20px;
+  }
+
+  .invoices-grid {
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
+  }
+
+  .invoice-card {
+    padding: 20px;
+  }
+
+  .invoice-number {
+    font-size: 17px;
+  }
+
+  .invoice-status {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .invoice-details > div {
+    font-size: 13px;
+  }
+
+  .service-item {
+    font-size: 12px;
+  }
+
+  .invoice-total {
+    font-size: 15px;
+  }
+
+  .booking-summary-card {
+    padding: 20px;
+  }
+}
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .invoices-page {
+    padding: 0 16px;
+  }
+
+  .page-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .page-actions .search-input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .invoices-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+  }
+
+  .invoice-card {
+    padding: 18px;
+  }
+
+  .invoice-number {
+    font-size: 16px;
+  }
+
+  .invoice-status {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .invoice-details > div {
+    font-size: 12px;
+  }
+
+  .service-item {
+    font-size: 11px;
+  }
+
+  .invoice-total {
+    font-size: 14px;
+  }
+
+  .invoice-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .invoice-actions {
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .booking-summary-card {
+    padding: 18px;
+  }
+}
+
+/* Mobile (768px and below) */
 @media (max-width: 768px) {
   .invoices-page {
     padding: 0 12px;
@@ -778,6 +924,28 @@
   .invoice-card {
     padding: 16px;
   }
+
+  .invoice-number {
+    font-size: 15px;
+  }
+
+  .invoice-status {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  .invoice-details > div {
+    font-size: 11px;
+  }
+
+  .service-item {
+    font-size: 10px;
+  }
+
+  .invoice-total {
+    font-size: 13px;
+  }
+
   /* Reserve space at bottom on mobile when pending to accommodate timer */
   .invoice-card.pending {
     padding-bottom: 40px;
@@ -787,6 +955,7 @@
   .invoice-expiry-warning {
     bottom: 10px;
   }
+
   .invoice-header {
     flex-direction: column;
     align-items: flex-start;
@@ -803,6 +972,7 @@
     align-items: flex-start;
     gap: 0px;
   }
+
   .service-actions {
     align-self: flex-end;
   }
@@ -848,98 +1018,45 @@
     margin-bottom: 12px;
   }
 
-  .invoice-summary-details > div {
-    margin-bottom: 6px;
-    font-size: 13px;
-  }
-
-  /* Create Invoice Modal Responsive Adjustments */
-  .create-invoice-modal .modal-content {
-    max-height: 85vh;
-    padding: 20px;
-  }
-
-  .create-invoice-title {
-    font-size: 20px;
-    margin-bottom: 12px;
-    padding-left: 8px;
-  }
-
-  .services-selection-subtitle {
-    font-size: 13px;
-    margin-bottom: 14px;
-    padding-left: 8px;
-  }
-
-  .services-selection {
-    margin-bottom: 24px;
-  }
-
-  .services-selection h3 {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-
-  .available-services {
-    gap: 12px;
-    padding-right: 8px;
-    padding-left: 8px;
-  }
-
-  .service-option {
-    padding: 14px 20px 14px 14px;
-  }
-
-  .service-name {
-    font-size: 15px;
-  }
-
-  .service-description {
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-
-  .service-price {
-    font-size: 16px;
-  }
-
-  .selected-services {
-    padding-top: 20px;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .selected-services h3 {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-
-  .selected-service {
-    padding: 10px 14px;
-    margin-bottom: 10px;
-  }
-
-  .service-details .service-name {
-    font-size: 13px;
-  }
-
-  .service-details .service-price {
-    font-size: 13px;
-  }
-
-  .quantity-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
-  }
-
-  .quantity {
-    font-size: 15px;
-  }
-
   .modal-actions {
     margin-top: 20px;
     padding-top: 20px;
+  }
+
+  .all-transactions-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .all-transactions-title {
+    font-size: 17px;
+    margin: 0;
+  }
+
+  .services-selection-subtitle {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .booking-summary-card {
+    padding: 16px;
+  }
+
+  .booking-summary-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .booking-summary-row {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+
+  .booking-summary-row.total {
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 
@@ -953,12 +1070,35 @@
   }
 
   .invoice-number {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .invoice-status {
-    font-size: 11px;
-    padding: 4px 8px;
+    font-size: 8px;
+    padding: 2px 5px;
+  }
+
+  .invoice-details > div {
+    font-size: 10px;
+  }
+
+  .service-item {
+    font-size: 9px;
+  }
+
+  .invoice-total {
+    font-size: 12px;
+  }
+
+  .all-transactions-title {
+    font-size: 15px;
+    margin: 0;
+  }
+
+  .services-selection-subtitle {
+    font-size: 10px;
+    margin-bottom: 10px;
+    padding-left: 6px;
   }
 
   /* Extra Small Mobile Modal Adjustments */
@@ -1029,15 +1169,11 @@
     margin-bottom: 10px;
   }
 
-  .available-services {
-    gap: 10px;
-    padding-right: 6px;
-    padding-left: 6px;
+  .service-option {
+    padding: 0;
   }
 
-  .service-option {
-    padding: 12px 16px 12px 12px;
-  }
+  /* Per-page visual rules for ServiceCard removed. Use reusable ServiceCard styles. */
 
   .service-name {
     font-size: 14px;
@@ -1092,36 +1228,6 @@
   }
 }
 
-/* ======================================== */
-/* ZOOM RESPONSIVENESS */
-/* ======================================== */
-
-/* Default zoom levels for components */
-.invoices-page {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
-.page-actions {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
-.invoices-container {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
-.invoices-grid {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
-.invoice-card {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
-
 /* Thermal receipt styling for InvoicesPage (reuse styles similar to Services) */
 .invoice-receipt-modal {
   min-width: 520px;
@@ -1136,7 +1242,7 @@
   padding: 24px;
   position: relative;
   overflow: hidden;
-  color: #111827;
+  color: #000;
 }
 .receipt-paper::before {
   content: "";
@@ -1155,19 +1261,19 @@
 }
 .receipt-brand {
   font-weight: 700;
-  color: #374151;
+  color: #000;
   font-size: 14px;
 }
 .receipt-title {
   font-size: 16px;
   font-weight: 800;
-  color: #111827;
+  color: #000;
   letter-spacing: 0.06em;
   margin-top: 2px;
 }
 .receipt-sub {
   font-size: 12px;
-  color: #6b7280;
+  color: #969696;
   margin-top: 2px;
 }
 .receipt-meta {
@@ -1187,7 +1293,7 @@
   border-bottom: none;
 }
 .receipt-meta .meta-row span:first-child {
-  color: #6b7280;
+  color: #969696;
   font-size: 12px;
 }
 .mono,
@@ -1209,7 +1315,7 @@
   padding: 10px 0;
 }
 .receipt-items .thead {
-  color: #6b7280;
+  color: #969696;
   font-size: 12px;
 }
 .receipt-items .row {
@@ -1224,7 +1330,7 @@
 }
 .receipt-foot {
   margin-top: 10px;
-  color: #6b7280;
+  color: #969696;
   font-size: 12px;
   text-align: center;
 }
@@ -1232,22 +1338,20 @@
   margin-top: 12px;
 }
 
-/* Create Invoice Subpage - default zoom */
-.create-invoice-subpage,
-.services-selection,
-.available-services,
-.selected-services,
-.service-option {
-  zoom: 1;
-  transition: zoom 0.3s ease;
+/* Create Invoice Subpage */
+.create-invoice-subpage {
+  margin-bottom: 20px;
 }
 
-.create-invoice-subpage {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.05);
-  border-radius: 12px;
-  padding: 20px;
-  background: #fff;
-  margin-bottom: 20px;
+/* Services Selection */
+.services-selection {
+  margin-bottom: 24px;
+}
+
+.services-selection-subtitle {
+  color: #969696;
+  font-size: 14px;
+  margin-bottom: 16px;
 }
 
 /* Service option cards (available services) */
@@ -1255,19 +1359,24 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 18px 16px;
+  padding: 0;
   border: none; /* borderless card */
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
   min-height: 160px;
   transition: transform 180ms ease, box-shadow 180ms ease;
+  overflow: hidden;
 }
 
 .service-option:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(16, 24, 40, 0.08);
 }
+
+/* Service card content area */
+/* Visual styling for ServiceCard moved to reusables/ServiceCard/servicecard.css */
+/* ServiceCard visual styles are provided by the reusable component; no per-page overrides. */
 
 /* Selected services panel styled as card */
 .selected-services {
@@ -1282,10 +1391,47 @@
 
 /* Border button zoom scaling is handled by the BorderButton component CSS */
 
-/* Border button zoom scaling for invoices page buttons */
-.border-button-invoicespage {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
+/* FieldButton styling for invoices page buttons */
+.fieldbutton-btn-invoicespage {
+  border: none;
+  background: #f8f8f8;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #007948;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  line-height: 1;
+  min-width: 60px;
+  justify-content: center;
+}
+
+.fieldbutton-btn-invoicespage:hover {
+  background: #0079480d;
+}
+
+/* Responsive FieldButton styling */
+@media (max-width: 1450px) {
+  .fieldbutton-btn-invoicespage {
+    height: 40px;
+    font-size: 14px;
+    padding: 0 10px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .fieldbutton-btn-invoicespage {
+    height: 36px;
+    font-size: 13px;
+    padding: 0 8px;
+    border-radius: 8px;
+  }
 }
 
 /* Modal zoom scaling */

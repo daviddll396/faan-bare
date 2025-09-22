@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Database } from "lucide-react";
 import "./DataTable.css";
+import AirplaneIcon from "/icons/airplane-icon.svg";
 
 interface DataTableProps {
   headers: string[];
@@ -74,12 +74,24 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <>
       <div className={`data-table-card ${className}`}>
-        {header && <div className="data-table-header">{header}</div>}
+        {header && <div className="">{header}</div>}
         {data.length === 0 ? (
           <div className="data-table-no-data">
             <div className="no-data-icon">
-              <Database size={48} className="desktop-icon" />
-              <Database size={36} className="mobile-icon" />
+              <img
+                src={AirplaneIcon}
+                alt="No data"
+                width={48}
+                height={48}
+                className="desktop-icon"
+              />
+              <img
+                src={AirplaneIcon}
+                alt="No data"
+                width={36}
+                height={36}
+                className="mobile-icon"
+              />
             </div>
             <div className="no-data-title">No Data Available</div>
             <div className="no-data-message">

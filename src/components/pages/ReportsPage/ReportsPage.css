@@ -6,9 +6,9 @@
 
 .reports-filter-row {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 12px;
-  margin: 20px 0 16px 0;
+  margin: 12px 0 16px 0;
   zoom: 1;
   transition: zoom 0.3s ease;
 }
@@ -26,7 +26,7 @@
 }
 
 .reports-date-field input[type="date"] {
-  border: 1px solid #d9d9d9;
+  border: 1px solid #f0f0f0;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
@@ -48,45 +48,27 @@
 }
 
 /* remove content-card usage and add tabs */
-.reports-tabs-row {
-  display: flex;
-  gap: 24px;
-  border-bottom: 2px solid #e4e4e4;
-  margin: 30px 0 0 0;
-  padding-left: 2px;
-  zoom: 1;
-  transition: zoom 0.3s ease;
-}
 .reports-actions {
   display: flex;
   gap: 12px;
- 
 }
 
-.reports-tab {
-  font-size: 14px;
-  font-weight: 500;
-  color: #969696;
-  padding: 0 7px 10px 7px;
-  margin-right: 16px;
-  cursor: pointer;
-  position: relative;
-  background: none;
-  border: none;
+/* FieldButton tweaks for reports header */
+.reports-filter-fieldbutton {
+  width: 100%;
 }
-.reports-tab.active {
-  color: #007948;
+.reports-filter-fieldbutton .fieldbutton-inputs {
+  gap: 12px;
+  align-items: center;
 }
-.reports-tab.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 3px;
-  background: #007948;
-  border-radius: 2px;
+.reports-filter-fieldbutton .fieldbutton-input {
+  min-width: 140px;
 }
+.reports-filter-fieldbutton .fieldbutton-btn {
+  height: 44px;
+}
+
+/* per-page reports tab styles removed in favor of reusable SwitchingTabs component */
 
 .reports-table-wrap {
   margin-top: 16px;
@@ -112,39 +94,6 @@
   border-radius: 8px;
   padding: 6px 8px;
   font-weight: 700;
-}
-
-/* Progressive zoom like other pages */
-@media (max-width: 1920px) {
-  .border-button-reports,
-  .reports-tabs-row,
-  .reports-filter-row {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1600px) {
-  .border-button-reports,
-  .reports-tabs-row,
-  .reports-filter-row {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1400px) {
-  .border-button-reports,
-  .reports-tabs-row,
-  .reports-filter-row {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1200px) {
-  .border-button-reports,
-  .reports-tabs-row,
-  .reports-filter-row {
-    zoom: 0.75;
-  }
 }
 
 @keyframes slideInUp {

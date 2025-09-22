@@ -1,4 +1,421 @@
-/* Base Styles */
+/* ======================================== */
+/* BILLS PAGE - MODERN REDESIGN */
+/* ======================================== */
+
+/* Bill Search Section */
+.bill-search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.bill-search-header {
+  margin-bottom: 8px;
+}
+
+.bill-search-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.bill-search-subtitle {
+  font-size: 16px;
+  color: #969696;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.bill-search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bill-search-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bill-search-fieldbutton {
+  width: 100%;
+}
+
+.bill-search-fieldbutton .fieldbutton-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.bill-search-fieldbutton .fieldbutton-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.bill-search-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+/* FieldButton customizations for BillsPage */
+.bill-create-fieldbutton {
+  margin-left: auto;
+}
+
+.bill-create-fieldbutton .fieldbutton-inputs {
+  gap: 0;
+}
+
+.bill-add-items-fieldbutton {
+  width: auto;
+}
+
+.bill-add-items-fieldbutton .fieldbutton-inputs {
+  gap: 0;
+}
+
+/* Bill Creation Section */
+.bill-creation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.bill-creation-header {
+  margin-bottom: 8px;
+}
+
+.bill-creation-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.bill-creation-subtitle {
+  font-size: 19px;
+  color: #969696;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.bill-creation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bill-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bill-item-card {
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.bill-item-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bill-item-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #007948;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.bill-item-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  flex: 1;
+}
+
+.bill-item-remove {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bill-item-remove:hover {
+  background: #fecaca;
+}
+
+.bill-item-remove img {
+  width: 16px;
+  height: 16px;
+}
+
+.bill-item-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.bill-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bill-field-group.bill-quantity-group {
+  grid-column: 1 / -1; /* Span full width */
+}
+
+
+
+
+.bill-select-wrapper {
+  position: relative;
+}
+
+.bill-amount-group {
+  grid-column: 1 / -1;
+}
+
+.bill-amount-input-wrapper {
+  display: flex;
+  gap: 8px;
+ ;
+
+}
+
+.bill-amount-input {
+  flex: 1;
+}
+
+
+
+.bill-creation-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #f5f5f5;
+}
+
+.bill-submit-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+  border-top: 1px solid #f5f5f5;
+}
+
+/* Customer Details Section - ProfilePage Style */
+.bill-customer-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Customer Header */
+.bill-customer-header {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+}
+
+.customer-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.customer-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.customer-avatar-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: #f0f9ff;
+  border-radius: 50%;
+  border: 3px solid #007948;
+}
+
+.customer-basic-info {
+  flex: 1;
+}
+
+.customer-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.customer-id {
+  font-size: 16px;
+  color: #969696;
+  margin: 0 0 4px 0;
+}
+
+.customer-nin {
+  font-size: 16px;
+  color: #969696;
+  margin: 0;
+}
+
+.customer-create-bill-btn {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.customer-create-bill-btn .fieldbutton-inputs {
+  gap: 0;
+}
+
+/* Customer Content Grid */
+.bill-customer-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.bill-customer-bills-card {
+  grid-column: 1 / -1;
+}
+
+.bill-transaction-datatable .data-table-card {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.bill-transaction-datatable .data-table-header {
+  display: none;
+}
+
+.bill-transaction-datatable .data-table {
+  border-radius: 0;
+}
+
+.bill-transaction-datatable .data-table-pagination-outer {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin-top: 0;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Customer Cards */
+
+
+.customer-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.customer-card-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.customer-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.customer-field-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.customer-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.customer-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #969696;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.customer-field span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  word-break: break-word;
+}
+
+/* Bill View Receipt Button */
+.bill-view-receipt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #007948;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bill-view-receipt-btn:hover {
+  background: #007948;
+  color: #fff;
+  border-color: #007948;
+  transform: translateY(-1px);
+}
+
+/* ======================================== */
+/* BASE STYLES */
+/* ======================================== */
 .bill-search-center {
   display: flex;
   align-items: flex-start;
@@ -21,7 +438,7 @@
 .bill-search-title {
   font-size: 20px;
   font-weight: 500;
-  color: #222b45;
+  color: #000;
   margin-bottom: 6px;
   text-align: left;
 }
@@ -52,23 +469,8 @@
   font-weight: 500;
 }
 
-.bill-form-group input {
-  border: 1.5px solid #eef2f7;
-  border-radius: 12px;
-  padding: 21px 16px; /* taller fields */
-  font-size: 16px;
-  font-family: inherit;
-  background: #fff;
-  color: #222b45;
-  outline: none;
-  transition: border 0.15s ease, box-shadow 0.15s ease;
-  font-weight: 500;
-  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.02);
-}
-
-.bill-form-group input:focus {
-  border: 1.5px solid #10b981;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+.bill-form-group {
+  /* native input styles removed; use `Input` (.reusable-input) for visuals */
 }
 
 .bill-form-row {
@@ -200,8 +602,8 @@
 .bill-customer-card {
   background: #fff;
   border-radius: 14px;
-  border: none;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  border: 1px solid #f0f0f0;
+ 
   padding: 20px 20px;
   display: flex;
   align-items: center;
@@ -321,14 +723,15 @@
 .bill-total-label {
   text-align: left;
   font-weight: 700;
-  color: #222b45;
+  color: #000;
   padding: 10px 8px;
 }
 
 .bill-total-value {
   font-weight: 700;
-  color: #070600;
+  color: #000;
   padding: 10px 8px;
+  text-align: right;
 }
 
 .bill-results-table-card {
@@ -371,7 +774,7 @@
 }
 
 .invoice-header-item {
-  color: #070600;
+  color: #000;
 }
 
 .add-service-form-bill {
@@ -458,115 +861,6 @@
 }
 
 /* Media Queries */
-
-/* Zoom scaling for bill search card */
-@media (max-width: 1920px) {
-  .bill-search-card {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .bill-search-card {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1700px) {
-  .bill-search-card {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1600px) {
-  .bill-search-card {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1500px) {
-  .bill-search-card {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1450px) {
-  .bill-search-card {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1400px) {
-  .bill-search-card {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1350px) {
-  .bill-search-card {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1300px) {
-  .bill-search-card {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1250px) {
-  .bill-search-card {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1200px) {
-  .bill-search-card {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1150px) {
-  .bill-search-card {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1100px) {
-  .bill-search-card {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1050px) {
-  .bill-search-card {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1000px) {
-  .bill-search-card {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 950px) {
-  .bill-search-card {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 900px) {
-  .bill-search-card {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 768px) {
-  .bill-search-card {
-    zoom: 1;
-  }
-}
 
 /* Progressive gap reduction for bill results wrapper */
 @media (max-width: 1920px) {
@@ -655,7 +949,354 @@
   }
 }
 
+/* ======================================== */
+/* BILLS PAGE RESPONSIVE STYLES */
+/* ======================================== */
+
+/* Desktop (1200px - 1399px) */
+@media (max-width: 1399px) {
+  .bill-search-section {
+    gap: 20px;
+  }
+  .bill-search-title {
+    font-size: 22px;
+  }
+  .bill-search-subtitle {
+    font-size: 15px;
+  }
+  .bill-search-form {
+    gap: 20px;
+  }
+  .bill-search-inputs {
+    gap: 14px;
+  }
+
+  .bill-creation-section {
+    padding: 28px;
+    gap: 20px;
+    max-width: 750px;
+  }
+  .bill-creation-title {
+    font-size: 22px;
+  }
+  .bill-creation-subtitle {
+    font-size: 15px;
+  }
+  .bill-item-fields {
+    gap: 14px;
+  }
+
+  .customer-details-section {
+    gap: 28px;
+    max-width: 100%;
+  }
+  .bill-customer-header {
+    padding: 28px;
+  }
+  .customer-name {
+    font-size: 26px;
+  }
+  .bill-customer-content-grid {
+    gap: 20px;
+  }
+  .bill-customer-card {
+    padding: 20px;
+  }
+  .customer-card-header h3 {
+    font-size: 17px;
+  }
+}
+
+/* Large Tablet (992px - 1199px) */
+@media (max-width: 1199px) {
+  .bill-search-title {
+    font-size: 20px;
+  }
+  .bill-search-subtitle {
+    font-size: 14px;
+  }
+  .bill-search-form {
+    gap: 18px;
+  }
+  .bill-search-inputs {
+    gap: 12px;
+  }
+
+  .bill-creation-section {
+    gap: 18px;
+    max-width: 700px;
+  }
+  .bill-creation-title {
+    font-size: 20px;
+  }
+  .bill-creation-subtitle {
+    font-size: 14px;
+  }
+  .bill-item-fields {
+    gap: 12px;
+  }
+
+  .customer-details-section {
+    gap: 24px;
+    max-width: 100%;
+  }
+  .bill-customer-header {
+    padding: 24px;
+  }
+  .customer-name {
+    font-size: 24px;
+  }
+  .bill-customer-content-grid {
+    gap: 18px;
+  }
+  .bill-customer-card {
+    padding: 18px;
+  }
+  .customer-card-header h3 {
+    font-size: 16px;
+  }
+}
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+  .bill-search-section {
+    gap: 16px;
+    max-width: 100%;
+  }
+  .bill-search-title {
+    font-size: 18px;
+  }
+  .bill-search-subtitle {
+    font-size: 13px;
+  }
+  .bill-search-form {
+    gap: 16px;
+  }
+  .bill-search-inputs {
+    gap: 10px;
+  }
+
+  .bill-creation-section {
+    gap: 16px;
+    max-width: 100%;
+  }
+  .bill-creation-title {
+    font-size: 18px;
+  }
+  .bill-creation-subtitle {
+    font-size: 13px;
+  }
+  .bill-item-fields {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .bill-item-card {
+    padding: 16px;
+  }
+
+  .bill-customer-details-section {
+    gap: 20px;
+    max-width: 100%;
+  }
+  .bill-customer-header {
+    padding: 20px;
+  }
+  .customer-header-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .customer-avatar-section {
+    justify-content: center;
+    text-align: center;
+  }
+  .customer-name {
+    font-size: 22px;
+  }
+  .bill-customer-content-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .bill-customer-card {
+    padding: 16px;
+  }
+  .customer-card-header h3 {
+    font-size: 15px;
+  }
+  .customer-field-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
 @media (max-width: 768px) {
+  .bill-search-section {
+    gap: 16px;
+    border-radius: 12px;
+    max-width: 100%;
+  }
+
+  .bill-search-header {
+    margin-bottom: 12px;
+  }
+
+  .bill-search-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .bill-search-subtitle {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .bill-search-form {
+    gap: 16px;
+  }
+
+  .bill-search-inputs {
+    gap: 12px;
+  }
+
+  .bill-search-fieldbutton .fieldbutton-inputs {
+    gap: 12px;
+  }
+
+  .bill-search-actions {
+    padding-top: 12px;
+  }
+
+  .bill-creation-section {
+    gap: 16px;
+    border-radius: 12px;
+    max-width: 100%;
+  }
+
+  .bill-creation-header {
+    margin-bottom: 12px;
+  }
+
+  .bill-creation-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .bill-creation-subtitle {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .bill-item-fields {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .bill-item-card {
+    padding: 16px;
+  }
+
+  .bill-item-header {
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .bill-item-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .bill-item-title {
+    font-size: 14px;
+  }
+
+
+
+
+
+
+
+  .bill-customer-details-section {
+    gap: 16px;
+    max-width: 100%;
+  }
+
+  .bill-customer-header {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .customer-header-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .customer-avatar-section {
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .customer-avatar-large {
+    width: 60px;
+    height: 60px;
+  }
+
+  .customer-name {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .customer-id,
+  .customer-nin {
+    font-size: 14px;
+  }
+
+  .customer-content-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .customer-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .customer-card-header {
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .customer-card-header h3 {
+    font-size: 14px;
+  }
+
+  .customer-card-content {
+    gap: 12px;
+  }
+
+  .customer-field-group {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .customer-field label {
+    font-size: 11px;
+  }
+
+  .customer-field span {
+    font-size: 14px;
+  }
+
+  .bill-view-receipt-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
   .bill-form-row {
     flex-direction: column;
     gap: 16px;
@@ -670,385 +1311,7 @@
   }
 }
 
-/* Progressive zoom scaling for bill results title */
-@media (max-width: 1920px) {
-  .bill-results-title {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .bill-results-title {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1700px) {
-  .bill-results-title {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1600px) {
-  .bill-results-title {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1500px) {
-  .bill-results-title {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1450px) {
-  .bill-results-title {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1400px) {
-  .bill-results-title {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1350px) {
-  .bill-results-title {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1300px) {
-  .bill-results-title {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1250px) {
-  .bill-results-title {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1200px) {
-  .bill-results-title {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1150px) {
-  .bill-results-title {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1100px) {
-  .bill-results-title {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1050px) {
-  .bill-results-title {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1000px) {
-  .bill-results-title {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 950px) {
-  .bill-results-title {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 900px) {
-  .bill-results-title {
-    zoom: 0.6;
-  }
-}
-
 @media (max-width: 768px) {
-  .bill-results-title {
-    zoom: 1;
-  }
-}
-
-/* Zoom scaling for bill results table card */
-@media (max-width: 1920px) {
-  .bill-results-table-card {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .bill-results-table-card {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1700px) {
-  .bill-results-table-card {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1600px) {
-  .bill-results-table-card {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1500px) {
-  .bill-results-table-card {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1450px) {
-  .bill-results-table-card {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1400px) {
-  .bill-results-table-card {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1350px) {
-  .bill-results-table-card {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1300px) {
-  .bill-results-table-card {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1250px) {
-  .bill-results-table-card {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1200px) {
-  .bill-results-table-card {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1150px) {
-  .bill-results-table-card {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1100px) {
-  .bill-results-table-card {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1050px) {
-  .bill-results-table-card {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1000px) {
-  .bill-results-table-card {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 950px) {
-  .bill-results-table-card {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 900px) {
-  .bill-results-table-card {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 768px) {
-  .bill-results-table-card {
-    zoom: 1;
-  }
-}
-
-/* Progressive zoom scaling for bill creation form */
-@media (max-width: 1920px) {
-  .add-service-form-bill {
-    zoom: 1.1;
-  }
-}
-
-@media (max-width: 1800px) {
-  .add-service-form-bill {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1700px) {
-  .add-service-form-bill {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1600px) {
-  .add-service-form-bill {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1500px) {
-  .add-service-form-bill {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1450px) {
-  .add-service-form-bill {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1400px) {
-  .add-service-form-bill {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1350px) {
-  .add-service-form-bill {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1300px) {
-  .add-service-form-bill {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1250px) {
-  .add-service-form-bill {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1200px) {
-  .add-service-form-bill {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1150px) {
-  .add-service-form-bill {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1100px) {
-  .add-service-form-bill {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1050px) {
-  .add-service-form-bill {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1000px) {
-  .add-service-form-bill {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 950px) {
-  .add-service-form-bill {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 900px) {
-  .add-service-form-bill {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 768px) {
-  .add-service-form-bill {
-    zoom: 1;
-  }
-}
-
-/* Zoom scaling for customer modal center */
-@media (max-width: 1920px) {
-  .customer-modal-center {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1400px) {
-  .customer-modal-center {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1300px) {
-  .customer-modal-center {
-    zoom: 0.65;
-  }
-}
-
-@media (max-width: 1150px) {
-  .customer-modal-center {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 1100px) {
-  .customer-modal-center {
-    zoom: 0.55;
-  }
-}
-
-@media (max-width: 1050px) {
-  .customer-modal-center {
-    zoom: 0.5;
-  }
-}
-
-@media (max-width: 768px) {
-  .customer-modal-center {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-content {
-    padding: 0;
-    background: var(--bg-color);
-  }
-  .page-header {
-    padding: 0px;
-    margin-bottom: 10px;
-  }
   .bill-search-center {
     flex-direction: column;
     align-items: stretch;
@@ -1315,5 +1578,666 @@
   .bill-success-modal {
     min-width: 90vw;
     max-width: 95vw;
+  }
+}
+
+/* ======================================== */
+/* COMPREHENSIVE RESPONSIVE BREAKPOINTS */
+/* ======================================== */
+
+/* Large Desktop (1400px+) */
+@media (min-width: 1400px) {
+  .bill-search-center {
+    max-width: 1000px;
+  }
+
+  .bill-search-form {
+    gap: 24px;
+  }
+
+  .bill-search-title {
+    font-size: 28px;
+  }
+
+  .bill-search-subtitle {
+    font-size: 18px;
+  }
+
+  .bill-search-fields {
+    gap: 20px;
+  }
+
+  .bill-search-actions {
+    gap: 16px;
+  }
+
+  .bill-customer-details-section {
+    gap: 32px;
+  }
+
+  .bill-customer-header {
+    padding: 32px;
+  }
+
+  .customer-name {
+    font-size: 28px;
+  }
+
+  .bill-customer-content-grid {
+    gap: 24px;
+  }
+
+  .bill-item-fields {
+    gap: 20px;
+  }
+
+  .bill-item-card {
+    padding: 24px;
+  }
+}
+
+/* Desktop (1200px - 1399px) */
+@media (max-width: 1399px) and (min-width: 1200px) {
+  .bill-search-center {
+    max-width: 900px;
+  }
+
+  .bill-search-form {
+    gap: 20px;
+  }
+
+  .bill-search-title {
+    font-size: 26px;
+  }
+
+  .bill-search-subtitle {
+    font-size: 16px;
+  }
+
+  .bill-search-fields {
+    gap: 18px;
+  }
+
+  .bill-search-actions {
+    gap: 14px;
+  }
+
+  .customer-details-section {
+    gap: 28px;
+  }
+
+  .customer-header {
+    padding: 28px;
+  }
+
+  .customer-name {
+    font-size: 26px;
+  }
+
+  .customer-content-grid {
+    gap: 20px;
+  }
+
+  .bill-item-fields {
+    gap: 18px;
+  }
+
+  .bill-item-card {
+    padding: 20px;
+  }
+}
+
+/* Large Tablet (992px - 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .bill-search-center {
+    max-width: 800px;
+  }
+
+  .bill-search-form {
+    gap: 18px;
+  }
+
+  .bill-search-title {
+    font-size: 24px;
+  }
+
+  .bill-search-subtitle {
+    font-size: 15px;
+  }
+
+  .bill-search-fields {
+    gap: 16px;
+  }
+
+  .bill-search-actions {
+    gap: 12px;
+  }
+
+  .customer-details-section {
+    gap: 24px;
+  }
+
+  .customer-header {
+    padding: 24px;
+  }
+
+  .customer-name {
+    font-size: 24px;
+  }
+
+  .customer-content-grid {
+    gap: 18px;
+  }
+
+  .bill-item-fields {
+    gap: 16px;
+  }
+
+  .bill-item-card {
+    padding: 18px;
+  }
+}
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .bill-search-center {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  .bill-search-form {
+    gap: 16px;
+  }
+
+  .bill-search-title {
+    font-size: 22px;
+  }
+
+  .bill-search-subtitle {
+    font-size: 14px;
+  }
+
+  .bill-search-fields {
+    gap: 14px;
+  }
+
+  .bill-search-actions {
+    gap: 10px;
+  }
+
+  .customer-details-section {
+    gap: 20px;
+  }
+
+  .customer-header {
+    padding: 20px;
+  }
+
+  .customer-name {
+    font-size: 22px;
+  }
+
+  .customer-content-grid {
+    gap: 16px;
+  }
+
+  .bill-item-fields {
+    gap: 14px;
+  }
+
+  .bill-item-card {
+    padding: 16px;
+  }
+
+
+
+
+  .bill-add-more-btn {
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .bill-create-btn {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  .bill-search-center {
+    padding: 0 12px;
+  }
+
+  .bill-search-form {
+    gap: 14px;
+  }
+
+  .bill-search-title {
+    font-size: 20px;
+  }
+
+  .bill-search-subtitle {
+    font-size: 13px;
+  }
+
+  .bill-search-fields {
+    gap: 12px;
+  }
+
+  .bill-search-actions {
+    gap: 8px;
+  }
+
+  .customer-details-section {
+    gap: 16px;
+  }
+
+  .customer-header {
+    padding: 16px;
+  }
+
+  .customer-name {
+    font-size: 20px;
+  }
+
+  .customer-content-grid {
+    gap: 14px;
+  }
+
+  .bill-item-fields {
+    gap: 12px;
+  }
+
+  .bill-item-card {
+    padding: 14px;
+  }
+
+
+  .bill-add-more-btn {
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .bill-create-btn {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  /* Modal adjustments for small mobile */
+  .bill-invoice-modal,
+  .bill-receipt-modal {
+    min-width: 95vw;
+    max-width: 98vw;
+  }
+
+  .bill-success-modal {
+    min-width: 95vw;
+    max-width: 98vw;
+  }
+}
+
+/* ======================================== */
+/* BILLS CUSTOMER DETAILS - CLEAN REBUILD */
+/* ======================================== */
+
+.bills-customer-details {
+  display: flex;
+  flex-direction: column;
+
+  gap: 32px;
+}
+
+/* Customer Header */
+.bills-customer-header {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.bills-customer-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  /* background: #fcfcfc; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.bills-customer-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bills-customer-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+}
+
+.bills-customer-id,
+.bills-customer-nin {
+  font-size: 16px;
+  color: #969696;
+  margin: 0;
+  font-weight: 500;
+}
+
+.bills-customer-actions {
+  display: flex;
+  align-items: center;
+}
+
+.bills-create-bill-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Information Grid */
+.bills-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.bills-info-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+}
+
+.bills-info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.bills-info-card-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.bills-info-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bills-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bills-info-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #969696;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bills-info-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  word-break: break-word;
+}
+
+/* Transaction Section */
+
+.bills-transaction-content {
+  width: 100%;
+}
+
+/* DataTable Integration */
+.bills-transaction-table .data-table-card {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.bills-transaction-table .data-table-header {
+  /* allow DataTable header to show; DataTable provides full header styling */
+  display: block;
+}
+
+.bills-transaction-table .data-table {
+  border-radius: 0;
+}
+
+.bills-transaction-table .data-table-pagination-outer {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  margin-top: 0;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* View Receipt Button */
+.bills-view-receipt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #007948;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bills-view-receipt-btn:hover {
+  background: #007948;
+  color: #fff;
+  border-color: #007948;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .bills-info-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .bills-customer-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .bills-customer-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .bills-customer-details {
+    gap: 24px;
+    max-width: 100%;
+  }
+
+  .bills-customer-header {
+    padding: 24px;
+  }
+
+  .bills-customer-name {
+    font-size: 24px;
+  }
+
+  .bills-info-card,
+  .bills-transaction-section {
+    padding: 20px;
+    width: 100%;
+  }
+
+  .bills-info-grid {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bills-customer-header {
+    padding: 20px;
+  }
+
+  .bills-customer-name {
+    font-size: 22px;
+  }
+
+  .bills-info-card,
+  .bills-transaction-section {
+    padding: 16px;
+  }
+}
+
+/* ======================================== */
+/* BILLS RECEIPT CARDS - CLEAN REBUILD */
+/* ======================================== */
+
+.bills-receipt-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.bills-receipt-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+
+  border: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.bills-receipt-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bills-receipt-card-icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.bills-receipt-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bills-receipt-card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #969696;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bills-receipt-card-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  word-break: break-word;
+}
+
+/* Responsive Design for Receipt Cards */
+@media (max-width: 991px) {
+  .bills-receipt-cards {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .bills-receipt-card {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .bills-receipt-cards {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .bills-receipt-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .bills-receipt-card-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .bills-receipt-card-icon img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bills-receipt-card-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bills-receipt-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .bills-receipt-card-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .bills-receipt-card-icon img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .bills-receipt-card-value {
+    font-size: 15px;
   }
 }

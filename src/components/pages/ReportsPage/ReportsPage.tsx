@@ -1,7 +1,8 @@
 import React from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
+import SwitchingTabs from "../../reusables/SwitchingTabs/SwitchingTabs";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import DataTable from "../../reusables/DataTable/DataTable";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import "./ReportsPage.css";
@@ -56,8 +57,10 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
     setToast({ message, type, isVisible: true });
   };
 
-  React.useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = React.useCallback(
+    async (overrides?: { from?: string; to?: string }) => {
+      const f = overrides?.from ?? fromDate;
+      const t = overrides?.to ?? toDate;
       try {
         if (role === "Admin") {
           const txns = await getAdminTransactionHistory();
@@ -74,21 +77,21 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
             setTransactions([]);
             return;
           }
-          const txns = await getTransactionHistory(fromDate, toDate);
+          const txns = await getTransactionHistory(f, t);
           if (!txns || !Array.isArray(txns)) {
             setTransactions([]);
             return;
           }
           const mapped = txns.map(
-            (t) =>
+            (x) =>
               ({
-                id: t.id,
-                tariffId: t.tariffId,
-                tariffName: t.tariffName,
-                amount: t.amount,
-                status: t.status,
-                createdAt: t.createdAt,
-                customerId: t.customerId || user?.customerId,
+                id: x.id,
+                tariffId: x.tariffId,
+                tariffName: x.tariffName,
+                amount: x.amount,
+                status: x.status,
+                createdAt: x.createdAt,
+                customerId: x.customerId || user?.customerId,
                 customerName: user
                   ? `${user.firstName} ${user.lastName}`.trim()
                   : undefined,
@@ -103,17 +106,34 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
         console.error("Reports: failed to fetch transactions", e);
         showToast("Failed to load report data", "error");
       }
-    };
+    },
+    [
+      getAdminTransactionHistory,
+      getTransactionHistory,
+      role,
+      fromDate,
+      toDate,
+      user,
+    ]
+  );
 
+  React.useEffect(() => {
     fetchData();
-  }, [
-    getAdminTransactionHistory,
-    getTransactionHistory,
-    role,
-    fromDate,
-    toDate,
-    user,
-  ]);
+  }, [fetchData]);
+
+  // Reset date range to default last-30-days
+  const handleClear = () => {
+    const dTo = new Date();
+    const dFrom = new Date();
+    dFrom.setDate(dTo.getDate() - 30);
+    setFromDate(dFrom.toISOString().slice(0, 10));
+    setToDate(dTo.toISOString().slice(0, 10));
+    // refetch using the reset range immediately
+    fetchData({
+      from: dFrom.toISOString().slice(0, 10),
+      to: dTo.toISOString().slice(0, 10),
+    });
+  };
 
   // Date filter helpers
   const inRange = (iso?: string) => {
@@ -423,7 +443,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
     const title = `${activeTab.toUpperCase()} Report (${fromDate} to ${toDate})`;
     const style = `
       <style>
-        body{font-family:Arial,Helvetica,sans-serif;color:#111827;padding:24px}
+        body{font-family:Arial,Helvetica,sans-serif;color:#000;padding:24px}
         table{width:100%;border-collapse:collapse}
         th,td{border:1px solid #e5e7eb;padding:8px;text-align:left}
         th{background:#f8fafc}
@@ -482,65 +502,72 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
       />
 
       <div className="page-header">
-        <PageTitle icon="/icons/reports-icon.svg" title="Reports" />
+        <PageTitle
+          icon="/icons/reports-icon.svg"
+          title="Reports"
+          subtitle={
+            "View and export system reports. Use filters to narrow results."
+          }
+        />
       </div>
 
       <div className="reports-filter-row">
-        <div className="reports-date-field">
-          <label>From</label>
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-          />
-        </div>
-        <div className="reports-date-field">
-          <label>To</label>
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-          />
-        </div>
-        <div className="reports-actions">
-          <BorderButton
-            text="Download CSV"
-            onClick={handleDownloadCurrent}
-            className="border-button-reports"
-          />
-          <BorderButton
-            text="Download JSON"
-            onClick={handleDownloadJson}
-            className="border-button-reports"
-          />
-          <BorderButton
-            text="Download PDF"
-            onClick={handleDownloadPdf}
-            className="border-button-reports"
-          />
-        </div>
+        <FieldButton
+          inputs={[
+            {
+              placeholder: "From",
+              value: fromDate,
+              type: "date",
+              hideIcon: true,
+              onChange: (e: unknown) =>
+                setFromDate(
+                  (e as { target?: { value?: string } })?.target?.value ??
+                    String(e)
+                ),
+            },
+            {
+              placeholder: "To",
+              value: toDate,
+              type: "date",
+              hideIcon: true,
+              onChange: (e: unknown) =>
+                setToDate(
+                  (e as { target?: { value?: string } })?.target?.value ??
+                    String(e)
+                ),
+            },
+          ]}
+          buttons={[
+            {
+              text: "Clear",
+              onClick: handleClear,
+              type: "button",
+              className: "reports-clear-btn",
+            },
+            { text: "Download CSV", onClick: handleDownloadCurrent },
+            { text: "Download JSON", onClick: handleDownloadJson },
+            { text: "Download PDF", onClick: handleDownloadPdf },
+          ]}
+          className="reports-filter-fieldbutton"
+        />
       </div>
 
       <div className="reports-tabs-row">
-        {availableTabs.map((key) => {
-          const labelMap: Record<string, string> = {
-            active: "Active Customers",
-            pending: "Pending Transactions",
-            completed: "Completed Payments",
-          };
-          return (
-            <button
-              key={key}
-              className={`reports-tab${activeTab === key ? " active" : ""}`}
-              onClick={() =>
-                setActiveTab(key as "active" | "pending" | "completed")
-              }
-              type="button"
-            >
-              {labelMap[key]}
-            </button>
-          );
-        })}
+        <SwitchingTabs
+          items={availableTabs.map((key) => ({
+            id: key,
+            label:
+              key === "active"
+                ? "Active Customers"
+                : key === "pending"
+                ? "Pending Transactions"
+                : "Completed Payments",
+          }))}
+          activeId={activeTab}
+          onChange={(id) =>
+            setActiveTab(id as "active" | "pending" | "completed")
+          }
+        />
       </div>
 
       <div className="reports-table-wrap">

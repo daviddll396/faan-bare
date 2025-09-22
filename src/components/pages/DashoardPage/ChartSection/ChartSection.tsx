@@ -12,7 +12,8 @@ import {
   Tooltip,
 } from "recharts";
 import ExportIcon from "/icons/charts-export-icon.svg";
-import BorderButton from "../../../reusables/BorderButton/BorderButton";
+import SolidButton from "../../../reusables/SolidButton/SolidButton";
+import { Download } from "lucide-react";
 import { useAuth } from "../../../../contexts/AuthContext";
 
 interface ChartSectionProps {
@@ -120,10 +121,12 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
       <div className="chart-section">
         <div className="chart-header">
           <h3>Total Bookings vs. Completed Bookings</h3>
-          <BorderButton
+          <SolidButton
             text="Export"
-            icon={ExportIcon}
+            icon={<Download size={18} color="#fff" />}
             onClick={handleExport}
+            variant="primary"
+            size={windowWidth <= 768 ? "small" : "medium"}
           />
         </div>
         <div className="inner-chart-header-mobile">
@@ -137,10 +140,12 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
               Completed Bookings
             </p>
           </div>
-          <BorderButton
+          <SolidButton
             text="Export"
-            icon={ExportIcon}
+            icon={<Download size={16} color="#fff" />}
             onClick={handleExport}
+            variant="primary"
+            size={windowWidth <= 768 ? "small" : "medium"}
           />
         </div>
         <div className="chart-container">
@@ -180,7 +185,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                   border: "none",
                   boxShadow: "0 6px 18px rgba(16,24,40,0.08)",
                 }}
-                labelStyle={{ color: "#6b7280" }}
+                labelStyle={{ color: "#969696" }}
                 formatter={(value: unknown, name: unknown, props: unknown) => {
                   try {
                     const p = props as
@@ -240,7 +245,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                       return (
                         <span
                           style={{
-                            color: "#222B45",
+                            color: "#000",
                             fontSize: 12,
                             fontWeight: 500,
                           }}
@@ -256,8 +261,13 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                       return (
                         <span
                           style={{
-                            color: "#222B45",
-                            fontSize: windowWidth <= 768 ? 12 : windowWidth <= 1450 ? 14 : 12,
+                            color: "#000",
+                            fontSize:
+                              windowWidth <= 768
+                                ? 12
+                                : windowWidth <= 1450
+                                ? 14
+                                : 12,
                             fontWeight: 500,
                           }}
                         >
@@ -269,8 +279,13 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                   return (
                     <span
                       style={{
-                        color: "#222B45",
-                        fontSize: windowWidth <= 768 ? 12 : windowWidth <= 1450 ? 14 : 12,
+                        color: "#000",
+                        fontSize:
+                          windowWidth <= 768
+                            ? 12
+                            : windowWidth <= 1450
+                            ? 14
+                            : 12,
                         fontWeight: 500,
                       }}
                     >

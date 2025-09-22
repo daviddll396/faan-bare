@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import Input from "../../reusables/Input/Input";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/onboarding-image.svg";
 import "./ForgotPasswordPage.css";
@@ -89,11 +90,11 @@ const ForgotPasswordPage: React.FC = () => {
             Enter your email address and we'll send you a password reset link.
           </p>
           <div className="form-row-modern" style={{ marginBottom: "20px" }}>
-            <label htmlFor="email">Email</label>
-            <input
+            <Input
+              label="Email"
               type="email"
               id="email"
-              className={`form-input-modern ${validationError ? "error" : ""}`}
+              className={`${validationError ? "error" : ""}`}
               value={email}
               onChange={handleEmailChange}
               placeholder="Enter your email"
@@ -105,7 +106,6 @@ const ForgotPasswordPage: React.FC = () => {
             )}
           </div>
           <GradientButton
-          
             type="submit"
             fullWidth
             disabled={isSubmitting || !!validationError || !email}

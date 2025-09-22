@@ -8,7 +8,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1; /* allow inputs to take available space so buttons sit next to them */
+  /* Prevent inputs from forcing full-width; allow them to size to content
+     but still shrink if container is narrow. */
+  flex: 0 1 auto;
+  min-width: 0;
 }
 .fieldbutton-input {
   min-width: 0; /* allow inputs to shrink inside flex */
@@ -19,62 +22,35 @@
   gap: 12px;
 }
 
-.fieldbutton-btn {
- 
-  border: none;
-  background: #f8f8f8;
-  border-radius: 8px;
-  padding: 0 12px; /* vertical padding removed so we can set fixed height */
-  color: #007948;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px; /* match input height */
-  line-height: 1;
-  min-width: 60px;
-  justify-content: center;
-}
-.fieldbutton-btn:hover {
-  background: #0079480d;
-}
-.fieldbutton-btn-icon {
-  width: 16px;
-  height: 16px;
-  /* make any img-based icon appear grey to match design */
-  filter: grayscale(100%) brightness(60%);
-}
-
 /* Search-specific styles (copied/adapted from searchinput.css) */
 .fieldbutton-search-wrapper {
   display: flex;
   align-items: center;
-  background: #fff;
-  border: 1px solid #d9d9d9;
+  background: transparent;
+  border: 1px solid #e4e4e4;
   border-radius: 12px;
   padding: 0 12px 0 12px;
-  height: 44px;
-  min-width: 220px;
+  height: 52px;
+  /* Avoid forcing a minimum width here so wrapper can remain compact */
+  min-width: 0;
   position: relative;
 }
 .fieldbutton-search-icon {
-  color: #626262; /* grey search icon */
+  color: #969696 !important;
   margin-right: 8px;
-  font-size: 18px;
+  font-size: 16px;
 }
 .fieldbutton-search-input {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
-  color: #626262;
+  color: #000;
   flex: 1;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
   cursor: text;
+  height: 48px;
 }
 .fieldbutton-search-select {
   border: none;
@@ -82,22 +58,24 @@
   background: transparent;
   font-size: 15px;
   font-weight: 500;
-  color: #626262;
+  color: #969696;
   flex: 1;
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
   padding: 10px 6px;
   cursor: pointer;
   appearance: none;
 }
 .fieldbutton-search-dropdown-wrapper {
   padding-right: 32px;
-  width: 320px;
+  /* let dropdown wrapper size naturally; don't fix width here */
+  width: auto;
+  max-width: 100%;
 }
 .fieldbutton-search-chevron {
   position: absolute;
   right: 12px;
   font-size: 12px;
-  color: #9ca3af;
+  color: #969696;
 }
 
 /* Inline button next to input, smaller spacing */
@@ -113,17 +91,14 @@
     gap: 6px;
   }
   .fieldbutton-search-wrapper {
-    height: 40px;
+    height: 48px;
     min-width: 180px;
     padding: 0 10px;
     border-radius: 10px;
   }
-  .fieldbutton-search-input,
-  .fieldbutton-search-select {
-    font-size: 14px;
-  }
+
   .fieldbutton-btn {
-    height: 40px;
+    height: 48px;
     font-size: 14px;
     padding: 0 10px;
     border-radius: 10px;
@@ -143,7 +118,7 @@
     width: 100%;
   }
   .fieldbutton-search-wrapper {
-    height: 36px;
+    height: 48px;
     min-width: 140px;
     padding: 0 8px;
     border-radius: 8px;
@@ -153,7 +128,7 @@
     font-size: 13px;
   }
   .fieldbutton-btn {
-    height: 36px;
+    height: 48px;
     font-size: 13px;
     padding: 0 8px;
     border-radius: 8px;

@@ -1,0 +1,33 @@
+.services-grid-root {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(320px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* Switch to 2 columns earlier (<= 1400px) so cards wrap sooner on large desktops */
+@media (max-width: 1400px) {
+  .services-grid-root {
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .services-grid-root {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .services-grid-root {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Utility spacing when grid used inside a padded container */
+.services-grid-root.padded {
+  padding: 8px 0;
+}

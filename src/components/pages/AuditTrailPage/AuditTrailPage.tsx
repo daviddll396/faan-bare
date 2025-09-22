@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLoading } from "../../../contexts/LoadingContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
-import SearchInput from "../../reusables/SearchInput/SearchInput";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
+// SearchInput and BorderButton removed in favor of FieldButton
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import DataTable from "../../reusables/DataTable/DataTable";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import "./AuditTrailPage.css";
@@ -234,27 +234,35 @@ const AuditTrailPage: React.FC<AuditTrailPageProps> = () => {
       />
 
       <div className="page-header">
-        <PageTitle icon="/icons/audit-trail-icon.svg" title="Audit Trail" />
+        <PageTitle
+          icon="/icons/audit-trail-icon.svg"
+          title="Audit Trail"
+          subtitle={
+            "Review system changes and user actions across the application."
+          }
+        />
       </div>
 
       <div className="page-actions">
-        <SearchInput
-          placeholder="Search audit logs..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+        <FieldButton
+          inputs={[
+            {
+              placeholder: "Search audit logs...",
+              value: searchQuery,
+              onChange: (e) =>
+                // FieldButton may pass a synthetic change or a simple object, handle both
+                setSearchQuery(
+                  (e as unknown as { target?: { value?: string } }).target
+                    ?.value ?? String(e)
+                ),
+            },
+          ]}
+          buttons={[
+            { text: "Search", onClick: handleSearch },
+            { text: "Clear", onClick: handleClearSearch },
+          ]}
+          className="audit-fieldbutton"
         />
-        <div style={{ display: "flex", gap: 12 }}>
-          <BorderButton
-            text="Search"
-            onClick={handleSearch}
-            className="border-button-audittrail"
-          />
-          <BorderButton
-            text="Clear"
-            onClick={handleClearSearch}
-            className="border-button-audittrail"
-          />
-        </div>
       </div>
 
       <div className="audit-summary">

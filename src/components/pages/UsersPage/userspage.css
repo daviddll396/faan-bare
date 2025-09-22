@@ -13,8 +13,110 @@
 .page-header-bottom {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   animation: slideInUp 0.4s ease-out 0.2s both;
+  margin-bottom: 24px;
+}
+
+/* ======================================== */
+/* USERS PAGE SEARCH SECTION REDESIGN */
+/* ======================================== */
+
+.userspage-search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+}
+
+.userspage-search-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.userspage-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid #f5f5f5;
+}
+
+/* FieldButton customizations for UsersPage */
+.userspage-search-fieldbutton {
+  width: 100%;
+}
+
+.userspage-search-fieldbutton .fieldbutton-inputs {
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.userspage-search-fieldbutton .fieldbutton-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.userspage-actions-fieldbutton {
+  display: flex;
+  gap: 8px;
+}
+
+.userspage-actions-fieldbutton .fieldbutton-inputs {
+  gap: 8px;
+}
+
+.userspage-add-fieldbutton {
+  margin-left: auto;
+}
+
+.userspage-add-fieldbutton .fieldbutton-inputs {
+  gap: 0;
+}
+
+/* ListBox styling for UsersPage */
+.userspage-role-listbox {
+  min-width: 180px;
+  max-width: 200px;
+  flex-shrink: 0;
+}
+
+/* Search section header */
+.userspage-search-header {
+  margin-bottom: 8px;
+}
+
+.userspage-search-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.userspage-search-subtitle {
+  font-size: 14px;
+  color: #969696;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Action button sections */
+.userspage-search-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.userspage-add-action {
+  display: flex;
+  align-items: center;
 }
 
 .table-container tbody tr:nth-child(even) {
@@ -28,254 +130,7 @@
   transition: zoom 0.3s ease;
 }
 
-/* Progressive zoom scaling for content card with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .content-card {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1800px) {
-  .content-card {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1700px) {
-  .content-card {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1600px) {
-  .content-card {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1500px) {
-  .content-card {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1450px) {
-  .content-card {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1400px) {
-  .content-card {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1350px) {
-  .content-card {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1300px) {
-  .content-card {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1250px) {
-  .content-card {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1200px) {
-  .content-card {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1150px) {
-  .content-card {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1100px) {
-  .content-card {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1050px) {
-  .content-card {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 1000px) {
-  .content-card {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 950px) {
-  .content-card {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 900px) {
-  .content-card {
-    zoom: 0.58;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .content-card {
-    zoom: 1;
-  }
-}
-
-.add-user-form-card {
-  background: #fff;
-  border-radius: 14px;
-  border: none; /* borderless card */
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
-  overflow: hidden;
-  padding: 24px 28px;
-  margin-top: 24px;
-  animation: slideInUp 0.4s ease-out 0.6s both;
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-  width: 100%;
-  max-width: 820px;
-}
-
-/* Progressive zoom scaling for add user form card with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .add-user-form-card {
-    zoom: 1.05;
-  }
-}
-
-@media (max-width: 1800px) {
-  .add-user-form-card {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1700px) {
-  .add-user-form-card {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1600px) {
-  .add-user-form-card {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1500px) {
-  .add-user-form-card {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1450px) {
-  .add-user-form-card {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1400px) {
-  .add-user-form-card {
-    zoom: 0.78;
-  }
-}
-
-@media (max-width: 1350px) {
-  .add-user-form-card {
-    zoom: 0.76;
-  }
-}
-
-@media (max-width: 1300px) {
-  .add-user-form-card {
-    zoom: 0.74;
-  }
-}
-
-@media (max-width: 1250px) {
-  .add-user-form-card {
-    zoom: 0.72;
-  }
-}
-
-@media (max-width: 1200px) {
-  .add-user-form-card {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1150px) {
-  .add-user-form-card {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1100px) {
-  .add-user-form-card {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1050px) {
-  .add-user-form-card {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 1000px) {
-  .add-user-form-card {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 950px) {
-  .add-user-form-card {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 900px) {
-  .add-user-form-card {
-    zoom: 0.58;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .add-user-form-card {
-    zoom: 1;
-  }
-}
-
-.add-user-title {
-  font-size: 22px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #222b45;
-}
-
-.add-user-helper {
-  color: #969696;
-  font-size: 17px;
-  font-weight: 400;
-  margin-bottom: 32px;
-}
+/* Add user card migrated to reusable Card component; per-page styles removed */
 
 .user-form-grid {
   display: flex;
@@ -302,24 +157,10 @@
   grid-column: 1 / -1;
 }
 
-.user-form-grid input,
-.user-form-grid select {
-  border: 1px solid #eef2f7;
-  border-radius: 12px;
-  padding: 21px 18px; /* 5px taller */
-  font-size: 17px;
-  font-family: inherit;
-  background: #fff;
-  color: #111827;
-  outline: none;
-  transition: border 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
-}
-
-.user-form-grid input:focus,
-.user-form-grid select:focus {
-  border: 1.5px solid #10b981;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+.user-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .user-form-grid label {
@@ -406,119 +247,160 @@
   transform: translateY(-50%) rotate(180deg);
 }
 
-/* Zoom scaling for BorderButton component on users page */
-.border-button-userspage {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
-}
+/* ======================================== */
+/* RESPONSIVE STYLING - MEDIA QUERIES */
+/* ======================================== */
 
-/* Progressive zoom scaling for border button with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .border-button-userspage {
-    zoom: 1.05;
+/* Desktop (1200px - 1399px) */
+@media (max-width: 1399px) {
+  .userspage-search-section {
+    padding: 0;
+    gap: 18px;
+  }
+  .userspage-search-inputs {
+    gap: 12px;
+    grid-template-columns: 1fr 1fr auto;
+  }
+  .userspage-action-buttons {
+    gap: 10px;
+  }
+  .userspage-search-fieldbutton .fieldbutton-inputs {
+    gap: 12px;
+  }
+  .userspage-search-fieldbutton .fieldbutton-input {
+    min-width: 0;
+  }
+  .userspage-role-listbox {
+    min-width: 160px;
+    max-width: 180px;
+  }
+  .userspage-search-title {
+    font-size: 17px;
+  }
+  .userspage-search-subtitle {
+    font-size: 13px;
+  }
+  /* add-user-form-card styles migrated to Card component */
+  .user-form-grid {
+    gap: 20px;
+  }
+  .form-row-pair {
+    gap: 28px;
+  }
+
+  .user-form-grid label {
+    font-size: 13px;
+  }
+  .save-btn-full {
+    font-size: 13px;
+    padding: 16px 0;
   }
 }
 
-@media (max-width: 1800px) {
-  .border-button-userspage {
-    zoom: 1;
+/* Large Tablet (992px - 1199px) */
+@media (max-width: 1199px) {
+  .userspage-search-section {
+    padding: 0;
+    gap: 16px;
+  }
+  .userspage-search-inputs {
+    gap: 10px;
+    grid-template-columns: 1fr 1fr auto;
+  }
+  .userspage-action-buttons {
+    gap: 8px;
+  }
+  .userspage-search-fieldbutton .fieldbutton-inputs {
+    gap: 10px;
+  }
+  .userspage-search-fieldbutton .fieldbutton-input {
+    min-width: 0;
+  }
+  .userspage-role-listbox {
+    min-width: 140px;
+    max-width: 160px;
+  }
+  .userspage-search-title {
+    font-size: 16px;
+  }
+  .userspage-search-subtitle {
+    font-size: 12px;
+  }
+  /* add-user-form-card styles migrated to Card component */
+  .user-form-grid {
+    gap: 18px;
+  }
+  .form-row-pair {
+    gap: 24px;
+  }
+
+  .user-form-grid label {
+    font-size: 12px;
+  }
+  .save-btn-full {
+    font-size: 12px;
+    padding: 14px 0;
   }
 }
 
-@media (max-width: 1700px) {
-  .border-button-userspage {
-    zoom: 0.95;
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+  .userspage-search-section {
+    padding: 0;
+    gap: 14px;
   }
-}
-
-@media (max-width: 1600px) {
-  .border-button-userspage {
-    zoom: 0.9;
+  .userspage-search-inputs {
+    gap: 8px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
   }
-}
-
-@media (max-width: 1500px) {
-  .border-button-userspage {
-    zoom: 0.85;
+  .userspage-search-fieldbutton {
+    grid-row: 1;
   }
-}
-
-@media (max-width: 1450px) {
-  .border-button-userspage {
-    zoom: 0.8;
+  .userspage-role-listbox {
+    grid-row: 2;
+    min-width: 100%;
+    max-width: 100%;
   }
-}
-
-@media (max-width: 1400px) {
-  .border-button-userspage {
-    zoom: 0.78;
+  .userspage-action-buttons {
+    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
   }
-}
-
-@media (max-width: 1350px) {
-  .border-button-userspage {
-    zoom: 0.76;
+  .userspage-search-actions {
+    justify-content: center;
   }
-}
-
-@media (max-width: 1300px) {
-  .border-button-userspage {
-    zoom: 0.74;
+  .userspage-add-action {
+    justify-content: center;
   }
-}
-
-@media (max-width: 1250px) {
-  .border-button-userspage {
-    zoom: 0.72;
+  .userspage-search-fieldbutton .fieldbutton-inputs {
+    gap: 8px;
+    flex-wrap: wrap;
   }
-}
-
-@media (max-width: 1200px) {
-  .border-button-userspage {
-    zoom: 0.7;
+  .userspage-search-fieldbutton .fieldbutton-input {
+    min-width: 0;
+    flex: 1 1 140px;
   }
-}
-
-@media (max-width: 1150px) {
-  .border-button-userspage {
-    zoom: 0.68;
+  .userspage-search-title {
+    font-size: 15px;
   }
-}
-
-@media (max-width: 1100px) {
-  .border-button-userspage {
-    zoom: 0.66;
+  .userspage-search-subtitle {
+    font-size: 11px;
   }
-}
-
-@media (max-width: 1050px) {
-  .border-button-userspage {
-    zoom: 0.64;
+  /* add-user-form-card styles migrated to Card component */
+  .user-form-grid {
+    gap: 16px;
   }
-}
-
-@media (max-width: 1000px) {
-  .border-button-userspage {
-    zoom: 0.62;
+  .form-row-pair {
+    gap: 20px;
   }
-}
 
-@media (max-width: 950px) {
-  .border-button-userspage {
-    zoom: 0.6;
+  .user-form-grid label {
+    font-size: 11px;
   }
-}
-
-@media (max-width: 900px) {
-  .border-button-userspage {
-    zoom: 0.58;
-  }
-}
-
-/* Reset zoom for mobile devices */
-@media (max-width: 768px) {
-  .border-button-userspage {
-    zoom: 1;
+  .save-btn-full {
+    font-size: 11px;
+    padding: 12px 0;
   }
 }
 
@@ -527,38 +409,92 @@
     padding: 0;
     background: var(--bg-color);
   }
-  .page-content {
-    padding: 0 0 24px 0;
-    gap: 18px;
-  }
-  .page-header {
-    padding: 0 12px;
-    margin-bottom: 10px;
-  }
   .page-header-bottom {
     flex-direction: column;
-    gap: 10px !important;
+    gap: 16px !important;
     padding: 0 0px;
-    align-items: flex-end;
-    margin-bottom: 0px !important;
+    align-items: stretch;
+    margin-bottom: 20px !important;
   }
 
-  .userspage-search-row {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+  .userspage-search-section {
+    padding: 0;
+    gap: 12px;
+    border-radius: 0;
+  }
+
+  .userspage-search-header {
+    margin-bottom: 12px;
+  }
+
+  .userspage-search-title {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .userspage-search-subtitle {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .userspage-search-inputs {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .userspage-search-fieldbutton {
+    width: 100%;
+    grid-row: 1;
+  }
+
+  .userspage-search-fieldbutton .fieldbutton-inputs {
+    flex-direction: column;
+    gap: 8px;
     width: 100%;
   }
-  .userspage-search-row .search-input {
-    flex: 1 1 0;
-    min-width: 0;
-  }
-  .userspage-role-row {
+
+  .userspage-search-fieldbutton .fieldbutton-input {
     width: 100%;
-    margin-top: 6px;
+    min-width: unset;
   }
-  .userspage-role-row .search-input {
+
+  .userspage-role-listbox {
     width: 100%;
+    min-width: unset;
+    max-width: unset;
+    grid-row: 2;
+  }
+
+  .userspage-action-buttons {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    justify-content: stretch;
+    padding-top: 12px;
+  }
+
+  .userspage-search-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .userspage-add-action {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .userspage-actions-fieldbutton,
+  .userspage-add-fieldbutton {
+    width: 100%;
+  }
+
+  .userspage-actions-fieldbutton .fieldbutton-inputs,
+  .userspage-add-fieldbutton .fieldbutton-inputs {
+    width: 100%;
+    justify-content: stretch;
   }
   .content-card {
     border-radius: 10px;
@@ -596,20 +532,7 @@
     border-radius: 5px;
     gap: 3px;
   }
-  .add-user-form-card {
-    width: 100%;
-    padding: 18px 15px;
-    border-radius: 10px;
-    margin-top: 0px;
-  }
-  .add-user-title {
-    font-size: 16px;
-    margin-bottom: 2px;
-  }
-  .add-user-helper {
-    font-size: 12px;
-    margin-bottom: 18px;
-  }
+  /* add-user-form-card styles migrated to Card component */
   .user-form-grid {
     gap: 14px;
   }
@@ -620,12 +543,7 @@
   .form-row {
     gap: 5px;
   }
-  .user-form-grid input,
-  .user-form-grid select {
-    font-size: 12px;
-    padding: 10px 12px;
-    border-radius: 8px;
-  }
+
   .user-form-grid label {
     font-size: 12px;
   }
@@ -639,14 +557,6 @@
     margin-top: 10px;
   }
 
-  .userspage-actions-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 8px;
-    width: 100%;
-    margin-top: 0px;
-  }
   .user-form-grid {
     gap: 10px !important;
   }

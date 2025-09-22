@@ -8,6 +8,8 @@ import {
   Save,
   Edit3,
 } from "lucide-react";
+import PageTitle from "../../reusables/PageTitle/PageTitle";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import "./profilepage.css";
 
 const ProfilePage: React.FC = () => {
@@ -35,6 +37,9 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="profile-dashboard-root">
+      <div className="page-header">
+        <PageTitle title="Profile" subtitle="Manage your profile" />
+      </div>
       {/* Header Section */}
       <div className="profile-header">
         <div className="profile-header-content">
@@ -50,13 +55,15 @@ const ProfilePage: React.FC = () => {
               <p className="profile-department">{formData.department}</p>
             </div>
           </div>
-          <button
+          <SolidButton
             className="profile-edit-toggle"
             onClick={() => setIsEditing(!isEditing)}
+            icon={<Edit3 size={16} />}
+            size="small"
+            variant="secondary"
           >
-            <Edit3 size={16} />
             {isEditing ? "Cancel" : "Edit Profile"}
-          </button>
+          </SolidButton>
         </div>
       </div>
 
@@ -214,7 +221,15 @@ const ProfilePage: React.FC = () => {
                   Last changed 3 months ago
                 </span>
               </div>
-              <button className="profile-btn-secondary">Change Password</button>
+              <SolidButton
+                onClick={() => {
+                  /* placeholder */
+                }}
+                size="small"
+                variant="secondary"
+              >
+                Change Password
+              </SolidButton>
             </div>
             <div className="profile-security-item">
               <div className="security-item-info">
@@ -223,7 +238,15 @@ const ProfilePage: React.FC = () => {
                 </span>
                 <span className="security-description">Not enabled</span>
               </div>
-              <button className="profile-btn-secondary">Enable 2FA</button>
+              <SolidButton
+                onClick={() => {
+                  /* placeholder */
+                }}
+                size="small"
+                variant="secondary"
+              >
+                Enable 2FA
+              </SolidButton>
             </div>
           </div>
         </div>
@@ -232,10 +255,14 @@ const ProfilePage: React.FC = () => {
       {/* Save Button for Edit Mode */}
       {isEditing && (
         <div className="profile-save-section">
-          <button className="profile-save-btn" onClick={handleSave}>
-            <Save size={16} />
+          <SolidButton
+            onClick={handleSave}
+            icon={<Save size={16} />}
+            size="medium"
+            variant="primary"
+          >
             Save Changes
-          </button>
+          </SolidButton>
         </div>
       )}
     </div>

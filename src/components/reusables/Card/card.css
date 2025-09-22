@@ -1,0 +1,22 @@
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+  padding: 24px 32px;
+  /* max-width: 100%; */
+  max-width: 1000px;
+}
+.card-title {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #000;
+}
+.card-helper {
+  color: #969696;
+  font-size: 17px;
+  font-weight: 400;
+  margin-bottom: 24px;
+}
