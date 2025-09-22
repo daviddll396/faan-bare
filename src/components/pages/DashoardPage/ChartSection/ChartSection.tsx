@@ -11,7 +11,6 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
-import ExportIcon from "/icons/charts-export-icon.svg";
 import SolidButton from "../../../reusables/SolidButton/SolidButton";
 import { Download } from "lucide-react";
 import { useAuth } from "../../../../contexts/AuthContext";
