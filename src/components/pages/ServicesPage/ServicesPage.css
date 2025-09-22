@@ -1655,7 +1655,7 @@
 
 .receipt-paper {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0f0f0;
   border-radius: 14px;
   box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
   padding: 24px 24px 18px 24px;
@@ -1674,7 +1674,7 @@
   height: 16px;
   background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
       top / 16px 16px repeat-x,
-    linear-gradient(#e5e7eb, #e5e7eb);
+    linear-gradient(#f0f0f0, #f0f0f0);
 }
 
 .receipt-head {
@@ -1701,7 +1701,7 @@
 }
 
 .receipt-meta {
-  border: 1px dashed #e5e7eb;
+  border: 1px dashed #f0f0f0;
   border-radius: 10px;
   padding: 12px 14px;
   margin: 12px 0 16px 0;
@@ -1711,7 +1711,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 4px;
-  border-bottom: 1px dashed #e5e7eb;
+  border-bottom: 1px dashed #f0f0f0;
 }
 .receipt-meta .meta-row:last-child {
   border-bottom: none;
@@ -1728,8 +1728,8 @@
 }
 
 .receipt-items {
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 .receipt-items .thead,
 .receipt-items .row,
@@ -1744,13 +1744,13 @@
   font-size: 12px;
 }
 .receipt-items .row {
-  border-top: 1px dashed #e5e7eb;
+  border-top: 1px dashed #f0f0f0;
 }
 .receipt-items .right {
   text-align: right;
 }
 .receipt-items .total {
-  border-top: 2px solid #e5e7eb;
+  border-top: 2px solid #f0f0f0;
   font-weight: 800;
 }
 
@@ -1986,7 +1986,7 @@
   background: #f8f9fa;
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0f0f0;
   transition: all 0.2s ease;
 }
 
@@ -2001,7 +2001,7 @@
   gap: 12px;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .service-item-number {

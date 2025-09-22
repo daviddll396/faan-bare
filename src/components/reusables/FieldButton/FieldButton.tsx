@@ -106,7 +106,7 @@ const FieldButton: React.FC<FieldButtonProps> = ({
             variant="secondary"
             rounded={false}
             className={btn.className}
-            style={{ height: "50px" }}
+            style={{ height: "56px" }}
           >
             {btn.icon && (
               <img

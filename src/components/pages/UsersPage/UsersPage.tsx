@@ -341,48 +341,53 @@ const UsersPage: React.FC<UsersPageProps> = () => {
         <>
           <div className="page-header-bottom">
             <div className="userspage-search-section">
-              <div className="userspage-search-inputs">
-                <FieldButton
-                  inputs={[
-                    {
-                      placeholder: "Search by name",
-                      value: searchName,
-                      onChange: (e) => setSearchName(e.target.value),
-                    },
-                    {
-                      placeholder: "Search by email",
-                      value: searchEmail,
-                      onChange: (e) => setSearchEmail(e.target.value),
-                    },
-                  ]}
-                  buttons={[
-                    { text: "Search", onClick: handleSearch },
-                    { text: "Clear", onClick: handleClearSearch },
-                  ]}
-                  className="userspage-search-fieldbutton"
-                />
-                {windowWidth > 768 && (
-                  <ListBox
-                    options={roleOptions}
-                    selected={selectedRole}
-                    onChange={setSelectedRole}
-                    placeholder="All Roles"
-                    className="userspage-role-listbox"
-                  />
-                )}
-
-                {/* Add New User action (matches ServicesPage pattern) */}
-                <div className="userspage-add-action">
+              <div className="userspage-search-row">
+                <div className="userspage-search-left">
                   <FieldButton
-                    buttons={[
+                    inputs={[
                       {
-                        text: "Add New User",
-                        icon: AddIcon,
-                        onClick: handleAddNewUser,
+                        placeholder: "Search by name",
+                        value: searchName,
+                        onChange: (e) => setSearchName(e.target.value),
+                      },
+                      {
+                        placeholder: "Search by email",
+                        value: searchEmail,
+                        onChange: (e) => setSearchEmail(e.target.value),
                       },
                     ]}
-                    className="userspage-add-fieldbutton"
+                    buttons={[
+                      { text: "Search", onClick: handleSearch },
+                      { text: "Clear", onClick: handleClearSearch },
+                    ]}
+                    className="userspage-search-fieldbutton"
                   />
+                  {windowWidth > 768 && (
+                    <div className="userspage-role-wrap">
+                      <ListBox
+                        options={roleOptions}
+                        selected={selectedRole}
+                        onChange={setSelectedRole}
+                        placeholder="All Roles"
+                        className="userspage-role-listbox"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="userspage-search-right">
+                  <div className="userspage-add-action">
+                    <FieldButton
+                      buttons={[
+                        {
+                          text: "Add New User",
+                          icon: AddIcon,
+                          onClick: handleAddNewUser,
+                        },
+                      ]}
+                      className="userspage-add-fieldbutton"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -453,85 +458,68 @@ const UsersPage: React.FC<UsersPageProps> = () => {
               </div>
               <form className="user-form-grid" onSubmit={handleFormSubmit}>
                 <div className="form-row-pair">
-                
-                   
-                    <Input
-                      label="First Name"
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                    />
-                 
-                
-                      
-                    <Input
-                      label="Last Name"
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                    />
-              
-                </div>
-                <div className="form-row-pair">
-                
-                    <Input
-                      label="Middle Name"
-                      type="text"
-                      name="middleName"
-                      value={formData.middleName}
-                      onChange={handleInputChange}
-                    />
-               
-               
-                  
-                  
-                    <Input
-                      label="User Name"
-                      type="text"
-                      name="userName"
-                      value={formData.userName}
-                      onChange={handleInputChange}
-                    />
-                  
-                </div>
-                <div className="form-row-pair">
-                 
-                    
-                    <Input
-                      label="Email Address"
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                    />
-                
-                 
-                   
-                    <Input
-                      label="Phone Number"
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
-                
-                </div>
-                
-                 
-                  
-                  <ListBox
-                    options={roleOptions}
-                    selected={
-                      roleOptions.find((o) => o.value === formData.role) ?? null
-                    }
-                    onChange={(opt) =>
-                      setFormData((prev) => ({ ...prev, role: opt.value }))
-                    }
-                    placeholder="Select role"
+                  <Input
+                    label="First Name"
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
                   />
-               
+
+                  <Input
+                    label="Last Name"
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-row-pair">
+                  <Input
+                    label="Middle Name"
+                    type="text"
+                    name="middleName"
+                    value={formData.middleName}
+                    onChange={handleInputChange}
+                  />
+
+                  <Input
+                    label="User Name"
+                    type="text"
+                    name="userName"
+                    value={formData.userName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-row-pair">
+                  <Input
+                    label="Email Address"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+
+                  <Input
+                    label="Phone Number"
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <ListBox
+                  options={roleOptions}
+                  selected={
+                    roleOptions.find((o) => o.value === formData.role) ?? null
+                  }
+                  onChange={(opt) =>
+                    setFormData((prev) => ({ ...prev, role: opt.value }))
+                  }
+                  placeholder="Select role"
+                />
+
                 <div className="form-actions">
                   <GradientButton type="submit" fullWidth>
                     {editingUser ? "UPDATE" : "SAVE"}

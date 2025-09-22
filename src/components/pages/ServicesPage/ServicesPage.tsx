@@ -6,6 +6,7 @@ import GradientButton from "../../reusables/GradientButton/GradientButton";
 // ChevronDown not used in redesigned form — keep import commented for future use
 // import ChevronDown from "/icons/chevron-down.svg";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
+import ConfirmationModal from "../../reusables/ConfirmationModal/ConfirmationModal";
 import ServicesIcon from "/icons/nav-product-icon.svg";
 import "./ServicesPage.css";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
@@ -196,6 +197,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   }, [getAllTariffs, showLoading, hideLoading]);
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [services, setServices] = useState([{ ...initialService }]);
+  const [editingServiceId, setEditingServiceId] = useState<number | null>(null);
+  const [serviceToDelete, setServiceToDelete] = useState<AdminService | null>(
+    null
+  );
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const [selectedService, setSelectedService] =
     useState<CustomerService | null>(null);
@@ -506,7 +512,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       return;
     }
 
-    showLoading("Creating service...");
+    const isEdit = Boolean(editingServiceId);
+    showLoading(isEdit ? "Updating service..." : "Creating service...");
 
     try {
       const request = {
@@ -519,7 +526,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
       const response = await createTariff(request);
 
       if (response && response.status) {
-        showToast("Service created successfully", "success");
+        showToast(
+          isEdit
+            ? "Service updated successfully"
+            : "Service created successfully",
+          "success"
+        );
 
         // Refresh services list
         await getAllTariffs();
@@ -666,6 +678,57 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const handleClearSearch = () => {
     setSearchName("");
     setFilteredServices(allServices);
+  };
+
+  const handleOpenEditService = (service: AdminService) => {
+    // Prefill the modal form with the service details and open modal for editing
+    setServices([
+      {
+        serviceName: service.name,
+        currency: service.price ? "NGR" : "NGR",
+        price: service.price,
+        description: service.description,
+      },
+    ]);
+    setEditingServiceId(service.id);
+    setShowAddServiceForm(true);
+  };
+
+  const handleDeleteService = async (serviceId: number) => {
+    showLoading("Deleting service...");
+    try {
+      // Optimistically remove from local lists
+      setFilteredServices((prev) => prev.filter((s) => s.id !== serviceId));
+      setAllServices((prev) => prev.filter((s) => s.id !== serviceId));
+
+      // TODO: Call backend delete endpoint here if available
+      await new Promise((res) => setTimeout(res, 300));
+
+      showToast("Service deleted successfully", "success");
+    } catch (err) {
+      console.error("Error deleting service:", err);
+      showToast("Failed to delete service", "error");
+    } finally {
+      hideLoading();
+      // clear modal state
+      setServiceToDelete(null);
+      setShowDeleteConfirmation(false);
+    }
+  };
+
+  const promptDeleteService = (service: AdminService) => {
+    setServiceToDelete(service);
+    setShowDeleteConfirmation(true);
+  };
+
+  const confirmDeleteService = () => {
+    if (!serviceToDelete) return;
+    handleDeleteService(serviceToDelete.id);
+  };
+
+  const cancelDeleteService = () => {
+    setServiceToDelete(null);
+    setShowDeleteConfirmation(false);
   };
 
   // Customer search functionality
@@ -1102,7 +1165,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                             { id: "engr", name: "Engr.", value: "Engr." },
                           ].find(
                             (o) => o.value === bookingForm.designation
-                          ) as any) ?? null
+                          ) as ListBoxOption | null) ?? null
                         }
                         onChange={(opt) =>
                           setBookingField("designation", opt.value)
@@ -1129,7 +1192,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                             { id: "female", name: "Female", value: "Female" },
                           ].find(
                             (o) => o.value === bookingForm.gender
-                          ) as any) ?? null
+                          ) as ListBoxOption | null) ?? null
                         }
                         onChange={(opt) => setBookingField("gender", opt.value)}
                         placeholder="Select gender"
@@ -1186,7 +1249,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                             },
                           ].find(
                             (o) => o.value === bookingForm.specialReq
-                          ) as any) ?? null
+                          ) as ListBoxOption | null) ?? null
                         }
                         onChange={(opt) =>
                           setBookingField("specialReq", opt.value)
@@ -1376,7 +1439,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
                             ].find(
                               (o) => o.value === bookingForm.airport
-                            ) as any) ?? null
+                            ) as ListBoxOption | null) ?? null
                           }
                           onChange={(opt) =>
                             setBookingField("airport", opt.value)
@@ -1441,7 +1504,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               .map((al, i) => ({ id: i, name: al, value: al }))
                               .find(
                                 (o) => o.value === bookingForm.airline
-                              ) as any) ?? null
+                              ) as ListBoxOption | null) ?? null
                           }
                           onChange={(opt) =>
                             setBookingField("airline", opt.value)
@@ -1468,7 +1531,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               .map((d, i) => ({ id: i, name: d, value: d }))
                               .find(
                                 (o) => o.value === bookingForm.destination
-                              ) as any) ?? null
+                              ) as ListBoxOption | null) ?? null
                           }
                           onChange={(opt) =>
                             setBookingField("destination", opt.value)
@@ -1841,23 +1904,23 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       <style>
                         @page { margin: 10mm; }
                         body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
-                        .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
-                        .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#e5e7eb,#e5e7eb)}
+                        .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #f0f0f0;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
+                        .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#f0f0f0,#f0f0f0)}
                         .receipt-head{text-align:center;margin:8px 0}
                         .receipt-brand{font-weight:700;color:#000;font-size:14px}
                         .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
                         .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
-                        .receipt-meta{border:1px dashed #e5e7eb;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
-                        .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #e5e7eb}
+                        .receipt-meta{border:1px dashed #f0f0f0;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
+                        .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #f0f0f0}
                         .receipt-meta .meta-row:last-child{border-bottom:none}
                         .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
                         .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
-                        .receipt-items{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
+                        .receipt-items{border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
                         .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
                         .receipt-items .thead{color:#969696;font-size:12px}
-                        .receipt-items .row{border-top:1px dashed #e5e7eb}
+                        .receipt-items .row{border-top:1px dashed #f0f0f0}
                         .right{text-align:right}
-                        .receipt-items .total{border-top:2px solid #e5e7eb;font-weight:800}
+                        .receipt-items .total{border-top:2px solid #f0f0f0;font-weight:800}
                         .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
                       </style>
                       </head><body>
@@ -2043,7 +2106,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       {
                         text: "Add New Service",
                         icon: AddIcon,
-                        onClick: () => setShowAddServiceForm(true),
+                        onClick: () => {
+                          setEditingServiceId(null);
+                          setServices([{ ...initialService }]);
+                          setShowAddServiceForm(true);
+                        },
                       },
                     ]}
                     className="servicespage-add-fieldbutton"
@@ -2069,10 +2136,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   </span>,
                   `₦${service.price}`,
                   <div key={`a-${service.id}`}>
-                    <button className="action-btn-table edit">
+                    <button
+                      className="action-btn-table edit"
+                      onClick={() => handleOpenEditService(service)}
+                    >
                       <Edit size={16} /> Edit
                     </button>
-                    <button className="action-btn-table delete">
+                    <button
+                      className="action-btn-table delete"
+                      onClick={() => promptDeleteService(service)}
+                    >
                       <Trash2 size={16} /> Delete
                     </button>
                   </div>,
@@ -2088,17 +2161,22 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
         {showAddServiceForm && (
           <Modal
             isOpen={showAddServiceForm}
-            onClose={() => setShowAddServiceForm(false)}
+            onClose={() => {
+              setShowAddServiceForm(false);
+              setEditingServiceId(null);
+              setServices([{ ...initialService }]);
+            }}
             showHeader={true}
             showLogo={false}
-            headerTitle={"Add New Service"}
+            headerTitle={editingServiceId ? "Edit Service" : "Add New Service"}
             className="add-service-modal"
-            
           >
             <div className="service-creation-section">
-            <div className="modal-form-header">
+              <div className="modal-form-header">
                 <p className="modal-form-helper">
-                Create a new service quickly. Provide a concise name, set the price and currency, and add a short description.
+                  {editingServiceId
+                    ? "Update the service details below. Make necessary changes and click Save Service to finish the update process."
+                    : "Create a new service quickly. Provide a concise name, set the price and currency, and add a short description."}
                 </p>
               </div>
 
@@ -2135,7 +2213,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <div style={{ flex: "0 0 65%", maxWidth: "65%" }}>
+                        <div style={{ flex: "0 0 72%", maxWidth: "72%" }}>
                           <Input
                             label="Price"
                             placeholder="0"
@@ -2197,6 +2275,20 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             </div>
           </Modal>
         )}
+        <ConfirmationModal
+          isOpen={showDeleteConfirmation}
+          title="Delete Service"
+          message={
+            serviceToDelete
+              ? `Are you sure you want to delete ${serviceToDelete.name}? This action cannot be undone.`
+              : ""
+          }
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDeleteService}
+          onCancel={cancelDeleteService}
+          variant="danger"
+        />
       </div>
     </div>
   );

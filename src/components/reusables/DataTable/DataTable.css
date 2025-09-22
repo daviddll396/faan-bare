@@ -80,24 +80,6 @@
   font-weight: 500;
 }
 
-/* Row hover effect: subtle green-tinted background and gentle lift for visual feedback */
-.data-table tbody tr {
-  transition: background-color 0.18s ease, transform 0.12s ease;
-}
-
-.data-table tbody tr:hover .table-data-item {
-  background-color: rgba(0, 121, 72, 0.03); /* very subtle app-green tint */
-}
-
-/* Make inline action buttons feel interactive on row hover */
-.action-btn-table {
-  transition: color 0.15s ease, transform 0.12s ease, opacity 0.15s ease;
-}
-.data-table tbody tr:hover .action-btn-table {
-  transform: translateY(-1px);
-  opacity: 1;
-}
-
 .data-table .alt-row {
   background: #fff;
 }
@@ -143,7 +125,7 @@
 
 .pagination-btn {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0f0f0;
   color: #000;
   font-size: 14px;
   font-weight: 500;
@@ -152,6 +134,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  /* center icons/text inside the button */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .pagination-btn:hover:not(.disabled) {
@@ -164,7 +151,7 @@
   background: #f9f9f9;
   color: #9ca3af;
   cursor: not-allowed;
-  border-color: #e5e7eb;
+  border-color: #f0f0f0;
 }
 
 .pagination-pages {

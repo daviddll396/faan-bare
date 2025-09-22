@@ -1,6 +1,6 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import GradientButton from "../GradientButton/GradientButton";
+import SolidButton from "../SolidButton/SolidButton";
 import "./ConfirmationModal.css";
 
 interface ConfirmationModalProps {
@@ -52,22 +52,22 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <p className="confirmation-modal-message">{message}</p>
 
           <div className="confirmation-modal-actions">
-            <GradientButton
-              variant="primary"
+            <SolidButton
+              variant="secondary"
               size="medium"
               onClick={onCancel}
               className="confirmation-modal-btn-spacing"
             >
               {cancelText}
-            </GradientButton>
-            <GradientButton
-              variant="close"
+            </SolidButton>
+            <SolidButton
+              variant={variant === "danger" ? "danger" : "primary"}
               size="medium"
               onClick={onConfirm}
               className="confirmation-modal-btn-spacing"
             >
               {confirmText}
-            </GradientButton>
+            </SolidButton>
           </div>
         </div>
       </div>
@@ -76,4 +76,3 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 };
 
 export default ConfirmationModal;
- 

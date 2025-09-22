@@ -34,11 +34,38 @@
   border: none;
 }
 
+.userspage-search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.userspage-search-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.userspage-role-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.userspage-search-right {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+}
+
 .userspage-search-inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  display: flex;
   gap: 16px;
-  align-items: end;
+  align-items: flex-end;
+  width: 100%;
 }
 
 .userspage-action-buttons {
@@ -117,6 +144,7 @@
 .userspage-add-action {
   display: flex;
   align-items: center;
+  margin-left: auto; /* push add button to the far right so it doesn't sit next to the listbox */
 }
 
 .table-container tbody tr:nth-child(even) {
@@ -249,7 +277,15 @@
 
 /* ======================================== */
 /* RESPONSIVE STYLING - MEDIA QUERIES */
+
 /* ======================================== */
+
+@media (max-width: 1530px) {
+  .userspage-search-inputs {
+    /* placeholder for small tweaks at this breakpoint */
+    gap: 12px;
+  }
+}
 
 /* Desktop (1200px - 1399px) */
 @media (max-width: 1399px) {
@@ -259,7 +295,9 @@
   }
   .userspage-search-inputs {
     gap: 12px;
-    grid-template-columns: 1fr 1fr auto;
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
   }
   .userspage-action-buttons {
     gap: 10px;
@@ -305,7 +343,9 @@
   }
   .userspage-search-inputs {
     gap: 10px;
-    grid-template-columns: 1fr 1fr auto;
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
   }
   .userspage-action-buttons {
     gap: 8px;
@@ -351,8 +391,9 @@
   }
   .userspage-search-inputs {
     gap: 8px;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   .userspage-search-fieldbutton {
     grid-row: 1;

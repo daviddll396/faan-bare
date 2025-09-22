@@ -445,7 +445,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
       <style>
         body{font-family:Arial,Helvetica,sans-serif;color:#000;padding:24px}
         table{width:100%;border-collapse:collapse}
-        th,td{border:1px solid #e5e7eb;padding:8px;text-align:left}
+        th,td{border:1px solid #f0f0f0;padding:8px;text-align:left}
         th{background:#f8fafc}
         h1{font-size:18px}
       </style>`;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./DataTable.css";
 import AirplaneIcon from "/icons/airplane-icon.svg";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface DataTableProps {
   headers: string[];
@@ -142,8 +143,9 @@ const DataTable: React.FC<DataTableProps> = ({
                     }`}
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
+                    aria-label="Previous page"
                   >
-                    ← Previous
+                    <ChevronLeft size={16} />
                   </button>
 
                   {/* Page Numbers */}
@@ -171,8 +173,9 @@ const DataTable: React.FC<DataTableProps> = ({
                     }`}
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
+                    aria-label="Next page"
                   >
-                    Next →
+                    <ChevronRight size={16} />
                   </button>
                 </div>
               </div>
@@ -197,8 +200,9 @@ const DataTable: React.FC<DataTableProps> = ({
               }`}
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
+              aria-label="Previous page"
             >
-              ← Previous
+              <ChevronLeft size={16} />
             </button>
 
             {/* Page Numbers */}
@@ -226,8 +230,9 @@ const DataTable: React.FC<DataTableProps> = ({
               }`}
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
+              aria-label="Next page"
             >
-              Next →
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>

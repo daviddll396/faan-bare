@@ -30,7 +30,7 @@
   border: 1px solid #e4e4e4;
   border-radius: 12px;
   padding: 0 12px 0 12px;
-  height: 52px;
+  height: 56px;
   /* Avoid forcing a minimum width here so wrapper can remain compact */
   min-width: 0;
   position: relative;
@@ -50,7 +50,7 @@
   flex: 1;
   font-family: "Poppins", sans-serif;
   cursor: text;
-  height: 48px;
+  height: 54px;
 }
 .fieldbutton-search-select {
   border: none;

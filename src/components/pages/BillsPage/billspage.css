@@ -121,7 +121,7 @@
 .bill-item-card {
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0f0f0;
 }
 
 .bill-item-header {
@@ -130,7 +130,7 @@
   gap: 12px;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .bill-item-number {
@@ -155,27 +155,25 @@
 }
 
 .bill-item-remove {
-  background: #fee2e2;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  padding: 6px;
+  background: transparent;
+  border: none;
+  color: #d32f2f;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .bill-item-remove:hover {
-  background: #fecaca;
-}
-
-.bill-item-remove img {
-  width: 16px;
-  height: 16px;
+  color: #a50d0d;
+  background: rgba(213, 36, 36, 0.04);
 }
 
 .bill-item-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .bill-field-group {
@@ -188,9 +186,6 @@
   grid-column: 1 / -1; /* Span full width */
 }
 
-
-
-
 .bill-select-wrapper {
   position: relative;
 }
@@ -199,18 +194,63 @@
   grid-column: 1 / -1;
 }
 
-.bill-amount-input-wrapper {
+.bill-amount-row {
   display: flex;
-  gap: 8px;
- ;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
+  flex-wrap: nowrap;
+}
 
+.bill-main-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.bill-base-wrapper {
+  flex: 1 1 40%;
+  min-width: 0;
+}
+
+.bill-qty-wrapper {
+  flex: 0 0 90px;
+  min-width: 72px;
+}
+
+.bill-amount-wrapper {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Make quantity, amount and currency share the full row width */
+.bill-amount-input-wrapper {
+  width: 100%;
+  align-items: flex-end;
+}
+.bill-amount-input-wrapper > div,
+.bill-amount-input-wrapper > .reusable-input,
+.bill-amount-input-wrapper input {
+  min-width: 0;
+}
+.bill-amount-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.bill-currency-wrapper {
+  flex: 0 0 120px; /* currency dropdown fixed-ish but fits well */
+  min-width: 0;
+}
+.bill-currency-wrapper .listbox-button {
+  width: 100%;
+  min-width: 0;
 }
 
 .bill-amount-input {
-  flex: 1;
+  width: 100%;
 }
-
-
 
 .bill-creation-actions {
   display: flex;
@@ -339,7 +379,6 @@
 
 /* Customer Cards */
 
-
 .customer-card-header {
   display: flex;
   align-items: center;
@@ -397,7 +436,7 @@
   gap: 6px;
   padding: 8px 12px;
   background: #f8f9fa;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0f0f0;
   border-radius: 6px;
   color: #007948;
   font-size: 12px;
@@ -469,9 +508,7 @@
   font-weight: 500;
 }
 
-.bill-form-group {
-  /* native input styles removed; use `Input` (.reusable-input) for visuals */
-}
+/* native input styles removed; use `Input` (.reusable-input) for visuals */
 
 .bill-form-row {
   display: flex;
@@ -603,7 +640,7 @@
   background: #fff;
   border-radius: 14px;
   border: 1px solid #f0f0f0;
- 
+
   padding: 20px 20px;
   display: flex;
   align-items: center;
@@ -1211,12 +1248,6 @@
     font-size: 14px;
   }
 
-
-
-
-
-
-
   .bill-customer-details-section {
     gap: 16px;
     max-width: 100%;
@@ -1789,9 +1820,6 @@
     padding: 16px;
   }
 
-
-
-
   .bill-add-more-btn {
     height: 40px;
     font-size: 13px;
@@ -1853,7 +1881,6 @@
     padding: 14px;
   }
 
-
   .bill-add-more-btn {
     height: 36px;
     font-size: 12px;
@@ -1890,11 +1917,6 @@
 
 /* Customer Header */
 .bills-customer-header {
-  background: #fff;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f0f0f0;
   display: flex;
   align-items: center;
   gap: 24px;
@@ -2044,7 +2066,7 @@
   align-items: center;
   gap: 6px;
   background: #f8f9fa;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0f0f0;
   border-radius: 6px;
   padding: 6px 12px;
   color: #007948;
@@ -2086,10 +2108,6 @@
     max-width: 100%;
   }
 
-  .bills-customer-header {
-    padding: 24px;
-  }
-
   .bills-customer-name {
     font-size: 24px;
   }
@@ -2106,10 +2124,6 @@
 }
 
 @media (max-width: 480px) {
-  .bills-customer-header {
-    padding: 20px;
-  }
-
   .bills-customer-name {
     font-size: 22px;
   }
@@ -2177,7 +2191,7 @@
 }
 
 .bills-receipt-card-value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #000;
   word-break: break-word;

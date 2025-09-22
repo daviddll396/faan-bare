@@ -2,21 +2,19 @@ import React from "react";
 
 import "./sidebar.css";
 import type { PageType } from "../Dashboard";
-import DashboardIcon from "/icons/nav-dashboard-icon.svg";
-import UserIcon from "/icons/nav-user-icon.svg";
-import ProductIcon from "/icons/nav-product-icon.svg";
-import CustomerIcon from "/icons/nav-customer-icon.svg";
-import BillIcon from "/icons/nav-bill-icon.svg";
-import PaymentIcon from "/icons/nav-payment-icon.svg";
-import LogoutIcon from "/icons/nav-logout-icon.svg";
-import { Users, UserCheck, FileText, ChevronRight } from "lucide-react";
-
-// Mobile-specific icons (using Lucide React icons for better mobile experience)
-
-import HomeBottomBarIcon from "/icons/home-bottombar.svg";
-import ServicesBottomBarIcon from "/icons/services-bottombar.svg";
-import PaymentsBottomBarIcon from "/icons/payments-bottombar.svg";
-import ProfileBottomBarIcon from "/icons/profile-bottombar.svg";
+import {
+  Home,
+  Users,
+  UserCheck,
+  FileText,
+  Clipboard,
+  Package,
+  CreditCard,
+  ChevronRight,
+  BarChart2,
+  Activity,
+  User,
+} from "lucide-react";
 
 interface MenuItem {
   icon: (() => React.ReactNode) | null;
@@ -86,16 +84,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const menuItems: MenuItem[] = [
     {
-      icon: () => (
-        <img src={DashboardIcon} alt="Dashboard" width={20} height={20} />
-      ),
-      mobileIcon: () => (
-        <img
-          src={HomeBottomBarIcon}
-          alt="Home"
-          className="sidebar-mobile-svg"
-        />
-      ),
+      icon: () => <Home size={20} />,
+      mobileIcon: () => <Home size={20} />,
       label: "Dashboard",
       mobileLabel: "Home",
       page: "dashboard" as PageType,
@@ -103,7 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForAdmin: true,
     },
     {
-      icon: () => <img src={UserIcon} alt="Users" width={20} height={20} />,
+      icon: () => <Users size={20} />,
       mobileIcon: () => <Users size={20} />,
       label: "Users",
       mobileLabel: "Users",
@@ -112,16 +102,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForAdmin: true,
     },
     {
-      icon: () => (
-        <img src={ProductIcon} alt="Products" width={20} height={20} />
-      ),
-      mobileIcon: () => (
-        <img
-          src={ServicesBottomBarIcon}
-          alt="Services"
-          className="sidebar-mobile-svg"
-        />
-      ),
+      icon: () => <Package size={20} />,
+      mobileIcon: () => <Package size={20} />,
       label: "Services",
       mobileLabel: "Services",
       page: "services" as PageType,
@@ -129,9 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForAdmin: true,
     },
     {
-      icon: () => (
-        <img src={CustomerIcon} alt="Customers" width={20} height={20} />
-      ),
+      icon: () => <UserCheck size={20} />,
       mobileIcon: () => <UserCheck size={20} />,
       label: "Customers",
       mobileLabel: "Customers",
@@ -140,8 +120,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForAdmin: true,
     },
     {
-      icon: () => <img src={BillIcon} alt="Bills" width={20} height={20} />,
-      mobileIcon: () => <FileText size={20} />,
+      icon: () => <Clipboard size={20} />,
+      mobileIcon: () => <Clipboard size={20} />,
       label: "Bills",
       mobileLabel: "Bills",
       page: "bills" as PageType,
@@ -149,15 +129,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForAdmin: true,
     },
     {
-      icon: () => (
-        <img
-          src="/icons/reports-icon.svg"
-          alt="Reports"
-          width={20}
-          height={20}
-        />
-      ),
-      mobileIcon: () => <FileText size={20} />,
+      icon: () => <BarChart2 size={20} />, // replaced image with Lucide BarChart2
+      mobileIcon: () => <BarChart2 size={20} />,
       label: "Reports",
       mobileLabel: "Reports",
       page: "reports" as PageType,
@@ -166,15 +139,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       desktopOnly: true,
     },
     {
-      icon: () => (
-        <img
-          src="/icons/audit-trail-icon.svg"
-          alt="Audit Trail"
-          width={20}
-          height={20}
-        />
-      ),
-      mobileIcon: () => <FileText size={20} />,
+      icon: () => <Activity size={20} />, // replaced image with Lucide Activity
+      mobileIcon: () => <Activity size={20} />,
       label: "Audit Trail",
       mobileLabel: "Audit Trail",
       page: "audit-trail" as PageType,
@@ -183,7 +149,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       desktopOnly: true,
     },
     {
-      icon: () => <img src={BillIcon} alt="Invoices" width={20} height={20} />,
+      icon: () => <FileText size={20} />,
       mobileIcon: () => <FileText size={20} />,
       label: "Invoices",
       mobileLabel: "Invoices",
@@ -192,16 +158,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       showForAdmin: true, // allow admins to access invoices
     },
     {
-      icon: () => (
-        <img src={PaymentIcon} alt="Payment" width={20} height={20} />
-      ),
-      mobileIcon: () => (
-        <img
-          src={PaymentsBottomBarIcon}
-          alt="Payments"
-          className="sidebar-mobile-svg"
-        />
-      ),
+      icon: () => <CreditCard size={20} />,
+      mobileIcon: () => <CreditCard size={20} />,
       label: "Payment",
       mobileLabel: "Payments",
       page: "payment" as PageType,
@@ -210,21 +168,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     // Profile for both mobile and desktop
     {
-      icon: () => (
-        <img
-          src="/icons/nav-user-icon.svg"
-          alt="Profile"
-          width={20}
-          height={20}
-        />
-      ),
-      mobileIcon: () => (
-        <img
-          src={ProfileBottomBarIcon}
-          alt="Profile"
-          className="sidebar-mobile-svg"
-        />
-      ),
+      icon: () => <User size={20} />,
+      mobileIcon: () => <User size={20} />,
       label: "Profile",
       mobileLabel: "Profile",
       page: "profile" as PageType,
@@ -312,7 +257,35 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="sidebar-footer">
         <div className="nav-item logout" onClick={onLogout}>
-          <img src={LogoutIcon} alt="Logout" width={20} height={20} />
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 17L21 12L16 7"
+              stroke="#fff"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M21 12H9"
+              stroke="#fff"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M12 19H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"
+              stroke="#fff"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           {!isCollapsed && (
             <span style={{ whiteSpace: "nowrap" }}>Log Out</span>
           )}

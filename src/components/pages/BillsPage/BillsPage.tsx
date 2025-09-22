@@ -10,7 +10,8 @@ import DataTable from "../../reusables/DataTable/DataTable";
 import ListBox, { type ListBoxOption } from "../../reusables/ListBox";
 
 import { Eye, User, Mail } from "lucide-react";
-import RemoveFormIcon from "/icons/trash-can-icon.svg";
+// RemoveFormIcon unused after replacing with text button
+// import RemoveFormIcon from "/icons/trash-can-icon.svg";
 import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
 import IdFormIcon from "/icons/id-form-icon.svg";
 import InvoiceAmountFormIcon from "/icons/invoice-amount-form-icon.svg";
@@ -19,6 +20,7 @@ import CheckCircle from "/icons/check-circle.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import Modal from "../../reusables/Modal/Modal";
 import SolidButton from "../../reusables/SolidButton";
+import MessageToast from "../../reusables/MessageToast/MessageToast";
 
 interface BillsPageProps {
   role?: string;
@@ -42,6 +44,15 @@ const BillsPage: React.FC<BillsPageProps> = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
   const [showReceiptModal, setShowReceiptModal] = React.useState(false);
   const [selectedBill, setSelectedBill] = React.useState<Bill | null>(null);
+  const [toast, setToast] = React.useState<{
+    message: string;
+    type: "success" | "error";
+    isVisible: boolean;
+  }>({ message: "", type: "success", isVisible: false });
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type, isVisible: true });
+  };
 
   // Search form state
   const [searchForm, setSearchForm] = useState({
@@ -151,6 +162,10 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     currency: "NGN",
   };
   const [billItems, setBillItems] = React.useState([{ ...initialBillItem }]);
+  // Validation errors per bill item
+  const [billItemErrors, setBillItemErrors] = React.useState<
+    Array<{ [k: string]: string }>
+  >(billItems.map(() => ({})));
 
   // Sample invoice data
   const invoiceNumber = "201564";
@@ -204,19 +219,67 @@ const BillsPage: React.FC<BillsPageProps> = () => {
       updated[idx][field] = newValue;
     }
     setBillItems(updated);
+    // clear error for this field
+    setBillItemErrors((prev) => {
+      const copy = [...prev];
+      if (!copy[idx]) copy[idx] = {};
+      delete copy[idx][field as string];
+      return copy;
+    });
   };
 
   const addMoreBillItem = () => {
     setBillItems([...billItems, { ...initialBillItem }]);
+    setBillItemErrors((prev) => [...prev, {}]);
   };
 
   const removeBillItem = (idx: number) => {
     if (billItems.length === 1) return;
     setBillItems(billItems.filter((_, i) => i !== idx));
+    setBillItemErrors((prev) => prev.filter((_, i) => i !== idx));
   };
+
+  const validateBillItems = (): boolean => {
+    const errors: Array<{ [k: string]: string }> = billItems.map(() => ({}));
+    let hasError = false;
+
+    billItems.forEach((b, i) => {
+      if (!b.item || String(b.item).trim() === "") {
+        errors[i].item = "Please select an item";
+        hasError = true;
+      }
+      if (!b.baseTariff || Number(b.baseTariff) <= 0) {
+        errors[i].baseTariff = "Enter a valid tariff";
+        hasError = true;
+      }
+      if (!b.qty || Number(b.qty) <= 0) {
+        errors[i].qty = "Enter quantity";
+        hasError = true;
+      }
+      if (!b.amount || Number(b.amount) <= 0) {
+        errors[i].amount = "Enter amount";
+        hasError = true;
+      }
+    });
+
+    setBillItemErrors(errors);
+    return !hasError;
+  };
+
+  // Hook to keep errors array in sync when items length changes
+  React.useEffect(() => {
+    setBillItemErrors(billItems.map(() => ({})));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [billItems.length]);
 
   return (
     <div className="page-content">
+      <MessageToast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
+      />
       <div className="page-header">
         {!showResults ? (
           <PageTitle
@@ -460,6 +523,14 @@ const BillsPage: React.FC<BillsPageProps> = () => {
               className="bill-creation-form"
               onSubmit={(e) => {
                 e.preventDefault();
+                // client-side validation
+                if (!validateBillItems()) {
+                  showToast(
+                    "Please fix validation errors in the bill items",
+                    "error"
+                  );
+                  return;
+                }
                 showLoading("Generating invoice...");
                 setTimeout(() => {
                   hideLoading();
@@ -477,11 +548,11 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                         type="button"
                         className="bill-item-remove"
                         onClick={() => removeBillItem(idx)}
+                        aria-label={`Delete item ${idx + 1}`}
                       >
-                        <img src={RemoveFormIcon} alt="Remove item" />
+                        Delete
                       </button>
                     </div>
-
                     <div className="bill-item-fields">
                       <div className="bill-field-group">
                         <ListBox
@@ -498,32 +569,51 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                           placeholder="Select item"
                           className="bill-item-listbox"
                         />
+                        {billItemErrors[idx]?.item && (
+                          <div className="validation-error">
+                            {billItemErrors[idx].item}
+                          </div>
+                        )}
                       </div>
 
-                      <Input
-                        label="Base Tariff"
-                        placeholder="Enter base tariff"
-                        value={formatNumberWithCommas(bill.baseTariff)}
-                        onChange={(e) =>
-                          handleBillItemChange(
-                            idx,
-                            "baseTariff",
-                            e.target.value
-                          )
-                        }
-                      />
+                      <div className="bill-main-row">
+                        <div className="bill-base-wrapper">
+                          <Input
+                            label="Base Tariff"
+                            placeholder="Enter base tariff"
+                            value={formatNumberWithCommas(bill.baseTariff)}
+                            onChange={(e) =>
+                              handleBillItemChange(
+                                idx,
+                                "baseTariff",
+                                e.target.value
+                              )
+                            }
+                          />
+                          {billItemErrors[idx]?.baseTariff && (
+                            <div className="validation-error">
+                              {billItemErrors[idx].baseTariff}
+                            </div>
+                          )}
+                        </div>
 
-                      <Input
-                        label="Quantity"
-                        placeholder="Enter quantity"
-                        value={bill.qty}
-                        onChange={(e) =>
-                          handleBillItemChange(idx, "qty", e.target.value)
-                        }
-                      />
+                        <div className="bill-qty-wrapper">
+                          <Input
+                            label="Quantity"
+                            placeholder="Qty"
+                            value={bill.qty}
+                            onChange={(e) =>
+                              handleBillItemChange(idx, "qty", e.target.value)
+                            }
+                          />
+                          {billItemErrors[idx]?.qty && (
+                            <div className="validation-error">
+                              {billItemErrors[idx].qty}
+                            </div>
+                          )}
+                        </div>
 
-                      <div className="bill-field-group bill-amount-group">
-                        <div className="bill-amount-input-wrapper">
+                        <div className="bill-amount-wrapper">
                           <Input
                             label="Amount"
                             placeholder="Enter amount"
@@ -537,21 +627,27 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                             }
                             className="bill-amount-input"
                           />
-                          <div className="bill-currency-wrapper">
-                            <ListBox
-                              label="Currency"
-                              options={currencyOptions}
-                              selected={
-                                currencyOptions.find(
-                                  (option) => option.value === bill.currency
-                                ) || currencyOptions[0]
-                              }
-                              onChange={(option: ListBoxOption) =>
-                                handleBillItemChange(idx, "currency", option)
-                              }
-                              placeholder="Currency"
-                            />
-                          </div>
+                          {billItemErrors[idx]?.amount && (
+                            <div className="validation-error">
+                              {billItemErrors[idx].amount}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="bill-currency-wrapper">
+                          <ListBox
+                            label="Currency"
+                            options={currencyOptions}
+                            selected={
+                              currencyOptions.find(
+                                (option) => option.value === bill.currency
+                              ) || currencyOptions[0]
+                            }
+                            onChange={(option: ListBoxOption) =>
+                              handleBillItemChange(idx, "currency", option)
+                            }
+                            placeholder="Currency"
+                          />
                         </div>
                       </div>
                     </div>
