@@ -185,7 +185,7 @@
 }
 
 .form-input:disabled {
-  background: #f8f9fa;
+  background: #e4e4e4;
   color: #898989;
   cursor: not-allowed;
 }
@@ -201,7 +201,6 @@
 }
 
 .auth-form-error {
- 
   color: #dc2626;
   padding: 12px 16px;
   border-radius: 8px;
@@ -406,7 +405,6 @@
   .auth-form-side {
     zoom: 0.97;
   }
-
 }
 @media (max-width: 1600px) {
   .auth-form-side {

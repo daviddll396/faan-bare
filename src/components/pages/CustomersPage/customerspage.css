@@ -294,9 +294,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: #f8f9fa;
-  border-radius: 12px;
+  padding:7px 0px;
+  background: #ffffff;
   font-size: 16px;
   min-height: 24px;
 }

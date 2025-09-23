@@ -492,7 +492,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                   bill.date,
                   <button
                     key={`action-${bill.billNo}`}
-                    className="bills-view-receipt-btn"
+                    className="view-receipt-btn"
                     onClick={() => {
                       setSelectedBill(bill);
                       setShowReceiptModal(true);

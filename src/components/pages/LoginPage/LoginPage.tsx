@@ -96,11 +96,12 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const success = await login(email, password);
-      if (success) {
+      const result = await login(email, password);
+      if (result.success) {
         navigate("/dashboard");
       } else {
-        showToast("Invalid email or password", "error");
+        // Show server-provided message if available, otherwise a default
+        showToast(result.message ?? "Invalid email or password", "error");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -168,7 +169,6 @@ const LoginPage: React.FC = () => {
               disabled={isSubmitting}
               required
             />
-        
           </div>
           <div className="form-row-modern">
             <Input
@@ -183,7 +183,6 @@ const LoginPage: React.FC = () => {
               required
               passwordToggle
             />
-         
           </div>
           <div className="form-row-modern form-row-remember">
             <Link to="/forgot-password" className="forgot-link">

@@ -264,7 +264,10 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   setGuestUser: (formData: GuestFormData) => void;
   fundWallet: (
@@ -463,7 +466,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
 
-      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+      // Accept success when the API explicitly returns status=true OR
+      // when the API uses a non-HTTP numeric/string statusCode (e.g. '00')
+      if (
+        data &&
+        (data.status === true ||
+          data.statusCode === HTTP_STATUS.OK ||
+          String(data.statusCode) === "00" ||
+          String(data.statusCode) === "0")
+      ) {
         // Create user object from API response
         const profile = data.data.customerProfile;
         const userData: User = {
@@ -497,7 +508,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<{ success: boolean; message?: string }> => {
     try {
       // Check for mock admin credentials first
       if (
@@ -538,7 +552,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken);
 
         console.log("Mock admin user created and stored:", mockAdminUser);
-        return true;
+        return { success: true };
       }
 
       // Check for mock customer credentials
@@ -583,7 +597,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken);
 
         console.log("Mock customer user created and stored:", mockCustomerUser);
-        return true;
+        return { success: true };
       }
 
       // If not mock credentials, proceed with API login
@@ -628,7 +642,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error("HTTP Error:", response.status, response.statusText);
         console.error("Error response body:", responseText);
         if (response.status === HTTP_STATUS.UNAUTHORIZED) {
-          return false; // Invalid credentials
+          return { success: false, message: "Invalid credentials" };
         }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -636,7 +650,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Check if response has content
       if (!responseText || responseText.trim() === "") {
         console.log("Empty response body");
-        return false;
+        return { success: false, message: "Empty response from server" };
       }
 
       // Decrypt the response
@@ -654,7 +668,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           "Encrypted response that failed to decrypt:",
           responseText
         );
-        return false;
+        return { success: false, message: "Failed to decrypt server response" };
       }
 
       let data;
@@ -667,10 +681,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           "Decrypted response that failed to parse:",
           decryptedResponse
         );
-        return false;
+        return { success: false, message: "Invalid server response format" };
       }
 
-      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+      // Debugging: log exact types/values so we can understand why success check fails
+      console.log(
+        "Login response status check =>",
+        "status:",
+        data?.status,
+        "(type:",
+        typeof data?.status,
+        ")",
+        "statusCode:",
+        data?.statusCode,
+        "(type:",
+        typeof data?.statusCode,
+        ")"
+      );
+
+      // Treat login as successful when API explicitly returns status=true
+      // or when it uses non-HTTP status codes like '00' for success.
+      if (
+        data &&
+        (data.status === true ||
+          data.statusCode === HTTP_STATUS.OK ||
+          String(data.statusCode) === "00" ||
+          String(data.statusCode) === "0")
+      ) {
         // Shape the login response to a typed object to include userType
         interface LoginResponse {
           status: boolean;
@@ -753,14 +790,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log("Fallback user data stored:", fallbackUserData);
         }
 
-        return true;
+        return { success: true };
       } else {
         console.error("Login failed:", data.message);
-        return false;
+        // Surface server message when available (e.g., "Customer account not approved")
+        return { success: false, message: data?.message ?? "Login failed" };
       }
     } catch (error) {
       console.error("Login error:", error);
-      return false;
+      const message = error instanceof Error ? error.message : String(error);
+      return { success: false, message };
     }
   };
 
@@ -887,7 +926,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return false;
       }
 
-      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+      // Treat login as successful when API explicitly returns status=true
+      // or when it uses non-HTTP status codes like '00' for success.
+      if (
+        data &&
+        (data.status === true ||
+          String(data.statusCode) === "00" ||
+          String(data.statusCode) === "0" ||
+          Number(data.statusCode) === HTTP_STATUS.OK)
+      ) {
         console.log("Wallet funding successful!");
         console.log("Transaction reference:", reference);
         console.log("New wallet balance:", data.data.balance);

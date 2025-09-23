@@ -122,6 +122,52 @@
 .stat-icon.processing {
   background: #3b82f6;
 }
+
+/* Shared View Receipt button used across Payments and Bills pages */
+.view-receipt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #e4e4e4;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  color: #007948;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.view-receipt-btn:hover {
+  background: #007948;
+  color: #fff;
+  border-color: #007948;
+  transform: translateY(-2px);
+}
+
+/* View Reason should match View Receipt styles closely */
+.view-reason-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff7f7; /* subtle red tint for reason */
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.view-reason-btn:hover {
+  background: #b91c1c;
+  color: #fff;
+  border-color: #b91c1c;
+  transform: translateY(-2px);
+}
 .stat-icon.failed {
   background: #ef4444;
 }

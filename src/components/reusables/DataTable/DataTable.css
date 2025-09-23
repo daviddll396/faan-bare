@@ -142,7 +142,7 @@
 }
 
 .pagination-btn:hover:not(.disabled) {
-  background: #f8f9fa;
+  background: #e4e4e4;
   border-color: #007948;
   color: #007948;
 }

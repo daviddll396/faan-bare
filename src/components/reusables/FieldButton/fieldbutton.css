@@ -90,12 +90,7 @@
   .fieldbutton-inputs {
     gap: 6px;
   }
-  .fieldbutton-search-wrapper {
-    height: 48px;
-    min-width: 180px;
-    padding: 0 10px;
-    border-radius: 10px;
-  }
+
 
   .fieldbutton-btn {
     height: 48px;
@@ -117,12 +112,7 @@
     gap: 6px;
     width: 100%;
   }
-  .fieldbutton-search-wrapper {
-    height: 48px;
-    min-width: 140px;
-    padding: 0 8px;
-    border-radius: 8px;
-  }
+
   .fieldbutton-search-input,
   .fieldbutton-search-select {
     font-size: 13px;

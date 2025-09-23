@@ -401,7 +401,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               <div key="actions">
                 {p.actionType === "reason" && (
                   <button
-                    className="payment-action-btn reason"
+                    className="view-reason-btn"
                     onClick={() => setModal({ type: "reason", data: p })}
                   >
                     <FiInfo className="payment-action-icon" />
@@ -410,7 +410,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 )}
                 {p.actionType === "receipt" && (
                   <button
-                    className="payment-action-btn receipt"
+                    className="view-receipt-btn"
                     onClick={() => setModal({ type: "receipt", data: p })}
                   >
                     <FiEye className="payment-action-icon" />
@@ -427,7 +427,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   </button>
                 )}
                 {p.actionType === "view" && (
-                  <button className="payment-action-btn view">
+                  <button className="view-receipt-btn">
                     <FiEye className="payment-action-icon" />
                   </button>
                 )}

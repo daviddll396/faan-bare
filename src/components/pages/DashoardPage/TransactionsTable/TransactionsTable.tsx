@@ -200,7 +200,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           </colgroup>
           <thead>
             <tr>
-              <th>S/N</th>
+              <th></th>
               <th className="gap-col"></th>
               <th>Service</th>
               <th className="gap-col"></th>

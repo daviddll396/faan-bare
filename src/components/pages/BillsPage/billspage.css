@@ -435,7 +435,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background: #f8f9fa;
+  background: #e4e4e4;
   border: 1px solid #f0f0f0;
   border-radius: 6px;
   color: #007948;
@@ -2062,25 +2062,7 @@
 
 /* View Receipt Button */
 .bills-view-receipt-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #f8f9fa;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-  padding: 6px 12px;
-  color: #007948;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.bills-view-receipt-btn:hover {
-  background: #007948;
-  color: #fff;
-  border-color: #007948;
-  transform: translateY(-1px);
+  /* alias for .view-receipt-btn in Dashboard.css */
 }
 
 /* Responsive Design */

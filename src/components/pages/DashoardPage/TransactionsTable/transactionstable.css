@@ -198,7 +198,7 @@
   padding: 12px 0px;
   border-bottom: 1px solid #f0f0f0;
   font-size: 14px;
-  color: #475569;
+  color: #000;
   font-weight: 600;
   line-height: 18px;
 }
@@ -224,15 +224,7 @@
   height: 31px;
 }
 
-.transaction-icon-wrap {
-  width: 40px;
-  height: 40px;
-  background: #f0f0f0;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 .service-meta {
   display: flex;
