@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.8",
     "@types/crypto-js": "^4.2.2",
     "axios": "^1.10.0",
     "crypto-js": "^4.2.0",

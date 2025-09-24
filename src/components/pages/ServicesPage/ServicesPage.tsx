@@ -1653,7 +1653,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   {/* RRR removed */}
                   <div className="booking-summary-row total">
                     <span>TOTAL</span>
-                    <span>₦{total.toLocaleString()}</span>
+                    <span className="summary-total-amount">₦{total.toLocaleString()}</span>
                   </div>
                   <div style={{ width: "100%" }}>
                     <GradientButton

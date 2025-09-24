@@ -98,7 +98,7 @@ const ListBox: React.FC<ListBoxProps> = ({
         onChange={onChange}
         disabled={disabled}
       >
-        {({ open }) => {
+        {({ open }: { open: boolean }) => {
           // Update position when dropdown opens
           useEffect(() => {
             if (open) {
@@ -200,13 +200,19 @@ const ListBox: React.FC<ListBoxProps> = ({
                               <Listbox.Option
                                 key={option.value}
                                 value={option}
-                                className={({ active, selected }) =>
+                                className={({
+                                  active,
+                                  selected,
+                                }: {
+                                  active: boolean;
+                                  selected: boolean;
+                                }) =>
                                   `listbox-option ${
                                     selected ? "selected" : ""
                                   } ${active ? "focused" : ""}`
                                 }
                               >
-                                {({ selected }) => (
+                                {({ selected }: { selected: boolean }) => (
                                   <>
                                     <span
                                       className={`listbox-option-text ${
