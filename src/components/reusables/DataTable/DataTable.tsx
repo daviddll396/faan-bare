@@ -75,7 +75,7 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <>
       <div className={`data-table-card ${className}`}>
-        {header && <div className="">{header}</div>}
+        {header && <div className="data-table-header">{header}</div>}
         {data.length === 0 ? (
           <div className="data-table-no-data">
             <div className="no-data-icon">

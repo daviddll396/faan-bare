@@ -4,7 +4,6 @@
 
 .invoices-page {
   width: 100%;
-  padding: 0 16px;
   animation: slideInUp 0.6s ease-out;
 }
 
@@ -125,40 +124,7 @@
   justify-self: start; /* align single card to the left */
 }
 
-/* Invoice Card */
-.invoice-card {
-  background: #fff;
-  border-radius: 14px;
-  border: 1px solid #f0f0f0;
-
-  padding: 22px;
-  animation: slideInUp 0.6s ease-out both;
-  position: relative; /* For absolute positioned expiry warning */
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.033);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.invoice-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(16, 24, 40, 0.12);
-}
-
-/* very subtle colored tint in the card shadow based on status */
-.invoice-card.paid {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
-    0 2px 6px rgba(16, 185, 129, 0.03);
-}
-.invoice-card.pending {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
-    0 2px 6px rgba(251, 146, 60, 0.03);
-}
-.invoice-card.cancelled {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
-    0 2px 6px rgba(220, 38, 38, 0.03);
-}
+/* Invoice Card styles moved to src/components/reusables/InvoiceCard/invoicecard.css */
 
 /* Staggered animation for invoice cards */
 /* Staggered animation for invoice cards */
@@ -178,150 +144,7 @@
   animation-delay: 0.6s;
 }
 
-/* Invoice Header */
-.invoice-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-/* Invoice Expiry Warning */
-.invoice-expiry-warning {
-  position: absolute;
-  bottom: 24px;
-  left: 8px;
-  z-index: 2;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 12px;
-  padding-bottom: 0px;
-  border-radius: 8px;
-  max-width: 240px;
-  text-align: center;
-  color: #4b5563 !important; /* Grey text color */
-}
-
-.expiry-warning.urgent {
-  color: #dc2626;
-
-  /* animation: pulse 2s infinite; */
-}
-
-.expiry-warning.expiry-info {
-  background: #f0f9ff;
-  color: #0369a1;
-  border: 2px solid #0369a1;
-  box-shadow: 0 2px 4px rgba(3, 105, 161, 0.2);
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-.invoice-number {
-  font-size: 18px;
-  font-weight: 700;
-  color: #000;
-  font-family: monospace;
-}
-
-.invoice-status {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.invoice-status.pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.invoice-status.paid {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.invoice-status.cancelled {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-/* Invoice Details */
-.invoice-details {
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.invoice-details > div {
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #969696;
-}
-
-.invoice-details strong {
-  color: #000;
-}
-
-/* Invoice Services */
-.invoice-services {
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.invoice-services > strong {
-  display: block;
-  margin-bottom: 8px;
-  color: #000;
-  font-size: 14px;
-}
-
-.service-item {
-  font-size: 13px;
-  color: #969696;
-  margin-bottom: 4px;
-  padding: 4px 0;
-}
-
-/* Invoice Total */
-.invoice-total {
-  margin-bottom: 20px;
-  padding: 12px;
-  background: #fafafa;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #000;
-  text-align: center;
-}
-
-/* Invoice Content Area - Flex grow to push actions to bottom */
-.invoice-content-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Invoice Actions */
-.invoice-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: auto; /* Push to bottom */
-}
+/* Invoice card component styles moved to src/components/reusables/InvoiceCard/invoicecard.css */
 
 /* Create Invoice Modal */
 .create-invoice-modal .modal-content {
@@ -645,16 +468,15 @@
 
 .view-details-modal h2 {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: #000;
   margin-bottom: 24px;
-  text-align: center;
+  text-align: left;
 }
 
 .invoice-details-content {
-  background: #f8fafc;
+  background: #fdfdfd;
   border-radius: 8px;
-  padding: 20px;
 }
 
 .invoice-details-content > div {
@@ -662,6 +484,8 @@
   font-size: 14px;
   color: #000;
   line-height: 1.5;
+  justify-content: space-between;
+  display: flex;
 }
 
 .invoice-details-content strong {
@@ -798,7 +622,7 @@
 /* Large Tablet (992px - 1199px) */
 @media (max-width: 1199px) and (min-width: 992px) {
   .invoices-page {
-    padding: 0 20px;
+   
   }
 
   .invoices-grid {
@@ -806,30 +630,7 @@
     gap: 20px;
   }
 
-  .invoice-card {
-    padding: 20px;
-  }
-
-  .invoice-number {
-    font-size: 17px;
-  }
-
-  .invoice-status {
-    font-size: 11px;
-    padding: 5px 10px;
-  }
-
-  .invoice-details > div {
-    font-size: 13px;
-  }
-
-  .service-item {
-    font-size: 12px;
-  }
-
-  .invoice-total {
-    font-size: 15px;
-  }
+  /* Invoice card responsive styles handled by InvoiceCard component */
 
   .booking-summary-card {
     padding: 20px;
@@ -838,9 +639,7 @@
 
 /* Tablet (768px - 991px) */
 @media (max-width: 991px) and (min-width: 768px) {
-  .invoices-page {
-    padding: 0 16px;
-  }
+
 
   .page-actions {
     flex-direction: row;
@@ -858,42 +657,7 @@
     gap: 18px;
   }
 
-  .invoice-card {
-    padding: 18px;
-  }
-
-  .invoice-number {
-    font-size: 16px;
-  }
-
-  .invoice-status {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
-
-  .invoice-details > div {
-    font-size: 12px;
-  }
-
-  .service-item {
-    font-size: 11px;
-  }
-
-  .invoice-total {
-    font-size: 14px;
-  }
-
-  .invoice-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .invoice-actions {
-    flex-direction: row;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  /* Invoice card responsive styles handled by InvoiceCard component */
 
   .booking-summary-card {
     padding: 18px;
@@ -903,7 +667,7 @@
 /* Mobile (768px and below) */
 @media (max-width: 768px) {
   .invoices-page {
-    padding: 0 12px;
+    
   }
 
   .page-actions {
@@ -921,51 +685,7 @@
     gap: 16px;
   }
 
-  .invoice-card {
-    padding: 16px;
-  }
-
-  .invoice-number {
-    font-size: 15px;
-  }
-
-  .invoice-status {
-    font-size: 9px;
-    padding: 3px 6px;
-  }
-
-  .invoice-details > div {
-    font-size: 11px;
-  }
-
-  .service-item {
-    font-size: 10px;
-  }
-
-  .invoice-total {
-    font-size: 13px;
-  }
-
-  /* Reserve space at bottom on mobile when pending to accommodate timer */
-  .invoice-card.pending {
-    padding-bottom: 40px;
-    position: relative;
-  }
-
-  .invoice-expiry-warning {
-    bottom: 10px;
-  }
-
-  .invoice-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .invoice-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
+  /* Invoice card responsive styles handled by InvoiceCard component */
 
   .service-option {
     flex-direction: column;
@@ -1061,34 +781,12 @@
 }
 
 @media (max-width: 480px) {
-  .invoice-card {
-    padding: 12px;
-  }
   .invoices-page {
     padding: 0px;
     padding-bottom: var(--page-bottom-padding-mobile);
   }
 
-  .invoice-number {
-    font-size: 14px;
-  }
-
-  .invoice-status {
-    font-size: 8px;
-    padding: 2px 5px;
-  }
-
-  .invoice-details > div {
-    font-size: 10px;
-  }
-
-  .service-item {
-    font-size: 9px;
-  }
-
-  .invoice-total {
-    font-size: 12px;
-  }
+  /* Invoice card responsive styles handled by InvoiceCard component */
 
   .all-transactions-title {
     font-size: 15px;

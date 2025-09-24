@@ -1,18 +1,19 @@
+/* BorderButton Base Styles */
 .border-button {
   background: #f7f9fc;
   border: 1px solid #007948;
   border-radius: 12px;
-  padding: 9px 8px;
+  padding: 12px 18px;
   color: #007948;
-  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 48px; /* Match SearchInput default height */
+  gap: 8px;
+  height: var(--form-control-height, 56px);
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
 .border-button:hover {
@@ -20,70 +21,71 @@
 }
 
 .button-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* ======================================== */
-/* RESPONSIVE STYLING - MEDIA QUERIES */
+/* RESPONSIVE MEDIA QUERIES (largest -> smallest) */
 /* ======================================== */
 
-/* Desktop (1200px - 1399px) */
-@media (max-width: 1399px) {
+@media (max-width: 1600px) {
   .border-button {
-    height: 44px; /* Match SearchInput height */
-    padding: 7px 6px;
-    font-size: 14px;
+    padding: 11px 16px;
     border-radius: 10px;
-    gap: 3px;
+    gap: 7px;
   }
   .button-icon {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
   }
 }
 
-/* Large Tablet (992px - 1199px) */
-@media (max-width: 1199px) {
+@media (max-width: 1200px) {
   .border-button {
-    height: 40px; /* Match SearchInput height */
-    padding: 6px 5px;
-    font-size: 13px;
-    border-radius: 9px;
-    gap: 3px;
-  }
-  .button-icon {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-/* Tablet (768px - 991px) */
-@media (max-width: 991px) {
-  .border-button {
-    height: 36px; /* Match SearchInput height */
-    padding: 5px 4px;
-    font-size: 12px;
+    padding: 10px 14px;
     border-radius: 8px;
-    gap: 2px;
-  }
-  .button-icon {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* Mobile (768px and below) */
-@media (max-width: 768px) {
-  .border-button {
-    height: 34px; /* Match SearchInput height */
-    padding: 4px 3px;
-    font-size: 11px;
-    border-radius: 7px;
-    gap: 2px;
+    gap: 6px;
   }
   .button-icon {
     width: 14px;
     height: 14px;
+  }
+}
+
+@media (max-width: 992px) {
+  .border-button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    gap: 5px;
+  }
+  .button-icon {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .border-button {
+    padding: 7px 10px;
+    border-radius: 6px;
+    gap: 4px;
+  }
+  .button-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .border-button {
+    padding: 6px 8px;
+    border-radius: 6px;
+    gap: 4px;
+  }
+  .button-icon {
+    width: 11px;
+    height: 11px;
   }
 }

@@ -7,8 +7,7 @@ import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
 import "./dashboardpage.css";
 import WalletIcon from "/icons/dashboard-wallet-icon.svg";
-import BorderButton from "../../reusables/BorderButton/BorderButton";
-import SolidButton from "../../reusables/SolidButton";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { Eye, EyeOff } from "lucide-react";
@@ -653,9 +652,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           {/* Funding records section - shows recent wallet funding attempts */}
           <div className="funding-records-section">
             <DataTable
-              header={
-                <div className="data-table-header">Recent Funding Records</div>
-              }
+              header="Recent Funding Records"
               headers={
                 user?.role === "Admin"
                   ? [
@@ -719,13 +716,15 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
       ) : (
         <div className="all-transactions-page">
           <div className="all-transactions-header">
-            <BorderButton
+            <SolidButton
               text="Back to Dashboard"
               onClick={() => setShowAllTransactions(false)}
               className="back-to-dashboard-btn"
+              variant="secondary"
+              size="medium"
             />
           </div>
-          <DataTable
+          <DataTable        
             header="All Transactions"
             headers={
               user?.role === "Admin"

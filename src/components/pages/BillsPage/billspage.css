@@ -430,27 +430,7 @@
 }
 
 /* Bill View Receipt Button */
-.bill-view-receipt-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: #e4e4e4;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-  color: #007948;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
 
-.bill-view-receipt-btn:hover {
-  background: #007948;
-  color: #fff;
-  border-color: #007948;
-  transform: translateY(-1px);
-}
 
 /* ======================================== */
 /* BASE STYLES */
@@ -786,29 +766,8 @@
   font-size: 16px;
 }
 
-.bill-view-receipt-btn {
-  background: none;
-  border: none;
-  color: #007948;
-  font-size: 16px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: color 0.15s;
-  padding: 0;
-}
 
-.bill-view-receipt-btn svg {
-  color: #007948;
-}
 
-.bill-view-receipt-btn:hover {
-  text-decoration: underline;
-  color: #007948;
-}
 
 .invoice-header-item {
   color: #000;
@@ -1009,7 +968,7 @@
   }
 
   .bill-creation-section {
-    padding: 28px;
+    padding: 28px 0px;
     gap: 20px;
     max-width: 750px;
   }
@@ -1322,12 +1281,6 @@
     font-size: 14px;
   }
 
-  .bill-view-receipt-btn {
-    padding: 6px 10px;
-    font-size: 11px;
-    gap: 4px;
-  }
-
   .bill-form-row {
     flex-direction: column;
     gap: 16px;
@@ -1469,12 +1422,7 @@
     font-size: 12px;
   }
 
-  .bill-view-receipt-btn {
-    font-size: 11px;
-    padding: 4px 7px;
-    border-radius: 5px;
-    gap: 3px;
-  }
+ 
   .customer-modal-center > div,
   .customer-success-modal {
     border-radius: 10px !important;
@@ -2060,10 +2008,7 @@
   border-top: 1px solid #f0f0f0;
 }
 
-/* View Receipt Button */
-.bills-view-receipt-btn {
-  /* alias for .view-receipt-btn in Dashboard.css */
-}
+
 
 /* Responsive Design */
 @media (max-width: 991px) {

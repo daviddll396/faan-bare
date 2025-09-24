@@ -317,10 +317,6 @@
   max-width: 800px;
 }
 
-.all-transactions-table-container {
-  width: 100%;
-}
-
 /* Animation keyframes */
 @keyframes fadeIn {
   from {
@@ -501,17 +497,7 @@
   margin: 0;
 }
 
-@media (max-width: 1550px) {
-  .all-transactions-title {
-    font-size: 20px;
-  }
-  .all-transactions-table .status-badge {
-    font-size: 14px;
-  }
-  .all-transactions-table .data-table-header {
-    font-size: 14px;
-  }
-}
+
 
 /* Funding records section styling */
 .funding-records-section {
@@ -528,12 +514,6 @@
   font-size: 14px;
 }
 
-/* All Transactions Table - Now using reusable DataTable component */
-.all-transactions-table {
-  /* Custom styling can be added here if needed */
-}
-
-/* Status Badge Styling - Identical to PaymentPage */
 
 .all-transactions-table .status-badge.cancelled {
   background: #fdeaea;

@@ -2,7 +2,7 @@
 .servicespage-search-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   width: 100%;
   background: transparent;
   border-radius: 0;
@@ -65,7 +65,6 @@
 .services-customer-search-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
   width: 100%;
   background: transparent;
   border-radius: 16px;
@@ -111,7 +110,7 @@
 
 /* Search section header */
 .servicespage-search-header {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .servicespage-search-title {
@@ -453,8 +452,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  gap: 24px;
+  margin-bottom: 16px;
+  gap: 16px;
 }
 
 .services-page .content-card {
@@ -483,8 +482,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 43px;
-  margin-top: 43px;
+  margin-bottom: 24px;
+  margin-top: 24px;
   animation: fadeIn 0.4s ease-out 0.2s both;
 }
 
@@ -1772,7 +1771,7 @@
 /* Desktop (1200px - 1399px) */
 @media (max-width: 1399px) {
   .servicespage-search-section {
-    gap: 18px;
+    gap: 10px;
   }
   .servicespage-search-inputs {
     gap: 12px;
@@ -1794,7 +1793,7 @@
 /* Large Tablet (992px - 1199px) */
 @media (max-width: 1199px) {
   .servicespage-search-section {
-    gap: 16px;
+    gap: 8px;
   }
   .servicespage-search-inputs {
     gap: 10px;
@@ -1816,7 +1815,7 @@
 /* Tablet (768px - 991px) */
 @media (max-width: 991px) {
   .servicespage-search-section {
-    gap: 14px;
+    gap: 8px;
   }
   .servicespage-search-inputs {
     flex-direction: column;
@@ -1847,12 +1846,12 @@
 
 @media (max-width: 768px) {
   .servicespage-search-section {
-    gap: 12px;
+    gap: 8px;
     border-radius: 12px;
   }
 
   .servicespage-search-header {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .servicespage-search-title {

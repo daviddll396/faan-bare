@@ -562,6 +562,11 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
           {/* All Customers Data Table */}
           {allCustomersFetched && (
             <DataTable
+              header={
+                allCustomersStatus === "PENDING"
+                  ? "Pending Customers"
+                  : "Approved Customers"
+              }
               headers={[
                 "S/N",
                 "First Name",

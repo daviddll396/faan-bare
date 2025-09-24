@@ -10,6 +10,8 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   passwordToggle?: boolean;
   /** Optional error state. If string, shown as message below input */
   error?: boolean | string;
+  /** Optional width prop to control input width */
+  width?: string | number;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -19,6 +21,7 @@ const Input: React.FC<InputProps> = ({
   passwordToggle = false,
   type,
   error,
+  width,
   ...rest
 }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -33,8 +36,15 @@ const Input: React.FC<InputProps> = ({
   const hasError =
     !!error || (className && className.toString().includes("error"));
 
+  // Convert width to CSS value
+  const widthStyle = width
+    ? typeof width === "number"
+      ? `${width}px`
+      : width
+    : undefined;
+
   return (
-    <label className="reusable-input-label">
+    <label className="reusable-input-label" style={{ width: widthStyle }}>
       {label && <span className="reusable-input-label-text">{label}</span>}
       <div className={passwordToggle ? "password-input-container" : undefined}>
         <input

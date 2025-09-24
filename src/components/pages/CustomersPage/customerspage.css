@@ -276,9 +276,9 @@
 
 .customer-details-title {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: #000;
-  text-align: center;
+  text-align: left;
   margin-bottom: 32px;
   margin-top: 0;
 }
@@ -294,7 +294,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:7px 0px;
+  padding: 7px 0px;
   background: #ffffff;
   font-size: 16px;
   min-height: 24px;
@@ -325,9 +325,13 @@
   display: flex;
   justify-content: center;
   width: 100%;
+  gap: 12px;
 }
 
+/* Make both SolidButton and legacy GradientButton expand to fill available space */
+.customer-details-actions .solid-button,
 .customer-details-actions .gradient-button {
+  flex: 1;
   min-width: 150px;
 }
 

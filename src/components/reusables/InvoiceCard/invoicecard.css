@@ -1,0 +1,452 @@
+/* InvoiceCard Base Styles */
+.invoice-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #f0f0f0;
+  padding: 22px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.033);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Status-based subtle shadow tints */
+.invoice-card.paid {
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
+    0 2px 6px rgba(16, 185, 129, 0.03);
+}
+
+.invoice-card.pending {
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
+    0 2px 6px rgba(251, 146, 60, 0.03);
+}
+
+.invoice-card.cancelled {
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
+    0 2px 6px rgba(220, 38, 38, 0.03);
+}
+
+/* Invoice Header */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.invoice-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  font-family: monospace;
+}
+
+.invoice-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.invoice-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.invoice-status.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.invoice-status.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Invoice Content Area */
+.invoice-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Invoice Details */
+.invoice-details {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.invoice-details > div {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #969696;
+}
+
+.invoice-details strong {
+  color: #000;
+}
+
+/* Invoice Services */
+.invoice-services {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.invoice-services > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #000;
+  font-size: 14px;
+}
+
+.service-item {
+  font-size: 13px;
+  color: #969696;
+  margin-bottom: 4px;
+  padding: 4px 0;
+}
+
+/* Invoice Total */
+.invoice-total {
+  margin-bottom: 20px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  text-align: center;
+}
+
+/* Invoice Expiry Warning */
+.invoice-expiry-warning {
+  position: absolute;
+  bottom: 24px;
+  left: 8px;
+  z-index: 2;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  padding-bottom: 0px;
+  border-radius: 8px;
+  max-width: 240px;
+  text-align: center;
+  color: #4b5563 !important;
+}
+
+.invoice-expiry-warning.urgent {
+  color: #dc2626 !important;
+}
+
+/* Invoice Actions */
+.invoice-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+/* ======================================== */
+/* RESPONSIVE MEDIA QUERIES (largest -> smallest) */
+/* ======================================== */
+
+@media (max-width: 1600px) {
+  .invoice-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  .invoice-number {
+    font-size: 17px;
+  }
+  .invoice-status {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+  .invoice-details > div {
+    font-size: 13px;
+    margin-bottom: 7px;
+  }
+  .invoice-services > strong {
+    font-size: 13px;
+    margin-bottom: 7px;
+  }
+  .service-item {
+    font-size: 12px;
+  }
+  .invoice-total {
+    font-size: 15px;
+    padding: 11px;
+    margin-bottom: 18px;
+  }
+  .invoice-expiry-warning {
+    font-size: 12px;
+    bottom: 22px;
+  }
+  .invoice-actions {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .invoice-card {
+    padding: 18px;
+    border-radius: 10px;
+  }
+  .invoice-header {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+  }
+  .invoice-number {
+    font-size: 16px;
+  }
+  .invoice-status {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  .invoice-details {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+  }
+  .invoice-details > div {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .invoice-services {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+  }
+  .invoice-services > strong {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .service-item {
+    font-size: 11px;
+  }
+  .invoice-total {
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+  .invoice-expiry-warning {
+    font-size: 11px;
+    bottom: 20px;
+  }
+  .invoice-actions {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 992px) {
+  .invoice-card {
+    padding: 16px;
+    border-radius: 8px;
+  }
+  .invoice-header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  .invoice-number {
+    font-size: 15px;
+  }
+  .invoice-status {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+  .invoice-details {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  .invoice-details > div {
+    font-size: 11px;
+    margin-bottom: 5px;
+  }
+  .invoice-services {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  .invoice-services > strong {
+    font-size: 11px;
+    margin-bottom: 5px;
+  }
+  .service-item {
+    font-size: 10px;
+  }
+  .invoice-total {
+    font-size: 13px;
+    padding: 9px;
+    margin-bottom: 14px;
+  }
+  .invoice-expiry-warning {
+    font-size: 10px;
+    bottom: 18px;
+  }
+  .invoice-actions {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .invoice-card {
+    padding: 14px;
+    border-radius: 6px;
+  }
+  .invoice-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  .invoice-number {
+    font-size: 14px;
+  }
+  .invoice-status {
+    font-size: 8px;
+    padding: 2px 5px;
+  }
+  .invoice-details {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  .invoice-details > div {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .invoice-services {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  .invoice-services > strong {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .service-item {
+    font-size: 9px;
+  }
+  .invoice-total {
+    font-size: 12px;
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+  .invoice-expiry-warning {
+    font-size: 9px;
+    bottom: 16px;
+    left: 6px;
+  }
+  .invoice-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .invoice-card {
+    padding: 12px;
+  }
+  .invoice-header {
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  .invoice-number {
+    font-size: 13px;
+  }
+  .invoice-status {
+    font-size: 7px;
+    padding: 2px 4px;
+  }
+  .invoice-details {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  .invoice-details > div {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+  .invoice-services {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  .invoice-services > strong {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+  .service-item {
+    font-size: 8px;
+  }
+  .invoice-total {
+    font-size: 11px;
+    padding: 6px;
+    margin-bottom: 10px;
+  }
+  .invoice-expiry-warning {
+    font-size: 8px;
+    bottom: 14px;
+    left: 4px;
+  }
+  .invoice-actions {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .invoice-card {
+    padding: 10px;
+  }
+  .invoice-card.pending {
+    padding-bottom: 35px;
+  }
+  .invoice-header {
+    gap: 6px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+  .invoice-number {
+    font-size: 12px;
+  }
+  .invoice-status {
+    font-size: 6px;
+    padding: 1px 3px;
+  }
+  .invoice-details {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+  .invoice-details > div {
+    font-size: 8px;
+    margin-bottom: 2px;
+  }
+  .invoice-services {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+  .invoice-services > strong {
+    font-size: 8px;
+    margin-bottom: 2px;
+  }
+  .service-item {
+    font-size: 7px;
+  }
+  .invoice-total {
+    font-size: 10px;
+    padding: 4px;
+    margin-bottom: 8px;
+  }
+  .invoice-expiry-warning {
+    font-size: 7px;
+    bottom: 8px;
+    left: 2px;
+  }
+  .invoice-actions {
+    gap: 3px;
+  }
+}

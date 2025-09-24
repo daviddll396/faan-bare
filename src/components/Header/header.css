@@ -1,12 +1,10 @@
-/* Header Styles */
+/* Header Base Styles */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 56px;
   background: white;
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
 }
 
 /* Desktop vs Mobile Visibility Classes */
@@ -18,100 +16,7 @@
   display: none;
 }
 
-/* Responsive zoom scaling for the header to handle different desktop sizes and scaling */
-/* Progressive zoom scaling with aggressive scaling for high DPI displays */
-@media (max-width: 1920px) {
-  .header {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1800px) {
-  .header {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1700px) {
-  .header {
-    zoom: 0.9;
-  }
-}
-
-@media (max-width: 1600px) {
-  .header {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1500px) {
-  .header {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1450px) {
-  .header {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1400px) {
-  .header {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1350px) {
-  .header {
-    zoom: 0.75;
-  }
-}
-
-@media (max-width: 1300px) {
-  .header {
-    zoom: 0.75;
-  }
-}
-
-@media (max-width: 1250px) {
-  .header {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1200px) {
-  .header {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1150px) {
-  .header {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1100px) {
-  .header {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1050px) {
-  .header {
-    zoom: 0.7;
-  }
-}
-
-/* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
-  .header {
-    zoom: 1;
-  }
-}
-
-.page-title {
+.page-title-header {
   font-size: 24px;
   font-weight: 600;
   color: #000;
@@ -415,74 +320,114 @@
   font-weight: 500;
 }
 
+/* Mobile Header Base Styles */
+.mobile-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 20px var(--mobile-x-padding);
+  padding-bottom: 10px;
+  background: var(--bg-color);
+  border-bottom: none;
+}
+
+.mobile-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0px;
+  border-radius: 12px;
+  background-color: var(--bg-color);
+  border: none;
+}
+
+.mobile-user-avatar {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.mobile-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.mobile-user-greeting {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
+  font-family: "Poppins", sans-serif;
+}
+
+.mobile-user-subtitle {
+  font-size: 12px;
+  font-weight: 400;
+  color: #898989;
+  font-family: "Poppins", sans-serif;
+}
+
 /* ======================================== */
-/* MOBILE HEADER STYLES - 768px and below */
+/* RESPONSIVE MEDIA QUERIES (largest -> smallest) */
 /* ======================================== */
+
+@media (max-width: 1600px) {
+  .header {
+    padding: 18px 48px;
+  }
+  .notif-dropdown {
+    width: 340px;
+  }
+  .page-title-header {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .header {
+    padding: 16px 40px;
+  }
+  .page-title-header {
+    font-size: 20px;
+  }
+  .notif-dropdown {
+    width: 320px;
+  }
+  .desktop-only-header .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .desktop-only-header .user-name {
+    font-size: 13px;
+  }
+  .desktop-only-header .user-role {
+    font-size: 12px;
+  }
+  .desktop-only-header .user-profile {
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 992px) {
+  .header {
+    padding: 14px 28px;
+  }
+  .page-title-header {
+    font-size: 18px;
+  }
+}
 
 @media (max-width: 768px) {
   .desktop-only-header {
     display: none;
   }
-
   .mobile-only {
     display: block;
-  }
-
-  /* Mobile Header */
-  .mobile-header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 20px var(--mobile-x-padding);
-    padding-bottom: 10px;
-    background: var(--bg-color);
-    border-bottom: none;
-  }
-
-  /* Mobile User Profile */
-  .mobile-user-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0px;
-    border-radius: 12px;
-    background-color: var(--bg-color);
-    border: none;
-  }
-
-  /* Mobile User Avatar */
-  .mobile-user-avatar {
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    border-radius: 50%;
-    padding: 8px;
-  }
-
-  /* Mobile User Info */
-  .mobile-user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  /* Mobile User Greeting */
-  .mobile-user-greeting {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--black);
-    font-family: "Poppins", sans-serif;
-  }
-
-  /* Mobile User Subtitle */
-  .mobile-user-subtitle {
-    font-size: 12px;
-    font-weight: 400;
-    color: #898989;
-    font-family: "Poppins", sans-serif;
   }
 }

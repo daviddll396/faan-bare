@@ -30,7 +30,8 @@
   border: 1px solid #e4e4e4;
   border-radius: 12px;
   padding: 0 12px 0 12px;
-  height: 56px;
+  height: var(--form-control-height, 56px);
+  font-size: var(--form-control-font-size, 16px);
   /* Avoid forcing a minimum width here so wrapper can remain compact */
   min-width: 0;
   position: relative;
@@ -44,13 +45,13 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: 16px;
+  font-size: inherit;
   font-weight: 500;
   color: #000;
   flex: 1;
   font-family: "Poppins", sans-serif;
   cursor: text;
-  height: 54px;
+  height: calc(var(--form-control-height, 56px) - 4px);
 }
 .fieldbutton-search-select {
   border: none;
@@ -83,27 +84,49 @@
   margin-left: 6px;
 }
 
-@media (max-width: 1450px) {
+/* ======================================== */
+/* RESPONSIVE MEDIA QUERIES (largest -> smallest) */
+/* ======================================== */
+
+@media (max-width: 1600px) {
+  .fieldbutton-root {
+    gap: 7px;
+  }
+  .fieldbutton-inputs {
+    gap: 7px;
+  }
+  .fieldbutton-search-wrapper {
+    border-radius: 10px;
+    padding: 0 11px;
+  }
+  .fieldbutton-search-icon {
+    font-size: 15px;
+  }
+  .fieldbutton-search-chevron {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1200px) {
   .fieldbutton-root {
     gap: 6px;
   }
   .fieldbutton-inputs {
     gap: 6px;
   }
-
-
-  .fieldbutton-btn {
-    height: 48px;
-    font-size: 14px;
+  .fieldbutton-search-wrapper {
+    border-radius: 8px;
     padding: 0 10px;
-    border-radius: 10px;
   }
-  .fieldbutton-root .fieldbutton-btn {
-    margin-left: 4px;
+  .fieldbutton-search-icon {
+    font-size: 14px;
+  }
+  .fieldbutton-search-chevron {
+    font-size: 10px;
   }
 }
 
-@media (max-width: 1250px) {
+@media (max-width: 992px) {
   .fieldbutton-root {
     gap: 6px;
     flex-wrap: wrap;
@@ -112,19 +135,54 @@
     gap: 6px;
     width: 100%;
   }
-
-  .fieldbutton-search-input,
-  .fieldbutton-search-select {
-    font-size: 13px;
-  }
-  .fieldbutton-btn {
-    height: 48px;
-    font-size: 13px;
+  .fieldbutton-search-wrapper {
+    border-radius: 6px;
     padding: 0 8px;
-    border-radius: 8px;
   }
-  /* If there's not enough horizontal space, allow buttons to wrap onto next line */
+  .fieldbutton-search-icon {
+    font-size: 13px;
+  }
+  .fieldbutton-search-chevron {
+    font-size: 9px;
+  }
   .fieldbutton-root .fieldbutton-btn {
     margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .fieldbutton-root {
+    gap: 5px;
+  }
+  .fieldbutton-inputs {
+    gap: 5px;
+  }
+  .fieldbutton-search-wrapper {
+    border-radius: 6px;
+    padding: 0 6px;
+  }
+  .fieldbutton-search-icon {
+    font-size: 12px;
+  }
+  .fieldbutton-search-chevron {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .fieldbutton-root {
+    gap: 4px;
+  }
+  .fieldbutton-inputs {
+    gap: 4px;
+  }
+  .fieldbutton-search-wrapper {
+    padding: 0 5px;
+  }
+  .fieldbutton-search-icon {
+    font-size: 11px;
+  }
+  .fieldbutton-search-chevron {
+    font-size: 7px;
   }
 }

@@ -371,6 +371,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       </div>
       {!isLoading && (
         <DataTable
+        header={  `${activeTab} Payments`}
           headers={
             user?.role === "Admin"
               ? [
@@ -419,7 +420,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 )}
                 {p.actionType === "invoice" && (
                   <button
-                    className="payment-action-btn invoice"
+                    className="view-receipt-btn"
                     onClick={() => setModal({ type: "invoice", data: p })}
                   >
                     <FiEye className="payment-action-icon" />

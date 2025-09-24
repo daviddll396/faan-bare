@@ -210,7 +210,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
     <>
       {/* Desktop Header - Only visible above 768px */}
       <div className="header desktop-only-header">
-        <h1 className="page-title">Hello, {user?.name ?? "Guest User"}</h1>
+        <h1 className="page-title-header">Hello, {user?.name ?? "Guest User"}</h1>
         <div
           className="header-right"
           style={{ display: "flex", alignItems: "center", gap: 12 }}
@@ -224,7 +224,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
             aria-expanded={open}
           >
             <div className="user-avatar">
-              <User size={40} color="#007948" />
+              <User color="#007948" width={"100%"} height={"100%"}/>
             </div>
             <div className="user-info">
               <span className="user-name">{user?.name || "Guest User"}</span>

@@ -2035,7 +2035,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
             {/* Show services inside the search container */}
             <ServicesGrid
-              className="services-customer-grid"
+              className="available-services"
               items={customerFilteredServices.map((s) => ({
                 id: s.id,
                 image: s.image,

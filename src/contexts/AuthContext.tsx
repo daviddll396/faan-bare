@@ -217,6 +217,7 @@ interface GetAllCustomersResponse {
 }
 
 interface ChangeCustomerStatusRequest {
+  customerId: string;
   status: "PENDING" | "APPROVED";
 }
 
@@ -257,6 +258,26 @@ interface CreateCustomerResponse {
   data?: {
     customerId: string;
     email: string;
+  };
+}
+
+interface UpdateProfileRequest {
+  phoneNumber?: string;
+  address?: string;
+}
+
+interface UpdateProfileResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    customerId: string;
   };
 }
 
@@ -308,6 +329,9 @@ interface AuthContextType {
   createCustomer: (
     request: CreateCustomerRequest
   ) => Promise<CreateCustomerResponse | null>;
+  updateProfile: (
+    request: UpdateProfileRequest
+  ) => Promise<UpdateProfileResponse | null>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -1865,10 +1889,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
 
-      const changeStatusUrl = `${API_ENDPOINTS.CHANGE_CUSTOMER_STATUS}/${customerId}/change-status`;
-      const requestBody: ChangeCustomerStatusRequest = { status };
+      // New API: POST /api/faan/customers/change-status with payload { customerId, status }
+      const changeStatusUrl = `${API_ENDPOINTS.CHANGE_CUSTOMER_STATUS}/change-status`;
+      const requestBody: ChangeCustomerStatusRequest = { customerId, status };
 
-      console.log("🚀 === CHANGING CUSTOMER STATUS ===");
+      console.log("🚀 === CHANGING CUSTOMER STATUS (payload) ===");
       console.log("📍 Request URL:", changeStatusUrl);
       console.log("🔍 Customer ID:", customerId);
       console.log("📋 New Status:", status);
@@ -2027,6 +2052,137 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateProfile = async (
+    request: UpdateProfileRequest
+  ): Promise<UpdateProfileResponse | null> => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      if (!token) {
+        console.error("No token found for updating profile");
+        return null;
+      }
+
+      console.log("🚀 === STARTING UPDATE PROFILE REQUEST ===");
+      console.log("📍 Request URL:", API_ENDPOINTS.USER_DETAILS);
+      console.log("🔑 Using token:", token);
+      console.log("🔍 Token details:", {
+        tokenLength: token?.length,
+        tokenStart: token?.substring(0, 20) + "...",
+        tokenType: token?.startsWith("mock-") ? "MOCK" : "REAL",
+        isTokenPresent: !!token,
+      });
+      console.log("👤 Current user:", {
+        id: user?.id,
+        customerId: user?.customerId,
+        role: user?.role,
+        email: user?.email,
+      });
+      console.log("📋 Profile update data:", request);
+      console.log("⏰ Request timestamp:", new Date().toISOString());
+      console.log("🔧 Request headers:", {
+        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+        "X-Source": REQUEST_HEADERS.X_SOURCE,
+        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+        Authorization: `Bearer ${token}`,
+      });
+
+      const response = await fetch(API_ENDPOINTS.USER_DETAILS, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+          "X-Source": REQUEST_HEADERS.X_SOURCE,
+          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(request),
+      });
+
+      console.log("📥 Update profile response status:", response.status);
+      console.log(
+        "📥 Update profile response status text:",
+        response.statusText
+      );
+      console.log("📥 Response timestamp:", new Date().toISOString());
+
+      if (!response.ok) {
+        console.error(
+          "❌ Failed to update profile:",
+          response.status,
+          response.statusText
+        );
+
+        // Get the error text first to see what the actual error is
+        const errorText = await response.text();
+        console.error("❌ Error response body:", errorText);
+        console.error("❌ Full response details:", {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          url: response.url,
+        });
+
+        // TEMPORARILY DISABLED: Don't redirect on this specific error so we can debug
+        // if (checkTokenAndRedirect(response)) {
+        //   return null;
+        // }
+
+        return null;
+      }
+
+      const responseText = await response.text();
+      console.log("📄 Raw update profile response:", responseText);
+      console.log("📏 Response length:", responseText.length);
+
+      // Check if response has content
+      if (!responseText || responseText.trim() === "") {
+        console.log("⚠️ Empty update profile response");
+        return null;
+      }
+
+      // Parse the JSON response directly (no decryption needed for this endpoint)
+      let data: UpdateProfileResponse;
+      try {
+        data = JSON.parse(responseText);
+        console.log("✅ Parsed update profile data:", data);
+      } catch (error) {
+        console.error("❌ Failed to parse update profile JSON:", error);
+        console.error("❌ Raw response that failed to parse:", responseText);
+        return null;
+      }
+
+      // Check for success
+      if (
+        data &&
+        (data.status === true ||
+          data.statusCode === HTTP_STATUS.OK ||
+          String(data.statusCode) === "00" ||
+          String(data.statusCode) === "0")
+      ) {
+        console.log("🎉 === UPDATE PROFILE COMPLETED SUCCESSFULLY ===");
+
+        // Update user's profile data in local storage if successful
+        if (user && data.data) {
+          const updatedUser: User = {
+            ...user,
+            phoneNumber: data.data.phoneNumber || user.phoneNumber,
+            address: data.data.address || user.address,
+          };
+          setUser(updatedUser);
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+          console.log("Updated user profile stored:", updatedUser);
+        }
+
+        return data;
+      } else {
+        console.error("❌ Profile update failed:", data.message);
+        return data; // Return the response even if failed so we can show the error message
+      }
+    } catch (error) {
+      console.error("💥 Update profile error:", error);
+      return null;
+    }
+  };
+
   // removed duplicate declaration (kept useCallback version above)
 
   const value: AuthContextType = {
@@ -2049,6 +2205,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getAllCustomers,
     changeCustomerStatus,
     createCustomer,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

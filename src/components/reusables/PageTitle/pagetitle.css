@@ -1,16 +1,29 @@
-/* Simplified page title header used across pages */
-.page-title-header {
+/* PageTitle Base Styles */
+.page-title-main {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-.page-title{
-  display:flex;
-  align-items: center;
-  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.page-title-header .mobile-back-btn {
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 30px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.page-subtitle {
+  margin: 4px 0 0 0;
+  color: #969696;
+  font-size: 16px;
+  margin: 0;
+}
+
+.mobile-back-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -19,47 +32,49 @@
   align-items: center;
   justify-content: center;
   padding: 0px;
+  transition: background-color 0.2s ease;
 }
 
-.page-title-header .page-title {
-  font-size: 30px;
-  font-weight: 600;
-  color: #000;
-  margin: 0;
+.mobile-back-btn:hover {
+  background-color: transparent;
 }
 
-.page-title-header .page-subtitle {
-  margin: 4px 0 0 0;
-  color: #969696;
+/* Breadcrumb Base Styles */
+.breadcrumb-item,
+.breadcrumb-link,
+.breadcrumb-label {
   font-size: 18px;
-  margin: 0;
+  font-weight: 500;
 }
 
-/* removed legacy zoom-based scaling; responsive rules added further below */
+.breadcrumb-icon,
+.breadcrumb-chevron-icon {
+  width: 18px;
+  height: 18px;
+}
 
-/* Reset zoom for mobile devices to use standard responsive behavior */
-@media (max-width: 768px) {
-  /* mobile-specific rules retained below */
+/* ======================================== */
+/* RESPONSIVE MEDIA QUERIES (largest -> smallest) */
+/* ======================================== */
 
-  /* Mobile Page Title Styling */
-  .page-title-header {
+@media (max-width: 1600px) {
+  .page-title {
+    font-size: 28px;
+  }
+  .page-subtitle {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .page-title-main {
     gap: 10px;
   }
-
-  /* Mobile Back Button */
-  .page-title-header .mobile-back-btn:hover {
-    background-color: transparent;
+  .page-title {
+    font-size: 26px;
   }
-}
-
-/* Remove zoom-based scaling: enforce normal zoom and provide responsive rules */
-.page-title-header {
-  zoom: 1 !important;
-}
-
-@media (max-width: 1450px) {
-  .page-title-header {
-    gap: 10px;
+  .page-subtitle {
+    font-size: 16px;
   }
   .breadcrumb-item,
   .breadcrumb-link,
@@ -68,15 +83,20 @@
   }
   .breadcrumb-icon,
   .breadcrumb-chevron-icon {
-    width: 16px !important;
-    height: 16px !important;
+    width: 16px;
+    height: 16px;
   }
 }
 
-@media (max-width: 1250px) {
-  .page-title-header {
+@media (max-width: 992px) {
+  .page-title-main {
     gap: 8px;
-    align-items: center;
+  }
+  .page-title {
+    font-size: 24px;
+  }
+  .page-subtitle {
+    font-size: 15px;
   }
   .breadcrumb-item,
   .breadcrumb-link,
@@ -86,7 +106,41 @@
   }
   .breadcrumb-icon,
   .breadcrumb-chevron-icon {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-title-main {
+    gap: 10px;
+  }
+  .page-title {
+    font-size: 22px;
+  }
+  .page-subtitle {
+    font-size: 14px;
+  }
+  .mobile-back-btn {
+    padding: 4px;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-title {
+    font-size: 20px;
+  }
+  .page-subtitle {
+    font-size: 13px;
+  }
+  .breadcrumb-item,
+  .breadcrumb-link,
+  .breadcrumb-label {
+    font-size: 14px;
+  }
+  .breadcrumb-icon,
+  .breadcrumb-chevron-icon {
+    width: 12px;
+    height: 12px;
   }
 }

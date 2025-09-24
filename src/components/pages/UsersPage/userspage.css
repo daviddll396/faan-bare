@@ -174,7 +174,13 @@
 
 .form-row-pair {
   display: flex;
-  gap: 32px;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.form-row-pair > * {
+  flex: 1;
+  min-width: 0;
 }
 
 .form-row-pair .form-row {
@@ -322,9 +328,6 @@
   .user-form-grid {
     gap: 20px;
   }
-  .form-row-pair {
-    gap: 28px;
-  }
 
   .user-form-grid label {
     font-size: 13px;
@@ -369,9 +372,6 @@
   /* add-user-form-card styles migrated to Card component */
   .user-form-grid {
     gap: 18px;
-  }
-  .form-row-pair {
-    gap: 24px;
   }
 
   .user-form-grid label {
@@ -432,10 +432,6 @@
   .user-form-grid {
     gap: 16px;
   }
-  .form-row-pair {
-    gap: 20px;
-  }
-
   .user-form-grid label {
     font-size: 11px;
   }
@@ -460,6 +456,11 @@
 
   .userspage-search-section {
     padding: 0;
+    gap: 12px;
+  }
+
+  .form-row-pair {
+    flex-direction: column;
     gap: 12px;
     border-radius: 0;
   }

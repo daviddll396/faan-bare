@@ -224,8 +224,6 @@
   margin: 0 auto;
   min-width: 340px;
   animation: slideInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
-  zoom: 1.08;
-  transition: zoom 0.3s ease;
 }
 
 .register-role-select-card .auth-form-title-modern {
@@ -345,8 +343,6 @@
   align-items: flex-start;
   margin: 0 auto;
   min-width: 340px;
-  zoom: 1.08;
-  transition: zoom 0.3s ease;
 }
 
 .register-badge-individual {
@@ -390,8 +386,6 @@
   flex-direction: column;
   align-items: flex-start;
   animation: slideInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
-  zoom: 1.08;
-  transition: zoom 0.3s ease;
 }
 
 .register-individual-grid {
@@ -460,133 +454,7 @@
 /* ======================================== */
 
 /* Desktop Zoom Scaling */
-@media (max-width: 1920px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 1700px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.95;
-  }
-}
-
-@media (max-width: 1600px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.85;
-  }
-}
-
-@media (max-width: 1500px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 1450px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.75;
-  }
-}
-
-@media (max-width: 1400px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.7;
-  }
-}
-
-@media (max-width: 1350px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.68;
-  }
-}
-
-@media (max-width: 1300px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.66;
-  }
-}
-
-@media (max-width: 1250px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.64;
-  }
-}
-
-@media (max-width: 1200px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.62;
-  }
-}
-
-@media (max-width: 1150px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 1100px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.58;
-  }
-}
-
-@media (max-width: 1050px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.56;
-  }
-}
-
-@media (max-width: 1000px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 950px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.52;
-  }
-}
-
-@media (max-width: 900px) {
-  .register-individual-form-card,
-  .register-role-select-card,
-  .register-form-placeholder {
-    zoom: 0.5;
-  }
-}
+/* Removed 'zoom' scaling (not best practice). Rely on layout and padding/width adjustments instead. */
 
 /* Tablet and Mobile Breakpoints */
 @media (max-width: 768px) {
@@ -612,7 +480,7 @@
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: var(--bp-md)) {
   .register-individual-form-card {
     zoom: 1;
     padding: 0px;
@@ -649,6 +517,15 @@
     margin: 0;
   }
 
+  /* Ensure the main form area is scrollable on small viewports */
+  .register-card,
+  .register-form-placeholder,
+  .register-individual-form-card {
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* Ensure the auth split screen allows scrolling on mobile */
   .auth-split-screen {
     height: auto;
@@ -675,7 +552,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: var(--bp-sm)) {
   .register-role-select-card,
   .register-form-placeholder {
     padding: 24px 10px 24px 10px;
@@ -689,7 +566,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: var(--bp-sm)) {
   .register-card {
     padding: 32px 24px;
   }
@@ -900,8 +777,53 @@ input[type="date"]::-moz-calendar-picker-indicator {
   font-style: italic;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
+/* Responsive layout rules (large -> small) using breakpoint tokens from index.css */
+@media (max-width: var(--bp-xxl)) {
+  /* Slightly reduce max widths/padding on very wide but not full-HD screens */
+  .register-card,
+  .register-form-placeholder,
+  .register-individual-form-card,
+  .register-role-select-card {
+    max-width: 720px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+@media (max-width: var(--bp-xl)) {
+  .register-card,
+  .register-form-placeholder,
+  .register-individual-form-card,
+  .register-role-select-card {
+    max-width: 680px;
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+}
+
+@media (max-width: var(--bp-lg)) {
+  .register-card,
+  .register-form-placeholder,
+  .register-individual-form-card,
+  .register-role-select-card {
+    max-width: 640px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  /* Allow content cards to scroll on smaller / narrower laptops */
+  .register-card,
+  .register-form-placeholder,
+  .register-individual-form-card,
+  .register-role-select-card {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Tablet and mobile breakpoints */
+@media (max-width: var(--bp-md)) {
   .indemnity-form-modal .modal-container {
     margin: 10px;
     max-height: 95vh;

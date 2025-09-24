@@ -15,6 +15,13 @@ body,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --form-control-height: 56px;
+  --form-control-font-size: 16px;
+  --bp-xs: 320px;
+  --bp-sm: 576px;
+  --bp-md: 768px;
+  --bp-lg: 992px;
+  --bp-xl: 1200px;
+  --bp-xxl: 1600px;
 }
 
 :root {
@@ -69,10 +76,321 @@ select:-webkit-autofill:active {
   --green: #007948;
   --border-color: #e4e4e4;
   --page-bottom-padding-mobile: 60px;
+
+  /* Form control base sizes */
+  --form-control-height: 56px;
+  --form-control-font-size: 16px;
+
+  /* Breakpoint variables */
+  --bp-xs: 320px;
+  --bp-sm: 576px;
+  --bp-md: 768px;
+  --bp-lg: 992px;
+  --bp-xl: 1200px;
+  --bp-xxl: 1600px;
+}
+
+  /* Height overrides for form controls */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .listbox-button,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .reusable-input {
+    height: 48px !important;
+    min-height: 48px !important;
+  }
+
+
+
+  /* Force font-size and height override for all form controls */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .search-input,
+  .search-input-select,
+  .listbox-button,
+  .listbox-button-text,
+  .listbox-option-text,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select,
+  .switching-tab,
+  .reusable-input,
+  .reusable-input-label-text {
+    font-size: 14px !important;
+  }
+
+/* ======================================== */
+/* RESPONSIVE FORM CONTROL SIZING (largest -> smallest) */
+/* ======================================== */
+
+@media (max-width: 1600px) {
+  :root {
+    --form-control-height: 52px;
+    --form-control-font-size: 15px;
+  }
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --form-control-height: 48px;
+    --form-control-font-size: 14px;
+  }
+
+  /* Force font-size and height override for all form controls */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .search-input,
+  .search-input-select,
+  .listbox-button,
+  .listbox-button-text,
+  .listbox-option-text,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select,
+  .switching-tab,
+  .reusable-input,
+  .reusable-input-label-text {
+    font-size: 14px !important;
+  }
+
+  /* Height overrides for form controls */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .listbox-button,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .reusable-input {
+    height: 48px !important;
+    min-height: 48px !important;
+  }
+
+  .fieldbutton-search-input {
+    height: 44px !important; /* wrapper height - 4px */
+  }
+  .solid-button--small {
+    font-size: 12px !important; /* 14px - 2px */
+  }
+  .solid-button--large {
+    font-size: 18px !important; /* 14px + 4px */
+  }
+}
+
+@media (max-width: 992px) {
+  :root {
+    --form-control-height: 44px;
+    --form-control-font-size: 13px;
+  }
+
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .search-input,
+  .search-input-select,
+  .listbox-button,
+  .listbox-button-text,
+  .listbox-option-text,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select,
+  .switching-tab,
+  .reusable-input,
+  .reusable-input-label-text {
+    font-size: 13px !important;
+  }
+
+  /* Height overrides */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .listbox-button,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .reusable-input {
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .fieldbutton-search-input {
+    height: 40px !important;
+  }
+  .solid-button--small {
+    font-size: 11px !important;
+  }
+  .solid-button--large {
+    font-size: 17px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --form-control-height: 40px;
+    --form-control-font-size: 12px;
+  }
+
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .search-input,
+  .search-input-select,
+  .listbox-button,
+  .listbox-button-text,
+  .listbox-option-text,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select,
+  .switching-tab,
+  .reusable-input,
+  .reusable-input-label-text {
+    font-size: 12px !important;
+  }
+
+  /* Height overrides */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .listbox-button,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .reusable-input {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .fieldbutton-search-input {
+    height: 36px !important;
+  }
+  .solid-button--small {
+    font-size: 10px !important;
+  }
+  .solid-button--large {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --form-control-height: 36px;
+    --form-control-font-size: 11px;
+  }
+
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .search-input,
+  .search-input-select,
+  .listbox-button,
+  .listbox-button-text,
+  .listbox-option-text,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select,
+  .switching-tab,
+  .reusable-input,
+  .reusable-input-label-text {
+    font-size: 11px !important;
+  }
+
+  /* Height overrides */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .listbox-button,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .reusable-input {
+    height: 36px !important;
+    min-height: 36px !important;
+  }
+
+  .fieldbutton-search-input {
+    height: 32px !important;
+  }
+  .solid-button--small {
+    font-size: 9px !important;
+  }
+  .solid-button--large {
+    font-size: 15px !important;
+  }
 }
 
 @media (max-width: 480px) {
   :root {
     --mobile-margin-top: 80px;
+    --form-control-height: 34px;
+    --form-control-font-size: 10px;
+  }
+
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .search-input,
+  .search-input-select,
+  .listbox-button,
+  .listbox-button-text,
+  .listbox-option-text,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select,
+  .switching-tab,
+  .reusable-input,
+  .reusable-input-label-text {
+    font-size: 10px !important;
+  }
+
+  /* Height overrides */
+  .solid-button--small,
+  .solid-button--medium,
+  .solid-button--large,
+  .border-button,
+  .search-input-wrapper,
+  .listbox-button,
+  .input-field,
+  .fieldbutton-search-wrapper,
+  .reusable-input {
+    height: 34px !important;
+    min-height: 34px !important;
+  }
+
+  .fieldbutton-search-input {
+    height: 30px !important;
+  }
+  .solid-button--small {
+    font-size: 8px !important;
+  }
+  .solid-button--large {
+    font-size: 14px !important;
   }
 }

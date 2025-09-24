@@ -58,12 +58,20 @@
   background: #fff;
 }
 
-.table-header-item,
-.table-data-item {
-  padding: 20px 24px;
+.data-table .table-header-item,
+.data-table .table-data-item {
+  padding: 20px 24px !important;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
   white-space: nowrap; /* Prevent text wrapping in cells */
+}
+
+/* Override Dashboard.css massive padding for first and last items */
+.data-table .table-header-item:first-child,
+.data-table .table-header-item:last-child,
+.data-table .table-data-item:first-child,
+.data-table .table-data-item:last-child {
+  padding: 20px 24px !important;
 }
 
 .table-header-item {
@@ -361,9 +369,17 @@
     min-width: 900px;
   }
 
-  .table-header-item,
-  .table-data-item {
-    padding: 24px 28px;
+  .data-table .table-header-item,
+  .data-table .table-data-item {
+    padding: 24px 28px !important;
+  }
+
+  /* Override Dashboard.css massive padding for first and last items */
+  .data-table .table-header-item:first-child,
+  .data-table .table-header-item:last-child,
+  .data-table .table-data-item:first-child,
+  .data-table .table-data-item:last-child {
+    padding: 24px 28px !important;
   }
 
   .table-header-item {
@@ -407,9 +423,17 @@
     min-width: 700px;
   }
 
-  .table-header-item,
-  .table-data-item {
-    padding: 12px 16px;
+  .data-table .table-header-item,
+  .data-table .table-data-item {
+    padding: 12px 16px !important;
+  }
+
+  /* Override Dashboard.css massive padding for first and last items */
+  .data-table .table-header-item:first-child,
+  .data-table .table-header-item:last-child,
+  .data-table .table-data-item:first-child,
+  .data-table .table-data-item:last-child {
+    padding: 12px 16px !important;
   }
 
   .table-header-item {
@@ -486,9 +510,17 @@
     min-width: 600px;
   }
 
-  .table-header-item,
-  .table-data-item {
-    padding: 10px 14px;
+  .data-table .table-header-item,
+  .data-table .table-data-item {
+    padding: 10px 14px !important;
+  }
+
+  /* Override Dashboard.css massive padding for first and last items */
+  .data-table .table-header-item:first-child,
+  .data-table .table-header-item:last-child,
+  .data-table .table-data-item:first-child,
+  .data-table .table-data-item:last-child {
+    padding: 10px 14px !important;
   }
 
   .table-header-item {
@@ -573,9 +605,17 @@
     min-width: 500px;
   }
 
-  .table-header-item,
-  .table-data-item {
-    padding: 8px 12px;
+  .data-table .table-header-item,
+  .data-table .table-data-item {
+    padding: 8px 12px !important;
+  }
+
+  /* Override Dashboard.css massive padding for first and last items */
+  .data-table .table-header-item:first-child,
+  .data-table .table-header-item:last-child,
+  .data-table .table-data-item:first-child,
+  .data-table .table-data-item:last-child {
+    padding: 8px 12px !important;
   }
 
   .table-header-item {
@@ -669,9 +709,17 @@
     min-width: 400px;
   }
 
-  .table-header-item,
-  .table-data-item {
-    padding: 6px 10px;
+  .data-table .table-header-item,
+  .data-table .table-data-item {
+    padding: 6px 10px !important;
+  }
+
+  /* Override Dashboard.css massive padding for first and last items */
+  .data-table .table-header-item:first-child,
+  .data-table .table-header-item:last-child,
+  .data-table .table-data-item:first-child,
+  .data-table .table-data-item:last-child {
+    padding: 6px 10px !important;
   }
 
   .table-header-item {
@@ -755,9 +803,17 @@
     min-width: 350px;
   }
 
-  .table-header-item,
-  .table-data-item {
-    padding: 4px 8px;
+  .data-table .table-header-item,
+  .data-table .table-data-item {
+    padding: 4px 8px !important;
+  }
+
+  /* Override Dashboard.css massive padding for first and last items */
+  .data-table .table-header-item:first-child,
+  .data-table .table-header-item:last-child,
+  .data-table .table-data-item:first-child,
+  .data-table .table-data-item:last-child {
+    padding: 4px 8px !important;
   }
 
   .table-header-item {

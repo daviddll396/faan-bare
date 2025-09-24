@@ -3,10 +3,10 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { useLoading } from "../../../contexts/LoadingContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
-import SolidButton from "../../reusables/SolidButton";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
+import InvoiceCard from "../../reusables/InvoiceCard/InvoiceCard";
 import "./InvoicesPage.css";
 import ServicesGrid from "../../reusables/ServicesGrid/ServicesGrid";
 
@@ -824,84 +824,41 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           ) : (
             <div className="invoices-grid">
               {filteredInvoices.map((invoice) => (
-                <div
+                <InvoiceCard
                   key={invoice.id}
-                  className={`invoice-card ${invoice.status}`}
-                >
-                  <div className="invoice-content-area">
-                    <div className="invoice-header">
-                      <div className="invoice-number">
-                        {invoice.invoiceNumber}
-                      </div>
-                      <div className={`invoice-status ${invoice.status}`}>
-                        {invoice.status.toUpperCase()}
-                      </div>
-                    </div>
-
-                    {/* Show expiration warning for pending invoices */}
-                    {invoice.status === "pending" && (
-                      <div className="invoice-expiry-warning">
-                        {isInvoiceExpiringSoon(invoice) ? (
-                          <div className="expiry-warning urgent">
-                            ⚠️ Expires in: {getTimeUntilExpiry(invoice)}
-                          </div>
-                        ) : (
-                          <div className="expiry-info">
-                            ⏰ Expires in: {getTimeUntilExpiry(invoice)}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="invoice-details">
-                      <div className="customer-info">
-                        <strong>Customer:</strong> {invoice.customerName}
-                      </div>
-                      <div className="invoice-date">
-                        <strong>Created:</strong>{" "}
-                        {invoice.createdAt.toLocaleDateString()}
-                      </div>
-                      <div className="invoice-due">
-                        <strong>Due:</strong>{" "}
-                        {invoice.dueDate.toLocaleDateString()}
-                      </div>
-                    </div>
-
-                    <div className="invoice-services">
-                      <strong>Services:</strong>
-                      {invoice.services.map((service, index) => (
-                        <div key={index} className="service-item">
-                          {service.name} x{service.quantity} - ₦
-                          {service.amount.toLocaleString()}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="invoice-total">
-                      <strong>Total:</strong> ₦
-                      {invoice.totalAmount.toLocaleString()}
-                    </div>
-                  </div>
-
-                  <div className="invoice-actions">
-                    {invoice.status === "pending" && (
-                      <SolidButton
-                        onClick={() => handlePayment(invoice)}
-                        size="small"
-                        variant="primary"
-                      >
-                        Pay Now
-                      </SolidButton>
-                    )}
-                    <SolidButton
-                      onClick={() => handleViewDetails(invoice)}
-                      size="small"
-                      variant="secondary"
-                    >
-                      View Details
-                    </SolidButton>
-                  </div>
-                </div>
+                  id={invoice.id}
+                  invoiceNumber={invoice.invoiceNumber}
+                  status={invoice.status}
+                  customerName={invoice.customerName}
+                  services={invoice.services.map((service) => ({
+                    name: service.name,
+                    price: service.amount,
+                    quantity: service.quantity,
+                  }))}
+                  totalAmount={invoice.totalAmount}
+                  createdAt={invoice.createdAt.toISOString()}
+                  expiryWarning={
+                    invoice.status === "pending"
+                      ? {
+                          message: isInvoiceExpiringSoon(invoice)
+                            ? `⚠️ Expires in: ${getTimeUntilExpiry(invoice)}`
+                            : `⏰ Expires in: ${getTimeUntilExpiry(invoice)}`,
+                          isUrgent: isInvoiceExpiringSoon(invoice),
+                        }
+                      : undefined
+                  }
+                  onViewDetails={() => handleViewDetails(invoice)}
+                  onPayNow={
+                    invoice.status === "pending"
+                      ? () => handlePayment(invoice)
+                      : undefined
+                  }
+                  onDownloadReceipt={
+                    invoice.status === "paid"
+                      ? () => handleViewDetails(invoice)
+                      : undefined
+                  }
+                />
               ))}
             </div>
           )}

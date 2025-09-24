@@ -1045,13 +1045,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="First Name"
                   autoComplete="off"
-                  className={formErrors.firstName ? "error" : ""}
+                  error={formErrors.firstName || false}
                 />
-                {formErrors.firstName && (
-                  <span className="validation-error">
-                    {formErrors.firstName}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1061,13 +1056,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Last Name"
                   autoComplete="off"
-                  className={formErrors.lastName ? "error" : ""}
+                  error={formErrors.lastName || false}
                 />
-                {formErrors.lastName && (
-                  <span className="validation-error">
-                    {formErrors.lastName}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1077,11 +1067,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Email"
                   autoComplete="off"
-                  className={formErrors.email ? "error" : ""}
+                  error={formErrors.email || false}
                 />
-                {formErrors.email && (
-                  <span className="validation-error">{formErrors.email}</span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1091,13 +1078,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Phone Number"
                   autoComplete="off"
-                  className={formErrors.phoneNumber ? "error" : ""}
+                  error={formErrors.phoneNumber || false}
                 />
-                {formErrors.phoneNumber && (
-                  <span className="validation-error">
-                    {formErrors.phoneNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -1132,13 +1114,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Identification Number"
                   autoComplete="off"
-                  className={formErrors.idNumber ? "error" : ""}
+                  error={formErrors.idNumber || false}
                 />
-                {formErrors.idNumber && (
-                  <span className="validation-error">
-                    {formErrors.idNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1148,11 +1125,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Address"
                   autoComplete="off"
-                  className={formErrors.address ? "error" : ""}
+                  error={formErrors.address || false}
                 />
-                {formErrors.address && (
-                  <span className="validation-error">{formErrors.address}</span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -1322,13 +1296,8 @@ const RegisterPage: React.FC = () => {
                   placeholder="Password"
                   autoComplete="new-password"
                   passwordToggle
-                  className={credentialsErrors.password ? "error" : ""}
+                  error={credentialsErrors.password || false}
                 />
-                {credentialsErrors.password && (
-                  <span className="validation-error">
-                    {credentialsErrors.password}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1351,13 +1320,8 @@ const RegisterPage: React.FC = () => {
                   placeholder="Confirm Password"
                   autoComplete="new-password"
                   passwordToggle
-                  className={credentialsErrors.confirmPassword ? "error" : ""}
+                  error={credentialsErrors.confirmPassword || false}
                 />
-                {credentialsErrors.confirmPassword && (
-                  <span className="validation-error">
-                    {credentialsErrors.confirmPassword}
-                  </span>
-                )}
               </div>
             </div>
 
@@ -1527,15 +1491,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Year of Incorporation"
                   autoComplete="off"
-                  className={
-                    corporateFormErrors.yearOfIncorporation ? "error" : ""
-                  }
+                  error={corporateFormErrors.yearOfIncorporation || false}
                 />
-                {corporateFormErrors.yearOfIncorporation && (
-                  <span className="validation-error">
-                    {corporateFormErrors.yearOfIncorporation}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1545,15 +1502,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Registered Address"
                   autoComplete="off"
-                  className={
-                    corporateFormErrors.registeredAddress ? "error" : ""
-                  }
+                  error={corporateFormErrors.registeredAddress || false}
                 />
-                {corporateFormErrors.registeredAddress && (
-                  <span className="validation-error">
-                    {corporateFormErrors.registeredAddress}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1563,15 +1513,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Registration Number"
                   autoComplete="off"
-                  className={
-                    corporateFormErrors.registrationNumber ? "error" : ""
-                  }
+                  error={corporateFormErrors.registrationNumber || false}
                 />
-                {corporateFormErrors.registrationNumber && (
-                  <span className="validation-error">
-                    {corporateFormErrors.registrationNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1581,13 +1524,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Email"
                   autoComplete="off"
-                  className={corporateFormErrors.email ? "error" : ""}
+                  error={corporateFormErrors.email || false}
                 />
-                {corporateFormErrors.email && (
-                  <span className="validation-error">
-                    {corporateFormErrors.email}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1597,13 +1535,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Phone Number"
                   autoComplete="off"
-                  className={corporateFormErrors.phoneNumber ? "error" : ""}
+                  error={corporateFormErrors.phoneNumber || false}
                 />
-                {corporateFormErrors.phoneNumber && (
-                  <span className="validation-error">
-                    {corporateFormErrors.phoneNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input

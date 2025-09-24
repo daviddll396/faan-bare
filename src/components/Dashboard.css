@@ -33,14 +33,6 @@
   transition: gap 0.3s ease;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
-  animation: slideInUp 0.4s ease-out;
-}
-
 .primary-btn {
   display: flex;
   align-items: center;
@@ -128,22 +120,20 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: #e4e4e4;
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
   color: #007948;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.18s ease;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 .view-receipt-btn:hover {
-  background: #007948;
-  color: #fff;
-  border-color: #007948;
-  transform: translateY(-2px);
+  cursor: pointer;
+  background-color: rgba(0, 121, 72, 0.1);
 }
 
 /* View Reason should match View Receipt styles closely */
@@ -151,22 +141,20 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: #fff7f7; /* subtle red tint for reason */
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
   color: #b91c1c;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.18s ease;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 .view-reason-btn:hover {
-  background: #b91c1c;
-  color: #fff;
-  border-color: #b91c1c;
-  transform: translateY(-2px);
+  cursor: pointer;
+  background-color: rgba(185, 28, 28, 0.1);
 }
 .stat-icon.failed {
   background: #ef4444;
@@ -351,6 +339,12 @@ table {
   .table-data-item:last-child {
     padding-right: 100px;
   }
+  .view-receipt-btn,
+  .view-reason-btn {
+    font-size: 13px;
+    gap: 6px;
+    padding: 3px 6px;
+  }
 }
 
 @media (max-width: 1450px) {
@@ -376,6 +370,12 @@ table {
   .table-data-item:last-child {
     padding-right: 80px;
   }
+  .view-receipt-btn,
+  .view-reason-btn {
+    font-size: 12px;
+    gap: 5px;
+    padding: 2px 5px;
+  }
 }
 
 @media (max-width: 1150px) {
@@ -399,6 +399,12 @@ table {
   }
   .table-data-item:last-child {
     padding-right: 60px;
+  }
+  .view-receipt-btn,
+  .view-reason-btn {
+    font-size: 11px;
+    gap: 4px;
+    padding: 2px 4px;
   }
 }
 
@@ -604,42 +610,29 @@ table {
   }
 }
 
-/* Progressive padding scaling for dashboard content */
-@media (max-width: 1920px) {
-  .dashboard-content {
-    padding: 28px 50px;
-  }
-}
-
-@media (max-width: 1800px) {
-  .dashboard-content {
-    padding: 24px 48px;
-  }
-}
-
-@media (max-width: 1700px) {
-  .dashboard-content {
-    padding: 21px 45px;
-  }
-}
-
+/* dashboard-content horizontal padding mirrors Header at key breakpoints */
 @media (max-width: 1600px) {
+  /* Header: 18px 48px */
   .dashboard-content {
-    padding: 19px 43px;
+    padding: 28px 48px; /* keep slightly taller vertical padding than header */
   }
 }
 
-@media (max-width: 1500px) {
+@media (max-width: 1200px) {
+  /* Header: 16px 40px */
   .dashboard-content {
-    padding: 16px 40px;
+    padding: 24px 40px;
+  }
+}
+
+@media (max-width: 992px) {
+  /* Header: 14px 28px */
+  .dashboard-content {
+    padding: 20px 28px;
   }
 }
 
 @media (max-width: 1450px) {
-  .dashboard-content {
-    padding: 15px 39px;
-  }
-
   .role-badge,
   .status-badge,
   .category-badge,
@@ -806,6 +799,13 @@ table {
     gap: 4px;
     margin-right: 8px;
     transition: color 0.15s;
+  }
+  .view-receipt-btn,
+  .view-reason-btn {
+    font-size: 10px;
+    gap: 3px;
+    padding: 1px 3px;
+    border-radius: 3px;
   }
   .table-data-item-role {
     padding: 5px 10px;

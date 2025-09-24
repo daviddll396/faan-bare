@@ -58,7 +58,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
   }
 
   return (
-    <div className={`page-title-header ${className}`}>
+    <div className={`page-title-main ${className}`}>
       <div>
         <h2 className="page-title">
           {" "}

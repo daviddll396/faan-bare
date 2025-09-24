@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { Listbox } from "@headlessui/react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 import "./ListBox.css";
 
@@ -36,55 +38,17 @@ const ListBox: React.FC<ListBoxProps> = ({
   label,
   error,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const listboxRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+    maxHeight: 240,
+  });
 
   const currentValue = value ?? selected?.value ?? "";
-  const selectedOption = options.find(
-    (option) => option.value === currentValue
-  );
-
-  const filteredOptions = options;
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        listboxRef.current &&
-        !listboxRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    // no-op: kept for click outside handling only
-  }, []);
-
-  const handleToggle = () => {
-    if (!disabled) {
-      setIsOpen(!isOpen);
-    }
-  };
-
-  const handleOptionClick = (option: ListBoxOption) => {
-    onChange(option);
-    setIsOpen(false);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleToggle();
-    } else if (event.key === "Escape") {
-      setIsOpen(false);
-    }
-  };
+  const selectedOption =
+    options.find((option) => option.value === currentValue) || null;
 
   // derive hasError from explicit prop or legacy className usage
   const hasError =
@@ -94,84 +58,188 @@ const ListBox: React.FC<ListBoxProps> = ({
     hasError ? "error" : ""
   }`;
 
+  const updateDropdownPosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const dropdownHeight = Math.min(options.length * 40 + 16, 240); // Estimate dropdown height (40px per option, max 240px)
+
+      // Check if dropdown would go below viewport
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      let top: number;
+      let maxHeight: number;
+
+      if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
+        // Not enough space below, but more space above - flip upwards
+        top = rect.top + window.scrollY - dropdownHeight - 4;
+        maxHeight = Math.min(dropdownHeight, spaceAbove - 8);
+      } else {
+        // Default: position below
+        top = rect.bottom + window.scrollY + 4;
+        maxHeight = Math.min(dropdownHeight, spaceBelow - 8);
+      }
+
+      setDropdownPosition({
+        top,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+        maxHeight,
+      });
+    }
+  };
+
   return (
-    <label className={wrapperClass}>
+    <div className={wrapperClass}>
       {label && <span className="listbox-label">{label}</span>}
-      <div className={`listbox-container`} ref={listboxRef}>
-        <div
-          className={`listbox-button ${isOpen ? "open" : ""} ${
-            disabled ? "disabled" : ""
-          }`}
-          onClick={handleToggle}
-          onKeyDown={handleKeyDown}
-          tabIndex={disabled ? -1 : 0}
-          role="combobox"
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-          aria-disabled={disabled}
-          aria-invalid={!!hasError}
-        >
-          <span
-            className={`listbox-button-text ${
-              selectedOption ? "has-value" : ""
-            }`}
-          >
-            {selectedOption
-              ? selectedOption.label ||
-                selectedOption.name ||
-                selectedOption.value
-              : placeholder}
-          </span>
-          <ChevronDown
-            size={16}
-            className={`listbox-button-icon ${isOpen ? "rotated" : ""}`}
-          />
-        </div>
+      <Listbox
+        value={selectedOption || undefined}
+        onChange={onChange}
+        disabled={disabled}
+      >
+        {({ open }) => {
+          // Update position when dropdown opens
+          useEffect(() => {
+            if (open) {
+              updateDropdownPosition();
+              const handleResize = () => updateDropdownPosition();
+              const handleScroll = () => updateDropdownPosition();
 
-        {isOpen && (
-          <div className="listbox-dropdown">
-            <div className="listbox-options" role="listbox">
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => {
-                  const labelTxt = option.label || option.name || option.value;
-                  return (
-                    <div
-                      key={option.value}
-                      className={`listbox-option ${
-                        option.value === currentValue ? "selected" : ""
-                      }`}
-                      onClick={() => handleOptionClick(option)}
-                      role="option"
-                      aria-selected={option.value === currentValue}
+              window.addEventListener("resize", handleResize);
+              window.addEventListener("scroll", handleScroll, true);
+
+              return () => {
+                window.removeEventListener("resize", handleResize);
+                window.removeEventListener("scroll", handleScroll, true);
+              };
+            }
+          }, [open]);
+
+          return (
+            <>
+              <div className="listbox-container">
+                <Listbox.Button
+                  ref={buttonRef}
+                  className={`listbox-button ${open ? "open" : ""} ${
+                    disabled ? "disabled" : ""
+                  }`}
+                  onClick={updateDropdownPosition}
+                >
+                  <span
+                    className={`listbox-button-text ${
+                      selectedOption ? "has-value" : ""
+                    }`}
+                  >
+                    {selectedOption
+                      ? selectedOption.label ||
+                        selectedOption.name ||
+                        selectedOption.value
+                      : placeholder}
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    className={`listbox-button-icon ${open ? "rotated" : ""}`}
+                  />
+                </Listbox.Button>
+
+                {/* Render error message when present */}
+                {hasError && (
+                  <div className="listbox-error">
+                    {typeof error === "string"
+                      ? error
+                      : "This field is required"}
+                  </div>
+                )}
+              </div>
+
+              {/* Render dropdown in portal to completely avoid z-index issues */}
+              {open &&
+                createPortal(
+                  <div
+                    className="listbox-portal-overlay"
+                    style={{
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      width: "100vw",
+                      height: "100vh",
+                      pointerEvents: "none",
+                      zIndex: 999999,
+                    }}
+                  >
+                    <Listbox.Options
+                      className="listbox-dropdown-portal"
+                      style={{
+                        position: "absolute",
+                        top: dropdownPosition.top,
+                        left: dropdownPosition.left,
+                        width: dropdownPosition.width,
+                        maxHeight: dropdownPosition.maxHeight,
+                        pointerEvents: "auto",
+                      }}
                     >
-                      <span
-                        className={`listbox-option-text ${
-                          option.value === currentValue ? "selected" : ""
-                        }`}
+                      <div
+                        className="listbox-options"
+                        style={
+                          options.length * 40 + 16 > dropdownPosition.maxHeight
+                            ? {
+                                maxHeight: dropdownPosition.maxHeight,
+                                overflowY: "auto",
+                              }
+                            : {
+                                // No maxHeight constraint for small dropdowns
+                              }
+                        }
                       >
-                        {labelTxt}
-                      </span>
-                      {option.value === currentValue && (
-                        <span className="listbox-option-check">✓</span>
-                      )}
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="listbox-no-options">No options found</div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Render error message when present */}
-        {hasError && (
-          <div className="listbox-error">
-            {typeof error === "string" ? error : "This field is required"}
-          </div>
-        )}
-      </div>
-    </label>
+                        {options.length > 0 ? (
+                          options.map((option) => {
+                            const labelTxt =
+                              option.label || option.name || option.value;
+                            return (
+                              <Listbox.Option
+                                key={option.value}
+                                value={option}
+                                className={({ active, selected }) =>
+                                  `listbox-option ${
+                                    selected ? "selected" : ""
+                                  } ${active ? "focused" : ""}`
+                                }
+                              >
+                                {({ selected }) => (
+                                  <>
+                                    <span
+                                      className={`listbox-option-text ${
+                                        selected ? "selected" : ""
+                                      }`}
+                                    >
+                                      {labelTxt}
+                                    </span>
+                                    {selected && (
+                                      <span className="listbox-option-check">
+                                        ✓
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </Listbox.Option>
+                            );
+                          })
+                        ) : (
+                          <div className="listbox-no-options">
+                            No options found
+                          </div>
+                        )}
+                      </div>
+                    </Listbox.Options>
+                  </div>,
+                  document.body
+                )}
+            </>
+          );
+        }}
+      </Listbox>
+    </div>
   );
 };
 
