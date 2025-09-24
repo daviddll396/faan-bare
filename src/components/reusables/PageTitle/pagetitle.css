@@ -4,7 +4,10 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+  transition: transform 0.2s ease;
 }
+
+
 
 .page-title {
   display: flex;
@@ -14,14 +17,19 @@
   font-weight: 600;
   color: #000;
   margin: 0;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
+
 
 .page-subtitle {
   margin: 4px 0 0 0;
   color: #969696;
   font-size: 16px;
   margin: 0;
+  transition: color 0.2s ease;
 }
+
+
 
 .mobile-back-btn {
   background: none;
@@ -31,12 +39,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0px;
-  transition: background-color 0.2s ease;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .mobile-back-btn:hover {
-  background-color: transparent;
+  background-color: rgba(0, 121, 72, 0.08);
+  color: #007948;
+  transform: translateX(-1px);
+  box-shadow: 0 2px 8px rgba(0, 121, 72, 0.15);
+}
+
+.mobile-back-btn:active {
+  transform: translateX(-1px) scale(0.98);
 }
 
 /* Breadcrumb Base Styles */
