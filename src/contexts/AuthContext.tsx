@@ -2065,18 +2065,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("🚀 === STARTING UPDATE PROFILE REQUEST ===");
       console.log("📍 Request URL:", API_ENDPOINTS.USER_DETAILS);
       console.log("🔑 Using token:", token);
-      console.log("🔍 Token details:", {
-        tokenLength: token?.length,
-        tokenStart: token?.substring(0, 20) + "...",
-        tokenType: token?.startsWith("mock-") ? "MOCK" : "REAL",
-        isTokenPresent: !!token,
-      });
-      console.log("👤 Current user:", {
-        id: user?.id,
-        customerId: user?.customerId,
-        role: user?.role,
-        email: user?.email,
-      });
       console.log("📋 Profile update data:", request);
       console.log("⏰ Request timestamp:", new Date().toISOString());
       console.log("🔧 Request headers:", {
