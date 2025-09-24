@@ -60,7 +60,7 @@
 
 .data-table .table-header-item,
 .data-table .table-data-item {
-  padding: 20px 24px !important;
+  padding: 12px 24px !important;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
   white-space: nowrap; /* Prevent text wrapping in cells */
@@ -71,7 +71,7 @@
 .data-table .table-header-item:last-child,
 .data-table .table-data-item:first-child,
 .data-table .table-data-item:last-child {
-  padding: 20px 24px !important;
+  padding: 12px 24px !important;
 }
 
 .table-header-item {
@@ -361,7 +361,7 @@
 @media (min-width: 1400px) {
   .data-table-header {
     font-size: 20px;
-    padding: 28px 28px 8px 28px;
+    padding: 24px 24px 8px 24px;
   }
 
   .data-table {
@@ -371,7 +371,7 @@
 
   .data-table .table-header-item,
   .data-table .table-data-item {
-    padding: 24px 28px !important;
+    padding: 14px 24px !important;
   }
 
   /* Override Dashboard.css massive padding for first and last items */
@@ -379,7 +379,7 @@
   .data-table .table-header-item:last-child,
   .data-table .table-data-item:first-child,
   .data-table .table-data-item:last-child {
-    padding: 24px 28px !important;
+    padding: 14px 24px !important;
   }
 
   .table-header-item {
