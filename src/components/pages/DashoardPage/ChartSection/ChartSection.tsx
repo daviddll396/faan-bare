@@ -94,6 +94,36 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
     return row;
   });
 
+  // Calculate appropriate Y-axis maximum based on the highest value in the data
+  const getYAxisMax = (data: typeof rawData) => {
+    const maxValue = Math.max(
+      ...data.map((row) =>
+        Math.max(Number(row.Bills) || 0, Number(row.Payment) || 0)
+      )
+    );
+
+    if (maxValue === 0) return 10; // Default minimum
+    if (maxValue <= 10) return 10;
+    if (maxValue <= 100) return 100;
+    if (maxValue <= 500) return 500;
+    if (maxValue <= 1000) return 1000;
+    if (maxValue <= 10000) return 10000;
+    if (maxValue <= 100000) return 100000;
+    if (maxValue <= 500000) return 500000;
+    if (maxValue <= 1000000) return 1000000;
+
+    // For values above 1M, round up to the nearest power of 10
+    const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)) + 1);
+    return magnitude;
+  };
+
+  const yAxisMax = getYAxisMax(rawData);
+
+  // Debug Y-axis calculation
+  console.log("📈 Y-Axis Max Calculation:");
+  console.log("📊 Raw Data:", rawData);
+  console.log("🎯 Calculated Y-Axis Max:", yAxisMax);
+
   // Export chart data as CSV
   const handleExport = () => {
     const csvRows = [
@@ -177,6 +207,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: "#7B91B0" }}
+                domain={[0, yAxisMax]}
               />
               <Tooltip
                 contentStyle={{
