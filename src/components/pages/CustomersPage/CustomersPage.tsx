@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import CheckCircle from "/icons/check-circle.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import { useLoading } from "../../../contexts/LoadingContext";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./customerspage.css";
@@ -854,21 +855,19 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
             </div>
             <div className="customer-details-actions">
               {allCustomersStatus === "PENDING" && (
-                <GradientButton
+                <SolidButton
                   variant="primary"
                   size="medium"
+                  text="APPROVE CUSTOMER"
                   onClick={() => handleApproveCustomer(selectedCustomer)}
-                >
-                  APPROVE CUSTOMER
-                </GradientButton>
+                />
               )}
-              <GradientButton
-                variant="close"
+              <SolidButton
+                variant="secondary"
                 size="medium"
+                text="CLOSE"
                 onClick={handleCloseCustomerDetails}
-              >
-                CLOSE
-              </GradientButton>
+              />
             </div>
           </div>
         )}
