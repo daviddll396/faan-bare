@@ -134,21 +134,43 @@
 
 /* form-row-modern base/animation lives in auth-common.css */
 
+/* Base animation for form elements */
+.auth-form-title-modern {
+  animation: slideInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.auth-form-subtitle-modern {
+  animation: slideInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.05s both;
+}
+
 /* Staggered animation for form rows */
-.form-row-modern:nth-child(4) {
+.form-row-modern {
+  animation: slideInUp 0.4s ease-out both;
+}
+
+.form-row-modern:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.form-row-modern:nth-child(2) {
   animation-delay: 0.15s;
 }
-.form-row-modern:nth-child(5) {
+.form-row-modern:nth-child(3) {
   animation-delay: 0.2s;
 }
-.form-row-modern:nth-child(6) {
+.form-row-modern:nth-child(4) {
   animation-delay: 0.25s;
 }
-.form-row-modern:nth-child(7) {
+.form-row-modern:nth-child(5) {
   animation-delay: 0.3s;
 }
-.form-row-modern:nth-child(8) {
+.form-row-modern:nth-child(6) {
   animation-delay: 0.35s;
+}
+.form-row-modern:nth-child(7) {
+  animation-delay: 0.4s;
+}
+.form-row-modern:nth-child(8) {
+  animation-delay: 0.45s;
 }
 
 .form-row-remember {
@@ -159,7 +181,7 @@
   margin-bottom: 10px;
   gap: 0;
   width: 100%;
-  animation: slideInUp 0.4s ease-out 0.4s both;
+  animation: slideInUp 0.4s ease-out 0.5s both;
 }
 
 .login-btn-modern {
@@ -175,7 +197,7 @@
   transition: background 0.2s;
   letter-spacing: 1px;
   margin-top: 8px;
-  animation: slideInUp 0.4s ease-out 0.45s both;
+  animation: slideInUp 0.4s ease-out 0.55s both;
 }
 
 .login-btn-modern:hover:not(:disabled) {
@@ -191,7 +213,7 @@
   margin-top: 32px;
   text-align: center;
   width: 100%;
-  animation: fadeIn 0.4s ease-out 0.5s both;
+  animation: fadeIn 0.4s ease-out 0.6s both;
 }
 
 .auth-form-link-modern {

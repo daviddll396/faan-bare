@@ -81,21 +81,21 @@
   }
 }
 
-@media (max-width: 1150px) {
+@media (max-width: 1170px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.6;
   }
 }
 
 @media (max-width: 1100px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.45;
   }
 }
 
 @media (max-width: 1050px) {
   .sidebar {
-    zoom: 0.8;
+    zoom: 0.45;
   }
 }
 

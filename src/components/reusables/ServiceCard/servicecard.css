@@ -161,28 +161,28 @@
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1050px) {
   .service-card {
     border-radius: 8px;
   }
   .service-card-img-wrap {
-    height: 140px;
+    height: 110px;
     border-radius: 8px 8px 0 0;
   }
   .service-card-body {
-    padding: 12px 10px;
-    gap: 5px;
+    padding: 10px 10px;
+    gap: 3px;
   }
   .service-card-name {
-    font-size: 17px;
+    font-size: 13px;
   }
   .service-card-desc {
-    font-size: 13px;
+    font-size: 11px;
     min-height: 26px;
     margin-top: 2px;
   }
   .service-card-price-left {
-    font-size: 17px;
+    font-size: 14px;
   }
   .service-card-bottom {
     gap: 6px;

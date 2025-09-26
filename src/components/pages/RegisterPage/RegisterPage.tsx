@@ -1419,7 +1419,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Business Name"
                   autoComplete="off"
-                  className={corporateFormErrors.businessName ? "error" : ""}
+                  error={corporateFormErrors.businessName || false}
                 />
                 {corporateFormErrors.businessName && (
                   <span className="validation-error">
@@ -1560,7 +1560,7 @@ const RegisterPage: React.FC = () => {
                   placeholder="Password"
                   autoComplete="new-password"
                   passwordToggle
-                  className={corporateFormErrors.password ? "error" : ""}
+                  error={corporateFormErrors.password || false}
                 />
                 {corporateFormErrors.password && (
                   <span className="validation-error">
@@ -1592,7 +1592,7 @@ const RegisterPage: React.FC = () => {
                   placeholder="Confirm Password"
                   autoComplete="new-password"
                   passwordToggle
-                  className={corporateFormErrors.confirmPassword ? "error" : ""}
+                  error={corporateFormErrors.confirmPassword || false}
                 />
                 {corporateFormErrors.confirmPassword && (
                   <span className="validation-error">

@@ -76,7 +76,22 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     getTransactionHistory,
     getAdminTransactionHistory,
     getAdminDashboardStats,
+    refreshUserDetails,
   } = useAuth();
+  const getTransactionHistoryRef = React.useRef(getTransactionHistory);
+  const getAdminTransactionHistoryRef = React.useRef(
+    getAdminTransactionHistory
+  );
+  const refreshUserDetailsRef = React.useRef(refreshUserDetails);
+  React.useEffect(() => {
+    getTransactionHistoryRef.current = getTransactionHistory;
+    getAdminTransactionHistoryRef.current = getAdminTransactionHistory;
+    refreshUserDetailsRef.current = refreshUserDetails;
+  }, [getTransactionHistory, getAdminTransactionHistory, refreshUserDetails]);
+  // On mount, fetch latest wallet amount from server
+  React.useEffect(() => {
+    refreshUserDetailsRef.current();
+  }, []);
   const [showFundWallet, setShowFundWallet] = React.useState(false);
   const [fundAmountDisplay, setFundAmountDisplay] = React.useState("");
   const [fundAmountNum, setFundAmountNum] = React.useState<number | null>(null);
@@ -200,7 +215,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         console.log(
           "🔐 Admin user detected, fetching admin transaction history for dashboard"
         );
-        txns = await getAdminTransactionHistory();
+        txns = await getAdminTransactionHistoryRef.current();
       } else {
         console.log(
           "👤 Customer user detected, fetching regular transaction history for dashboard"
@@ -209,7 +224,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         const startDate = new Date();
         startDate.setMonth(endDate.getMonth() - 6);
         const format = (d: Date) => d.toISOString().slice(0, 10);
-        txns = await getTransactionHistory(format(startDate), format(endDate));
+        txns = await getTransactionHistoryRef.current(
+          format(startDate),
+          format(endDate)
+        );
       }
 
       if (txns) {
@@ -218,7 +236,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
       }
     };
     fetchTransactions();
-  }, [getTransactionHistory, getAdminTransactionHistory, user?.role]);
+  }, [user?.role]);
 
   // Load persisted funding records into state on mount
   React.useEffect(() => {
@@ -477,6 +495,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               setShowFundSuccess(true);
               setShowFundWallet(true);
               showToast("Wallet funded successfully!", "success");
+              // Sync wallet from server to ensure accurate balance
+              try {
+                await refreshUserDetailsRef.current();
+              } catch {}
               // Persist funding record locally so it shows up in Recent Funding Records
               try {
                 const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
@@ -724,7 +746,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               size="medium"
             />
           </div>
-          <DataTable        
+          <DataTable
             header="All Transactions"
             headers={
               user?.role === "Admin"

@@ -123,7 +123,7 @@ select:-webkit-autofill:active {
   .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text {
+  .reusable-input-label-text,.listbox-label {
     font-size: 14px !important;
   }
 
@@ -161,7 +161,7 @@ select:-webkit-autofill:active {
   .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text {
+  .reusable-input-label-text,.listbox-label {
     font-size: 14px !important;
   }
 
@@ -190,12 +190,16 @@ select:-webkit-autofill:active {
   }
 }
 
-@media (max-width: 992px) {
+
+
+
+@media (max-width: 1050px) {
   :root {
-    --form-control-height: 44px;
-    --form-control-font-size: 13px;
+    --form-control-height: 30px;
+    --form-control-font-size: 9px;
   }
 
+  /* Force font-size and height override for all form controls */
   .solid-button--small,
   .solid-button--medium,
   .solid-button--large,
@@ -212,11 +216,11 @@ select:-webkit-autofill:active {
   .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text {
-    font-size: 13px !important;
+  .reusable-input-label-text,.listbox-label {
+    font-size: 9px !important;
   }
 
-  /* Height overrides */
+  /* Height overrides for form controls */
   .solid-button--small,
   .solid-button--medium,
   .solid-button--large,
@@ -226,18 +230,18 @@ select:-webkit-autofill:active {
   .input-field,
   .fieldbutton-search-wrapper,
   .reusable-input {
-    height: 44px !important;
-    min-height: 44px !important;
+    height: 30px !important;
+    min-height: 30px !important;
   }
 
   .fieldbutton-search-input {
-    height: 40px !important;
+    height: 30px !important; /* wrapper height - 4px */
   }
   .solid-button--small {
-    font-size: 11px !important;
+    font-size: 9px !important; /* 14px - 2px */
   }
   .solid-button--large {
-    font-size: 17px !important;
+    font-size: 14px !important; /* 14px + 4px */
   }
 }
 
@@ -263,7 +267,7 @@ select:-webkit-autofill:active {
   .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text {
+  .reusable-input-label-text,.listbox-label {
     font-size: 12px !important;
   }
 
@@ -314,7 +318,7 @@ select:-webkit-autofill:active {
   .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text {
+  .reusable-input-label-text,.listbox-label {
     font-size: 11px !important;
   }
 
@@ -366,7 +370,7 @@ select:-webkit-autofill:active {
   .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text {
+  .reusable-input-label-text,.listbox-label {
     font-size: 10px !important;
   }
 

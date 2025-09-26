@@ -16,6 +16,9 @@
   opacity: 0;
   pointer-events: none;
   zoom: 1; /* Default zoom level */
+  line-height: 1.4;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .message-toast-success {
@@ -38,15 +41,61 @@
   opacity: 0;
 }
 
+/* ======================================== */
+/* RESPONSIVE BREAKPOINTS (largest -> smallest) */
+/* Keep in sync with other components */
+/* ======================================== */
 
+@media (max-width: 1600px) {
+  .message-toast {
+    min-width: 300px;
+    max-width: 520px;
+    padding: 12px 24px;
+    font-size: 14px;
+    bottom: 24px;
+  }
+}
 
-/* Reset zoom for mobile devices to use standard responsive behavior */
+@media (max-width: 992px) {
+  .message-toast {
+    min-width: 180px;
+    max-width: 440px;
+    padding: 6px 8px;
+    font-size: 8px;
+    bottom: 15px;
+  }
+}
+
+/* Reset zoom for mobile devices and adjust sizing */
 @media (max-width: 768px) {
   .message-toast {
     zoom: 1;
-    min-width: 280px;
-    max-width: 90%;
+    min-width: 0;
+    max-width: calc(100% - 32px);
     padding: 10px 20px;
     font-size: 13px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 576px) {
+  .message-toast {
+    min-width: 0;
+    max-width: none;
+    left: 12px;
+    right: 12px;
+    transform: translateY(100%);
+    padding: 10px 16px;
+    font-size: 12px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    border-radius: 6px;
+  }
+
+  /* Override transform for in/out states on very small screens */
+  .message-toast-in {
+    transform: translateY(0);
+  }
+  .message-toast-out {
+    transform: translateY(100%);
   }
 }

@@ -104,27 +104,36 @@
   }
 }
 
-@media (max-width: 992px) {
+
+
+
+@media (max-width: 1050px) {
   .page-title-main {
     gap: 8px;
   }
   .page-title {
-    font-size: 24px;
+    font-size: 18px;
   }
   .page-subtitle {
-    font-size: 15px;
+    font-size: 10px;
   }
   .breadcrumb-item,
   .breadcrumb-link,
   .breadcrumb-label {
-    font-size: 15px;
+    font-size: 10px;
     font-weight: 600;
   }
   .breadcrumb-icon,
   .breadcrumb-chevron-icon {
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
   }
+  .mobile-back-btn{
+    width:20px;
+    height:20px;
+    padding:0px;
+  }
+
 }
 
 @media (max-width: 768px) {

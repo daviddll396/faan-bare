@@ -962,10 +962,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 {windowWidth > 768 ? (
                   <div className="booking-form-fields-row">
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label required">
-                        First Name
-                      </label>
                       <Input
+                        label="First Name"
                         className={`booking-form-input ${
                           fieldErrors.firstName ? "error" : ""
                         }`}
@@ -975,10 +973,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label required">
-                        Last Name
-                      </label>
                       <Input
+                        label="Last Name"
                         className={`booking-form-input ${
                           fieldErrors.lastName ? "error" : ""
                         }`}
@@ -1050,10 +1046,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                       />
                     </div>
                     <div className="booking-form-field-col">
-                      <label className="booking-form-label required">
-                        Mobile Number
-                      </label>
                       <Input
+                        label="Mobile Number"
                         className={`booking-form-input ${
                           fieldErrors.mobile ? "error" : ""
                         }`}
@@ -1300,7 +1294,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               name: "MMIA (INTERNATIONAL)",
                               value: "MMIA",
                             },
-                            { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                            { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
                           ]}
                           selected={
                             ([
@@ -1309,7 +1303,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                                 name: "MMIA (INTERNATIONAL)",
                                 value: "MMIA",
                               },
-                              { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                              { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
                             ].find(
                               (o) => o.value === bookingForm.airport
                             ) as ListBoxOption | null) ?? null
@@ -1353,6 +1347,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.airportTime}
                           onChange={handleBookingFormChange}
                           type="time"
+                          lang="en-US"
+                          step={60}
+                          placeholder="hh:mm AM/PM"
                           label="Airport Time"
                         />
                       </div>
@@ -1427,7 +1424,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               name: "MMIA (INTERNATIONAL)",
                               value: "MMIA",
                             },
-                            { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                            { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
                           ]}
                           selected={
                             ([
@@ -1436,7 +1433,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                                 name: "MMIA (INTERNATIONAL)",
                                 value: "MMIA",
                               },
-                              { id: "abv", name: "ABV (ABUJA)", value: "ABV" },
+                              { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
                             ].find(
                               (o) => o.value === bookingForm.airport
                             ) as ListBoxOption | null) ?? null
@@ -1483,6 +1480,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.airportTime}
                           onChange={handleBookingFormChange}
                           type="time"
+                          lang="en-US"
+                          step={60}
+                          placeholder="hh:mm AM/PM"
                           label="Airport Time"
                         />
                       </div>
@@ -1550,14 +1550,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   </div>
                 )}
                 <div className="booking-add-passenger-row">
-                  <button
-                    className="booking-add-passenger-btn"
+                  <SolidButton
                     type="button"
                     onClick={handleAddPassenger}
+                    size="medium"
+                    variant="primary"
+                    rounded={false}
                     style={{ marginTop: 12, marginBottom: 0 }}
                   >
                     + Add New Passenger
-                  </button>
+                  </SolidButton>
                 </div>
               </>
             )}
@@ -1653,7 +1655,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   {/* RRR removed */}
                   <div className="booking-summary-row total">
                     <span>TOTAL</span>
-                    <span className="summary-total-amount">₦{total.toLocaleString()}</span>
+                    <span className="summary-total-amount">
+                      ₦{total.toLocaleString()}
+                    </span>
                   </div>
                   <div style={{ width: "100%" }}>
                     <GradientButton

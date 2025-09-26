@@ -101,13 +101,18 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
     propTransactions && propTransactions.length > 0
       ? propTransactions
       : transactions;
+  // Show newest first: reverse order without mutating inputs
+  const orderedTransactions = React.useMemo(
+    () => [...finalTransactions].reverse(),
+    [finalTransactions]
+  );
   const hasRealData = finalTransactions && finalTransactions.length > 0;
   const isLargeScreen = window.innerWidth > 1800;
   const sliceCount = isLargeScreen ? 5 : 4;
   const visibleTransactions = hasRealData
     ? expanded
-      ? finalTransactions
-      : finalTransactions.slice(0, sliceCount)
+      ? orderedTransactions
+      : orderedTransactions.slice(0, sliceCount)
     : [];
   const showStatusAndDate = hasRealData && expanded;
 

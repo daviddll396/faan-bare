@@ -446,32 +446,32 @@
 }
 @media (max-width: 1200px) {
   .auth-form-side {
-    zoom: 0.78;
+    zoom: 0.7;
   }
 }
-@media (max-width: 1150px) {
+/* @media (max-width: 1150px) {
   .auth-form-side {
     zoom: 0.76;
   }
 }
 @media (max-width: 1100px) {
   .auth-form-side {
-    zoom: 0.74;
+    zoom: 0.7;
   }
-}
+} */
 @media (max-width: 1050px) {
   .auth-form-side {
-    zoom: 0.72;
+    zoom: 0.55;
   }
 }
 @media (max-width: 1000px) {
   .auth-form-side {
-    zoom: 0.7;
+    zoom: 0.55;
   }
 }
 @media (max-width: 950px) {
   .auth-form-side {
-    zoom: 0.68;
+    zoom: 0.5;
   }
 }
 /* Keep mobile at 1 for clarity */

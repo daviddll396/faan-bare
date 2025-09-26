@@ -20,11 +20,14 @@ const DataTable: React.FC<DataTableProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Show newest first: reverse order without mutating props
+  const orderedData = React.useMemo(() => [...data].reverse(), [data]);
+
   // Calculate pagination
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(orderedData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  const currentData = orderedData.slice(startIndex, endIndex);
 
   // Handle page changes
   const handlePageChange = (page: number) => {
@@ -76,7 +79,7 @@ const DataTable: React.FC<DataTableProps> = ({
     <>
       <div className={`data-table-card ${className}`}>
         {header && <div className="data-table-header">{header}</div>}
-        {data.length === 0 ? (
+        {orderedData.length === 0 ? (
           <div className="data-table-no-data">
             <div className="no-data-icon">
               <img
@@ -131,8 +134,9 @@ const DataTable: React.FC<DataTableProps> = ({
             {totalPages > 1 && (
               <div className="data-table-pagination">
                 <div className="pagination-info">
-                  Showing {startIndex + 1} to {Math.min(endIndex, data.length)}{" "}
-                  of {data.length} entries
+                  Showing {startIndex + 1} to{" "}
+                  {Math.min(endIndex, orderedData.length)} of{" "}
+                  {orderedData.length} entries
                 </div>
 
                 <div className="pagination-controls">
@@ -185,11 +189,11 @@ const DataTable: React.FC<DataTableProps> = ({
       </div>
 
       {/* Mobile Pagination Controls - Outside table container for better mobile experience */}
-      {data.length > 0 && totalPages > 1 && (
+      {orderedData.length > 0 && totalPages > 1 && (
         <div className="data-table-pagination-outer">
           <div className="pagination-info">
-            Showing {startIndex + 1} to {Math.min(endIndex, data.length)} of{" "}
-            {data.length} entries
+            Showing {startIndex + 1} to {Math.min(endIndex, orderedData.length)}{" "}
+            of {orderedData.length} entries
           </div>
 
           <div className="pagination-controls">

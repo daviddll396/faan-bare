@@ -1265,7 +1265,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
       }
 
-      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+      if (
+        data &&
+        (data.status === true ||
+          String(data.statusCode) === "00" ||
+          String(data.statusCode) === "0" ||
+          Number(data.statusCode) === HTTP_STATUS.OK)
+      ) {
         console.log("🎉 === MAKE PAYMENT COMPLETED SUCCESSFULLY ===");
         return { success: true };
       } else {
@@ -1460,7 +1466,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return false;
       }
 
-      if (data.status && data.statusCode === HTTP_STATUS.OK) {
+      if (
+        data &&
+        (data.status === true ||
+          String(data.statusCode) === "00" ||
+          String(data.statusCode) === "0" ||
+          Number(data.statusCode) === HTTP_STATUS.OK)
+      ) {
         console.log("🎉 === REFRESH USER DETAILS COMPLETED SUCCESSFULLY ===");
         // Update user's details from the API response
         if (user && data.data.customerProfile) {

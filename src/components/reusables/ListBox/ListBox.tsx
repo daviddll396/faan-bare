@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Listbox } from "@headlessui/react";
 import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
@@ -26,6 +26,30 @@ interface ListBoxProps {
   /** Optional error state. If boolean true will show generic message; if string shows provided message */
   error?: boolean | string;
 }
+
+// Runs side effects tied to the dropdown open state
+const DropdownPositionerEffect: React.FC<{
+  open: boolean;
+  update: () => void;
+}> = ({ open, update }) => {
+  useEffect(() => {
+    if (!open) return;
+
+    update();
+    const handleResize = () => update();
+    const handleScroll = () => update();
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll, true);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [open, update]);
+
+  return null;
+};
 
 const ListBox: React.FC<ListBoxProps> = ({
   options,
@@ -58,37 +82,51 @@ const ListBox: React.FC<ListBoxProps> = ({
     hasError ? "error" : ""
   }`;
 
-  const updateDropdownPosition = () => {
+  const updateDropdownPosition = useCallback(() => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      const dropdownHeight = Math.min(options.length * 40 + 16, 240); // Estimate dropdown height (40px per option, max 240px)
+      const estimatedItemHeight = 40; // px per option
+      const verticalPadding = 16; // px padding inside dropdown
+      const gap = 4; // px gap between button and dropdown
 
-      // Check if dropdown would go below viewport
+      const dropdownHeight = Math.min(
+        options.length * estimatedItemHeight + verticalPadding,
+        240
+      );
+
+      // Space relative to viewport since overlay is fixed
       const spaceBelow = viewportHeight - rect.bottom;
       const spaceAbove = rect.top;
 
-      let top: number;
-      let maxHeight: number;
+      const shouldFlipUp =
+        spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
 
-      if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
-        // Not enough space below, but more space above - flip upwards
-        top = rect.top + window.scrollY - dropdownHeight - 4;
-        maxHeight = Math.min(dropdownHeight, spaceAbove - 8);
-      } else {
-        // Default: position below
-        top = rect.bottom + window.scrollY + 4;
-        maxHeight = Math.min(dropdownHeight, spaceBelow - 8);
-      }
+      // Compute top/left relative to viewport (no scroll offsets for fixed overlay)
+      let top = shouldFlipUp
+        ? rect.top - dropdownHeight - gap
+        : rect.bottom + gap;
+      let left = rect.left;
+
+      // Clamp within viewport to avoid rendering off-screen on small viewports
+      top = Math.max(gap, Math.min(top, viewportHeight - dropdownHeight - gap));
+      left = Math.max(gap, Math.min(left, viewportWidth - rect.width - gap));
+
+      // Max height should never be negative; enforce a sensible minimum
+      let maxHeight = shouldFlipUp
+        ? Math.min(dropdownHeight, Math.max(0, spaceAbove - 8))
+        : Math.min(dropdownHeight, Math.max(0, spaceBelow - 8));
+      maxHeight = Math.max(40, maxHeight);
 
       setDropdownPosition({
         top,
-        left: rect.left + window.scrollX,
+        left,
         width: rect.width,
         maxHeight,
       });
     }
-  };
+  }, [options]);
 
   return (
     <div className={wrapperClass}>
@@ -99,25 +137,12 @@ const ListBox: React.FC<ListBoxProps> = ({
         disabled={disabled}
       >
         {({ open }: { open: boolean }) => {
-          // Update position when dropdown opens
-          useEffect(() => {
-            if (open) {
-              updateDropdownPosition();
-              const handleResize = () => updateDropdownPosition();
-              const handleScroll = () => updateDropdownPosition();
-
-              window.addEventListener("resize", handleResize);
-              window.addEventListener("scroll", handleScroll, true);
-
-              return () => {
-                window.removeEventListener("resize", handleResize);
-                window.removeEventListener("scroll", handleScroll, true);
-              };
-            }
-          }, [open]);
-
           return (
             <>
+              <DropdownPositionerEffect
+                open={open}
+                update={updateDropdownPosition}
+              />
               <div className="listbox-container">
                 <Listbox.Button
                   ref={buttonRef}

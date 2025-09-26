@@ -622,6 +622,7 @@ table {
   /* Header: 16px 40px */
   .dashboard-content {
     padding: 24px 40px;
+    padding-top:0px;
   }
 }
 
@@ -718,6 +719,13 @@ table {
   max-width: 200px !important;
   white-space: wrap;
 }
+
+@media (max-width: 1050px) {
+  .dashboard-content {
+    padding: 10px 20px;
+  }
+}
+
 
 /* Reset to standard mobile gap */
 @media (max-width: 768px) {
