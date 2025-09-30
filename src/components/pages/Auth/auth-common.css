@@ -426,27 +426,27 @@
 }
 @media (max-width: 1400px) {
   .auth-form-side {
-    zoom: 0.86;
+    zoom: 0.8;
   }
 }
 @media (max-width: 1350px) {
   .auth-form-side {
-    zoom: 0.84;
+    zoom: 0.8;
   }
 }
 @media (max-width: 1300px) {
   .auth-form-side {
-    zoom: 0.82;
+    zoom: 0.68;
   }
 }
 @media (max-width: 1250px) {
   .auth-form-side {
-    zoom: 0.8;
+    zoom: 0.7;
   }
 }
 @media (max-width: 1200px) {
   .auth-form-side {
-    zoom: 0.7;
+    zoom: 0.65;
   }
 }
 /* @media (max-width: 1150px) {
