@@ -121,6 +121,21 @@
   padding: 4px 0;
 }
 
+/* Remove unexpected black focus outlines/rings on some browsers */
+.listbox-dropdown-portal,
+.listbox-dropdown-portal:focus,
+.listbox-dropdown-portal:focus-visible,
+.listbox-options,
+.listbox-options:focus,
+.listbox-options:focus-visible,
+.listbox-option,
+.listbox-option:focus,
+.listbox-option:focus-visible {
+  outline: none;
+  outline-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Custom scrollbar styling for ListBox options */
 .listbox-options::-webkit-scrollbar {
   width: 8px;

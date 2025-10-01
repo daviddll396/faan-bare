@@ -1291,19 +1291,33 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                             { id: "", name: "", value: "" },
                             {
                               id: "mmia",
-                              name: "MMIA (INTERNATIONAL)",
+                              name: "MMIA (Lagos - International)",
                               value: "MMIA",
                             },
-                            { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
+                            { id: "abj", name: "ABJ (Abuja)", value: "ABJ" },
+                            {
+                              id: "phc",
+                              name: "PHC (Port Harcourt)",
+                              value: "PHC",
+                            },
+                            { id: "kan", name: "KAN (Kano)", value: "KAN" },
+                            { id: "enu", name: "ENU (Enugu)", value: "ENU" },
                           ]}
                           selected={
                             ([
                               {
                                 id: "mmia",
-                                name: "MMIA (INTERNATIONAL)",
+                                name: "MMIA (Lagos - International)",
                                 value: "MMIA",
                               },
-                              { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
+                              { id: "abj", name: "ABJ (Abuja)", value: "ABJ" },
+                              {
+                                id: "phc",
+                                name: "PHC (Port Harcourt)",
+                                value: "PHC",
+                              },
+                              { id: "kan", name: "KAN (Kano)", value: "KAN" },
+                              { id: "enu", name: "ENU (Enugu)", value: "ENU" },
                             ].find(
                               (o) => o.value === bookingForm.airport
                             ) as ListBoxOption | null) ?? null
@@ -1421,19 +1435,33 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                             { id: "", name: "", value: "" },
                             {
                               id: "mmia",
-                              name: "MMIA (INTERNATIONAL)",
+                              name: "MMIA (Lagos - International)",
                               value: "MMIA",
                             },
-                            { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
+                            { id: "abj", name: "ABJ (Abuja)", value: "ABJ" },
+                            {
+                              id: "phc",
+                              name: "PHC (Port Harcourt)",
+                              value: "PHC",
+                            },
+                            { id: "kan", name: "KAN (Kano)", value: "KAN" },
+                            { id: "enu", name: "ENU (Enugu)", value: "ENU" },
                           ]}
                           selected={
                             ([
                               {
                                 id: "mmia",
-                                name: "MMIA (INTERNATIONAL)",
+                                name: "MMIA (Lagos - International)",
                                 value: "MMIA",
                               },
-                              { id: "abj", name: "ABJ (ABUJA)", value: "ABJ" },
+                              { id: "abj", name: "ABJ (Abuja)", value: "ABJ" },
+                              {
+                                id: "phc",
+                                name: "PHC (Port Harcourt)",
+                                value: "PHC",
+                              },
+                              { id: "kan", name: "KAN (Kano)", value: "KAN" },
+                              { id: "enu", name: "ENU (Enugu)", value: "ENU" },
                             ].find(
                               (o) => o.value === bookingForm.airport
                             ) as ListBoxOption | null) ?? null

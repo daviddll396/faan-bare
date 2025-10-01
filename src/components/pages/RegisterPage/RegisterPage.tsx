@@ -8,7 +8,6 @@ import Modal from "../../reusables/Modal/Modal";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/boarding1.jpg";
 import CryptoJS from "crypto-js";
-import { Eye, EyeOff } from "lucide-react";
 import "./RegisterPage.css";
 
 // API Base URL - configure for different environments
@@ -243,8 +242,6 @@ const RegisterPage: React.FC = () => {
   const [governmentForm, setGovernmentForm] = useState(initialGovernmentForm);
   const [familyForm, setFamilyForm] = useState(initialFamilyForm);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [credentialsErrors, setCredentialsErrors] = useState<{
@@ -256,11 +253,6 @@ const RegisterPage: React.FC = () => {
   const [governmentFormErrors, setGovernmentFormErrors] = useState<{
     [key: string]: string;
   }>({});
-  // password visibility handled inside reusable `Input` via `passwordToggle`
-  // removed per-form showPassword states
-  const [showGovernmentPassword, setShowGovernmentPassword] = useState(false);
-  const [showGovernmentConfirmPassword, setShowGovernmentConfirmPassword] =
-    useState(false);
   const [familyFormErrors, setFamilyFormErrors] = useState<{
     [key: string]: string;
   }>({});
@@ -476,7 +468,7 @@ const RegisterPage: React.FC = () => {
     setCredentialsErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
-    // Prepare customer data for indemnity form based on selected role
+    // Prepare customer data for registration based on selected role
     let customerData: Record<string, unknown> = {
       email: "", // Will be set based on role
       password: password,
@@ -513,6 +505,25 @@ const RegisterPage: React.FC = () => {
         gender: familyForm.gender,
         isStudent: familyForm.isStudent,
         meansOfId: familyForm.meansOfId,
+      };
+    } else if (selectedRole === "GOVERNMENT") {
+      customerData = {
+        firstName: governmentForm.officeName, // Use office name as first name
+        lastName: "", // Government doesn't have last name
+        email: governmentForm.email,
+        phoneNumber: governmentForm.phoneNumber,
+        address: governmentForm.address,
+        password: password,
+        customerType: "GOVERNMENT",
+        officeName: governmentForm.officeName,
+        officeType: governmentForm.officeType,
+        state: governmentForm.state,
+        serviceType: governmentForm.serviceType,
+        cacNumber: null, // Government doesn't have CAC
+        nin: "", // Government doesn't have NIN
+        dob: "", // Government doesn't have DOB
+        userType: "CUSTOMER",
+        creationType: "CUSTOMER",
       };
     }
 
@@ -758,16 +769,15 @@ const RegisterPage: React.FC = () => {
   const handleCompleteRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prepare customer data for indemnity form
+    // Prepare customer data for registration
     const customerData = {
       firstName: corporateForm.businessName, // Use business name as first name
       lastName: "", // Corporate doesn't have last name
       email: corporateForm.email,
       phoneNumber: corporateForm.phoneNumber,
       address: corporateForm.registeredAddress,
-      customerType: "CORPORATE",
-      // Store additional data for later registration
       password: corporateForm.password,
+      customerType: "CORPORATE",
       businessName: corporateForm.businessName,
       natureOfBusiness: corporateForm.natureOfBusiness,
       serviceType: corporateForm.serviceType,
@@ -776,13 +786,117 @@ const RegisterPage: React.FC = () => {
       cacNumber: corporateForm.registrationNumber,
       nin: "", // Corporate doesn't have NIN
       dob: "", // Corporate doesn't have DOB
+      userType: "CUSTOMER",
+      creationType: "CUSTOMER",
     };
 
-    // Store data in sessionStorage for indemnity form
-    sessionStorage.setItem("registrationData", JSON.stringify(customerData));
+    setIsSubmitting(true);
 
-    // Navigate to indemnity form
-    navigate("/indemnity-form", { state: { customerData } });
+    try {
+      // Encrypt and POST to register endpoint (same approach used on Indemnity page)
+      const payload = JSON.stringify(customerData);
+      console.log(
+        "📝 Corporate registration payload (before encryption):",
+        customerData
+      );
+      console.log("📝 Corporate registration payload (JSON string):", payload);
+      const encryptedPayload = encryptAESCBC(payload, AES_SECRET_KEY, AES_IV);
+      console.log("🔐 Encrypted payload length:", encryptedPayload.length);
+
+      const resp = await fetch("/auth/faan/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Client-Auth": "Basic dGVzdDp0ZXN0",
+          "X-Source": "web",
+        },
+        body: encryptedPayload,
+      });
+
+      // Read raw encrypted response text
+      const rawResponseText = await resp.text();
+
+      // Attempt to decrypt and parse
+      let decryptedResponse = "";
+      let responseData: Record<string, unknown> | null = null;
+      try {
+        decryptedResponse = decryptAESCBC(
+          String(rawResponseText),
+          AES_SECRET_KEY,
+          AES_IV
+        );
+        console.log(
+          "🔐 Decrypted corporate registration response (raw string):",
+          decryptedResponse
+        );
+        responseData = JSON.parse(String(decryptedResponse));
+        console.log(
+          "🧾 Decrypted corporate registration response (parsed):",
+          responseData
+        );
+      } catch (err) {
+        console.warn(
+          "Failed to decrypt/parse corporate registration response, raw text:",
+          rawResponseText,
+          err
+        );
+      }
+
+      // If server returned non-OK HTTP, surface error (use decrypted message if available)
+      if (!resp.ok) {
+        console.error(
+          "🚨 Corporate registration failed - HTTP Status:",
+          resp.status
+        );
+        console.error("🚨 Raw response text:", rawResponseText);
+        console.error("🚨 Decrypted response:", decryptedResponse);
+        console.error("🚨 Parsed response data:", responseData);
+
+        const errMsg = String(
+          responseData?.message ?? rawResponseText ?? `HTTP ${resp.status}`
+        );
+        console.error("Corporate registration failed:", resp.status, errMsg);
+        throw new Error(errMsg);
+      }
+
+      // Use decrypted response to decide success if available
+      const success =
+        responseData?.status === true ||
+        resp.status === 200 ||
+        resp.status === 201;
+      if (success) {
+        // On success, download FAAN form and notify user
+        downloadFaanForm();
+
+        setToast({
+          message:
+            "Corporate account created successfully! FAAN form downloaded.",
+          type: "success",
+          isVisible: true,
+        });
+
+        // Navigate to login after a short delay
+        setTimeout(() => {
+          setIsSubmitting(false);
+          navigate("/login");
+        }, 1200);
+      } else {
+        const errMsg = String(responseData?.message ?? "Registration failed");
+        throw new Error(errMsg);
+      }
+    } catch (error) {
+      console.error("Error creating corporate account:", error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : String(error ?? "Failed to create account. Please try again.");
+      setToast({
+        message,
+        type: "error",
+        isVisible: true,
+      });
+      setIsSubmitting(false);
+    }
   };
 
   const handleGovernmentChange = (
@@ -832,31 +946,7 @@ const RegisterPage: React.FC = () => {
     const errors = validateGovernmentForm();
     setGovernmentFormErrors(errors);
     if (Object.keys(errors).length > 0) return;
-
-    // Prepare customer data for indemnity form
-    const customerData = {
-      firstName: governmentForm.officeName, // Use office name as first name
-      lastName: "", // Government doesn't have last name
-      email: governmentForm.email,
-      phoneNumber: governmentForm.phoneNumber,
-      address: governmentForm.address,
-      customerType: "GOVERNMENT",
-      // Store additional data for later registration
-      password: governmentForm.password,
-      officeName: governmentForm.officeName,
-      officeType: governmentForm.officeType,
-      state: governmentForm.state,
-      serviceType: governmentForm.serviceType,
-      cacNumber: null, // Government doesn't have CAC
-      nin: "", // Government doesn't have NIN
-      dob: "", // Government doesn't have DOB
-    };
-
-    // Store data in sessionStorage for indemnity form
-    sessionStorage.setItem("registrationData", JSON.stringify(customerData));
-
-    // Navigate to indemnity form
-    navigate("/indemnity-form", { state: { customerData } });
+    setStep("credentials");
   };
 
   const handleFamilyChange = (
@@ -1151,9 +1241,6 @@ const RegisterPage: React.FC = () => {
                   }
                   className="bill-item-listbox"
                 />
-                {formErrors.gender && (
-                  <span className="validation-error">{formErrors.gender}</span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -1178,11 +1265,6 @@ const RegisterPage: React.FC = () => {
                   }
                   className="bill-item-listbox"
                 />
-                {formErrors.isStudent && (
-                  <span className="validation-error">
-                    {formErrors.isStudent}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1266,8 +1348,8 @@ const RegisterPage: React.FC = () => {
                 className="form-row-modern"
                 style={{ gridColumn: "1 / span 2" }}
               >
-                <label>Email</label>
                 <Input
+                  label="Email"
                   name="email"
                   value={individualForm.email}
                   disabled
@@ -1334,7 +1416,6 @@ const RegisterPage: React.FC = () => {
                   checked={acceptedTerms}
                   onChange={(e) => setAcceptedTerms(e.target.checked)}
                   className="terms-checkbox"
-                  style={{ background: "#fcfcfc" }}
                 />
                 <label htmlFor="acceptTerms" className="terms-label">
                   I accept the{" "}
@@ -1421,11 +1502,6 @@ const RegisterPage: React.FC = () => {
                   autoComplete="off"
                   error={corporateFormErrors.businessName || false}
                 />
-                {corporateFormErrors.businessName && (
-                  <span className="validation-error">
-                    {corporateFormErrors.businessName}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -1449,11 +1525,6 @@ const RegisterPage: React.FC = () => {
                     }))
                   }
                 />
-                {corporateFormErrors.natureOfBusiness && (
-                  <span className="validation-error">
-                    {corporateFormErrors.natureOfBusiness}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -1477,11 +1548,6 @@ const RegisterPage: React.FC = () => {
                     }))
                   }
                 />
-                {corporateFormErrors.serviceType && (
-                  <span className="validation-error">
-                    {corporateFormErrors.serviceType}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1562,11 +1628,6 @@ const RegisterPage: React.FC = () => {
                   passwordToggle
                   error={corporateFormErrors.password || false}
                 />
-                {corporateFormErrors.password && (
-                  <span className="validation-error">
-                    {corporateFormErrors.password}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1594,11 +1655,6 @@ const RegisterPage: React.FC = () => {
                   passwordToggle
                   error={corporateFormErrors.confirmPassword || false}
                 />
-                {corporateFormErrors.confirmPassword && (
-                  <span className="validation-error">
-                    {corporateFormErrors.confirmPassword}
-                  </span>
-                )}
               </div>
             </div>
             <GradientButton
@@ -1894,8 +1950,7 @@ const RegisterPage: React.FC = () => {
                   >
                     terms and conditions
                   </button>
-                  (this will open a modal with the indemnity form containing
-                  your details)
+                  here and FAAN is indemnified against any claims or demands
                 </label>
               </div>
             </div>
@@ -1969,13 +2024,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleGovernmentChange}
                   placeholder="Government Office Name"
                   autoComplete="off"
-                  className={governmentFormErrors.officeName ? "error" : ""}
+                  error={governmentFormErrors.officeName || false}
                 />
-                {governmentFormErrors.officeName && (
-                  <span className="validation-error">
-                    {governmentFormErrors.officeName}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -1985,13 +2035,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleGovernmentChange}
                   placeholder="Address"
                   autoComplete="off"
-                  className={governmentFormErrors.address ? "error" : ""}
+                  error={governmentFormErrors.address || false}
                 />
-                {governmentFormErrors.address && (
-                  <span className="validation-error">
-                    {governmentFormErrors.address}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2001,13 +2046,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleGovernmentChange}
                   placeholder="Email"
                   autoComplete="off"
-                  className={governmentFormErrors.email ? "error" : ""}
+                  error={governmentFormErrors.email || false}
                 />
-                {governmentFormErrors.email && (
-                  <span className="validation-error">
-                    {governmentFormErrors.email}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2017,13 +2057,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleGovernmentChange}
                   placeholder="Phone Number"
                   autoComplete="off"
-                  className={governmentFormErrors.phoneNumber ? "error" : ""}
+                  error={governmentFormErrors.phoneNumber || false}
                 />
-                {governmentFormErrors.phoneNumber && (
-                  <span className="validation-error">
-                    {governmentFormErrors.phoneNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2047,13 +2082,8 @@ const RegisterPage: React.FC = () => {
                   placeholder="Password"
                   autoComplete="new-password"
                   passwordToggle
-                  className={governmentFormErrors.password ? "error" : ""}
+                  error={governmentFormErrors.password || false}
                 />
-                {governmentFormErrors.password && (
-                  <span className="validation-error">
-                    {governmentFormErrors.password}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2079,15 +2109,8 @@ const RegisterPage: React.FC = () => {
                   placeholder="Confirm Password"
                   autoComplete="new-password"
                   passwordToggle
-                  className={
-                    governmentFormErrors.confirmPassword ? "error" : ""
-                  }
+                  error={governmentFormErrors.confirmPassword || false}
                 />
-                {governmentFormErrors.confirmPassword && (
-                  <span className="validation-error">
-                    {governmentFormErrors.confirmPassword}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -2111,11 +2134,6 @@ const RegisterPage: React.FC = () => {
                     }))
                   }
                 />
-                {governmentFormErrors.officeType && (
-                  <span className="validation-error">
-                    {governmentFormErrors.officeType}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -2136,11 +2154,6 @@ const RegisterPage: React.FC = () => {
                     setGovernmentForm((prev) => ({ ...prev, state: opt.value }))
                   }
                 />
-                {governmentFormErrors.state && (
-                  <span className="validation-error">
-                    {governmentFormErrors.state}
-                  </span>
-                )}
               </div>
               <div
                 className="form-row-modern"
@@ -2167,11 +2180,6 @@ const RegisterPage: React.FC = () => {
                     }))
                   }
                 />
-                {governmentFormErrors.serviceType && (
-                  <span className="validation-error">
-                    {governmentFormErrors.serviceType}
-                  </span>
-                )}
               </div>
             </div>
             <GradientButton
@@ -2183,213 +2191,16 @@ const RegisterPage: React.FC = () => {
               CONTINUE
             </GradientButton>
           </form>
-        ) : selectedRole === "GOVERNMENT" && step === "credentials" ? (
-          <form
-            key="government-credentials"
-            className="auth-form-modern"
-            onSubmit={handleCredentialsSubmit}
-            autoComplete="off"
-          >
-            <div className="register-badge-individual">GOVERNMENT OFFICIAL</div>
-            <h2 className="auth-form-title-modern">Create an account</h2>
-            <div
-              className="auth-form-subtitle-modern"
-              style={{ marginBottom: 4 }}
-            >
-              Already have an account?{" "}
-              <Link to="/login" className="register-login-link">
-                Log In
-              </Link>
-            </div>
-            <div className="register-progress-row">
-              <span
-                className="register-progress-individual clickable"
-                aria-label="Back to previous step"
-                onClick={() => setStep("form")}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  userSelect: "none",
-                }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  style={{ marginRight: 7, verticalAlign: "middle" }}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M14 17L9 11L14 5"
-                    stroke="#007948"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                2/2 Steps Completed
-              </span>
-            </div>
-            <div
-              className="register-individual-grid"
-              style={{ marginBottom: 32 }}
-            >
-              <div
-                className="form-row-modern"
-                style={{ gridColumn: "1 / span 2" }}
-              >
-                <label>Email</label>
-                <input
-                  name="email"
-                  value={governmentForm.email}
-                  disabled
-                  style={{ background: "#f7f7f7", color: "#b0b0b0" }}
-                />
-              </div>
-              <div className="form-row-modern">
-                <label>Password</label>
-                <div className="password-input-container">
-                  <input
-                    name="password"
-                    type={showGovernmentPassword ? "text" : "password"}
-                    value={governmentForm.password}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setGovernmentForm((prev) => ({
-                        ...prev,
-                        password: value,
-                      }));
-                      setGovernmentFormErrors((prev) => ({
-                        ...prev,
-                        password: validateField("password", value),
-                        confirmPassword: !governmentForm.confirmPassword
-                          ? "Confirm your password"
-                          : value !== governmentForm.confirmPassword
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowGovernmentPassword((v) => !v)}
-                    aria-label={
-                      showGovernmentPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showGovernmentPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
-                {governmentFormErrors.password && (
-                  <span className="validation-error">
-                    {governmentFormErrors.password}
-                  </span>
-                )}
-              </div>
-              <div className="form-row-modern">
-                <label>Confirm Password</label>
-                <div className="password-input-container">
-                  <input
-                    name="confirmPassword"
-                    type={showGovernmentConfirmPassword ? "text" : "password"}
-                    value={governmentForm.confirmPassword}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setGovernmentForm((prev) => ({
-                        ...prev,
-                        confirmPassword: value,
-                      }));
-                      setGovernmentFormErrors((prev) => ({
-                        ...prev,
-                        confirmPassword: !value
-                          ? "Confirm your password"
-                          : value !== governmentForm.password
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Confirm Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowGovernmentConfirmPassword((v) => !v)}
-                    aria-label={
-                      showGovernmentConfirmPassword
-                        ? "Hide password"
-                        : "Show password"
-                    }
-                  >
-                    {showGovernmentConfirmPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
-                {governmentFormErrors.confirmPassword && (
-                  <span className="validation-error">
-                    {governmentFormErrors.confirmPassword}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Terms and Conditions Checkbox */}
-            <div className="form-row-modern">
-              <div className="terms-checkbox-container">
-                <input
-                  type="checkbox"
-                  id="acceptTermsGovernment"
-                  checked={acceptedTerms}
-                  onChange={(e) => setAcceptedTerms(e.target.checked)}
-                  className="terms-checkbox"
-                />
-                <label htmlFor="acceptTermsGovernment" className="terms-label">
-                  I accept the{" "}
-                  <button
-                    type="button"
-                    className="terms-link"
-                    onClick={() => setShowIndemnityModal(true)}
-                  >
-                    terms and conditions
-                  </button>
-                  (this will open a modal with the indemnity form containing
-                  your details)
-                </label>
-              </div>
-            </div>
-
-            <GradientButton
-              type="submit"
-              fullWidth
-              disabled={!isCredentialsValid() || isSubmitting || !acceptedTerms}
-              loading={isSubmitting}
-            >
-              CREATE ACCOUNT
-            </GradientButton>
-          </form>
         ) : selectedRole === "FAMILY" && step === "form" ? (
           <form
             key="family-form"
             className="auth-form-modern long-register-form"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               const errors = validateFamilyForm();
               setFamilyFormErrors(errors);
               if (Object.keys(errors).length > 0) return;
+
               setStep("credentials");
             }}
             autoComplete="off"
@@ -2445,13 +2256,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="First Name"
                   autoComplete="off"
-                  className={familyFormErrors.firstName ? "error" : ""}
+                  error={familyFormErrors.firstName || false}
                 />
-                {familyFormErrors.firstName && (
-                  <span className="validation-error">
-                    {familyFormErrors.firstName}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2461,13 +2267,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Last Name"
                   autoComplete="off"
-                  className={familyFormErrors.lastName ? "error" : ""}
+                  error={familyFormErrors.lastName || false}
                 />
-                {familyFormErrors.lastName && (
-                  <span className="validation-error">
-                    {familyFormErrors.lastName}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2477,13 +2278,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Email"
                   autoComplete="off"
-                  className={familyFormErrors.email ? "error" : ""}
+                  error={familyFormErrors.email || false}
                 />
-                {familyFormErrors.email && (
-                  <span className="validation-error">
-                    {familyFormErrors.email}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2493,13 +2289,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Phone Number"
                   autoComplete="off"
-                  className={familyFormErrors.phoneNumber ? "error" : ""}
+                  error={familyFormErrors.phoneNumber || false}
                 />
-                {familyFormErrors.phoneNumber && (
-                  <span className="validation-error">
-                    {familyFormErrors.phoneNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -2529,13 +2320,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Identification Number"
                   autoComplete="off"
-                  className={familyFormErrors.idNumber ? "error" : ""}
+                  error={familyFormErrors.idNumber || false}
                 />
-                {familyFormErrors.idNumber && (
-                  <span className="validation-error">
-                    {familyFormErrors.idNumber}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2545,13 +2331,8 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Address"
                   autoComplete="off"
-                  className={familyFormErrors.address ? "error" : ""}
+                  error={familyFormErrors.address || false}
                 />
-                {familyFormErrors.address && (
-                  <span className="validation-error">
-                    {familyFormErrors.address}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -2572,11 +2353,6 @@ const RegisterPage: React.FC = () => {
                     setFamilyForm((prev) => ({ ...prev, gender: opt.value }))
                   }
                 />
-                {familyFormErrors.gender && (
-                  <span className="validation-error">
-                    {familyFormErrors.gender}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <ListBox
@@ -2597,11 +2373,6 @@ const RegisterPage: React.FC = () => {
                     setFamilyForm((prev) => ({ ...prev, isStudent: opt.value }))
                   }
                 />
-                {familyFormErrors.isStudent && (
-                  <span className="validation-error">
-                    {familyFormErrors.isStudent}
-                  </span>
-                )}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2615,6 +2386,7 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
             </div>
+
             <GradientButton
               type="submit"
               fullWidth
@@ -2685,8 +2457,8 @@ const RegisterPage: React.FC = () => {
                 className="form-row-modern"
                 style={{ gridColumn: "1 / span 2" }}
               >
-                <label>Email</label>
-                <input
+                <Input
+                  label="Email"
                   name="email"
                   value={familyForm.email}
                   disabled
@@ -2694,89 +2466,53 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               <div className="form-row-modern">
-                <label>Password</label>
-                <div className="password-input-container">
-                  <input
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setPassword(value);
-                      setCredentialsErrors((prev) => ({
-                        ...prev,
-                        password: validateField("password", value),
-                        confirmPassword: !confirmPassword
-                          ? "Confirm your password"
-                          : value !== confirmPassword
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {credentialsErrors.password && (
-                  <span className="validation-error">
-                    {credentialsErrors.password}
-                  </span>
-                )}
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setPassword(value);
+                    setCredentialsErrors((prev) => ({
+                      ...prev,
+                      password: validateField("password", value),
+                      confirmPassword: !confirmPassword
+                        ? "Confirm your password"
+                        : value !== confirmPassword
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  error={credentialsErrors.password || false}
+                />
               </div>
               <div className="form-row-modern">
-                <label>Confirm Password</label>
-                <div className="password-input-container">
-                  <input
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setConfirmPassword(value);
-                      setCredentialsErrors((prev) => ({
-                        ...prev,
-                        confirmPassword: !value
-                          ? "Confirm your password"
-                          : value !== password
-                          ? "Passwords do not match"
-                          : "",
-                      }));
-                    }}
-                    placeholder="Confirm Password"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    tabIndex={-1}
-                    onClick={() => setShowConfirmPassword((v) => !v)}
-                    aria-label={
-                      showConfirmPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
-                {credentialsErrors.confirmPassword && (
-                  <span className="validation-error">
-                    {credentialsErrors.confirmPassword}
-                  </span>
-                )}
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setConfirmPassword(value);
+                    setCredentialsErrors((prev) => ({
+                      ...prev,
+                      confirmPassword: !value
+                        ? "Confirm your password"
+                        : value !== password
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Confirm Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  error={credentialsErrors.confirmPassword || false}
+                />
               </div>
             </div>
 
@@ -2798,9 +2534,163 @@ const RegisterPage: React.FC = () => {
                     onClick={() => setShowIndemnityModal(true)}
                   >
                     terms and conditions
-                  </button>
-                  (this will open a modal with the indemnity form containing
-                  your details)
+                  </button>{" "}
+                  here and FAAN is indemnified against any claims or demands
+                </label>
+              </div>
+            </div>
+
+            <GradientButton
+              type="submit"
+              fullWidth
+              disabled={!isCredentialsValid() || isSubmitting || !acceptedTerms}
+              loading={isSubmitting}
+            >
+              CREATE ACCOUNT
+            </GradientButton>
+          </form>
+        ) : selectedRole === "GOVERNMENT" && step === "credentials" ? (
+          <form
+            key="government-credentials"
+            className="auth-form-modern"
+            onSubmit={handleCredentialsSubmit}
+            autoComplete="off"
+          >
+            <div className="register-badge-individual">GOVERNMENT OFFICIAL</div>
+            <h2 className="auth-form-title-modern">Create an account</h2>
+            <div
+              className="auth-form-subtitle-modern"
+              style={{ marginBottom: 4 }}
+            >
+              Already have an account?{" "}
+              <Link to="/login" className="register-login-link">
+                Log In
+              </Link>
+            </div>
+            <div className="register-progress-row">
+              <span
+                className="register-progress-individual clickable"
+                aria-label="Back to previous step"
+                onClick={() => setStep("form")}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 22 22"
+                  fill="none"
+                  style={{ marginRight: 7, verticalAlign: "middle" }}
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14 17L9 11L14 5"
+                    stroke="#007948"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                2/2 Steps Completed
+              </span>
+            </div>
+            <div
+              className="register-individual-grid"
+              style={{ marginBottom: 32 }}
+            >
+              <div
+                className="form-row-modern"
+                style={{ gridColumn: "1 / span 2" }}
+              >
+                <Input
+                  label="Email"
+                  name="email"
+                  value={governmentForm.email}
+                  disabled
+                  style={{ background: "#f7f7f7", color: "#b0b0b0" }}
+                />
+              </div>
+              <div className="form-row-modern">
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={governmentForm.password}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setGovernmentForm((prev) => ({
+                      ...prev,
+                      password: value,
+                    }));
+                    setGovernmentFormErrors((prev) => ({
+                      ...prev,
+                      password: validateField("password", value),
+                      confirmPassword: !governmentForm.confirmPassword
+                        ? "Confirm your password"
+                        : value !== governmentForm.confirmPassword
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  error={governmentFormErrors.password || false}
+                />
+              </div>
+              <div className="form-row-modern">
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  value={governmentForm.confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setGovernmentForm((prev) => ({
+                      ...prev,
+                      confirmPassword: value,
+                    }));
+                    setGovernmentFormErrors((prev) => ({
+                      ...prev,
+                      confirmPassword: !value
+                        ? "Confirm your password"
+                        : value !== governmentForm.password
+                        ? "Passwords do not match"
+                        : "",
+                    }));
+                  }}
+                  placeholder="Confirm Password"
+                  autoComplete="new-password"
+                  passwordToggle
+                  error={governmentFormErrors.confirmPassword || false}
+                />
+              </div>
+            </div>
+
+            {/* Terms and Conditions Checkbox */}
+            <div className="form-row-modern">
+              <div className="terms-checkbox-container">
+                <input
+                  type="checkbox"
+                  id="acceptTermsGovernment"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="terms-checkbox"
+                />
+                <label htmlFor="acceptTermsGovernment" className="terms-label">
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => setShowIndemnityModal(true)}
+                  >
+                    terms and conditions
+                  </button>{" "}
+                  here and FAAN is indemnified against any claims or demands
                 </label>
               </div>
             </div>
