@@ -79,3 +79,124 @@
   color: #000;
   border: 1px solid #f0f0f0;
 }
+
+/* ===================== RESPONSIVE DESIGN ===================== */
+
+/* Tablet (768px - 1199px) */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .logout-bg {
+    min-height: 65vh;
+  }
+
+  .logout-modal {
+    padding: 32px 32px 28px 32px;
+    min-width: 340px;
+    max-width: 480px;
+  }
+
+  .logout-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 18px;
+  }
+
+  .logout-title {
+    font-size: 20px;
+    margin-bottom: 9px;
+  }
+
+  .logout-text {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .logout-btn {
+    font-size: 14px;
+    padding: 15px 0;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .logout-bg {
+    min-height: 60vh;
+    padding: 20px;
+  }
+
+  .logout-modal {
+    padding: 28px 24px 24px 24px;
+    min-width: auto;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+  }
+
+  .logout-icon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 16px;
+  }
+
+  .logout-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .logout-text {
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+
+  .logout-btn {
+    font-size: 13px;
+    padding: 14px 0;
+    border-radius: 10px;
+    letter-spacing: 0.4px;
+  }
+
+  .logout-btn-confirm {
+    margin-bottom: 10px;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  .logout-bg {
+    min-height: 50vh;
+    padding: 16px;
+  }
+
+  .logout-modal {
+    padding: 24px 20px 20px 20px;
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  .logout-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 14px;
+  }
+
+  .logout-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .logout-text {
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+
+  .logout-btn {
+    font-size: 12px;
+    padding: 13px 0;
+    border-radius: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .logout-btn-confirm {
+    margin-bottom: 8px;
+  }
+}
