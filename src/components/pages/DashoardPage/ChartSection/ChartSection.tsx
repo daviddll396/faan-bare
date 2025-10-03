@@ -41,10 +41,10 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
     user?.transactionStats || { total: 0, completed: 0 };
 
   // Debug logging to see which data source is being used
-  console.log("🔍 ChartSection - Data Source Debug:");
-  console.log("📊 Admin Stats Available:", !!adminStats);
-  console.log("👤 User Transaction Stats:", user?.transactionStats);
-  console.log("🎯 Final Transaction Stats Used:", transactionStats);
+  // console.log("🔍 ChartSection - Data Source Debug:");
+  // console.log("📊 Admin Stats Available:", !!adminStats);
+  // console.log("👤 User Transaction Stats:", user?.transactionStats);
+  // console.log("🎯 Final Transaction Stats Used:", transactionStats);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -120,9 +120,9 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
   const yAxisMax = getYAxisMax(rawData);
 
   // Debug Y-axis calculation
-  console.log("📈 Y-Axis Max Calculation:");
-  console.log("📊 Raw Data:", rawData);
-  console.log("🎯 Calculated Y-Axis Max:", yAxisMax);
+  // console.log("📈 Y-Axis Max Calculation:");
+  // console.log("📊 Raw Data:", rawData);
+  // console.log("🎯 Calculated Y-Axis Max:", yAxisMax);
 
   // Export chart data as CSV
   const handleExport = () => {

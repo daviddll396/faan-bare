@@ -8,6 +8,7 @@ import React, {
   type ReactNode,
 } from "react";
 import CryptoJS from "crypto-js";
+import { logger } from "../utils/logger";
 
 // API Base URL - configure for different environments
 const getApiBaseUrl = (): string => {
@@ -416,7 +417,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userData);
           }
         } catch (error) {
-          console.error("Error parsing stored user data:", error);
+          logger.error("Auth", "Error parsing stored user data", error);
           // Clear corrupted data
           localStorage.removeItem(STORAGE_KEYS.USER);
           localStorage.removeItem(STORAGE_KEYS.TOKEN);
@@ -434,10 +435,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // Function to fetch user details using Bearer token
-  const fetchUserDetails = async (token: string): Promise<User | null> => {
+  const fetchUserDetails = async (
+    token: string,
+    userRole?: string
+  ): Promise<User | null> => {
     try {
-      console.log("Fetching user details with token:", token);
-      console.log("Request URL:", API_ENDPOINTS.USER_DETAILS);
+      logger.info("Auth", "Fetching user details...");
 
       const response = await fetch(API_ENDPOINTS.USER_DETAILS, {
         method: "GET",
@@ -448,19 +451,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
       });
 
-      console.log("User details response status:", response.status);
-      console.log("User details response status text:", response.statusText);
-      console.log("User details request headers:", {
-        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-        Authorization: `Bearer ${token}`,
-      });
+      logger.apiResponse(API_ENDPOINTS.USER_DETAILS, response.status);
 
       if (!response.ok) {
-        console.error(
-          "Failed to fetch user details:",
-          response.status,
-          response.statusText
+        logger.error(
+          "Auth",
+          `Failed to fetch user details: ${response.status}`
         );
 
         // Check if token is expired and redirect if needed
@@ -472,21 +468,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const responseText = await response.text();
-      console.log("Raw user details response:", responseText);
 
-      // Check if response has content
       if (!responseText || responseText.trim() === "") {
-        console.log("Empty user details response");
+        logger.warn("Auth", "Empty user details response");
         return null;
       }
 
-      // Parse the JSON response directly (no decryption needed for this endpoint)
       let data;
       try {
         data = JSON.parse(responseText);
-        console.log("Parsed user details data:", data);
+        logger.debug("Auth", "User details parsed successfully");
       } catch (error) {
-        console.error("Failed to parse user details JSON:", error);
+        logger.error("Auth", "Failed to parse user details JSON", error);
         return null;
       }
 
@@ -513,21 +506,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           dob: profile.dob,
           address: profile.address,
           customerType: profile.customerType,
-          role: "Customer",
+          role: userRole || "Customer", // Use provided role or default to Customer
           walletBalance: data.data.walletBalance,
           transactionStats: data.data.transactionStats,
         };
 
-        console.log("User details fetched successfully:", userData);
-        console.log("Wallet balance:", data.data.walletBalance);
-        console.log("Transaction stats:", data.data.transactionStats);
+        logger.success("Auth", "User details fetched", {
+          customerId: userData.customerId,
+          role: userData.role,
+          walletBalance: data.data.walletBalance,
+        });
         return userData;
       } else {
-        console.error("Failed to get user details:", data.message);
+        logger.error("Auth", "Failed to get user details", data.message);
         return null;
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      logger.error("Auth", "Error fetching user details", error);
       return null;
     }
   };
@@ -542,7 +537,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email === MOCK_ADMIN_CREDENTIALS.email &&
         password === MOCK_ADMIN_CREDENTIALS.password
       ) {
-        console.log("Mock admin login detected");
+        logger.info("Auth", "Mock admin login detected");
 
         // Create mock admin user
         const mockAdminUser: User = {
@@ -575,7 +570,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockAdminUser));
         localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken);
 
-        console.log("Mock admin user created and stored:", mockAdminUser);
+        logger.success("Auth", "Mock admin user created");
         return { success: true };
       }
 
@@ -584,7 +579,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email === MOCK_CUSTOMER_CREDENTIALS.email &&
         password === MOCK_CUSTOMER_CREDENTIALS.password
       ) {
-        console.log("Mock customer login detected");
+        logger.info("Auth", "Mock customer login detected");
 
         // Create mock customer user
         const mockCustomerUser: User = {
@@ -620,7 +615,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         );
         localStorage.setItem(STORAGE_KEYS.TOKEN, mockToken);
 
-        console.log("Mock customer user created and stored:", mockCustomerUser);
+        logger.success("Auth", "Mock customer user created");
         return { success: true };
       }
 
@@ -635,10 +630,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         ENCRYPTION_CONFIG.IV_KEY
       );
 
-      console.log("Original request body:", requestBody);
-      console.log("Encrypted payload:", encryptedPayload);
-      console.log("Request URL:", API_ENDPOINTS.LOGIN);
-      console.log("Request method:", "POST");
+      logger.group("Auth", "Login Request", () => {
+        logger.info("Auth", "Endpoint", API_ENDPOINTS.LOGIN);
+        logger.debug("Auth", "Request body", requestBody);
+        logger.debug(
+          "Auth",
+          "Encrypted payload length",
+          encryptedPayload.length
+        );
+      });
 
       const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: "POST",
@@ -650,21 +650,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: encryptedPayload,
       });
 
-      console.log("Response status:", response.status);
-      console.log("Response status text:", response.statusText);
-      console.log(
-        "Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
-
       // Log response text for debugging
       const responseText = await response.text();
-      console.log("Raw encrypted response text:", responseText);
+
+      logger.apiResponse(API_ENDPOINTS.LOGIN, response.status, {
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        bodyLength: responseText.length,
+      });
 
       // Check if response is ok and has content
       if (!response.ok) {
-        console.error("HTTP Error:", response.status, response.statusText);
-        console.error("Error response body:", responseText);
+        logger.error("Auth", `HTTP Error: ${response.status}`, responseText);
         if (response.status === HTTP_STATUS.UNAUTHORIZED) {
           return { success: false, message: "Invalid credentials" };
         }
@@ -673,7 +670,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Check if response has content
       if (!responseText || responseText.trim() === "") {
-        console.log("Empty response body");
+        logger.warn("Auth", "Empty response body received");
         return { success: false, message: "Empty response from server" };
       }
 
@@ -685,43 +682,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           ENCRYPTION_CONFIG.SECRET_KEY,
           ENCRYPTION_CONFIG.IV_KEY
         );
-        console.log("Decrypted response:", decryptedResponse);
+        logger.debug("Auth", "Response decrypted successfully");
       } catch (error) {
-        console.error("Failed to decrypt response:", error);
-        console.error(
-          "Encrypted response that failed to decrypt:",
-          responseText
-        );
+        logger.error("Auth", "Failed to decrypt response", error);
         return { success: false, message: "Failed to decrypt server response" };
       }
 
       let data;
       try {
         data = JSON.parse(decryptedResponse);
-        console.log("Parsed response data:", data);
+        logger.debug("Auth", "Response parsed successfully", data);
       } catch (error) {
-        console.error("Failed to parse JSON response:", error);
-        console.error(
-          "Decrypted response that failed to parse:",
-          decryptedResponse
-        );
+        logger.error("Auth", "Failed to parse JSON", {
+          error,
+          decryptedResponse,
+        });
         return { success: false, message: "Invalid server response format" };
       }
-
-      // Debugging: log exact types/values so we can understand why success check fails
-      console.log(
-        "Login response status check =>",
-        "status:",
-        data?.status,
-        "(type:",
-        typeof data?.status,
-        ")",
-        "statusCode:",
-        data?.statusCode,
-        "(type:",
-        typeof data?.statusCode,
-        ")"
-      );
 
       // Treat login as successful when API explicitly returns status=true
       // or when it uses non-HTTP status codes like '00' for success.
@@ -754,42 +731,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             ? "Guest"
             : "Customer";
 
-        // Log the token and customerId we received
-        console.log("Login successful! Token received:", data.data.token);
-        console.log("Customer ID received:", data.data.customerId);
-        console.log("User Type received:", userTypeRaw);
-        console.log("Token type:", typeof data.data.token);
-        console.log("Token length:", data.data.token?.length);
+        logger.success("Auth", "Login successful", {
+          customerId: data.data.customerId,
+          userType: userTypeRaw,
+          role: normalizedRole,
+          tokenLength: data.data.token?.length,
+        });
 
         // Store the token first
         localStorage.setItem(STORAGE_KEYS.TOKEN, data.data.token);
-        console.log("Token stored in localStorage");
 
         // Now fetch user details using the token
-        console.log("=== STARTING CUSTOMER DETAILS FETCH ===");
-        console.log("Fetching user details...");
-        console.log("Using token:", data.data.token);
-        console.log("For customer ID:", data.data.customerId);
-        const userDetails = await fetchUserDetails(loginResp.data.token);
-        console.log("=== CUSTOMER DETAILS FETCH COMPLETED ===");
+        logger.info("Auth", "Fetching user details...");
+        const userDetails = await fetchUserDetails(
+          loginResp.data.token,
+          normalizedRole
+        );
 
         if (userDetails) {
-          // Use the real user details from the API and add customerId
+          // Use the real user details from the API (role is already set correctly in fetchUserDetails)
           const completeUserData: User = {
             ...userDetails,
             customerId: loginResp.data.customerId,
-            // Override role using accountType from login response
-            role: normalizedRole,
           };
           setUser(completeUserData);
           localStorage.setItem(
             STORAGE_KEYS.USER,
             JSON.stringify(completeUserData)
           );
-          console.log("Real user details stored:", completeUserData);
+          logger.success("Auth", "User data stored", {
+            customerId: completeUserData.customerId,
+          });
         } else {
           // Fallback to basic user object if user details fetch fails
-          console.log("User details fetch failed, using fallback user data");
+          logger.warn("Auth", "User details fetch failed, using fallback");
           const fallbackUserData: User = {
             id: loginResp.data.customerId || Date.now().toString(),
             customerId: loginResp.data.customerId,
@@ -811,17 +786,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             STORAGE_KEYS.USER,
             JSON.stringify(fallbackUserData)
           );
-          console.log("Fallback user data stored:", fallbackUserData);
         }
 
         return { success: true };
       } else {
-        console.error("Login failed:", data.message);
-        // Surface server message when available (e.g., "Customer account not approved")
+        logger.error("Auth", "Login failed", data.message);
         return { success: false, message: data?.message ?? "Login failed" };
       }
     } catch (error) {
-      console.error("Login error:", error);
+      logger.error("Auth", "Login error", error);
       const message = error instanceof Error ? error.message : String(error);
       return { success: false, message };
     }
@@ -837,7 +810,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkTokenAndRedirect = useCallback(
     (response: Response): boolean => {
       if (response.status === HTTP_STATUS.UNAUTHORIZED && user) {
-        console.log("Token expired or invalid, redirecting to login");
+        logger.warn("Auth", "Token expired, redirecting to login");
         // Clear local user and token directly rather than calling logout to keep this function stable
         setUser(null);
         localStorage.removeItem(STORAGE_KEYS.USER);
@@ -860,13 +833,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       if (!token) {
-        console.error("No token found for wallet funding");
+        logger.error("Wallet", "No token found for wallet funding");
         return false;
       }
 
-      console.log("=== STARTING WALLET FUNDING ===");
-      console.log("Funding amount:", amount);
-      console.log("Request URL:", API_ENDPOINTS.FUND_WALLET);
+      logger.group("Wallet", "Fund Wallet", () => {
+        logger.info("Wallet", "Funding amount", amount);
+        logger.info("Wallet", "Endpoint", API_ENDPOINTS.FUND_WALLET);
+      });
 
       // Generate a unique reference for the transaction
       const reference = `fund-${new Date()
@@ -895,8 +869,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         requestBody.providerResponse = providerResponse;
       }
 
-      console.log("Fund wallet request body:", requestBody);
-      console.log("Generated reference:", reference);
+      logger.debug("Wallet", "Request details", {
+        reference: externalReference ?? reference,
+        amount: paidAmount,
+      });
 
       const response = await fetch(API_ENDPOINTS.FUND_WALLET, {
         method: "POST",
@@ -908,20 +884,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("Fund wallet response status:", response.status);
-      console.log("Fund wallet response status text:", response.statusText);
-      console.log("Fund wallet request headers:", {
-        "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-        "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-        Authorization: `Bearer ${token}`,
-      });
+      logger.apiResponse(API_ENDPOINTS.FUND_WALLET, response.status);
 
       if (!response.ok) {
-        console.error(
-          "Failed to fund wallet:",
-          response.status,
-          response.statusText
-        );
+        logger.error("Wallet", `Failed to fund wallet: ${response.status}`);
 
         // Check if token is expired and redirect if needed
         if (checkTokenAndRedirect(response)) {
@@ -932,26 +898,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const responseText = await response.text();
-      console.log("Raw fund wallet response:", responseText);
 
-      // Check if response has content
       if (!responseText || responseText.trim() === "") {
-        console.log("Empty fund wallet response");
+        logger.warn("Wallet", "Empty fund wallet response");
         return false;
       }
 
-      // Parse the JSON response directly (no decryption needed for this endpoint)
       let data;
       try {
         data = JSON.parse(responseText);
-        console.log("Parsed fund wallet data:", data);
+        logger.debug("Wallet", "Response parsed successfully");
       } catch (error) {
-        console.error("Failed to parse fund wallet JSON:", error);
+        logger.error("Wallet", "Failed to parse fund wallet JSON", error);
         return false;
       }
 
-      // Treat login as successful when API explicitly returns status=true
-      // or when it uses non-HTTP status codes like '00' for success.
       if (
         data &&
         (data.status === true ||
@@ -959,9 +920,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           String(data.statusCode) === "0" ||
           Number(data.statusCode) === HTTP_STATUS.OK)
       ) {
-        console.log("Wallet funding successful!");
-        console.log("Transaction reference:", reference);
-        console.log("New wallet balance:", data.data.balance);
+        logger.success("Wallet", "Wallet funded successfully", {
+          reference,
+          newBalance: data.data.balance,
+        });
 
         // Update user's wallet balance from the API response
         if (user && data.data?.balance !== undefined) {
@@ -971,17 +933,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           };
           setUser(updatedUser);
           localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
-          console.log("Updated wallet balance:", data.data.balance);
         }
 
-        console.log("=== WALLET FUNDING COMPLETED ===");
         return true;
       } else {
-        console.error("Wallet funding failed:", data.message);
+        logger.error("Wallet", "Wallet funding failed", data.message);
         return false;
       }
     } catch (error) {
-      console.error("Wallet funding error:", error);
+      logger.error("Wallet", "Wallet funding error", error);
       return false;
     }
   };
@@ -1000,14 +960,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
         if (!token) {
-          console.error("No token found for fetching tariffs");
+          logger.error("Service", "No token found for fetching tariffs");
           return null;
         }
 
-        console.log("🚀 === STARTING GET ALL TARIFFS REQUEST ===");
-        console.log("📍 Request URL:", API_ENDPOINTS.GET_ALL_TARIFFS);
-        console.log("🔑 Using token:", token);
-        console.log("⏰ Request timestamp:", new Date().toISOString());
+        logger.info(
+          "Service",
+          "Fetching tariffs",
+          API_ENDPOINTS.GET_ALL_TARIFFS
+        );
 
         const requestPromise = fetch(API_ENDPOINTS.GET_ALL_TARIFFS, {
           method: "GET",
@@ -1018,23 +979,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           },
         });
         tariffsInFlightRef.current = requestPromise.then(async (response) => {
-          console.log("📥 Get all tariffs response status:", response.status);
-          console.log(
-            "📥 Get all tariffs response status text:",
-            response.statusText
-          );
-          console.log("📥 Response timestamp:", new Date().toISOString());
-          console.log("🔧 Get all tariffs request headers:", {
-            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-            Authorization: `Bearer ${token}`,
-          });
+          logger.apiResponse(API_ENDPOINTS.GET_ALL_TARIFFS, response.status);
 
           if (!response.ok) {
-            console.error(
-              "❌ Failed to fetch tariffs:",
-              response.status,
-              response.statusText
+            logger.error(
+              "Service",
+              `Failed to fetch tariffs: ${response.status}`
             );
 
             // Check if token is expired and redirect if needed
@@ -1043,29 +993,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
 
             const errorText = await response.text();
-            console.error("❌ Error response body:", errorText);
+            logger.error("Service", "Tariff fetch error response", errorText);
             return null;
           }
 
           const responseText = await response.text();
-          console.log("📄 Raw get all tariffs response:", responseText);
-          console.log("📏 Response length:", responseText.length);
 
           if (!responseText || responseText.trim() === "") {
-            console.log("⚠️ Empty get all tariffs response");
+            logger.warn("Service", "Empty tariffs response");
             return null;
           }
 
           let data: TariffsResponse;
           try {
             data = JSON.parse(responseText);
-            console.log("✅ Parsed get all tariffs data:", data);
+            logger.success("Service", "Tariffs loaded", {
+              count: data.data?.length,
+            });
           } catch (error) {
-            console.error("❌ Failed to parse get all tariffs JSON:", error);
-            console.error(
-              "❌ Raw response that failed to parse:",
-              responseText
-            );
+            logger.error("Service", "Failed to parse tariffs JSON", error);
             return null;
           }
 
@@ -1079,10 +1025,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
         // Clear in-flight reference
         tariffsInFlightRef.current = null;
-        console.log("🎉 === GET ALL TARIFFS COMPLETED SUCCESSFULLY ===");
         return data;
       } catch (error) {
-        console.error("💥 Get all tariffs error:", error);
+        logger.error("Service", "Get all tariffs error", error);
         tariffsInFlightRef.current = null;
         return null;
       }
@@ -1095,15 +1040,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
         if (!token) {
-          console.error("No token found for creating tariff");
+          logger.error("Service", "No token found for creating tariff");
           return null;
         }
 
-        console.log("🚀 === STARTING CREATE TARIFF REQUEST ===");
-        console.log("📍 Request URL:", API_ENDPOINTS.CREATE_TARIFF);
-        console.log("📋 Request payload:", request);
-        console.log("🔑 Using token:", token);
-        console.log("⏰ Request timestamp:", new Date().toISOString());
+        logger.info("Service", "Creating tariff", request);
 
         const response = await fetch(API_ENDPOINTS.CREATE_TARIFF, {
           method: "POST",
@@ -1115,54 +1056,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify(request),
         });
 
-        console.log("📥 Create tariff response status:", response.status);
-        console.log(
-          "📥 Create tariff response status text:",
-          response.statusText
-        );
+        logger.apiResponse(API_ENDPOINTS.CREATE_TARIFF, response.status);
 
         if (!response.ok) {
-          console.error(
-            "❌ Failed to create tariff:",
-            response.status,
-            response.statusText
+          logger.error(
+            "Service",
+            `Failed to create tariff: ${response.status}`
           );
-
-          // Check if token is expired and redirect if needed
           if (checkTokenAndRedirect(response)) {
             return null;
           }
-
-          const errorText = await response.text();
-          console.error("❌ Error response body:", errorText);
           return null;
         }
 
         const responseText = await response.text();
-        console.log("📄 Raw create tariff response:", responseText);
 
         if (!responseText || responseText.trim() === "") {
-          console.log("⚠️ Empty create tariff response");
+          logger.warn("Service", "Empty create tariff response");
           return null;
         }
 
         let data: CreateTariffResponse;
         try {
           data = JSON.parse(responseText);
-          console.log("✅ Parsed create tariff data:", data);
+          logger.success("Service", "Tariff created", data);
         } catch (error) {
-          console.error("❌ Failed to parse create tariff JSON:", error);
-          console.error("❌ Raw response that failed to parse:", responseText);
+          logger.error("Service", "Failed to parse create tariff JSON", error);
           return null;
         }
 
         // Clear tariffs cache to force refresh on next getAllTariffs call
         tariffsCacheRef.current = null;
 
-        console.log("🎉 === CREATE TARIFF COMPLETED SUCCESSFULLY ===");
         return data;
       } catch (error) {
-        console.error("💥 Create tariff error:", error);
+        logger.error("Service", "Create tariff error", error);
         return null;
       }
     },
@@ -1489,7 +1417,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             dob: data.data.customerProfile.dob,
             address: data.data.customerProfile.address,
             customerType: data.data.customerProfile.customerType,
-            role: "Customer",
+            // Preserve the existing role - don't overwrite it
+            role: user.role,
             walletBalance: data.data.walletBalance,
             transactionStats: data.data.transactionStats,
           };

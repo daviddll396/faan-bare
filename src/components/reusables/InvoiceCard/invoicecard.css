@@ -1,33 +1,18 @@
 /* InvoiceCard Base Styles */
 .invoice-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: 1px solid #f0f0f0;
   padding: 22px;
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.033);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-family: "Poppins", sans-serif;
 }
 
 /* Status-based subtle shadow tints */
-.invoice-card.paid {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
-    0 2px 6px rgba(16, 185, 129, 0.03);
-}
-
-.invoice-card.pending {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
-    0 2px 6px rgba(251, 146, 60, 0.03);
-}
-
-.invoice-card.cancelled {
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06),
-    0 2px 6px rgba(220, 38, 38, 0.03);
-}
 
 /* Invoice Header */
 .invoice-header {
@@ -48,7 +33,7 @@
 
 .invoice-status {
   padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: 5px;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
@@ -120,7 +105,7 @@
   margin-bottom: 20px;
   padding: 12px;
   background: #fafafa;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 16px;
   font-weight: 500;
   color: #000;
@@ -162,7 +147,6 @@
 @media (max-width: 1600px) {
   .invoice-card {
     padding: 20px;
-    border-radius: 12px;
   }
   .invoice-number {
     font-size: 17px;
@@ -199,7 +183,7 @@
 @media (max-width: 1200px) {
   .invoice-card {
     padding: 18px;
-    border-radius: 10px;
+   
   }
   .invoice-header {
     margin-bottom: 14px;
@@ -248,7 +232,7 @@
 @media (max-width: 992px) {
   .invoice-card {
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 5px;
   }
   .invoice-header {
     margin-bottom: 12px;

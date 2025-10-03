@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "../../../../contexts/AuthContext";
+import { logger } from "../../../../utils/logger";
 import "./metriccard.css";
 import BillIcon from "/icons/bill-metric-icon.svg";
 import PaymentIcon from "/icons/payment-metric-icon.svg";
@@ -104,7 +105,7 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
           void cancelled;
         }
       } catch (err) {
-        console.warn("MetricsCards: failed to fetch previous month stats", err);
+        logger.warn("Metrics", "Failed to fetch previous month stats", err);
       }
     };
     fetchPrev();
@@ -146,7 +147,7 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
         const previousCounts = buildCounts(prevTxns as Txn[] | null);
         setMonthCounts({ current: currentCounts, prev: previousCounts });
       } catch (err) {
-        console.warn("MetricsCards: failed to fetch month counts", err);
+        logger.warn("Metrics", "Failed to fetch month counts", err);
       }
     };
     fetchMonthCounts();
@@ -181,11 +182,12 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
   //   : adminStats?.data?.previousTransactionStats || prevStats || defaultStats;
 
   // Debug logging to see which data source is being used
-  console.log("🔍 MetricsCards - Data Source Debug:");
-  console.log("📊 Admin Stats Available:", !!adminStats);
-  console.log("👤 User Transaction Stats:", user?.transactionStats);
-  console.log("🎯 Using monthCounts for current:", monthHasData);
-  console.log("🎯 Using monthCounts for prev:", monthPrevHasData);
+  logger.debug("Metrics", "Data source check", {
+    hasAdminStats: !!adminStats,
+    hasUserStats: !!user?.transactionStats,
+    usingMonthCountsCurrent: monthHasData,
+    usingMonthCountsPrev: monthPrevHasData,
+  });
 
   const metrics = [
     {

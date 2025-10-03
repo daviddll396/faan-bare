@@ -129,66 +129,11 @@ const DataTable: React.FC<DataTableProps> = ({
                 ))}
               </tbody>
             </table>
-
-            {/* Desktop Pagination - Inside table container */}
-            {totalPages > 1 && (
-              <div className="data-table-pagination">
-                <div className="pagination-info">
-                  Showing {startIndex + 1} to{" "}
-                  {Math.min(endIndex, orderedData.length)} of{" "}
-                  {orderedData.length} entries
-                </div>
-
-                <div className="pagination-controls">
-                  {/* Previous Button */}
-                  <button
-                    className={`pagination-btn ${
-                      currentPage === 1 ? "disabled" : ""
-                    }`}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    aria-label="Previous page"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-
-                  {/* Page Numbers */}
-                  <div className="pagination-pages">
-                    {getPageNumbers().map((page, index) => (
-                      <button
-                        key={index}
-                        className={`pagination-page ${
-                          page === currentPage ? "active" : ""
-                        } ${page === "..." ? "ellipsis" : ""}`}
-                        onClick={() =>
-                          typeof page === "number" && handlePageChange(page)
-                        }
-                        disabled={page === "..."}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Next Button */}
-                  <button
-                    className={`pagination-btn ${
-                      currentPage === totalPages ? "disabled" : ""
-                    }`}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    aria-label="Next page"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>
 
-      {/* Mobile Pagination Controls - Outside table container for better mobile experience */}
+      {/* Pagination Controls - Always outside table container */}
       {orderedData.length > 0 && totalPages > 1 && (
         <div className="data-table-pagination-outer">
           <div className="pagination-info">

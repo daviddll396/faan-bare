@@ -41,7 +41,7 @@
   color: white;
   border: none;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -445,7 +445,7 @@ table {
 .type-badge,
 .method-badge {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: 5px;
   font-size: 12px;
   font-weight: 500;
   text-transform: capitalize;
@@ -502,6 +502,14 @@ table {
   background: #fef2f2;
   color: #dc2626;
 }
+.status-badge.cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.status-badge.success {
+  background: #ecfdf5;
+  color: #10b981;
+}
 .status-badge.in-stock {
   background: #ecfdf5;
   color: #059669;
@@ -513,6 +521,59 @@ table {
 .status-badge.out-of-stock {
   background: #fef2f2;
   color: #dc2626;
+}
+
+/* Status Badge Table Variant (text-only, no background) */
+.status-badge-table {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge-table.active {
+  color: #009a34;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+}
+
+.status-badge-table.inactive {
+  color: #d60000;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+}
+
+.status-badge-table.paid {
+  color: #009a34;
+  font-weight: 600;
+}
+
+.status-badge-table.pending {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.status-badge-table.overdue {
+  color: #d60000;
+  font-weight: 600;
+}
+
+.status-badge-table.draft {
+  color: #969696;
+  font-weight: 600;
+}
+
+.status-badge-table.completed {
+  color: #009a34;
+  font-weight: 600;
+}
+
+.status-badge-table.processing {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.status-badge-table.failed {
+  color: #d60000;
+  font-weight: 600;
 }
 
 /* Category Badges */
@@ -622,7 +683,7 @@ table {
   /* Header: 16px 40px */
   .dashboard-content {
     padding: 24px 40px;
-    padding-top:0px;
+    padding-top: 0px;
   }
 }
 
@@ -640,10 +701,13 @@ table {
   .type-badge,
   .method-badge {
     padding: 4px 12px;
-    border-radius: 20px;
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: capitalize;
+  }
+
+  .status-badge-table {
+    font-size: 11px;
   }
 }
 
@@ -724,8 +788,11 @@ table {
   .dashboard-content {
     padding: 10px 20px;
   }
-}
 
+  .status-badge-table {
+    font-size: 10px;
+  }
+}
 
 /* Reset to standard mobile gap */
 @media (max-width: 768px) {
@@ -791,10 +858,7 @@ table {
     color: #898989;
   }
   .status-badge-table {
-    font-size: 12px;
-    padding: 0px 0px;
-    border-radius: 6px;
-    font-weight: 600 !important;
+    font-size: 9px;
   }
   .action-btn-table {
     background: none;

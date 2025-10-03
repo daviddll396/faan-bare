@@ -196,7 +196,7 @@
   height: 48px;
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  border-radius: 8px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,7 +232,7 @@
   margin-left: 52px;
   font-weight: 500;
   color: #ffffff;
-  border-radius: 12px;
+  border-radius: 5px;
 }
 
 .nav-item:hover {
@@ -379,7 +379,7 @@
     gap: 3px;
     margin: 0;
     padding: 7px 11px;
-    border-radius: 12px;
+    border-radius: 5px;
     background: transparent;
     color: #979797;
     font-size: 12px;
@@ -393,7 +393,7 @@
   .nav-item.active {
     background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
     color: white;
-    border-radius: 12px;
+    border-radius: 5px;
     height: 100%;
   }
 

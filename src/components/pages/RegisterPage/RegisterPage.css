@@ -253,7 +253,7 @@
   width: 100%;
   padding: 18px 18px;
   border: 1.5px solid #f0f0f0;
-  border-radius: 10px;
+  border-radius: 5px;
   background: var(--bg-color);
   font-size: 14px;
   font-weight: 500;
@@ -865,7 +865,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 /* New aesthetic overrides for register page to match app style */
 .register-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: none;
   box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
   padding: 40px 36px;

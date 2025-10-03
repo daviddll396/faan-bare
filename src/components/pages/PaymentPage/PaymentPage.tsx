@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
-import GradientButton from "../../reusables/GradientButton/GradientButton";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
@@ -371,7 +371,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       </div>
       {!isLoading && (
         <DataTable
-        header={  `${activeTab} Payments`}
+          header={`${activeTab} Payments`}
           headers={
             user?.role === "Admin"
               ? [
@@ -392,7 +392,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               p.amount,
               <span
                 key="status"
-                className={`payment-status-badge ${
+                className={`status-badge ${
                   statusColors[p.status as keyof typeof statusColors]
                 }`}
               >
@@ -530,14 +530,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             )}
 
             <div className="modal-actions" style={{ width: "100%" }}>
-              <GradientButton
+              <SolidButton
+                text="PAY"
                 onClick={() => {
                   setModal(null);
                 }}
                 fullWidth
-              >
-                PAY
-              </GradientButton>
+              />
             </div>
 
             {/* Notice about payment method (wallet-only) */}
@@ -574,6 +573,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <span>Payment Date</span>
                 <span>{new Date().toLocaleString()}</span>
               </div>
+              <div className="meta-row">
+                <span>Payment Channel</span>
+                <span>Web</span>
+              </div>
+              <div className="meta-row">
+                <span>Payment Method</span>
+                <span>Wallet</span>
+              </div>
             </div>
             <div className="receipt-items">
               <div className="thead">
@@ -589,8 +596,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <span className="right mono">{modal.data.amount}</span>
               </div>
             </div>
+            {user?.customerId && (
+              <div className="receipt-foot">Customer ID: {user.customerId}</div>
+            )}
             <div className="receipt-download" style={{ marginTop: 12 }}>
-              <GradientButton
+              <SolidButton
+                text="Download PDF"
                 fullWidth
                 onClick={() => {
                   const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
@@ -616,6 +627,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     .receipt-items .row{border-top:1px dashed #f0f0f0}
                     .right{text-align:right}
                     .receipt-items .total{border-top:2px solid #f0f0f0;font-weight:800}
+                    .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
                   </style>
                   </head><body>
                     <div class='receipt-paper'>
@@ -629,6 +641,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           modal.data.billNo
                         }</span></div>
                         <div class='meta-row'><span>Payment Date</span><span>${new Date().toLocaleString()}</span></div>
+                        <div class='meta-row'><span>Payment Channel</span><span>Web</span></div>
+                        <div class='meta-row'><span>Payment Method</span><span>Wallet</span></div>
                       </div>
                       <div class='receipt-items'>
                         <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
@@ -641,6 +655,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           modal.data.amount
                         }</span></div>
                       </div>
+                      ${
+                        user?.customerId
+                          ? `<div class='receipt-foot'>Customer ID: ${user.customerId}</div>`
+                          : ""
+                      }
                     </div>
                     <script>
                       window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
@@ -653,9 +672,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     win.document.close();
                   }
                 }}
-              >
-                Download PDF
-              </GradientButton>
+              />
             </div>
           </div>
         )}
@@ -666,28 +683,61 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         isOpen={modal?.type === "reason"}
         onClose={() => setModal(null)}
         showHeader={true}
-        headerTitle="CANCELLATION REASON"
+        headerTitle="PAYMENT STATUS"
         className="payment-reason-modal"
       >
         {modal?.type === "reason" && (
-          <div className="payment-reason-content">
-            <div className="payment-reason-message">
-              Payment failed due to insufficient funds.
-            </div>
-            <div className="payment-reason-details">
-              <div className="payment-reason-detail">
-                <div className="payment-reason-label">Bill No.</div>
-                <div className="payment-reason-value">{modal.data.billNo}</div>
+          <div className="reason-paper">
+            <div className="reason-head">
+              <div className="reason-brand">
+                Federal Airports Authority of Nigeria
               </div>
-              <div className="payment-reason-detail">
-                <div className="payment-reason-label">Service</div>
-                <div className="payment-reason-value">{modal.data.service}</div>
+              <div className="reason-title">PAYMENT STATUS</div>
+              <div className="reason-sub">Transaction Details</div>
+            </div>
+            <div className="reason-meta">
+              <div className="meta-row">
+                <span>Bill No.</span>
+                <span className="mono">{modal.data.billNo}</span>
+              </div>
+              <div className="meta-row">
+                <span>Service</span>
+                <span>{modal.data.service}</span>
+              </div>
+              <div className="meta-row">
+                <span>Amount</span>
+                <span className="mono">{modal.data.amount}</span>
+              </div>
+              <div className="meta-row">
+                <span>Date</span>
+                <span>{modal.data.date}</span>
               </div>
             </div>
-            <div className="payment-reason-actions">
-              <GradientButton onClick={() => setModal(null)} fullWidth>
-                CLOSE
-              </GradientButton>
+
+            <div className="reason-details">
+              <div className="reason-section">
+                <div className="reason-label">Reason for Cancellation:</div>
+                <div className="reason-message">
+                  Payment failed due to insufficient funds in your wallet.
+                </div>
+              </div>
+              <div className="reason-section">
+                <div className="reason-help">
+                  <strong>What you can do:</strong>
+                  <ul>
+                    <li>Top up your wallet balance</li>
+                    <li>Try the payment again</li>
+                    <li>Contact support if the issue persists</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="reason-actions">
+              <SolidButton
+                text="CLOSE"
+                onClick={() => setModal(null)}
+                fullWidth
+              />
             </div>
           </div>
         )}
@@ -712,12 +762,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           <div className="customer-success-desc">
             Your payment has been made successfully.
           </div>
-          <GradientButton
+          <SolidButton
+            text="CLOSE"
             onClick={() => setShowPaymentSuccess(false)}
             fullWidth
-          >
-            CLOSE
-          </GradientButton>
+          />
         </div>
       </Modal>
     </div>

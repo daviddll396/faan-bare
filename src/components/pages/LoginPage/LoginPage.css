@@ -41,7 +41,7 @@
 
 .login-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: none; /* borderless card */
   box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
   padding: 40px 36px;

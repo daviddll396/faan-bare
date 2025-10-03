@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../../contexts/AuthContext";
 import { useLoading } from "../../../../contexts/LoadingContext";
+import { logger } from "../../../../utils/logger";
 import "./transactionstable.css";
 import AirplaneIcon from "/icons/airplane-icon.svg";
 
@@ -51,14 +52,10 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
 
         // Use admin transaction history for admin users, regular history for customers
         if (user?.role === "Admin") {
-          console.log(
-            "🔐 Admin user detected, fetching admin transaction history for TransactionsTable"
-          );
+          logger.info("Transactions", "Fetching admin transaction history");
           fetchedTransactions = await getAdminTransactionHistory();
         } else {
-          console.log(
-            "👤 Customer user detected, fetching regular transaction history for TransactionsTable"
-          );
+          logger.info("Transactions", "Fetching customer transaction history");
           const endDate = new Date();
           const startDate = new Date();
           startDate.setMonth(endDate.getMonth() - 6);
@@ -70,17 +67,16 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         }
 
         if (fetchedTransactions) {
-          console.log(
-            "📄 Raw transaction data for TransactionsTable:",
-            fetchedTransactions
-          );
+          logger.success("Transactions", "Transactions loaded", {
+            count: fetchedTransactions.length,
+          });
           setTransactions(fetchedTransactions as Transaction[]);
         } else {
-          console.log("No transactions found");
+          logger.warn("Transactions", "No transactions found");
           setTransactions([]);
         }
       } catch (error) {
-        console.error("Error fetching transactions:", error);
+        logger.error("Transactions", "Failed to fetch transactions", error);
         setTransactions([]);
       } finally {
         hideLoading();

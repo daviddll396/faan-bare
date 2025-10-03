@@ -218,44 +218,51 @@ const ListBox: React.FC<ListBoxProps> = ({
                         }
                       >
                         {options.length > 0 ? (
-                          options.map((option) => {
-                            const labelTxt =
-                              option.label || option.name || option.value;
-                            return (
-                              <Listbox.Option
-                                key={option.value}
-                                value={option}
-                                className={({
-                                  active,
-                                  selected,
-                                }: {
-                                  active: boolean;
-                                  selected: boolean;
-                                }) =>
-                                  `listbox-option ${
-                                    selected ? "selected" : ""
-                                  } ${active ? "focused" : ""}`
-                                }
-                              >
-                                {({ selected }: { selected: boolean }) => (
-                                  <>
-                                    <span
-                                      className={`listbox-option-text ${
-                                        selected ? "selected" : ""
-                                      }`}
-                                    >
-                                      {labelTxt}
-                                    </span>
-                                    {selected && (
-                                      <span className="listbox-option-check">
-                                        ✓
+                          options
+                            .filter((option) => {
+                              // Filter out empty or null options
+                              const labelTxt =
+                                option.label || option.name || option.value;
+                              return labelTxt && labelTxt.trim() !== "";
+                            })
+                            .map((option) => {
+                              const labelTxt =
+                                option.label || option.name || option.value;
+                              return (
+                                <Listbox.Option
+                                  key={option.value}
+                                  value={option}
+                                  className={({
+                                    active,
+                                    selected,
+                                  }: {
+                                    active: boolean;
+                                    selected: boolean;
+                                  }) =>
+                                    `listbox-option ${
+                                      selected ? "selected" : ""
+                                    } ${active ? "focused" : ""}`
+                                  }
+                                >
+                                  {({ selected }: { selected: boolean }) => (
+                                    <>
+                                      <span
+                                        className={`listbox-option-text ${
+                                          selected ? "selected" : ""
+                                        }`}
+                                      >
+                                        {labelTxt}
                                       </span>
-                                    )}
-                                  </>
-                                )}
-                              </Listbox.Option>
-                            );
-                          })
+                                      {selected && (
+                                        <span className="listbox-option-check">
+                                          ✓
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
+                                </Listbox.Option>
+                              );
+                            })
                         ) : (
                           <div className="listbox-no-options">
                             No options found

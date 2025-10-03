@@ -28,7 +28,7 @@
   align-items: center;
   background: transparent;
   border: 1px solid #e4e4e4;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 0 12px 0 12px;
   height: var(--form-control-height, 56px);
   font-size: var(--form-control-font-size, 16px);
@@ -96,7 +96,7 @@
     gap: 7px;
   }
   .fieldbutton-search-wrapper {
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 0 11px;
   }
   .fieldbutton-search-icon {
@@ -115,7 +115,6 @@
     gap: 6px;
   }
   .fieldbutton-search-wrapper {
-    border-radius: 8px;
     padding: 0 10px;
   }
   .fieldbutton-search-icon {
@@ -136,7 +135,7 @@
     width: 100%;
   }
   .fieldbutton-search-wrapper {
-    border-radius: 6px;
+  
     padding: 0 8px;
   }
   .fieldbutton-search-icon {

@@ -16,15 +16,15 @@
 
 .solid-button--small {
   padding: 8px 12px;
-  border-radius: 10px; /* default radius when not rounded */
+  border-radius: 5px; /* default radius when not rounded */
 }
 .solid-button--medium {
   padding: 12px 18px;
-  border-radius: 10px; /* default radius when not rounded */
+  border-radius: 5px; /* default radius when not rounded */
 }
 .solid-button--large {
   padding: 18px 28px;
-  border-radius: 10px; /* default radius when not rounded */
+  border-radius: 5px; /* default radius when not rounded */
 }
 
 .solid-button--rounded {
@@ -58,7 +58,9 @@
 }
 
 .solid-button:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
+  background: #434343 !important;
+  color: #fff !important;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -95,30 +97,24 @@
 @media (max-width: 1600px) {
   .solid-button--small {
     padding: 7px 11px;
-    border-radius: 9px;
   }
   .solid-button--medium {
     padding: 11px 16px;
-    border-radius: 9px;
   }
   .solid-button--large {
     padding: 16px 24px;
-    border-radius: 9px;
   }
 }
 
 @media (max-width: 1200px) {
   .solid-button--small {
     padding: 6px 10px;
-    border-radius: 8px;
   }
   .solid-button--medium {
     padding: 10px 14px;
-    border-radius: 8px;
   }
   .solid-button--large {
     padding: 14px 20px;
-    border-radius: 8px;
   }
 }
 

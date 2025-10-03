@@ -460,72 +460,146 @@
 }
 
 /* View Details Modal */
-.view-details-modal .modal-content {
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
+/* Invoice Details Modal - Receipt Style */
+.view-details-modal {
+  min-width: 520px;
+  max-width: 720px;
 }
 
-.view-details-modal h2 {
-  font-size: 24px;
-  font-weight: 600;
+.invoice-details-paper {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
   color: #000;
-  margin-bottom: 24px;
-  text-align: left;
+  min-height: 400px;
+  width: 100%;
+  max-width: 580px;
 }
 
-.invoice-details-content {
-  background: #fdfdfd;
-  border-radius: 8px;
+.invoice-details-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 16px;
+  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
+      top / 16px 16px repeat-x,
+    linear-gradient(#f0f0f0, #f0f0f0);
 }
 
-.invoice-details-content > div {
-  margin-bottom: 16px;
+.invoice-details-head {
+  text-align: center;
+  margin: 8px 0;
+}
+
+.invoice-details-brand {
+  font-weight: 700;
+  color: #000;
   font-size: 14px;
-  color: #000;
-  line-height: 1.5;
-  justify-content: space-between;
-  display: flex;
 }
 
-.invoice-details-content strong {
+.invoice-details-title {
+  font-size: 16px;
+  font-weight: 800;
   color: #000;
-  font-weight: 600;
-  margin-right: 8px;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
 }
 
-.invoice-details-content .invoice-status {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
+.invoice-details-sub {
   font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
+  color: #969696;
+  margin-top: 2px;
 }
 
-.invoice-details-content .invoice-status.pending {
+.invoice-details-meta {
+  border: 1px dashed #f0f0f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px 0;
+}
+
+.invoice-details-meta .meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px dashed #f0f0f0;
+}
+
+.invoice-details-meta .meta-row:last-child {
+  border-bottom: none;
+}
+
+.invoice-details-meta .meta-row span:first-child {
+  color: #969696;
+  font-size: 12px;
+}
+
+.invoice-details-meta .status-indicator {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.invoice-details-meta .status-indicator.status-pending {
   background: #fef3c7;
   color: #92400e;
 }
 
-.invoice-details-content .invoice-status.paid {
+.invoice-details-meta .status-indicator.status-paid {
   background: #d1fae5;
   color: #065f46;
 }
 
-.invoice-details-content .invoice-status.cancelled {
+.invoice-details-meta .status-indicator.status-cancelled {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.invoice-details-content ul {
-  margin: 8px 0 0 20px;
-  padding: 0;
+.invoice-details-items {
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.invoice-details-content li {
-  margin-bottom: 4px;
-  color: #000;
+.invoice-details-items .thead,
+.invoice-details-items .row,
+.invoice-details-items .total {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.invoice-details-items .thead {
+  color: #969696;
+  font-size: 12px;
+}
+
+.invoice-details-items .row {
+  border-top: 1px dashed #f0f0f0;
+}
+
+.invoice-details-items .right {
+  text-align: right;
+}
+
+.invoice-details-items .total {
+  border-top: 2px solid #f0f0f0;
+  font-weight: 800;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
 }
 
 .payment-summary,
@@ -533,7 +607,6 @@
   margin-bottom: 24px;
   padding: 20px;
   background: #f8fafc;
-  border-radius: 8px;
 }
 
 .payment-summary h3,
@@ -559,9 +632,7 @@
 /* Make sure booking-summary-card (reused) has readable text */
 .booking-summary-card {
   background: #fff;
-  border-radius: 12px;
   padding: 18px;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
   color: #000;
 }
 
@@ -621,10 +692,6 @@
 
 /* Large Tablet (992px - 1199px) */
 @media (max-width: 1199px) and (min-width: 992px) {
-  .invoices-page {
-   
-  }
-
   .invoices-grid {
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 20px;
@@ -639,8 +706,6 @@
 
 /* Tablet (768px - 991px) */
 @media (max-width: 991px) and (min-width: 768px) {
-
-
   .page-actions {
     flex-direction: row;
     flex-wrap: wrap;
@@ -666,10 +731,6 @@
 
 /* Mobile (768px and below) */
 @media (max-width: 768px) {
-  .invoices-page {
-    
-  }
-
   .page-actions {
     flex-direction: column;
     align-items: stretch;
@@ -708,24 +769,49 @@
   }
 
   /* Modal Responsive Adjustments */
-  .view-details-modal .modal-content {
+  .view-details-modal {
+    min-width: 95vw;
     max-width: 95vw;
-    max-height: 85vh;
-    padding: 20px;
   }
 
-  .view-details-modal h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
+  .invoice-details-paper {
+    padding: 20px 24px;
   }
 
-  .invoice-details-content {
-    padding: 16px;
-  }
-
-  .invoice-details-content > div {
-    margin-bottom: 12px;
+  .invoice-details-brand {
     font-size: 13px;
+  }
+
+  .invoice-details-title {
+    font-size: 15px;
+  }
+
+  .invoice-details-sub {
+    font-size: 11px;
+  }
+
+  .invoice-details-meta {
+    padding: 10px 12px;
+    margin: 10px 0 14px 0;
+  }
+
+  .invoice-details-meta .meta-row {
+    padding: 6px 3px;
+  }
+
+  .invoice-details-meta .meta-row span:first-child {
+    font-size: 11px;
+  }
+
+  .invoice-details-items .thead,
+  .invoice-details-items .row,
+  .invoice-details-items .total {
+    gap: 10px;
+    padding: 8px 0;
+  }
+
+  .invoice-details-items .thead {
+    font-size: 11px;
   }
 
   .payment-summary {
@@ -800,24 +886,54 @@
   }
 
   /* Extra Small Mobile Modal Adjustments */
-  .view-details-modal .modal-content {
+  .view-details-modal {
+    min-width: 98vw;
     max-width: 98vw;
-    max-height: 90vh;
-    padding: 16px;
   }
 
-  .view-details-modal h2 {
-    font-size: 18px;
-    margin-bottom: 16px;
+  .invoice-details-paper {
+    padding: 16px 20px;
   }
 
-  .invoice-details-content {
-    padding: 12px;
-  }
-
-  .invoice-details-content > div {
-    margin-bottom: 10px;
+  .invoice-details-brand {
     font-size: 12px;
+  }
+
+  .invoice-details-title {
+    font-size: 14px;
+  }
+
+  .invoice-details-sub {
+    font-size: 10px;
+  }
+
+  .invoice-details-meta {
+    padding: 8px 10px;
+    margin: 8px 0 12px 0;
+  }
+
+  .invoice-details-meta .meta-row {
+    padding: 5px 2px;
+  }
+
+  .invoice-details-meta .meta-row span:first-child {
+    font-size: 10px;
+  }
+
+  .invoice-details-meta .status-indicator {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .invoice-details-items .thead,
+  .invoice-details-items .row,
+  .invoice-details-items .total {
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  .invoice-details-items .thead {
+    font-size: 10px;
   }
 
   .payment-summary {
@@ -833,11 +949,6 @@
   .invoice-summary-details > div {
     margin-bottom: 5px;
     font-size: 12px;
-  }
-
-  .invoice-details-content .invoice-status {
-    padding: 3px 10px;
-    font-size: 11px;
   }
 
   /* Extra Small Mobile Create Invoice Modal Adjustments */
@@ -932,27 +1043,6 @@
   max-width: 720px;
 }
 
-.receipt-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-  color: #000;
-}
-.receipt-paper::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -8px;
-  height: 16px;
-  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
-      top / 16px 16px repeat-x,
-    linear-gradient(#f0f0f0, #f0f0f0);
-}
 .receipt-head {
   text-align: center;
   margin: 8px 0;
@@ -1059,7 +1149,7 @@
   align-items: stretch;
   padding: 0;
   border: none; /* borderless card */
-  border-radius: 14px;
+  border-radius: 8px;
   background: #fff;
   box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
   min-height: 160px;
@@ -1130,14 +1220,6 @@
     padding: 0 8px;
     border-radius: 8px;
   }
-}
-
-/* Modal zoom scaling */
-.create-invoice-modal .modal-content,
-.payment-modal .modal-content,
-.view-details-modal .modal-content {
-  zoom: 1; /* Default zoom level */
-  transition: zoom 0.3s ease;
 }
 
 /* Removed legacy zoom-based responsiveness. Use explicit responsive rules instead. */

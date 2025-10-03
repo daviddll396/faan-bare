@@ -4,7 +4,7 @@
 
 .data-table-card {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 5px;
   border: 1px solid #f0f0f0;
   padding: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -96,27 +96,18 @@
   background: #fff;
 }
 
-/* Pagination Controls - Outer container for better mobile experience */
+/* Pagination Controls - Always outside table container */
 .data-table-pagination-outer {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 5px;
   border: 1px solid #f0f0f0;
   padding: 20px 24px;
   margin-top: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  display: none; /* Hidden by default on desktop */
+  display: flex; /* Always visible */
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-}
-
-/* Default pagination (desktop) - inside table container */
-.data-table-pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px 10px 24px;
 }
 
 .pagination-info {
@@ -150,7 +141,6 @@
 }
 
 .pagination-btn:hover:not(.disabled) {
-  background: #e4e4e4;
   border-color: #007948;
   color: #007948;
 }
@@ -282,57 +272,7 @@
   display: inline-block;
 }
 
-.status-badge-table {
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-badge-table.active {
-  color: #009a34;
-  font-weight: 600;
-  font-family: "Poppins", sans-serif;
-}
-
-.status-badge-table.inactive {
-  color: #d60000;
-  font-weight: 600;
-  font-family: "Poppins", sans-serif;
-}
-
-.status-badge-table.paid {
-  color: #009a34;
-  font-weight: 600;
-}
-
-.status-badge-table.pending {
-  color: #d97706;
-  font-weight: 600;
-}
-
-.status-badge-table.overdue {
-  color: #d60000;
-  font-weight: 600;
-}
-
-.status-badge-table.draft {
-  color: #969696;
-  font-weight: 600;
-}
-
-.status-badge-table.completed {
-  color: #009a34;
-  font-weight: 600;
-}
-
-.status-badge-table.processing {
-  color: #2563eb;
-  font-weight: 600;
-}
-
-.status-badge-table.failed {
-  color: #d60000;
-  font-weight: 600;
-}
+/* Status badges now defined in Dashboard.css */
 
 .action-btn-table {
   background: none;
@@ -464,9 +404,7 @@
     font-size: 11px;
     border-radius: 3px;
   }
-  .status-badge-table {
-    font-size: 11px;
-  }
+
   .action-btn-table {
     font-size: 10px;
     gap: 2px;
@@ -559,9 +497,7 @@
     font-size: 10px;
     border-radius: 3px;
   }
-  .status-badge-table {
-    font-size: 10px;
-  }
+
   .action-btn-table {
     font-size: 9px;
     gap: 2px;
@@ -592,10 +528,10 @@
 @media (max-width: 1050px) and (min-width: 768px) {
   .data-table-card {
     padding-bottom: 10px;
-    border-radius:8px;
+    border-radius: 8px;
   }
-  .table-data-item{
-    font-size:8px;
+  .table-data-item {
+    font-size: 8px;
   }
 
   .data-table-header {
@@ -644,22 +580,9 @@
     min-width: 24px;
   }
 
-  .data-table-pagination {
-    padding: 10px 14px 0 14px;
-  }
-
   .data-table-pagination-outer {
     padding: 12px 14px;
-    border-radius:8px;
-  }
-
-  /* Show mobile pagination on tablet */
-  .data-table-pagination {
-    display: none;
-  }
-
-  .data-table-pagination-outer {
-    display: flex;
+    border-radius: 8px;
   }
 
   /* Table badges and buttons */
@@ -668,9 +591,7 @@
     font-size: 8px;
     border-radius: 2px;
   }
-  .status-badge-table {
-    font-size: 9px;
-  }
+
   .action-btn-table {
     font-size: 8px;
     gap: 1px;
@@ -749,12 +670,7 @@
     min-width: 20px;
   }
 
-  .data-table-pagination {
-    display: none;
-  }
-
   .data-table-pagination-outer {
-    display: flex;
     padding: 12px 14px;
     margin-top: 12px;
     border-radius: 10px;

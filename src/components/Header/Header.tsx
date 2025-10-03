@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { ChevronDown, User, Bell } from "lucide-react";
 import { CSSTransition } from "react-transition-group";
+import { logger } from "../../utils/logger";
 import "./header.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
         // expected server shape: [{id,title,body,read,createdAt,targetUrl}]
         setNotifications(data);
       } catch (err) {
-        console.warn("fetchNotifications failed, using mock data", err);
+        logger.warn("Notifications", "API unavailable, using mock data", err);
         // Fallback to mock data when backend isn't available yet
         const mock = [
           {
@@ -146,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
     try {
       await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
     } catch (err) {
-      console.warn(`markAsRead failed for notification ${id}`, err);
+      logger.warn("Notifications", `Mark as read failed for ${id}`, err);
       // ignore - backend may not exist; could revert if needed
     }
   };
@@ -156,7 +157,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
     try {
       await fetch(`/api/notifications/mark-all-read`, { method: "POST" });
     } catch (err) {
-      console.warn("markAllRead failed", err);
+      logger.warn("Notifications", "Mark all read failed", err);
       // backend may not exist yet
     }
   };
@@ -210,7 +211,9 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
     <>
       {/* Desktop Header - Only visible above 768px */}
       <div className="header desktop-only-header">
-        <h1 className="page-title-header">Hello, {user?.name ?? "Guest User"}</h1>
+        <h1 className="page-title-header">
+          Hello, {user?.name ?? "Guest User"}
+        </h1>
         <div
           className="header-right"
           style={{ display: "flex", alignItems: "center", gap: 12 }}
@@ -224,7 +227,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
             aria-expanded={open}
           >
             <div className="user-avatar">
-              <User color="#007948" width={"100%"} height={"100%"}/>
+              <User color="#007948" width={"100%"} height={"100%"} />
             </div>
             <div className="user-info">
               <span className="user-name">{user?.name || "Guest User"}</span>

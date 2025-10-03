@@ -1143,50 +1143,69 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           setShowViewDetailsModal(false);
           setViewingInvoice(null);
         }}
+        showHeader={true}
+        headerTitle="INVOICE DETAILS"
         className="view-details-modal"
       >
-        <div className="modal-content">
-          <h2 className="invoice-details-title">Invoice Details</h2>
-          {viewingInvoice && (
-            <div className="invoice-details-content">
-              <div>
-                <strong>Invoice Number:</strong> {viewingInvoice.invoiceNumber}
+        {viewingInvoice && (
+          <div className="invoice-details-paper">
+            <div className="invoice-details-head">
+              <div className="invoice-details-brand">
+                Federal Airports Authority of Nigeria
               </div>
-              <div>
-                <strong>Status:</strong>{" "}
-                <span className={`invoice-status ${viewingInvoice.status}`}>
+              <div className="invoice-details-title">INVOICE DETAILS</div>
+              <div className="invoice-details-sub">Transaction Information</div>
+            </div>
+            <div className="invoice-details-meta">
+              <div className="meta-row">
+                <span>Invoice Number</span>
+                <span className="mono">{viewingInvoice.invoiceNumber}</span>
+              </div>
+              <div className="meta-row">
+                <span>Status</span>
+                <span
+                  className={`status-indicator status-${viewingInvoice.status}`}
+                >
                   {viewingInvoice.status.toUpperCase()}
                 </span>
               </div>
-              <div>
-                <strong>Created At:</strong>{" "}
-                {viewingInvoice.createdAt.toLocaleDateString()}
+              <div className="meta-row">
+                <span>Customer</span>
+                <span>{viewingInvoice.customerName}</span>
               </div>
-              <div>
-                <strong>Due Date:</strong>{" "}
-                {viewingInvoice.dueDate.toLocaleDateString()}
+              <div className="meta-row">
+                <span>Created At</span>
+                <span>{viewingInvoice.createdAt.toLocaleDateString()}</span>
               </div>
-              <div>
-                <strong>Customer:</strong> {viewingInvoice.customerName}
-              </div>
-              <div>
-                <strong>Total Amount:</strong> ₦
-                {viewingInvoice.totalAmount.toLocaleString()}
-              </div>
-              <div>
-                <strong>Services:</strong>
-                <ul>
-                  {viewingInvoice.services.map((service, index) => (
-                    <li key={index}>
-                      {service.name} x{service.quantity} - ₦
-                      {service.amount.toLocaleString()}
-                    </li>
-                  ))}
-                </ul>
+              <div className="meta-row">
+                <span>Due Date</span>
+                <span>{viewingInvoice.dueDate.toLocaleDateString()}</span>
               </div>
             </div>
-          )}
-        </div>
+            <div className="invoice-details-items">
+              <div className="thead">
+                <span>Service</span>
+                <span className="right">Amount</span>
+              </div>
+              {viewingInvoice.services.map((service, index) => (
+                <div key={index} className="row">
+                  <span>
+                    {service.name} x{service.quantity}
+                  </span>
+                  <span className="right mono">
+                    ₦{(service.amount * service.quantity).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+              <div className="total">
+                <span>Total</span>
+                <span className="right mono">
+                  ₦{viewingInvoice.totalAmount.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

@@ -1725,7 +1725,7 @@ const RegisterPage: React.FC = () => {
             <div
               style={{
                 background: "#fff",
-                borderRadius: 18,
+                borderRadius: 5,
                 boxShadow: "0 4px 32px rgba(34, 43, 69, 0.08)",
                 border: "1px solid #e4e4e4",
                 padding: 32,
@@ -1742,7 +1742,7 @@ const RegisterPage: React.FC = () => {
                 onDragOver={(e) => e.preventDefault()}
                 style={{
                   border: "2px dashed #b6e2d6",
-                  borderRadius: 12,
+                  borderRadius: 5,
                   padding: 32,
                   textAlign: "center",
                   marginBottom: 24,
@@ -1796,7 +1796,7 @@ const RegisterPage: React.FC = () => {
                     color: "#6C7278",
                     background: "transparent",
                     border: "1.5px solid #d1d5db",
-                    borderRadius: 8,
+                    borderRadius: 5,
                     fontWeight: 500,
                     fontSize: 14,
                     padding: "5px 14px",
@@ -1827,7 +1827,7 @@ const RegisterPage: React.FC = () => {
                       style={{
                         background: "#fff",
                         border: "1px solid #e4e4e4",
-                        borderRadius: 10,
+                        borderRadius: 5,
                         padding: "12px 18px 10px 18px",
                         marginBottom: 14,
                         display: "flex",

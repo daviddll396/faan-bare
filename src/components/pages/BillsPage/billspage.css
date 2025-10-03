@@ -431,7 +431,6 @@
 
 /* Bill View Receipt Button */
 
-
 /* ======================================== */
 /* BASE STYLES */
 /* ======================================== */
@@ -443,7 +442,7 @@
 
 .bill-search-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: none;
   box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
   padding: 28px 28px;
@@ -618,7 +617,7 @@
 
 .bill-customer-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: 1px solid #f0f0f0;
 
   padding: 20px 20px;
@@ -753,7 +752,7 @@
 
 .bill-results-table-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: none;
   margin-top: 12px;
   padding: 0;
@@ -766,16 +765,13 @@
   font-size: 16px;
 }
 
-
-
-
 .invoice-header-item {
   color: #000;
 }
 
 .add-service-form-bill {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: none;
   box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
   padding: 24px 28px;
@@ -1422,7 +1418,6 @@
     font-size: 12px;
   }
 
- 
   .customer-modal-center > div,
   .customer-success-modal {
     border-radius: 10px !important;
@@ -1925,9 +1920,8 @@
 
 .bills-info-card {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 5px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid #f0f0f0;
 }
 
@@ -2007,8 +2001,6 @@
   padding-top: 16px;
   border-top: 1px solid #f0f0f0;
 }
-
-
 
 /* Responsive Design */
 @media (max-width: 991px) {

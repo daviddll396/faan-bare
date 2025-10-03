@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import { logger } from "../../../utils/logger";
 import MetricsCards from "./MetricCard/MetricsCards";
 import ChartSection from "./ChartSection/ChartSection";
 import TransactionsTable from "./TransactionsTable/TransactionsTable";
@@ -9,7 +10,6 @@ import "./dashboardpage.css";
 import WalletIcon from "/icons/dashboard-wallet-icon.svg";
 import SolidButton from "../../reusables/SolidButton/SolidButton";
 import CheckCircle from "/icons/check-circle.svg";
-import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { Eye, EyeOff } from "lucide-react";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import DataTable from "../../reusables/DataTable/DataTable";
@@ -69,7 +69,7 @@ interface FundingTransaction extends Transaction {
   balanceAfter?: number;
 }
 
-const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
+const DashboardPage: React.FC<DashboardPageProps> = () => {
   const {
     user,
     fundWallet,
@@ -147,35 +147,34 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
       )?.env?.VITE_ITEX_API_KEY;
       if (envKey) {
         (window as WindowWithItex).ITEX_PUBLIC_API_KEY = envKey;
-        console.log("Exported VITE_ITEX_API_KEY to window.ITEX_PUBLIC_API_KEY");
+        logger.debug("Payment", "ITEX API key exported to window");
       } else {
-        console.warn("VITE_ITEX_API_KEY not set in import.meta.env");
+        logger.warn("Payment", "VITE_ITEX_API_KEY not set in env");
       }
     } catch (err) {
-      console.warn("Failed to export VITE_ITEX_API_KEY to window", err);
+      logger.warn("Payment", "Failed to export ITEX API key", err);
     }
     let mounted = true;
     const onLoad = () => {
       if (!mounted) return;
-      console.log("ITEXPay script loaded");
+      logger.success("Payment", "ITEXPay script loaded");
       setItexReady(true);
       // Log env key and window availability when script loads
       try {
         const envKey = (
           import.meta as unknown as { env?: { VITE_ITEX_API_KEY?: string } }
         )?.env?.VITE_ITEX_API_KEY;
-        console.log("VITE_ITEX_API_KEY (env) on script load:", envKey);
-        console.log(
-          "window.ItexPayNS present:",
-          !!(window as WindowWithItex).ItexPayNS
-        );
+        logger.debug("Payment", "ITEXPay initialized", {
+          hasApiKey: !!envKey,
+          hasItexPayNS: !!(window as WindowWithItex).ItexPayNS,
+        });
       } catch (err) {
-        console.warn("Could not read import.meta.env at script load", err);
+        logger.warn("Payment", "Could not read env at script load", err);
       }
     };
     const onError = () => {
       if (!mounted) return;
-      console.error("Failed to load ITEXPay script");
+      logger.error("Payment", "Failed to load ITEXPay script");
       setItexReady(false);
     };
 
@@ -212,14 +211,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
 
       // Use admin transaction history for admin users, regular history for customers
       if (user?.role === "Admin") {
-        console.log(
-          "🔐 Admin user detected, fetching admin transaction history for dashboard"
-        );
+        logger.info("Dashboard", "Fetching admin transaction history");
         txns = await getAdminTransactionHistoryRef.current();
       } else {
-        console.log(
-          "👤 Customer user detected, fetching regular transaction history for dashboard"
-        );
+        logger.info("Dashboard", "Fetching customer transaction history");
         const endDate = new Date();
         const startDate = new Date();
         startDate.setMonth(endDate.getMonth() - 6);
@@ -231,7 +226,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
       }
 
       if (txns) {
-        console.log("📄 Raw transaction data for dashboard:", txns);
+        logger.success("Dashboard", "Transactions loaded", {
+          count: txns.length,
+        });
         setTransactions(txns as Transaction[]);
       }
     };
@@ -247,7 +244,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         setFundingRecords(parsed || []);
       }
     } catch (err) {
-      console.warn("Failed to read persisted funding records:", err);
+      logger.warn("Wallet", "Failed to read persisted funding records", err);
     }
   }, []);
 
@@ -255,10 +252,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   React.useEffect(() => {
     const fetchAdminStats = async () => {
       if (user?.role === "Admin") {
-        console.log("🔐 Admin user detected, fetching dashboard stats");
+        logger.info("Dashboard", "Fetching admin dashboard stats");
         const stats = await getAdminDashboardStats();
         if (stats) {
-          console.log("📊 Admin dashboard stats received:", stats);
+          logger.success("Dashboard", "Admin stats loaded", {
+            totalBookings: stats.data.transactionStats.total,
+          });
           setAdminStats(stats);
         }
       }
@@ -270,46 +269,20 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
   // Log admin stats whenever they change
   React.useEffect(() => {
     if (adminStats && user?.role === "Admin") {
-      console.log("🎯 === ADMIN DASHBOARD STATS UPDATED ===");
-      console.log("📊 Current Admin Stats:", adminStats);
-      console.log(
-        "📋 Total Bookings/Bills:",
-        adminStats.data.transactionStats.total
-      );
-      console.log(
-        "⏳ Pending Bookings/Bills:",
-        adminStats.data.transactionStats.pending
-      );
-      console.log(
-        "✅ Completed Bookings/Bills:",
-        adminStats.data.transactionStats.completed
-      );
-      console.log(
-        "❌ Cancelled Bookings/Bills:",
-        adminStats.data.transactionStats.cancelled
-      );
-      console.log("💰 Wallet Balance:", adminStats.data.walletBalance);
-      console.log("👤 Customer Profile:", adminStats.data.customerProfile);
-      console.log("📋 API Status:", adminStats.status);
-      console.log("🔢 Status Code:", adminStats.statusCode);
-      console.log("💬 Message:", adminStats.message);
-
-      // Additional context for clarity
-      console.log("📊 === BOOKING & PAYMENT STATISTICS ===");
-      console.log("🎫 Total Bookings:", adminStats.data.transactionStats.total);
-      console.log("💳 Total Bills:", adminStats.data.transactionStats.total);
-      console.log(
-        "✅ Successful Payments:",
-        adminStats.data.transactionStats.completed
-      );
-      console.log(
-        "⏳ Pending Payments:",
-        adminStats.data.transactionStats.pending
-      );
-      console.log(
-        "❌ Failed/Cancelled Payments:",
-        adminStats.data.transactionStats.cancelled
-      );
+      logger.group("Dashboard", "Admin Stats Updated", () => {
+        logger.info("Dashboard", "Transaction Stats", {
+          total: adminStats.data.transactionStats.total,
+          pending: adminStats.data.transactionStats.pending,
+          completed: adminStats.data.transactionStats.completed,
+          cancelled: adminStats.data.transactionStats.cancelled,
+        });
+        logger.info("Dashboard", "Wallet & Status", {
+          walletBalance: adminStats.data.walletBalance,
+          status: adminStats.status,
+          statusCode: adminStats.statusCode,
+          message: adminStats.message,
+        });
+      });
     }
   }, [adminStats, user?.role]);
 
@@ -391,7 +364,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
     try {
       // Prevent multiple payment windows
       if (paymentInitializedRef.current) {
-        console.log("Payment already initialized, ignoring duplicate request");
+        logger.warn(
+          "Payment",
+          "Payment already initialized, ignoring duplicate"
+        );
         return;
       }
 
@@ -400,18 +376,13 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         const envKeyNow = (
           import.meta as unknown as { env?: { VITE_ITEX_API_KEY?: string } }
         )?.env?.VITE_ITEX_API_KEY;
-        console.log(
-          "Attempting ITEXPay init - itexReady:",
+        logger.debug("Payment", "Attempting ITEXPay init", {
           itexReady,
-          "envKey:",
-          envKeyNow
-        );
-        console.log(
-          "window.ItexPayNS present:",
-          !!(window as WindowWithItex).ItexPayNS
-        );
+          hasApiKey: !!envKeyNow,
+          hasItexPayNS: !!(window as WindowWithItex).ItexPayNS,
+        });
       } catch (err) {
-        console.warn("Could not read import.meta.env", err);
+        logger.warn("Payment", "Could not read import.meta.env", err);
       }
 
       // Use ITEXPay inline checkout if available
@@ -421,8 +392,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         paymentInitializedRef.current = true;
         hasProcessedCompletionRef.current = false;
         if (!itexReady) {
-          console.log(
-            "ITEXPay available but script not yet ready — waiting for load event."
+          logger.warn(
+            "Payment",
+            "ITEXPay script not yet ready, waiting for load"
           );
         }
 
@@ -430,11 +402,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         // NOTE: API key hardcoded for testing per request
         const apiKey =
           "ITXPUB_STAGING_N9OSLGOKR2WT6KNKMRPHI0TNDZF3FEMCFDUO2PFN-6011000252-04GPRVVTV0CPUVD";
-        console.log("Using ITEX API key: [REDACTED]");
+        logger.debug("Payment", "Using ITEX API key: [REDACTED]");
         if (!apiKey) {
-          console.error(
-            "ITEX API key is missing. Set VITE_ITEX_API_KEY and restart dev server."
-          );
+          logger.error("Payment", "ITEX API key is missing");
           setShowFundLoading(false);
           paymentInitializedRef.current = false;
           setShowFundWallet(true);
@@ -450,11 +420,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
 
         // Check if we have minimum required information
         if (!firstName || !lastName || !phoneNumber || !email) {
-          console.error("Missing required user information for ITEXPay:", {
-            firstName,
-            lastName,
-            phoneNumber,
-            email,
+          logger.error("Payment", "Missing required user information", {
+            hasFirstName: !!firstName,
+            hasLastName: !!lastName,
+            hasPhone: !!phoneNumber,
+            hasEmail: !!email,
           });
           setShowFundLoading(false);
           paymentInitializedRef.current = false;
@@ -477,17 +447,15 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
           currency: "NGN",
           reference,
           onCompleted: async (data: unknown) => {
-            console.log("ITEXPay success data:", data);
+            logger.success("Payment", "ITEXPay payment completed", data);
             if (hasProcessedCompletionRef.current) {
-              console.log(
-                "Payment completion already processed, ignoring duplicate trigger"
-              );
+              logger.warn("Payment", "Duplicate completion trigger, ignoring");
               return;
             }
             hasProcessedCompletionRef.current = true;
 
             // Call backend to record the successful fund (include provider response)
-            console.log("Calling fundWallet with provider response", data);
+            logger.info("Wallet", "Recording fund wallet transaction");
             const result = await fundWallet(amount, reference, data);
             setShowFundLoading(false);
             paymentInitializedRef.current = false;
@@ -498,7 +466,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
               // Sync wallet from server to ensure accurate balance
               try {
                 await refreshUserDetailsRef.current();
-              } catch {}
+              } catch {
+                // Ignore refresh errors - wallet balance will be updated on next page load
+              }
               // Persist funding record locally so it shows up in Recent Funding Records
               try {
                 const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
@@ -526,7 +496,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                 // also update local wallet balance optimistically
                 setLocalWalletBalance((b) => b + Math.round(amount));
               } catch (err) {
-                console.warn("Failed to persist funding record locally", err);
+                logger.warn("Wallet", "Failed to persist funding record", err);
               }
             } else {
               setShowFundWallet(true);
@@ -534,14 +504,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
             }
           },
           onError: (err: unknown) => {
-            console.error("ITEXPay error:", err);
+            logger.error("Payment", "ITEXPay error", err);
             setShowFundLoading(false);
             paymentInitializedRef.current = false;
             setShowFundWallet(true);
             showToast("Payment failed or was cancelled.", "error");
           },
           onClose: () => {
-            console.log("ITEXPay closed by user");
+            logger.info("Payment", "ITEXPay closed by user");
             setShowFundLoading(false);
             paymentInitializedRef.current = false;
             setShowFundWallet(true);
@@ -551,7 +521,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         try {
           Pay.init();
         } catch (err) {
-          console.error("Failed to init ITEXPay:", err);
+          logger.error("Payment", "Failed to init ITEXPay", err);
           setShowFundLoading(false);
           paymentInitializedRef.current = false;
           setShowFundWallet(true);
@@ -593,7 +563,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
             setTransactions((prev) => [record as Transaction, ...prev]);
             setLocalWalletBalance((b) => b + Math.round(amount));
           } catch (err) {
-            console.warn("Failed to persist fallback funding record:", err);
+            logger.warn(
+              "Wallet",
+              "Failed to persist fallback funding record",
+              err
+            );
           }
         } else {
           setShowFundLoading(false);
@@ -603,7 +577,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         }
       }
     } catch (error) {
-      console.error("Fund wallet error:", error);
+      logger.error("Wallet", "Fund wallet error", error);
       setShowFundLoading(false);
       // Reopen modal to show error state
       setShowFundWallet(true);
@@ -628,7 +602,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
         <LoadingSpinner isVisible={true} message="Processing payment..." />
       )}
 
-      {role === "Customer" && (
+      {user?.role === "Customer" && (
         <div className="customer-dashboard-top">
           <div className="wallet-card">
             <div className="wallet-info">
@@ -811,9 +785,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
             <div className="fund-wallet-success-desc">
               Your payment was successful.
             </div>
-            <GradientButton onClick={handleCloseFundWallet} fullWidth>
-              CLOSE
-            </GradientButton>
+            <SolidButton
+              text="CLOSE"
+              onClick={handleCloseFundWallet}
+              fullWidth
+            />
           </div>
         )}
         {/* Fund Wallet Form */}
@@ -838,14 +814,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ role }) => {
                   required
                 />
               </div>
-              <GradientButton
+              <SolidButton
+                text="FUND WALLET"
                 type="submit"
                 fullWidth
                 disabled={!fundAmountNum || (fundAmountNum ?? 0) < 200000}
-                className="fund-wallet-submit-btn"
-              >
-                FUND WALLET
-              </GradientButton>
+              />
             </form>
           </div>
         )}

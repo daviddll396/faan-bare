@@ -26,7 +26,7 @@
 
 .content-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   border: none;
   padding: 28px;
   animation: slideInUp 0.6s ease-out 0.4s both;
@@ -50,16 +50,16 @@
   text-align: center;
   padding: 18px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 5px;
   box-shadow: 0 6px 18px rgba(16, 24, 40, 0.008);
   border: 1px solid #f0f0f0;
 }
 
 .summary-label {
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   color: #969696;
-  margin-bottom: 8px;
+  
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -83,34 +83,10 @@
 }
 
 /* Status Badges */
-.status-badge {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 6px 10px;
-  text-align: center;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
 
-.status-badge.success {
-  background: #ecfdf5;
-  color: #10b981;
-  border: 1px solid #a7f3d0;
-}
 
-.status-badge.failed {
-  background: #fef2f2;
-  color: #ef4444;
-  border: 1px solid #fecaca;
-}
 
-.status-badge.warning {
-  background: #fffbeb;
-  color: #f59e0b;
-  border: 1px solid #fed7aa;
-}
+
 
 /* Button Styles */
 .border-button-audittrail {

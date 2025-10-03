@@ -15,7 +15,7 @@
   padding: 12px 14px; /* adjusted to respect variable heights */
   height: var(--form-control-height);
   border: 1.5px solid #e4e4e4;
-  border-radius: 12px;
+  border-radius: 5px;
   font-size: var(--form-control-font-size, 16px);
   font-family: inherit;
   background: #fff;

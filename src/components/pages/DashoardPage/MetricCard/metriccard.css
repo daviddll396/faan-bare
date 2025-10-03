@@ -25,7 +25,7 @@
 .metric-card {
   background: #fff;
   padding: 20px 22px;
-  border-radius: 14px;
+  border-radius: 5px;
   border: none;
   box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
   display: flex;
@@ -68,7 +68,7 @@
 .metric-card-icon {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -87,7 +87,7 @@
 
 .metric-trend-badge {
   background: #ecfdf5;
-  border-radius: 6px;
+  border-radius: 5px;
   padding: 6px;
   display: inline-flex;
   align-items: center;
