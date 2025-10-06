@@ -271,12 +271,12 @@ const ChartSection: React.FC<ChartSectionProps> = ({
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#7B91B0" }}
+                tick={{ fontSize: 12, fill: "#898989" }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#7B91B0" }}
+                tick={{ fontSize: 12, fill: "#898989" }}
                 domain={[0, yAxisMax]}
               />
               <Tooltip

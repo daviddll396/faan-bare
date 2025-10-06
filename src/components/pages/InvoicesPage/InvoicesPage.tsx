@@ -8,7 +8,8 @@ import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import InvoiceCard from "../../reusables/InvoiceCard/InvoiceCard";
 import "./InvoicesPage.css";
-import ServicesGrid from "../../reusables/ServicesGrid/ServicesGrid";
+import Grid from "../../reusables/Grid/Grid";
+import ServiceCard from "../../reusables/ServiceCard/ServiceCard";
 
 // helper to map service names to images (reuses same assets as ServicesPage)
 const getImageForService = (serviceName: string): string => {
@@ -729,21 +730,23 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       {showCreateInvoicePage && (
         <div className="create-invoice-subpage">
           <div className="services-selection">
-            <ServicesGrid
-              className="available-services"
-              items={availableServices.map((s) => ({
-                id: s.id,
-                image: getImageForService(s.name),
-                name: s.name,
-                price: s.amount,
-                description: s.description,
-              }))}
-              actionText="Add to Invoice"
-              onAction={(id) => {
-                const svc = availableServices.find((a) => a.id === id);
-                if (svc) handleServiceSelection(svc);
-              }}
-            />
+            <Grid className="available-services">
+              {availableServices.map((s) => (
+                <ServiceCard
+                  key={s.id}
+                  id={s.id}
+                  image={getImageForService(s.name)}
+                  name={s.name}
+                  price={s.amount}
+                  description={s.description}
+                  actionText="Add to Invoice"
+                  onAction={() => {
+                    const svc = availableServices.find((a) => a.id === s.id);
+                    if (svc) handleServiceSelection(svc);
+                  }}
+                />
+              ))}
+            </Grid>
           </div>
 
           {selectedServices.length > 0 && (

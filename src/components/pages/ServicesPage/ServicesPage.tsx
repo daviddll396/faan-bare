@@ -15,7 +15,8 @@ import { FiUserPlus } from "react-icons/fi";
 import CheckCircle from "/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
-import ServicesGrid from "../../reusables/ServicesGrid/ServicesGrid";
+import Grid from "../../reusables/Grid/Grid";
+import ServiceCard from "../../reusables/ServiceCard/ServiceCard";
 import SlideIndicator from "../../reusables/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Input from "../../reusables/Input/Input";
@@ -2066,21 +2067,25 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             </div>
 
             {/* Show services inside the search container */}
-            <ServicesGrid
-              className="available-services"
-              items={customerFilteredServices.map((s) => ({
-                id: s.id,
-                image: s.image,
-                name: s.name,
-                price: `₦${s.price}`,
-                description: s.description,
-              }))}
-              actionText="Book Service"
-              onAction={(id) => {
-                const svc = customerFilteredServices.find((c) => c.id === id);
-                if (svc) setSelectedService(svc as CustomerService);
-              }}
-            />
+            <Grid className="available-services">
+              {customerFilteredServices.map((s) => (
+                <ServiceCard
+                  key={s.id}
+                  id={s.id}
+                  image={s.image}
+                  name={s.name}
+                  price={`₦${s.price}`}
+                  description={s.description}
+                  actionText="Book Service"
+                  onAction={() => {
+                    const svc = customerFilteredServices.find(
+                      (c) => c.id === s.id
+                    );
+                    if (svc) setSelectedService(svc as CustomerService);
+                  }}
+                />
+              ))}
+            </Grid>
           </div>
         </div>
       </div>
