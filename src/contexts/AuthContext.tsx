@@ -43,6 +43,11 @@ const API_ENDPOINTS = {
   GET_ALL_CUSTOMERS: `${API_BASE_URL}/api/faan/customers`,
   CHANGE_CUSTOMER_STATUS: `${API_BASE_URL}/api/faan/customers`,
   CREATE_CUSTOMER: `${API_BASE_URL}/auth/faan/register`,
+  SUBMIT_FEEDBACK: `${API_BASE_URL}/api/faan/feedback`,
+  SUBMIT_DISPUTE: `${API_BASE_URL}/api/faan/disputes`,
+  CUSTOMER_DISPUTES: `${API_BASE_URL}/api/faan/disputes/customer`,
+  ADMIN_DISPUTES: `${API_BASE_URL}/api/faan/disputes/admin`,
+  UPDATE_DISPUTE_STATUS: `${API_BASE_URL}/api/faan/disputes`,
 };
 
 const ENCRYPTION_CONFIG = {
@@ -282,6 +287,108 @@ interface UpdateProfileResponse {
   };
 }
 
+// Feedback interfaces
+interface SubmitFeedbackRequest {
+  message: string;
+  category: string;
+}
+
+interface SubmitFeedbackResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data?: {
+    id: string;
+    message: string;
+    category: string;
+    createdAt: string;
+  };
+}
+
+// Dispute interfaces
+interface SubmitDisputeRequest {
+  invoiceId?: string;
+  paymentId?: string;
+  reason: string;
+  category: string;
+  comments?: string;
+  attachment?: File;
+}
+
+interface SubmitDisputeResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data?: {
+    id: string;
+    reference: string;
+    invoiceId?: string;
+    paymentId?: string;
+    reason: string;
+    comments?: string;
+    status: string;
+    createdAt: string;
+  };
+}
+
+interface CustomerDisputesResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data: Array<{
+    id: string;
+    reference: string;
+    invoiceId?: string;
+    paymentId?: string;
+    reason: string;
+    category: string;
+    comments?: string;
+    status: "Pending" | "In Review" | "Resolved" | "Closed";
+    resolutionNotes?: string;
+    createdAt: string;
+    updatedAt: string;
+    attachmentUrl?: string;
+  }>;
+}
+
+interface AdminDisputesResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data: Array<{
+    id: string;
+    reference: string;
+    invoiceId?: string;
+    paymentId?: string;
+    reason: string;
+    comments?: string;
+    status: "Pending" | "In Review" | "Resolved" | "Closed";
+    resolutionNotes?: string;
+    customerId: string;
+    customerName?: string;
+    createdAt: string;
+    updatedAt: string;
+    attachmentUrl?: string;
+  }>;
+}
+
+interface UpdateDisputeStatusRequest {
+  status: "In Review" | "Resolved" | "Closed";
+  resolutionNotes?: string;
+}
+
+interface UpdateDisputeStatusResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data?: {
+    id: string;
+    status: string;
+    resolutionNotes?: string;
+    updatedAt: string;
+  };
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -333,6 +440,23 @@ interface AuthContextType {
   updateProfile: (
     request: UpdateProfileRequest
   ) => Promise<UpdateProfileResponse | null>;
+  submitFeedback: (
+    request: SubmitFeedbackRequest
+  ) => Promise<SubmitFeedbackResponse | null>;
+  submitDispute: (
+    request: SubmitDisputeRequest
+  ) => Promise<SubmitDisputeResponse | null>;
+  getCustomerDisputes: () => Promise<CustomerDisputesResponse | null>;
+  getAdminDisputes: (filters?: {
+    status?: string;
+    date?: string;
+    invoiceId?: string;
+    paymentId?: string;
+  }) => Promise<AdminDisputesResponse | null>;
+  updateDisputeStatus: (
+    disputeId: string,
+    request: UpdateDisputeStatusRequest
+  ) => Promise<UpdateDisputeStatusResponse | null>;
 }
 
 // AES encryption function (CBC with PKCS5 padding)
@@ -2114,6 +2238,367 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // removed duplicate declaration (kept useCallback version above)
 
+  // Feedback & Disputes methods
+  const submitFeedback = useCallback(
+    async (
+      request: SubmitFeedbackRequest
+    ): Promise<SubmitFeedbackResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error("Feedback", "No token found for submitting feedback");
+          return null;
+        }
+
+        logger.info("Feedback", "Submitting feedback", request);
+
+        const response = await fetch(API_ENDPOINTS.SUBMIT_FEEDBACK, {
+          method: "POST",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(request),
+        });
+
+        logger.apiResponse(API_ENDPOINTS.SUBMIT_FEEDBACK, response.status);
+
+        if (!response.ok) {
+          logger.error(
+            "Feedback",
+            `Failed to submit feedback: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Feedback", "Empty feedback response");
+          return null;
+        }
+
+        let data: SubmitFeedbackResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success("Feedback", "Feedback submitted successfully", data);
+        } catch (error) {
+          logger.error("Feedback", "Failed to parse feedback response", error);
+          return null;
+        }
+
+        return data;
+      } catch (error) {
+        logger.error("Feedback", "Submit feedback error", error);
+        return null;
+      }
+    },
+    [checkTokenAndRedirect]
+  );
+
+  const submitDispute = useCallback(
+    async (
+      request: SubmitDisputeRequest
+    ): Promise<SubmitDisputeResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error("Dispute", "No token found for submitting dispute");
+          return null;
+        }
+
+        logger.info("Dispute", "Submitting dispute", request);
+
+        const formData = new FormData();
+        formData.append("reason", request.reason);
+        formData.append("category", request.category);
+        if (request.invoiceId) formData.append("invoiceId", request.invoiceId);
+        if (request.paymentId) formData.append("paymentId", request.paymentId);
+        if (request.comments) formData.append("comments", request.comments);
+        if (request.attachment)
+          formData.append("attachment", request.attachment);
+
+        const response = await fetch(API_ENDPOINTS.SUBMIT_DISPUTE, {
+          method: "POST",
+          headers: {
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        logger.apiResponse(API_ENDPOINTS.SUBMIT_DISPUTE, response.status);
+
+        if (!response.ok) {
+          logger.error(
+            "Dispute",
+            `Failed to submit dispute: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Dispute", "Empty dispute response");
+          return null;
+        }
+
+        let data: SubmitDisputeResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success("Dispute", "Dispute submitted successfully", data);
+        } catch (error) {
+          logger.error("Dispute", "Failed to parse dispute response", error);
+          return null;
+        }
+
+        return data;
+      } catch (error) {
+        logger.error("Dispute", "Submit dispute error", error);
+        return null;
+      }
+    },
+    [checkTokenAndRedirect]
+  );
+
+  const getCustomerDisputes =
+    useCallback(async (): Promise<CustomerDisputesResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error(
+            "Dispute",
+            "No token found for fetching customer disputes"
+          );
+          return null;
+        }
+
+        logger.info("Dispute", "Fetching customer disputes");
+
+        const response = await fetch(API_ENDPOINTS.CUSTOMER_DISPUTES, {
+          method: "GET",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        logger.apiResponse(API_ENDPOINTS.CUSTOMER_DISPUTES, response.status);
+
+        if (!response.ok) {
+          logger.error(
+            "Dispute",
+            `Failed to fetch customer disputes: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Dispute", "Empty customer disputes response");
+          return null;
+        }
+
+        let data: CustomerDisputesResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success("Dispute", "Customer disputes loaded", {
+            count: data.data?.length,
+          });
+        } catch (error) {
+          logger.error("Dispute", "Failed to parse customer disputes", error);
+          return null;
+        }
+
+        return data;
+      } catch (error) {
+        logger.error("Dispute", "Get customer disputes error", error);
+        return null;
+      }
+    }, [checkTokenAndRedirect]);
+
+  const getAdminDisputes = useCallback(
+    async (filters?: {
+      status?: string;
+      date?: string;
+      invoiceId?: string;
+      paymentId?: string;
+    }): Promise<AdminDisputesResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error("Dispute", "No token found for fetching admin disputes");
+          return null;
+        }
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (filters?.status) params.append("status", filters.status);
+        if (filters?.date) params.append("date", filters.date);
+        if (filters?.invoiceId) params.append("invoiceId", filters.invoiceId);
+        if (filters?.paymentId) params.append("paymentId", filters.paymentId);
+
+        const url = `${API_ENDPOINTS.ADMIN_DISPUTES}?${params.toString()}`;
+
+        logger.info("Dispute", "Fetching admin disputes", filters);
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        logger.apiResponse(API_ENDPOINTS.ADMIN_DISPUTES, response.status);
+
+        if (!response.ok) {
+          logger.error(
+            "Dispute",
+            `Failed to fetch admin disputes: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Dispute", "Empty admin disputes response");
+          return null;
+        }
+
+        let data: AdminDisputesResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success("Dispute", "Admin disputes loaded", {
+            count: data.data?.length,
+            filters,
+          });
+        } catch (error) {
+          logger.error("Dispute", "Failed to parse admin disputes", error);
+          return null;
+        }
+
+        return data;
+      } catch (error) {
+        logger.error("Dispute", "Get admin disputes error", error);
+        return null;
+      }
+    },
+    [checkTokenAndRedirect]
+  );
+
+  const updateDisputeStatus = useCallback(
+    async (
+      disputeId: string,
+      request: UpdateDisputeStatusRequest
+    ): Promise<UpdateDisputeStatusResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error("Dispute", "No token found for updating dispute status");
+          return null;
+        }
+
+        logger.info("Dispute", "Updating dispute status", {
+          disputeId,
+          request,
+        });
+
+        const response = await fetch(
+          `${API_ENDPOINTS.UPDATE_DISPUTE_STATUS}/${disputeId}/status`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+              "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(request),
+          }
+        );
+
+        logger.apiResponse(
+          `${API_ENDPOINTS.UPDATE_DISPUTE_STATUS}/${disputeId}/status`,
+          response.status
+        );
+
+        if (!response.ok) {
+          logger.error(
+            "Dispute",
+            `Failed to update dispute status: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Dispute", "Empty update dispute status response");
+          return null;
+        }
+
+        let data: UpdateDisputeStatusResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success(
+            "Dispute",
+            "Dispute status updated successfully",
+            data
+          );
+        } catch (error) {
+          logger.error(
+            "Dispute",
+            "Failed to parse update dispute status response",
+            error
+          );
+          return null;
+        }
+
+        return data;
+      } catch (error) {
+        logger.error("Dispute", "Update dispute status error", error);
+        return null;
+      }
+    },
+    [checkTokenAndRedirect]
+  );
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -2135,6 +2620,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     changeCustomerStatus,
     createCustomer,
     updateProfile,
+    submitFeedback,
+    submitDispute,
+    getCustomerDisputes,
+    getAdminDisputes,
+    updateDisputeStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -639,7 +639,7 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
         <>
           <MetricsCards adminStats={adminStats} />
           <div className="dashboard-bottom-grid">
-            <ChartSection adminStats={adminStats} />
+            <ChartSection adminStats={adminStats} transactions={transactions} />
             <TransactionsTable
               onSeeAll={() => setShowAllTransactions(true)}
               transactions={transactions}

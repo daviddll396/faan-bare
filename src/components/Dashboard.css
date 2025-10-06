@@ -445,10 +445,15 @@ table {
 .type-badge,
 .method-badge {
   padding: 4px 12px;
-  border-radius: 5px;
-  font-size: 12px;
+  border-radius: 3px;
+  font-size: 14px;
   font-weight: 500;
   text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: fit-content;
 }
 
 /* Role Badges */
@@ -514,13 +519,28 @@ table {
   background: #ecfdf5;
   color: #059669;
 }
-.status-badge.low-stock {
-  background: #fef3c7;
-  color: #d97706;
+
+/* Dispute Status Badges */
+.status-badge.in-review,
+.status-badge.under-review {
+  background: #dbeafe;
+  color: #2563eb;
 }
-.status-badge.out-of-stock {
+
+.status-badge.resolved {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.status-badge.closed {
   background: #fef2f2;
   color: #dc2626;
+}
+
+/* Feedback Status Badges */
+.status-badge.submitted {
+  background: #fef3c7;
+  color: #d97706;
 }
 
 /* Status Badge Table Variant (text-only, no background) */

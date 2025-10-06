@@ -28,6 +28,7 @@ interface FieldButtonProps {
     onClick?: () => void;
     className?: string; // optional extra class for custom overrides
     type?: "button" | "submit" | "reset";
+    variant?: "primary" | "secondary" | "danger"; // optional variant for SolidButton
   }>;
   gap?: number; // spacing between elements
   className?: string;
@@ -103,7 +104,7 @@ const FieldButton: React.FC<FieldButtonProps> = ({
             onClick={btn.onClick}
             text={btn.text}
             size="medium"
-            variant="secondary"
+            variant={btn.variant ?? "secondary"}
             rounded={false}
             className={btn.className}
             style={{ height: "56px" }}

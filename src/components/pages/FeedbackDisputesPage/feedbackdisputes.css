@@ -1,0 +1,366 @@
+/* Page Actions */
+.page-actions {
+  margin-bottom: 24px;
+}
+
+.feedback-search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedback-search-inputs {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.feedback-search-fieldbutton {
+  width: 100%;
+}
+
+.feedback-actions-fieldbutton {
+  width: 100%;
+}
+
+.disputes-search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.disputes-search-inputs {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.disputes-search-fieldbutton {
+  width: 100%;
+}
+
+.disputes-actions-fieldbutton {
+  width: 100%;
+}
+
+/* Disputes History Section */
+.disputes-history-section {
+  margin-top: 24px;
+}
+
+.disputes-history-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 16px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Admin Grid Sections */
+.admin-feedback-grid-section,
+.admin-disputes-grid-section {
+  margin-top: 24px;
+}
+
+.admin-feedback-grid-section h3,
+.admin-disputes-grid-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 16px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ======================================== */
+/* FEEDBACK & DISPUTES PAGE STYLES */
+/* ======================================== */
+
+/* Tabs */
+.feedback-disputes-tabs-row {
+  margin-bottom: 24px;
+}
+
+/* Tab Content */
+.tab-content {
+  min-height: 400px;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.section-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.section-header p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Filter Row */
+.feedback-disputes-filter-row {
+  margin-bottom: 24px;
+}
+
+.feedback-disputes-filters {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.filter-group:last-child {
+  min-width: auto;
+}
+
+/* Manage Dispute Action */
+.manage-dispute-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #007948;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.manage-dispute-action:hover {
+  background-color: #f0f9f4;
+  color: #005a3a;
+}
+
+/* Table Wrapper */
+.feedback-disputes-table-wrap {
+  margin-top: 24px;
+}
+
+/* Feedback History Section */
+.feedback-history-section {
+  margin-top: 32px;
+}
+
+.feedback-history-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 16px 0;
+}
+
+/* Feedback Details */
+.feedback-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.feedback-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedback-full-message {
+  line-height: 1.6;
+  color: #000;
+  overflow-y: auto;
+  max-width: 450px;
+  text-align: left !important;
+}
+
+/* Forms */
+.feedback-form,
+.dispute-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d0d0d0;
+  color: #000 !important;
+  border-radius: 5px;
+  font-size: 14px;
+  background: #fff;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #007948;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Dispute Details */
+.dispute-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dispute-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 500;
+  color: #666;
+  min-width: 120px;
+}
+
+.info-row .value {
+  color: #000;
+  text-align: right;
+  flex: 1;
+}
+
+.info-row .value.status-value {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.admin-actions {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* ======================================== */
+/* RESPONSIVE DESIGN */
+/* ======================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .section-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .feedback-disputes-filters {
+    gap: 12px;
+  }
+
+  .filter-group {
+    min-width: 180px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .section-header {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+  }
+
+  .feedback-disputes-filters {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .feedback-disputes-table-wrap {
+    margin-top: 16px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  .info-row .label {
+    min-width: auto;
+    font-weight: 600;
+  }
+
+  .info-row .value {
+    text-align: left;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .section-header {
+    padding: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+  }
+
+  .feedback-disputes-filters {
+    gap: 12px;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .manage-dispute-action {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+}

@@ -14,6 +14,7 @@ import {
   BarChart2,
   Activity,
   User,
+  MessageSquare,
 } from "lucide-react";
 
 interface MenuItem {
@@ -163,6 +164,15 @@ const Sidebar: React.FC<SidebarProps> = ({
       label: "Payment",
       mobileLabel: "Payments",
       page: "payment" as PageType,
+      showForCustomer: true,
+      showForAdmin: true,
+    },
+    {
+      icon: () => <MessageSquare size={20} />,
+      mobileIcon: () => <MessageSquare size={20} />,
+      label: "Feedback & Disputes",
+      mobileLabel: "Feedback",
+      page: "feedback-disputes" as PageType,
       showForCustomer: true,
       showForAdmin: true,
     },

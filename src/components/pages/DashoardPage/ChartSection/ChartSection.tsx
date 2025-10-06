@@ -1,8 +1,7 @@
 import React from "react";
 import "./chartsection.css";
 import {
-  LineChart,
-  Line,
+  AreaChart,
   Area,
   XAxis,
   YAxis,
@@ -14,6 +13,18 @@ import {
 import SolidButton from "../../../reusables/SolidButton/SolidButton";
 import { Download } from "lucide-react";
 import { useAuth } from "../../../../contexts/AuthContext";
+
+interface Transaction {
+  id: number;
+  tariffName?: string;
+  service?: string;
+  amount?: number;
+  price?: string;
+  status?: string;
+  createdAt?: string;
+  customerName?: string;
+  customerId?: string;
+}
 
 interface ChartSectionProps {
   adminStats?: {
@@ -31,9 +42,13 @@ interface ChartSectionProps {
     };
     message: string;
   } | null;
+  transactions?: Transaction[];
 }
 
-const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
+const ChartSection: React.FC<ChartSectionProps> = ({
+  adminStats,
+  transactions,
+}) => {
   const { user } = useAuth();
 
   // Use admin stats if available, otherwise fall back to user transaction stats
@@ -71,17 +86,71 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
     "Nov",
     "Dec",
   ];
-  const currentMonth = new Date().toLocaleString("default", { month: "short" });
-  type RawRow = { month: string; Bills: number; Payment: number };
-  const rawData: RawRow[] = months.map((month) =>
-    month === currentMonth
-      ? {
-          month,
-          Bills: transactionStats.total,
-          Payment: transactionStats.completed,
+
+  // Function to get month name from date string
+  const getMonthFromDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString("default", { month: "short" });
+    } catch {
+      return "";
+    }
+  };
+
+  // Function to check if transaction is completed
+  const isCompletedTransaction = (status?: string): boolean => {
+    return (
+      status?.toLowerCase() === "completed" ||
+      status?.toLowerCase() === "success" ||
+      status?.toLowerCase() === "paid"
+    );
+  };
+
+  // Process transaction data to distribute by actual months
+  const processTransactionData = (): RawRow[] => {
+    // Initialize all months with zero values
+    const monthlyData: Record<string, { Bills: number; Payment: number }> = {};
+    months.forEach((month) => {
+      monthlyData[month] = { Bills: 0, Payment: 0 };
+    });
+
+    // If we have actual transaction data, use it
+    if (transactions && transactions.length > 0) {
+      transactions.forEach((transaction) => {
+        if (transaction.createdAt) {
+          const month = getMonthFromDate(transaction.createdAt);
+          if (month && monthlyData[month]) {
+            // Count all transactions as "Bills" (total bookings)
+            monthlyData[month].Bills += 1;
+
+            // Count completed transactions as "Payment" (completed bookings)
+            if (isCompletedTransaction(transaction.status)) {
+              monthlyData[month].Payment += 1;
+            }
+          }
         }
-      : { month, Bills: 0, Payment: 0 }
-  );
+      });
+    } else {
+      // Fallback to aggregated stats for current month only
+      const currentMonth = new Date().toLocaleString("default", {
+        month: "short",
+      });
+      if (monthlyData[currentMonth]) {
+        monthlyData[currentMonth].Bills = transactionStats.total;
+        monthlyData[currentMonth].Payment = transactionStats.completed;
+      }
+    }
+
+    // Convert to array format
+    return months.map((month) => ({
+      month,
+      Bills: monthlyData[month].Bills,
+      Payment: monthlyData[month].Payment,
+    }));
+  };
+
+  type RawRow = { month: string; Bills: number; Payment: number };
+  const rawData: RawRow[] = processTransactionData();
 
   // If Bills and Payment are exactly equal for a month, offset them slightly so both lines remain visible
   const data = rawData.map((row) => {
@@ -104,6 +173,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
 
     if (maxValue === 0) return 10; // Default minimum
     if (maxValue <= 10) return 10;
+    if (maxValue <= 50) return 50;
     if (maxValue <= 100) return 100;
     if (maxValue <= 500) return 500;
     if (maxValue <= 1000) return 1000;
@@ -182,7 +252,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
             width="100%"
             height={windowWidth <= 768 ? 200 : 300}
           >
-            <LineChart
+            <AreaChart
               data={data}
               margin={{ top: 12, right: 18, left: 12, bottom: 6 }}
             >
@@ -266,45 +336,53 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                 verticalAlign="bottom"
                 formatter={(value: string) => {
                   const label = String(value || "");
-                  // use current month's raw values for legend
-                  const currentRaw: RawRow | undefined = rawData.find(
-                    (r) => r.month === currentMonth
+
+                  // Calculate totals across all months for legend
+                  const totalBills = rawData.reduce(
+                    (sum, row) => sum + row.Bills,
+                    0
                   );
-                  if (currentRaw) {
-                    if (label.toLowerCase().includes("bill")) {
-                      return (
-                        <span
-                          style={{
-                            color: "#000",
-                            fontSize: 12,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {label} ({currentRaw.Bills})
-                        </span>
-                      );
-                    }
-                    if (
-                      label.toLowerCase().includes("completed") ||
-                      label.toLowerCase().includes("payment")
-                    ) {
-                      return (
-                        <span
-                          style={{
-                            color: "#000",
-                            fontSize:
-                              windowWidth <= 768
-                                ? 12
-                                : windowWidth <= 1450
-                                ? 14
-                                : 12,
-                            fontWeight: 500,
-                          }}
-                        >
-                          {label}
-                        </span>
-                      );
-                    }
+                  const totalPayments = rawData.reduce(
+                    (sum, row) => sum + row.Payment,
+                    0
+                  );
+
+                  if (
+                    label.toLowerCase().includes("bill") ||
+                    label.toLowerCase().includes("total")
+                  ) {
+                    return (
+                      <span
+                        style={{
+                          color: "#000",
+                          fontSize: 12,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {label} ({totalBills})
+                      </span>
+                    );
+                  }
+                  if (
+                    label.toLowerCase().includes("completed") ||
+                    label.toLowerCase().includes("payment")
+                  ) {
+                    return (
+                      <span
+                        style={{
+                          color: "#000",
+                          fontSize:
+                            windowWidth <= 768
+                              ? 12
+                              : windowWidth <= 1450
+                              ? 14
+                              : 12,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {label} ({totalPayments})
+                      </span>
+                    );
                   }
                   return (
                     <span
@@ -330,30 +408,19 @@ const ChartSection: React.FC<ChartSectionProps> = ({ adminStats }) => {
                 stroke="#0095FF"
                 strokeWidth={2}
                 fill="url(#gradBills)"
-                name="Bills"
+                name="Total Bookings"
                 animationDuration={800}
               />
-              {/* draw a subtle line for Bills so it's visible */}
-              <Line
-                type="monotone"
-                dataKey="Bills"
-                stroke="#0077DD"
-                strokeWidth={2}
-                dot={false}
-                name="Total Bookings"
-                opacity={0.9}
-              />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="Payment"
                 stroke="#00E096"
                 strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
+                fill="url(#gradPayment)"
                 name="Completed Bookings"
                 animationDuration={900}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>

@@ -1,0 +1,83 @@
+/* Grid Component Styles */
+.grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  margin-top: 24px;
+}
+
+/* Single item centering */
+.grid > *:only-child {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Animation delays for staggered entrance */
+.grid > *:nth-child(1) {
+  --enter-delay: 0ms;
+}
+.grid > *:nth-child(2) {
+  --enter-delay: 80ms;
+}
+.grid > *:nth-child(3) {
+  --enter-delay: 160ms;
+}
+.grid > *:nth-child(4) {
+  --enter-delay: 240ms;
+}
+.grid > *:nth-child(5) {
+  --enter-delay: 320ms;
+}
+.grid > *:nth-child(6) {
+  --enter-delay: 400ms;
+}
+.grid > *:nth-child(7) {
+  --enter-delay: 480ms;
+}
+.grid > *:nth-child(8) {
+  --enter-delay: 560ms;
+}
+
+/* Responsive Grid */
+@media (min-width: 1400px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 28px;
+  }
+}
+
+@media (max-width: 1399px) and (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    gap: 14px;
+    margin-top: 16px;
+  }
+}

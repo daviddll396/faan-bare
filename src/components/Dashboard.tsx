@@ -12,6 +12,7 @@ import ProfilePage from "./pages/ProfilePage";
 import InvoicesPage from "./pages/InvoicesPage";
 import ReportsPage from "./pages/ReportsPage/ReportsPage";
 import AuditTrailPage from "./pages/AuditTrailPage/AuditTrailPage";
+import FeedbackDisputesPage from "./pages/FeedbackDisputesPage/FeedbackDisputesPage";
 import { useAuth } from "../contexts/AuthContext";
 import "./Dashboard.css";
 
@@ -25,6 +26,7 @@ export type PageType =
   | "reports"
   | "invoices"
   | "payment"
+  | "feedback-disputes"
   | "logout"
   | "profile";
 
@@ -56,6 +58,7 @@ const Dashboard: React.FC = () => {
           "reports",
           "invoices",
           "payment",
+          "feedback-disputes",
           "logout",
           "profile",
         ]
@@ -71,6 +74,7 @@ const Dashboard: React.FC = () => {
           "reports",
           "invoices" /* allow admins access to invoices */,
           "payment",
+          "feedback-disputes",
           "logout",
           "profile",
         ];
@@ -99,6 +103,7 @@ const Dashboard: React.FC = () => {
       reports: "Reports",
       invoices: "Invoices",
       payment: "Payment",
+      "feedback-disputes": "Feedback & Disputes",
       logout: "Log Out",
       profile: "Profile",
     };
@@ -132,6 +137,8 @@ const Dashboard: React.FC = () => {
         return <InvoicesPage role={user?.role} />;
       case "payment":
         return <PaymentPage role={user?.role} />;
+      case "feedback-disputes":
+        return <FeedbackDisputesPage />;
       case "logout":
         return <LogoutPage />;
       case "profile":

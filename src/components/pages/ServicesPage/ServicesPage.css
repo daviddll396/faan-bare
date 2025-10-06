@@ -638,7 +638,7 @@
   background: #ffffff; /* light grey background */
   border-radius: 5px;
   padding: 12px 14px;
-  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04); /* subtle shadow */
+border:1px solid #f0f0f0;
 }
 
 .passenger-pill-left {
@@ -676,7 +676,7 @@
 .passenger-pill-delete {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 5px;
   background: #fff5f5; /* light red */
   border: none;
   display: inline-flex;
@@ -1631,11 +1631,7 @@
     margin-top: 10px;
   }
 
-  .form-actions .gradient-button {
-    font-size: 16px;
-    padding: 14px 0;
-    border-radius: 8px;
-  }
+
 
   .form-row-full {
     width: 100%;

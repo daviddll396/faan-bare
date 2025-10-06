@@ -717,11 +717,10 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                         {
                           text: "Create New Invoice",
                           onClick: () => setShowCreateInvoicePage(true),
-                          className: "border-button-invoicespage",
+                          variant: "primary" as const,
                         },
                       ]),
                 ]}
-                className="invoices-search-fieldbutton invoices-actions-fieldbutton"
               />
             </div>
           </div>
