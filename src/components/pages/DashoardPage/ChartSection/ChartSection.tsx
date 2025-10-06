@@ -403,20 +403,34 @@ const ChartSection: React.FC<ChartSectionProps> = ({
                 }}
               />
               <Area
-                type="monotone"
+                type="linear"
                 dataKey="Bills"
                 stroke="#0095FF"
-                strokeWidth={2}
+                strokeWidth={3}
                 fill="url(#gradBills)"
+                dot={{ fill: "#0095FF", strokeWidth: 2, r: 4 }}
+                activeDot={{
+                  r: 6,
+                  stroke: "#0095FF",
+                  strokeWidth: 2,
+                  fill: "#fff",
+                }}
                 name="Total Bookings"
                 animationDuration={800}
               />
               <Area
-                type="monotone"
+                type="linear"
                 dataKey="Payment"
                 stroke="#00E096"
-                strokeWidth={2}
+                strokeWidth={3}
                 fill="url(#gradPayment)"
+                dot={{ fill: "#00E096", strokeWidth: 2, r: 4 }}
+                activeDot={{
+                  r: 6,
+                  stroke: "#00E096",
+                  strokeWidth: 2,
+                  fill: "#fff",
+                }}
                 name="Completed Bookings"
                 animationDuration={900}
               />
