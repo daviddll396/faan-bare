@@ -483,7 +483,8 @@ table {
   background: #ecfdf5;
   color: #059669;
 }
-.status-badge.pending {
+.status-badge.pending,
+.status-badge.processing {
   background: #fef3c7;
   color: #d97706;
 }
@@ -499,10 +500,10 @@ table {
   background: #ecfdf5;
   color: #059669;
 }
-.status-badge.processing {
+/* .status-badge.processing {
   background: #dbeafe;
   color: #2563eb;
-}
+} */
 .status-badge.failed {
   background: #fef2f2;
   color: #dc2626;

@@ -104,8 +104,6 @@
   flex-shrink: 0;
 }
 
-
-
 .customer-table {
   width: 100%;
   border-collapse: collapse;
@@ -309,6 +307,9 @@
   font-size: 16px;
   text-align: right;
   flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .customer-details-value.highlight {

@@ -350,10 +350,23 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
   const handleFund = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate minimum amount
+    // Get minimum amount based on customer type
+    const getMinimumAmount = () => {
+      const customerType = user?.customerType;
+      if (customerType === "INDIVIDUAL") {
+        return 25000;
+      } else if (customerType === "CORPORATE") {
+        return 200000;
+      }
+      // Default fallback
+      return 200000;
+    };
+
+    const minimumAmount = getMinimumAmount();
     const amount = fundAmountNum ?? parseAmount(fundAmountDisplay);
-    if (!amount || amount < 200000) {
-      showToast("Minimum fundable amount is ₦200,000", "error");
+    if (!amount || amount < minimumAmount) {
+      const formattedMin = minimumAmount.toLocaleString();
+      showToast(`Minimum fundable amount is ₦${formattedMin}`, "error");
       return;
     }
 
@@ -809,7 +822,9 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
                     setFundAmountNum(digits ? Number(digits) : null);
                     setFundAmountDisplay(formatNumberInput(e.target.value));
                   }}
-                  placeholder="200,000"
+                  placeholder={
+                    user?.customerType === "INDIVIDUAL" ? "25,000" : "200,000"
+                  }
                   className="fund-wallet-input"
                   required
                 />
@@ -818,7 +833,11 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
                 text="FUND WALLET"
                 type="submit"
                 fullWidth
-                disabled={!fundAmountNum || (fundAmountNum ?? 0) < 200000}
+                disabled={
+                  !fundAmountNum ||
+                  (fundAmountNum ?? 0) <
+                    (user?.customerType === "INDIVIDUAL" ? 25000 : 200000)
+                }
               />
             </form>
           </div>

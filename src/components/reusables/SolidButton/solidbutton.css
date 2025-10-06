@@ -66,28 +66,37 @@
   box-shadow: none;
 }
 
+.solid-button-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .solid-button-icon {
   display: inline-flex;
   align-items: center;
 }
+
 .solid-button-label {
   display: inline-flex;
   align-items: center;
 }
 
 .solid-button-spinner {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: rgba(255, 255, 255, 0.85);
-  animation: spin 900ms linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+/* Hide text and icon when loading */
+.solid-button-content--loading .solid-button-label,
+.solid-button-content--loading .solid-button-icon {
+  opacity: 0;
 }
 
 /* ======================================== */

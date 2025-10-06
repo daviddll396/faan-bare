@@ -25,7 +25,7 @@ interface FeedbackHistory {
   message: string;
   category: string;
   createdAt: string;
-  status: "Submitted" | "Under Review" | "Resolved";
+  status: "Submitted" | "In Review" | "Resolved";
   customerId?: string;
   customerName?: string;
 }
@@ -99,6 +99,16 @@ const FeedbackDisputesPage: React.FC = () => {
     category: "Payment",
     comments: "",
   });
+  const [formErrors, setFormErrors] = useState<{
+    feedback?: { message?: string; category?: string };
+    dispute?: {
+      invoiceId?: string;
+      paymentId?: string;
+      reason?: string;
+      category?: string;
+      comments?: string;
+    };
+  }>({});
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [filteredDisputes, setFilteredDisputes] = useState<Dispute[]>([]);
   const [feedbackHistory, setFeedbackHistory] = useState<FeedbackHistory[]>([]);
@@ -172,7 +182,7 @@ const FeedbackDisputesPage: React.FC = () => {
           "I experienced some delays in receiving payment confirmations. Could you please look into this?",
         category: "Technical Issues",
         createdAt: "2024-01-18T10:15:00Z",
-        status: "Under Review",
+        status: "In Review",
         customerId: "CUST-002",
         customerName: "Jane Smith",
       },
@@ -202,7 +212,7 @@ const FeedbackDisputesPage: React.FC = () => {
           "Payment processing is fast, but I'd like to see more payment options available.",
         category: "Suggestions",
         createdAt: "2024-01-10T11:30:00Z",
-        status: "Under Review",
+        status: "In Review",
         customerId: "CUST-005",
         customerName: "David Brown",
       },
@@ -370,7 +380,7 @@ const FeedbackDisputesPage: React.FC = () => {
           "I experienced some delays in receiving payment confirmations. Could you please look into this?",
         category: "Technical Issues",
         createdAt: "2024-01-18T10:15:00Z",
-        status: "Under Review",
+        status: "In Review",
       },
       {
         id: "3",
@@ -487,6 +497,67 @@ const FeedbackDisputesPage: React.FC = () => {
     });
   };
 
+  const validateFeedbackForm = (): boolean => {
+    const errors: { message?: string; category?: string } = {};
+
+    if (!feedbackForm.message.trim()) {
+      errors.message = "Feedback message is required";
+    } else if (feedbackForm.message.trim().length < 10) {
+      errors.message = "Feedback message must be at least 10 characters long";
+    } else if (feedbackForm.message.trim().length > 1000) {
+      errors.message = "Feedback message must be less than 1000 characters";
+    }
+
+    if (!feedbackForm.category) {
+      errors.category = "Please select a category";
+    }
+
+    setFormErrors((prev) => ({ ...prev, feedback: errors }));
+    return Object.keys(errors).length === 0;
+  };
+
+  const validateDisputeForm = (): boolean => {
+    const errors: {
+      invoiceId?: string;
+      paymentId?: string;
+      reason?: string;
+      category?: string;
+      comments?: string;
+    } = {};
+
+    // At least one ID is required
+    if (!disputeForm.invoiceId && !disputeForm.paymentId) {
+      errors.invoiceId = "Either Invoice ID or Payment ID is required";
+      errors.paymentId = "Either Invoice ID or Payment ID is required";
+    }
+
+    // Validate Invoice ID format if provided
+    if (disputeForm.invoiceId && !/^INV-\d+$/.test(disputeForm.invoiceId)) {
+      errors.invoiceId = "Invoice ID must be in format INV-001";
+    }
+
+    // Validate Payment ID format if provided
+    if (disputeForm.paymentId && !/^PAY-\d+$/.test(disputeForm.paymentId)) {
+      errors.paymentId = "Payment ID must be in format PAY-001";
+    }
+
+    if (!disputeForm.reason) {
+      errors.reason = "Please select a reason for the dispute";
+    }
+
+    if (!disputeForm.category) {
+      errors.category = "Please select a category";
+    }
+
+    // Validate comments if provided
+    if (disputeForm.comments && disputeForm.comments.length > 500) {
+      errors.comments = "Comments must be less than 500 characters";
+    }
+
+    setFormErrors((prev) => ({ ...prev, dispute: errors }));
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSearch = () => {
     if (activeTab === "feedback") {
       const filtered = feedbackHistory.filter(
@@ -517,8 +588,8 @@ const FeedbackDisputesPage: React.FC = () => {
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!feedbackForm.message.trim()) {
-      showToast("Please enter your feedback message", "error");
+    if (!validateFeedbackForm()) {
+      showToast("Please fix the validation errors", "error");
       return;
     }
 
@@ -544,6 +615,7 @@ const FeedbackDisputesPage: React.FC = () => {
         showToast("Feedback submitted successfully!", "success");
         setShowFeedbackModal(false);
         setFeedbackForm({ message: "", category: "General" });
+        setFormErrors((prev) => ({ ...prev, feedback: {} }));
       } else {
         showToast(
           result?.message || "Failed to submit feedback. Please try again.",
@@ -561,13 +633,8 @@ const FeedbackDisputesPage: React.FC = () => {
   const handleDisputeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!disputeForm.invoiceId && !disputeForm.paymentId) {
-      showToast("Please provide either an Invoice ID or Payment ID", "error");
-      return;
-    }
-
-    if (!disputeForm.reason) {
-      showToast("Please select a reason for the dispute", "error");
+    if (!validateDisputeForm()) {
+      showToast("Please fix the validation errors", "error");
       return;
     }
 
@@ -589,6 +656,7 @@ const FeedbackDisputesPage: React.FC = () => {
         );
         setShowDisputeModal(false);
         setDisputeForm({ reason: "", category: "Payment", comments: "" });
+        setFormErrors((prev) => ({ ...prev, dispute: {} }));
 
         // Refresh disputes list
         if (isAdmin) {
@@ -761,7 +829,7 @@ const FeedbackDisputesPage: React.FC = () => {
     switch (status) {
       case "Submitted":
         return <Clock size={16} className="status-icon pending" />;
-      case "Under Review":
+      case "In Review":
         return <AlertCircle size={16} className="status-icon review" />;
       case "Resolved":
         return <CheckCircle size={16} className="status-icon resolved" />;
@@ -981,7 +1049,7 @@ const FeedbackDisputesPage: React.FC = () => {
                     options={[
                       { value: "", label: "All Statuses" },
                       { value: "Submitted", label: "Submitted" },
-                      { value: "Under Review", label: "Under Review" },
+                      { value: "In Review", label: "In Review" },
                       { value: "Resolved", label: "Resolved" },
                     ]}
                     value={statusFilter}
@@ -1166,12 +1234,20 @@ const FeedbackDisputesPage: React.FC = () => {
                 label: category,
               }))}
               value={feedbackForm.category}
-              onChange={(option) =>
+              onChange={(option) => {
                 setFeedbackForm((prev) => ({
                   ...prev,
                   category: option.value,
-                }))
-              }
+                }));
+                // Clear category error when user selects
+                if (formErrors.feedback?.category) {
+                  setFormErrors((prev) => ({
+                    ...prev,
+                    feedback: { ...prev.feedback, category: undefined },
+                  }));
+                }
+              }}
+              error={formErrors.feedback?.category}
             />
           </div>
 
@@ -1185,17 +1261,31 @@ const FeedbackDisputesPage: React.FC = () => {
             <textarea
               id="feedback-message"
               value={feedbackForm.message}
-              onChange={(e) =>
+              onChange={(e) => {
                 setFeedbackForm((prev) => ({
                   ...prev,
                   message: e.target.value,
-                }))
-              }
+                }));
+                // Clear message error when user types
+                if (formErrors.feedback?.message) {
+                  setFormErrors((prev) => ({
+                    ...prev,
+                    feedback: { ...prev.feedback, message: undefined },
+                  }));
+                }
+              }}
               placeholder="Please share your feedback..."
-              className="form-textarea"
+              className={`form-textarea ${
+                formErrors.feedback?.message ? "error" : ""
+              }`}
               rows={5}
               required
             />
+            {formErrors.feedback?.message && (
+              <div className="reusable-input-error">
+                {formErrors.feedback.message}
+              </div>
+            )}
           </div>
 
           <div className="form-actions">
@@ -1206,10 +1296,11 @@ const FeedbackDisputesPage: React.FC = () => {
               size="medium"
             />
             <SolidButton
-              text={loading ? "Submitting..." : "Submit Feedback"}
+              text="Submit Feedback"
               type="submit"
               variant="primary"
               size="medium"
+              loading={loading}
               disabled={loading}
             />
           </div>
@@ -1228,26 +1319,42 @@ const FeedbackDisputesPage: React.FC = () => {
             label="Invoice ID (optional)"
             type="text"
             value={disputeForm.invoiceId || ""}
-            onChange={(e) =>
+            onChange={(e) => {
               setDisputeForm((prev) => ({
                 ...prev,
                 invoiceId: e.target.value,
-              }))
-            }
+              }));
+              // Clear invoice ID error when user types
+              if (formErrors.dispute?.invoiceId) {
+                setFormErrors((prev) => ({
+                  ...prev,
+                  dispute: { ...prev.dispute, invoiceId: undefined },
+                }));
+              }
+            }}
             placeholder="e.g., INV-001"
+            error={formErrors.dispute?.invoiceId}
           />
 
           <Input
             label="Payment ID (optional)"
             type="text"
             value={disputeForm.paymentId || ""}
-            onChange={(e) =>
+            onChange={(e) => {
               setDisputeForm((prev) => ({
                 ...prev,
                 paymentId: e.target.value,
-              }))
-            }
+              }));
+              // Clear payment ID error when user types
+              if (formErrors.dispute?.paymentId) {
+                setFormErrors((prev) => ({
+                  ...prev,
+                  dispute: { ...prev.dispute, paymentId: undefined },
+                }));
+              }
+            }}
             placeholder="e.g., PAY-001"
+            error={formErrors.dispute?.paymentId}
           />
 
           <ListBox
@@ -1257,10 +1364,18 @@ const FeedbackDisputesPage: React.FC = () => {
               label: reason,
             }))}
             value={disputeForm.reason}
-            onChange={(option) =>
-              setDisputeForm((prev) => ({ ...prev, reason: option.value }))
-            }
+            onChange={(option) => {
+              setDisputeForm((prev) => ({ ...prev, reason: option.value }));
+              // Clear reason error when user selects
+              if (formErrors.dispute?.reason) {
+                setFormErrors((prev) => ({
+                  ...prev,
+                  dispute: { ...prev.dispute, reason: undefined },
+                }));
+              }
+            }}
             placeholder="Select a reason"
+            error={formErrors.dispute?.reason}
           />
 
           <ListBox
@@ -1270,10 +1385,18 @@ const FeedbackDisputesPage: React.FC = () => {
               label: category,
             }))}
             value={disputeForm.category}
-            onChange={(option) =>
-              setDisputeForm((prev) => ({ ...prev, category: option.value }))
-            }
+            onChange={(option) => {
+              setDisputeForm((prev) => ({ ...prev, category: option.value }));
+              // Clear category error when user selects
+              if (formErrors.dispute?.category) {
+                setFormErrors((prev) => ({
+                  ...prev,
+                  dispute: { ...prev.dispute, category: undefined },
+                }));
+              }
+            }}
             placeholder="Select a category"
+            error={formErrors.dispute?.category}
           />
 
           <div>
@@ -1286,16 +1409,30 @@ const FeedbackDisputesPage: React.FC = () => {
             <textarea
               id="dispute-comments"
               value={disputeForm.comments || ""}
-              onChange={(e) =>
+              onChange={(e) => {
                 setDisputeForm((prev) => ({
                   ...prev,
                   comments: e.target.value,
-                }))
-              }
+                }));
+                // Clear comments error when user types
+                if (formErrors.dispute?.comments) {
+                  setFormErrors((prev) => ({
+                    ...prev,
+                    dispute: { ...prev.dispute, comments: undefined },
+                  }));
+                }
+              }}
               placeholder="Please provide additional details about your dispute..."
-              className="form-textarea"
+              className={`form-textarea ${
+                formErrors.dispute?.comments ? "error" : ""
+              }`}
               rows={4}
             />
+            {formErrors.dispute?.comments && (
+              <div className="reusable-input-error">
+                {formErrors.dispute.comments}
+              </div>
+            )}
           </div>
 
           <div className="form-actions">
@@ -1306,10 +1443,11 @@ const FeedbackDisputesPage: React.FC = () => {
               size="medium"
             />
             <SolidButton
-              text={loading ? "Submitting..." : "Submit Dispute"}
+              text="Submit Dispute"
               type="submit"
               variant="primary"
               size="medium"
+              loading={loading}
               disabled={loading}
             />
           </div>

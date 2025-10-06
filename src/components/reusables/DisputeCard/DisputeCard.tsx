@@ -42,6 +42,14 @@ const DisputeCard: React.FC<DisputeCardProps> = ({
     return text.substring(0, maxLength) + "...";
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="dispute-card">
       <div className="dispute-header">
@@ -70,9 +78,7 @@ const DisputeCard: React.FC<DisputeCardProps> = ({
           </div>
           <div className="dispute-detail-item">
             <span className="detail-label">Created:</span>
-            <span className="detail-value">
-              {new Date(createdAt).toLocaleDateString()}
-            </span>
+            <span className="detail-value">{formatDate(createdAt)}</span>
           </div>
         </div>
       </div>
