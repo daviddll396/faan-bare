@@ -1,0 +1,193 @@
+/* File Upload Component Styles */
+.file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.file-upload-wrapper.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.file-upload-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.file-input-hidden {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.file-upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border: 1.5px solid #e4e4e4;
+  border-radius: 5px;
+  background: #fff;
+  color: #7a7d80;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 140px;
+  height: var(--form-control-height);
+  box-sizing: border-box;
+  width: 100%;
+  outline: none;
+}
+
+.file-upload-button:hover:not(.disabled) {
+  border-color: #10b981;
+  color: #10b981;
+  background: #f0fdf4;
+}
+
+.file-upload-button:focus:not(.disabled) {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.file-upload-button.error {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.file-upload-button.error:hover:not(.disabled) {
+  background: #fef2f2;
+}
+
+.file-upload-button.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.file-upload-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.file-upload-icon {
+  flex-shrink: 0;
+}
+
+.file-upload-text {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  flex-shrink: 0;
+}
+
+.file-selected-icon {
+  flex-shrink: 0;
+}
+
+.file-upload-hint {
+  color: #7a7d80;
+  font-size: 12px;
+  margin-top: 6px;
+  font-family: "Poppins", sans-serif;
+  line-height: 1.4;
+}
+
+.file-upload-error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .file-upload-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .file-upload-button {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .file-selected {
+    justify-content: center;
+    margin-top: 4px;
+  }
+
+  .file-upload-content {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .file-upload-button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .file-upload-text {
+    font-size: 13px;
+  }
+
+  .file-selected {
+    font-size: 11px;
+  }
+
+  .file-upload-hint,
+  .file-upload-error {
+    font-size: 11px;
+  }
+}
+
+/* Focus management for accessibility */
+.file-upload-button:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .file-upload-button {
+    border-width: 2px;
+  }
+
+  .file-upload-button:hover:not(.disabled) {
+    border-color: #059669;
+  }
+
+  .file-upload-button.error {
+    border-color: #b91c1c;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .file-upload-button {
+    transition: none;
+  }
+}

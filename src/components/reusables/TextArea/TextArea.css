@@ -1,0 +1,132 @@
+/* TextArea Component Styles - Based on Input.css */
+
+.reusable-textarea {
+  width: 100%;
+  padding: 12px 14px; /* adjusted to respect variable heights */
+  min-height: 80px;
+  border: 1.5px solid #e4e4e4;
+  border-radius: 5px;
+  font-size: var(--form-control-font-size, 16px);
+  font-family: inherit;
+  background: #fff;
+  color: #000;
+  outline: none;
+  transition: border 0.15s ease;
+  font-weight: 500;
+  box-sizing: border-box;
+  resize: vertical; /* Allow vertical resize only */
+  line-height: 1.5;
+}
+
+/* Fix autofill background color */
+.reusable-textarea:-webkit-autofill,
+.reusable-textarea:-webkit-autofill:hover,
+.reusable-textarea:-webkit-autofill:focus,
+.reusable-textarea:-webkit-autofill:active {
+  -webkit-text-fill-color: #000 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+.reusable-textarea:focus {
+  border: 1.5px solid #10b981;
+}
+
+.reusable-textarea[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* smaller textarea size */
+.reusable-textarea.small {
+  padding: 8px 10px;
+  font-size: 14px;
+  min-height: 60px;
+}
+
+/* larger textarea size */
+.reusable-textarea.large {
+  padding: 16px 18px;
+  font-size: 18px;
+  min-height: 120px;
+}
+
+/* Error state */
+.reusable-textarea.error {
+  border-color: #dc2626;
+}
+
+.reusable-textarea.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Placeholder styling */
+.reusable-textarea::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Scrollbar styling for webkit browsers */
+.reusable-textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reusable-textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.reusable-textarea::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.reusable-textarea::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .reusable-textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reusable-textarea {
+    padding: 8px 10px;
+    font-size: 14px;
+    min-height: 70px;
+  }
+}
+
+/* Focus management for accessibility */
+.reusable-textarea:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .reusable-textarea {
+    border-width: 2px;
+  }
+
+  .reusable-textarea:focus {
+    border-color: #059669;
+  }
+
+  .reusable-textarea.error {
+    border-color: #b91c1c;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .reusable-textarea {
+    transition: none;
+  }
+}

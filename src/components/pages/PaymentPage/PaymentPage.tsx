@@ -91,7 +91,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         }
 
         if (transactions) {
-          console.log("📄 Raw transaction data from API:", transactions);
+          // console.log("📄 Raw transaction data from API:", transactions);
 
           // Map API response to PaymentItem format (normalize unknown shapes)
           const txs = transactions as unknown as Array<Record<string, unknown>>;
@@ -137,10 +137,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   : "reason",
             };
 
-            console.log(`🔍 Mapped transaction ${billNo}:`, {
-              original: txn,
-              mapped: paymentItem,
-            });
+            // console.log(`🔍 Mapped transaction ${billNo}:`, {
+            //   original: txn,
+            //   mapped: paymentItem,
+            // });
             return paymentItem;
           });
 
@@ -200,7 +200,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               mappedPayments.push(d);
           }
 
-          console.log("✅ Final mapped payments:", mappedPayments);
+          // console.log("✅ Final mapped payments:", mappedPayments);
           setPayments(mappedPayments);
         }
       } catch (error) {
@@ -214,7 +214,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   }, [getTransactionHistory, getAdminTransactionHistory, user?.role]);
 
   const handleSearch = () => {
-    console.log("Search triggered:", { searchName, searchBillNo });
+    // console.log("Search triggered:", { searchName, searchBillNo });
     setAppliedSearchName(searchName);
     setAppliedSearchBillNo(searchBillNo);
   };

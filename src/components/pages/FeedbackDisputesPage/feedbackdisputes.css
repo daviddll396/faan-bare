@@ -1,8 +1,4 @@
 /* Form Validation Styles */
-.form-textarea.error {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 1px #dc2626;
-}
 
 .reusable-input-error {
   color: #dc2626;
@@ -207,25 +203,6 @@
   gap: 10px;
 }
 
-.form-textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #d0d0d0;
-  color: #000 !important;
-  border-radius: 5px;
-  font-size: 14px;
-  background: #fff;
-  transition: border-color 0.2s ease;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 100px;
-}
-
-.form-textarea:focus {
-  outline: none;
-  border-color: #007948;
-}
-
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -286,7 +263,7 @@
 /* ======================================== */
 
 /* Tablet */
-@media (max-width: 1024px) {
+@media (max-width: 1050px) {
   .section-header {
     flex-direction: column;
     gap: 16px;

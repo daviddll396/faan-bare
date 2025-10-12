@@ -412,7 +412,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                   </span>,
                   <span
                     key={`s-${user.id}`}
-                    className={`status-badge-table ${user.status.toLowerCase()}`}
+                    className={`status-badge ${user.status.toLowerCase() === 'inactive' ? 'failed' : 'completed'}`}
                   >
                     {user.status}
                   </span>,
@@ -420,15 +420,18 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                   <div key={`a-${user.id}`}>
                     <button
                       className="action-btn-table edit"
+                      style={{marginRight: '5px'}}
                       onClick={() => handleEdit(user)}
                     >
-                      <Edit size={16} /> Edit
+                      <Edit size={16} />
+                       {/* Edit */}
                     </button>
                     <button
                       className="action-btn-table delete"
                       onClick={() => handleDelete(user)}
                     >
-                      <Trash2 size={16} /> Delete
+                      <Trash2 size={16} /> 
+                      {/* Delete */}
                     </button>
                   </div>,
                 ])}

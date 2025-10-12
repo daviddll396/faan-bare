@@ -147,10 +147,6 @@
   margin-left: auto; /* push add button to the far right so it doesn't sit next to the listbox */
 }
 
-.table-container tbody tr:nth-child(even) {
-  background: var(--bg-color);
-}
-
 /* Add animation to content card */
 .content-card {
   animation: slideInUp 0.4s ease-out 0.4s both;
@@ -545,34 +541,6 @@
     box-shadow: none;
     background: #fff;
     overflow-x: auto;
-  }
-  .table-container {
-    overflow-x: auto;
-    padding: 0;
-    margin: 0;
-  }
-  table {
-    min-width: 700px;
-    font-size: 12px;
-  }
-
-  .table-data-item,
-  .table-data-item-role {
-    font-size: 12px;
-    padding: 8px 8px;
-    white-space: nowrap;
-  }
-  .role-badge-table {
-    font-size: 12px;
-    padding: 7px 12px;
-    border-radius: 6px;
-  }
-
-  .action-btn-table {
-    font-size: 11px;
-    padding: 4px 7px;
-    border-radius: 5px;
-    gap: 3px;
   }
   /* add-user-form-card styles migrated to Card component */
   .user-form-grid {

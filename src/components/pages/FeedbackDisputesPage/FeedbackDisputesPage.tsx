@@ -12,6 +12,8 @@ import FeedbackCard from "../../reusables/FeedbackCard/FeedbackCard";
 import DisputeCard from "../../reusables/DisputeCard/DisputeCard";
 import Grid from "../../reusables/Grid/Grid";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
+import FileUpload from "../../reusables/FileUpload/FileUpload";
+import TextArea from "../../reusables/TextArea/TextArea";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import "./feedbackdisputes.css";
 
@@ -34,9 +36,9 @@ interface DisputeFormData {
   invoiceId?: string;
   paymentId?: string;
   reason: string;
-  category: string;
   comments?: string;
-  attachment?: File;
+  attachment?: string;
+  attachmentFileName?: string;
 }
 
 interface Dispute {
@@ -75,8 +77,10 @@ const FeedbackDisputesPage: React.FC = () => {
   const {
     user,
     submitFeedback,
+    getCustomerFeedback,
     submitDispute,
     getCustomerDisputes,
+    getAdminDisputes,
     updateDisputeStatus,
   } = useAuth();
   const [activeTab, setActiveTab] = useState<"feedback" | "disputes">(
@@ -92,11 +96,10 @@ const FeedbackDisputesPage: React.FC = () => {
     useState<FeedbackHistory | null>(null);
   const [feedbackForm, setFeedbackForm] = useState<FeedbackFormData>({
     message: "",
-    category: "General",
+    category: "GENERAL",
   });
   const [disputeForm, setDisputeForm] = useState<DisputeFormData>({
     reason: "",
-    category: "Payment",
     comments: "",
   });
   const [formErrors, setFormErrors] = useState<{
@@ -105,8 +108,8 @@ const FeedbackDisputesPage: React.FC = () => {
       invoiceId?: string;
       paymentId?: string;
       reason?: string;
-      category?: string;
       comments?: string;
+      attachment?: string;
     };
   }>({});
   const [disputes, setDisputes] = useState<Dispute[]>([]);
@@ -129,7 +132,9 @@ const FeedbackDisputesPage: React.FC = () => {
 
   // Admin filters
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [dateFilter, setDateFilter] = useState<string>("");
+  const [startDateFilter, setStartDateFilter] = useState<string>("");
+  const [endDateFilter, setEndDateFilter] = useState<string>("");
+  const [customerIdFilter, setCustomerIdFilter] = useState<string>("");
   const [invoiceFilter, setInvoiceFilter] = useState<string>("");
   const [paymentFilter, setPaymentFilter] = useState<string>("");
 
@@ -137,13 +142,11 @@ const FeedbackDisputesPage: React.FC = () => {
 
   // Feedback categories
   const feedbackCategories = [
-    "General",
-    "Service Quality",
-    "Technical Issues",
-    "Payment Problems",
-    "User Experience",
-    "Suggestions",
-    "Other",
+    "GENERAL",
+    "PAYMENT",
+    "FUNDING",
+    "TECHNICAL",
+    "OTHER",
   ];
 
   // Dispute reasons
@@ -156,12 +159,6 @@ const FeedbackDisputesPage: React.FC = () => {
     "Technical Error",
     "Other",
   ];
-
-  // Dispute categories
-  const disputeCategories = ["Invoice", "Payment", "Others"];
-
-  // Status options for admin
-  const statusOptions = ["Pending", "In Review", "Resolved", "Closed"];
 
   // Mock data for admin feedback
   const mockAdminFeedback: FeedbackHistory[] = useMemo(
@@ -220,209 +217,99 @@ const FeedbackDisputesPage: React.FC = () => {
     []
   );
 
-  // Mock data for customer disputes
-  const mockCustomerDisputes: Dispute[] = useMemo(
-    () => [
-      {
-        id: "cust-disp-1",
-        reference: "DISP-2024-101",
-        invoiceId: "INV-2024-101",
-        reason: "Incorrect Amount",
-        category: "Invoice",
-        comments:
-          "The amount charged was higher than expected. Please review the invoice.",
-        status: "Pending",
-        customerId: user?.customerId || "CUST-001",
-        createdAt: "2024-01-15T10:30:00Z",
-        updatedAt: "2024-01-15T10:30:00Z",
-      },
-      {
-        id: "cust-disp-2",
-        reference: "DISP-2024-102",
-        paymentId: "PAY-2024-102",
-        reason: "Service Not Received",
-        category: "Payment",
-        comments:
-          "Payment was made but the service was not provided as promised.",
-        status: "In Review",
-        customerId: user?.customerId || "CUST-001",
-        createdAt: "2024-01-14T14:20:00Z",
-        updatedAt: "2024-01-16T09:15:00Z",
-      },
-      {
-        id: "cust-disp-3",
-        reference: "DISP-2024-103",
-        invoiceId: "INV-2024-103",
-        reason: "Duplicate Charge",
-        category: "Others",
-        comments:
-          "I was charged twice for the same service. Please refund the duplicate payment.",
-        status: "Resolved",
-        resolutionNotes:
-          "Duplicate charge confirmed. Refund processed successfully.",
-        customerId: user?.customerId || "CUST-001",
-        createdAt: "2024-01-12T16:45:00Z",
-        updatedAt: "2024-01-18T11:30:00Z",
-      },
-    ],
-    [user?.customerId]
-  );
-
-  // Mock data for admin disputes
-  const mockAdminDisputes: Dispute[] = useMemo(
-    () => [
-      {
-        id: "1",
-        reference: "DISP-2024-001",
-        invoiceId: "INV-2024-001",
-        reason: "Incorrect Amount",
-        category: "Invoice",
-        comments:
-          "The amount charged was higher than expected. Please review the invoice.",
-        status: "Pending",
-        customerId: "CUST-001",
-        customerName: "John Doe",
-        createdAt: "2024-01-15T10:30:00Z",
-        updatedAt: "2024-01-15T10:30:00Z",
-      },
-      {
-        id: "2",
-        reference: "DISP-2024-002",
-        paymentId: "PAY-2024-002",
-        reason: "Service Not Received",
-        category: "Payment",
-        comments:
-          "Payment was made but the service was not provided as promised.",
-        status: "In Review",
-        customerId: "CUST-002",
-        customerName: "Jane Smith",
-        createdAt: "2024-01-14T14:20:00Z",
-        updatedAt: "2024-01-16T09:15:00Z",
-      },
-      {
-        id: "3",
-        reference: "DISP-2024-003",
-        invoiceId: "INV-2024-003",
-        reason: "Duplicate Charge",
-        category: "Others",
-        comments:
-          "I was charged twice for the same service. Please refund the duplicate payment.",
-        status: "Resolved",
-        resolutionNotes:
-          "Duplicate charge confirmed. Refund processed successfully.",
-        customerId: "CUST-003",
-        customerName: "Michael Johnson",
-        createdAt: "2024-01-12T16:45:00Z",
-        updatedAt: "2024-01-18T11:30:00Z",
-      },
-      {
-        id: "4",
-        reference: "DISP-2024-004",
-        paymentId: "PAY-2024-004",
-        reason: "Technical Error",
-        category: "Payment",
-        comments:
-          "Payment was processed but the system shows it as failed. Please investigate.",
-        status: "Closed",
-        resolutionNotes:
-          "Technical issue resolved. Payment status updated correctly.",
-        customerId: "CUST-004",
-        customerName: "Sarah Wilson",
-        createdAt: "2024-01-10T08:15:00Z",
-        updatedAt: "2024-01-20T13:45:00Z",
-      },
-      {
-        id: "5",
-        reference: "DISP-2024-005",
-        invoiceId: "INV-2024-005",
-        reason: "Refund Not Received",
-        category: "Invoice",
-        comments:
-          "Requested refund 2 weeks ago but still haven't received it in my account.",
-        status: "In Review",
-        customerId: "CUST-005",
-        customerName: "David Brown",
-        createdAt: "2024-01-08T12:00:00Z",
-        updatedAt: "2024-01-17T10:20:00Z",
-      },
-      {
-        id: "6",
-        reference: "DISP-2024-006",
-        paymentId: "PAY-2024-006",
-        reason: "Other",
-        category: "Others",
-        comments:
-          "The service quality was below expectations. Requesting partial refund.",
-        status: "Pending",
-        customerId: "CUST-006",
-        customerName: "Lisa Anderson",
-        createdAt: "2024-01-05T15:30:00Z",
-        updatedAt: "2024-01-05T15:30:00Z",
-      },
-    ],
-    []
-  );
-
-  // Mock data for customer feedback history
-  const mockFeedbackHistory: FeedbackHistory[] = useMemo(
-    () => [
-      {
-        id: "1",
-        message:
-          "The payment process is very smooth and user-friendly. Great job on the interface design!",
-        category: "User Experience",
-        createdAt: "2024-01-20T14:30:00Z",
-        status: "Submitted",
-      },
-      {
-        id: "2",
-        message:
-          "I experienced some delays in receiving payment confirmations. Could you please look into this?",
-        category: "Technical Issues",
-        createdAt: "2024-01-18T10:15:00Z",
-        status: "In Review",
-      },
-      {
-        id: "3",
-        message:
-          "It would be helpful to have email notifications for all transaction updates.",
-        category: "Suggestions",
-        createdAt: "2024-01-15T16:45:00Z",
-        status: "Resolved",
-      },
-      {
-        id: "4",
-        message:
-          "The mobile app works well, but the desktop version could use some improvements in navigation.",
-        category: "User Experience",
-        createdAt: "2024-01-12T09:20:00Z",
-        status: "Submitted",
-      },
-    ],
-    []
-  );
-
   // Load disputes data
   useEffect(() => {
     const loadDisputes = async () => {
       setLoading(true);
       try {
         if (isAdmin) {
-          // Use mock data for admin since endpoint doesn't exist yet
-          setDisputes(mockAdminDisputes);
-          setFilteredDisputes(mockAdminDisputes);
-        } else {
-          // Use mock data for customers since endpoint doesn't exist yet
-          setDisputes(mockCustomerDisputes);
-          setFilteredDisputes(mockCustomerDisputes);
+          // Use real API for admin disputes
+          const adminDisputesResult = await getAdminDisputes({
+            startDate: startDateFilter || undefined,
+            endDate: endDateFilter || undefined,
+            customerId: customerIdFilter || undefined,
+            status: statusFilter || undefined,
+            invoiceId: invoiceFilter || undefined,
+            paymentId: paymentFilter || undefined,
+          });
 
-          // Load mock feedback history for customers
-          setFeedbackHistory(mockFeedbackHistory);
-          setFilteredFeedbackHistory(mockFeedbackHistory);
+          if (adminDisputesResult?.data) {
+            const disputesData: Dispute[] = adminDisputesResult.data.map(
+              (d) => ({
+                id: d.id,
+                reference: d.reference,
+                invoiceId: d.invoiceId,
+                paymentId: d.paymentId,
+                reason: d.reason,
+                category: d.category || "Others", // Default category if not provided
+                comments: d.comments,
+                status: d.status,
+                resolutionNotes: d.resolutionNotes,
+                customerId: d.customerId,
+                customerName: d.customerName,
+                createdAt: d.createdAt,
+                updatedAt: d.updatedAt,
+                attachmentUrl: d.attachmentUrl,
+              })
+            );
+            setDisputes(disputesData);
+            setFilteredDisputes(disputesData);
+          } else {
+            // No disputes found or API failed
+            setDisputes([]);
+            setFilteredDisputes([]);
+          }
+        } else {
+          // Use real API for customers
+          const disputesResult = await getCustomerDisputes();
+          if (disputesResult?.data) {
+            const disputesData: Dispute[] = disputesResult.data.map(
+              (d: ApiCustomerDisputeData) => ({
+                id: d.id,
+                reference: d.reference,
+                invoiceId: d.invoiceId,
+                paymentId: d.paymentId,
+                reason: d.reason,
+                category: d.category,
+                comments: d.comments,
+                status: d.status,
+                resolutionNotes: d.resolutionNotes,
+                customerId: user?.customerId || "",
+                createdAt: d.createdAt,
+                updatedAt: d.updatedAt,
+                attachmentUrl: d.attachmentUrl,
+              })
+            );
+            setDisputes(disputesData);
+            setFilteredDisputes(disputesData);
+          } else {
+            // No disputes found or API failed
+            setDisputes([]);
+            setFilteredDisputes([]);
+          }
+
+          // Load customer feedback using real API
+          const feedbackResult = await getCustomerFeedback();
+          if (feedbackResult?.data) {
+            const feedbackData: FeedbackHistory[] = feedbackResult.data.map(
+              (f) => ({
+                id: f.id,
+                message: f.message,
+                category: f.category,
+                createdAt: f.createdAt,
+                status: f.status,
+              })
+            );
+            setFeedbackHistory(feedbackData);
+            setFilteredFeedbackHistory(feedbackData);
+          }
         }
       } catch (error) {
         logger.error("FeedbackDisputes", "Failed to load disputes", error);
         showToast("Failed to load disputes. Please try again.", "error");
+        // Set empty arrays on error
+        setDisputes([]);
+        setFilteredDisputes([]);
       } finally {
         setLoading(false);
       }
@@ -433,61 +320,19 @@ const FeedbackDisputesPage: React.FC = () => {
     isAdmin,
     user?.customerId,
     getCustomerDisputes,
-    mockAdminDisputes,
-    mockCustomerDisputes,
-    mockAdminFeedback,
-    mockFeedbackHistory,
-  ]);
-
-  // Filter disputes for admin using mock data
-  useEffect(() => {
-    if (!isAdmin) return;
-
-    const filterDisputes = () => {
-      let filtered = [...mockAdminDisputes];
-
-      // Filter by status
-      if (statusFilter) {
-        filtered = filtered.filter(
-          (dispute) => dispute.status === statusFilter
-        );
-      }
-
-      // Filter by date
-      if (dateFilter) {
-        const filterDate = new Date(dateFilter).toDateString();
-        filtered = filtered.filter((dispute) => {
-          const disputeDate = new Date(dispute.createdAt).toDateString();
-          return disputeDate === filterDate;
-        });
-      }
-
-      // Filter by invoice ID
-      if (invoiceFilter) {
-        filtered = filtered.filter((dispute) =>
-          dispute.invoiceId?.toLowerCase().includes(invoiceFilter.toLowerCase())
-        );
-      }
-
-      // Filter by payment ID
-      if (paymentFilter) {
-        filtered = filtered.filter((dispute) =>
-          dispute.paymentId?.toLowerCase().includes(paymentFilter.toLowerCase())
-        );
-      }
-
-      setFilteredDisputes(filtered);
-    };
-
-    filterDisputes();
-  }, [
+    getAdminDisputes,
     statusFilter,
-    dateFilter,
+    startDateFilter,
+    endDateFilter,
+    customerIdFilter,
     invoiceFilter,
     paymentFilter,
-    isAdmin,
-    mockAdminDisputes,
+    mockAdminFeedback,
+    getCustomerFeedback,
   ]);
+
+  // Note: Admin filtering is now handled by the API call with query parameters
+  // No need for client-side filtering since the API returns filtered results
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
@@ -521,8 +366,8 @@ const FeedbackDisputesPage: React.FC = () => {
       invoiceId?: string;
       paymentId?: string;
       reason?: string;
-      category?: string;
       comments?: string;
+      attachment?: string;
     } = {};
 
     // At least one ID is required
@@ -545,13 +390,21 @@ const FeedbackDisputesPage: React.FC = () => {
       errors.reason = "Please select a reason for the dispute";
     }
 
-    if (!disputeForm.category) {
-      errors.category = "Please select a category";
-    }
-
     // Validate comments if provided
     if (disputeForm.comments && disputeForm.comments.length > 500) {
       errors.comments = "Comments must be less than 500 characters";
+    }
+
+    // Validate attachment if provided
+    if (disputeForm.attachment) {
+      // Check file size (10MB limit)
+      const base64Data = disputeForm.attachment.split(",")[1];
+      const fileSizeInBytes = (base64Data.length * 3) / 4;
+      const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+      if (fileSizeInMB > 10) {
+        errors.attachment = "File size must be less than 10MB";
+      }
     }
 
     setFormErrors((prev) => ({ ...prev, dispute: errors }));
@@ -596,26 +449,33 @@ const FeedbackDisputesPage: React.FC = () => {
     setLoading(true);
     try {
       const result = await submitFeedback({
-        message: feedbackForm.message,
         category: feedbackForm.category,
+        message: feedbackForm.message,
       });
 
       if (result?.status) {
-        // Add new feedback to history
-        const newFeedback: FeedbackHistory = {
-          id: Date.now().toString(),
-          message: feedbackForm.message,
-          category: feedbackForm.category,
-          createdAt: new Date().toISOString(),
-          status: "Submitted",
-        };
-        setFeedbackHistory((prev) => [newFeedback, ...prev]);
-        setFilteredFeedbackHistory((prev) => [newFeedback, ...prev]);
-
         showToast("Feedback submitted successfully!", "success");
         setShowFeedbackModal(false);
-        setFeedbackForm({ message: "", category: "General" });
+        setFeedbackForm({ message: "", category: "GENERAL" });
         setFormErrors((prev) => ({ ...prev, feedback: {} }));
+
+        // Refresh feedback list
+        if (!isAdmin) {
+          const feedbackResult = await getCustomerFeedback();
+          if (feedbackResult?.data) {
+            const feedbackData: FeedbackHistory[] = feedbackResult.data.map(
+              (f) => ({
+                id: f.id,
+                message: f.message,
+                category: f.category,
+                createdAt: f.createdAt,
+                status: f.status,
+              })
+            );
+            setFeedbackHistory(feedbackData);
+            setFilteredFeedbackHistory(feedbackData);
+          }
+        }
       } else {
         showToast(
           result?.message || "Failed to submit feedback. Please try again.",
@@ -644,7 +504,6 @@ const FeedbackDisputesPage: React.FC = () => {
         invoiceId: disputeForm.invoiceId,
         paymentId: disputeForm.paymentId,
         reason: disputeForm.reason,
-        category: disputeForm.category,
         comments: disputeForm.comments,
         attachment: disputeForm.attachment,
       });
@@ -655,15 +514,56 @@ const FeedbackDisputesPage: React.FC = () => {
           "success"
         );
         setShowDisputeModal(false);
-        setDisputeForm({ reason: "", category: "Payment", comments: "" });
+        setDisputeForm({ reason: "", comments: "" });
         setFormErrors((prev) => ({ ...prev, dispute: {} }));
+
+        // Clear file input
+        const fileInput = document.getElementById(
+          "dispute-attachment"
+        ) as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = "";
+        }
 
         // Refresh disputes list
         if (isAdmin) {
-          // For admin, just refresh the mock data (in real implementation, this would be an API call)
-          setDisputes(mockAdminDisputes);
-          setFilteredDisputes(mockAdminDisputes);
+          // For admin, refresh using real API with current filters
+          const adminDisputesResult = await getAdminDisputes({
+            startDate: startDateFilter || undefined,
+            endDate: endDateFilter || undefined,
+            customerId: customerIdFilter || undefined,
+            status: statusFilter || undefined,
+            invoiceId: invoiceFilter || undefined,
+            paymentId: paymentFilter || undefined,
+          });
+
+          if (adminDisputesResult?.data) {
+            const disputesData: Dispute[] = adminDisputesResult.data.map(
+              (d) => ({
+                id: d.id,
+                reference: d.reference,
+                invoiceId: d.invoiceId,
+                paymentId: d.paymentId,
+                reason: d.reason,
+                category: d.category || "Others",
+                comments: d.comments,
+                status: d.status,
+                resolutionNotes: d.resolutionNotes,
+                customerId: d.customerId,
+                customerName: d.customerName,
+                createdAt: d.createdAt,
+                updatedAt: d.updatedAt,
+                attachmentUrl: d.attachmentUrl,
+              })
+            );
+            setDisputes(disputesData);
+            setFilteredDisputes(disputesData);
+          } else {
+            setDisputes([]);
+            setFilteredDisputes([]);
+          }
         } else {
+          // For customers, refresh using real API
           const disputesResult = await getCustomerDisputes();
           if (disputesResult?.data) {
             const disputesData: Dispute[] = disputesResult.data.map(
@@ -685,6 +585,9 @@ const FeedbackDisputesPage: React.FC = () => {
             );
             setDisputes(disputesData);
             setFilteredDisputes(disputesData);
+          } else {
+            setDisputes([]);
+            setFilteredDisputes([]);
           }
         }
       } else {
@@ -712,40 +615,39 @@ const FeedbackDisputesPage: React.FC = () => {
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        // Update local state
-        setDisputes((prev) =>
-          prev.map((d) =>
-            d.id === disputeId
-              ? {
-                  ...d,
-                  status: newStatus as
-                    | "Pending"
-                    | "In Review"
-                    | "Resolved"
-                    | "Closed",
-                  resolutionNotes,
-                  updatedAt: new Date().toISOString(),
-                }
-              : d
-          )
-        );
+        // Refresh admin disputes using real API with current filters
+        const adminDisputesResult = await getAdminDisputes({
+          startDate: startDateFilter || undefined,
+          endDate: endDateFilter || undefined,
+          customerId: customerIdFilter || undefined,
+          status: statusFilter || undefined,
+          invoiceId: invoiceFilter || undefined,
+          paymentId: paymentFilter || undefined,
+        });
 
-        setFilteredDisputes((prev) =>
-          prev.map((d) =>
-            d.id === disputeId
-              ? {
-                  ...d,
-                  status: newStatus as
-                    | "Pending"
-                    | "In Review"
-                    | "Resolved"
-                    | "Closed",
-                  resolutionNotes,
-                  updatedAt: new Date().toISOString(),
-                }
-              : d
-          )
-        );
+        if (adminDisputesResult?.data) {
+          const disputesData: Dispute[] = adminDisputesResult.data.map((d) => ({
+            id: d.id,
+            reference: d.reference,
+            invoiceId: d.invoiceId,
+            paymentId: d.paymentId,
+            reason: d.reason,
+            category: d.category || "Others",
+            comments: d.comments,
+            status: d.status,
+            resolutionNotes: d.resolutionNotes,
+            customerId: d.customerId,
+            customerName: d.customerName,
+            createdAt: d.createdAt,
+            updatedAt: d.updatedAt,
+            attachmentUrl: d.attachmentUrl,
+          }));
+          setDisputes(disputesData);
+          setFilteredDisputes(disputesData);
+        } else {
+          setDisputes([]);
+          setFilteredDisputes([]);
+        }
 
         showToast("Dispute status updated successfully!", "success");
         setShowDisputeDetailsModal(false);
@@ -753,8 +655,8 @@ const FeedbackDisputesPage: React.FC = () => {
       } else {
         // For customer, use real API
         const result = await updateDisputeStatus(disputeId, {
-          status: newStatus as "In Review" | "Resolved" | "Closed",
-          resolutionNotes,
+          disputeId: disputeId,
+          status: newStatus as "IN_REVIEW" | "RESOLVED" | "CLOSED",
         });
 
         if (result?.status) {
@@ -1059,11 +961,21 @@ const FeedbackDisputesPage: React.FC = () => {
 
                 <div className="filter-group">
                   <Input
-                    label="Date"
+                    label="Start Date"
                     type="date"
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    placeholder="Select date"
+                    value={startDateFilter}
+                    onChange={(e) => setStartDateFilter(e.target.value)}
+                    placeholder="Select start date"
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <Input
+                    label="End Date"
+                    type="date"
+                    value={endDateFilter}
+                    onChange={(e) => setEndDateFilter(e.target.value)}
+                    placeholder="Select end date"
                   />
                 </div>
 
@@ -1071,8 +983,8 @@ const FeedbackDisputesPage: React.FC = () => {
                   <Input
                     label="Customer ID"
                     type="text"
-                    value={invoiceFilter}
-                    onChange={(e) => setInvoiceFilter(e.target.value)}
+                    value={customerIdFilter}
+                    onChange={(e) => setCustomerIdFilter(e.target.value)}
                     placeholder="Enter Customer ID"
                   />
                 </div>
@@ -1082,7 +994,9 @@ const FeedbackDisputesPage: React.FC = () => {
                     text="Clear Filters"
                     onClick={() => {
                       setStatusFilter("");
-                      setDateFilter("");
+                      setStartDateFilter("");
+                      setEndDateFilter("");
+                      setCustomerIdFilter("");
                       setInvoiceFilter("");
                       setPaymentFilter("");
                     }}
@@ -1125,10 +1039,9 @@ const FeedbackDisputesPage: React.FC = () => {
                     placeholder="All Statuses"
                     options={[
                       { value: "", label: "All Statuses" },
-                      ...statusOptions.map((status) => ({
-                        value: status,
-                        label: status,
-                      })),
+                      { value: "IN_REVIEW", label: "In Review" },
+                      { value: "RESOLVED", label: "Resolved" },
+                      { value: "CLOSED", label: "Closed" },
                     ]}
                     value={statusFilter}
                     onChange={(option) => setStatusFilter(option.value)}
@@ -1137,11 +1050,31 @@ const FeedbackDisputesPage: React.FC = () => {
 
                 <div className="filter-group">
                   <Input
-                    label="Date"
+                    label="Start Date"
                     type="date"
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    placeholder="Select date"
+                    value={startDateFilter}
+                    onChange={(e) => setStartDateFilter(e.target.value)}
+                    placeholder="Select start date"
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <Input
+                    label="End Date"
+                    type="date"
+                    value={endDateFilter}
+                    onChange={(e) => setEndDateFilter(e.target.value)}
+                    placeholder="Select end date"
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <Input
+                    label="Customer ID"
+                    type="text"
+                    value={customerIdFilter}
+                    onChange={(e) => setCustomerIdFilter(e.target.value)}
+                    placeholder="Enter Customer ID"
                   />
                 </div>
 
@@ -1170,7 +1103,9 @@ const FeedbackDisputesPage: React.FC = () => {
                     text="Clear Filters"
                     onClick={() => {
                       setStatusFilter("");
-                      setDateFilter("");
+                      setStartDateFilter("");
+                      setEndDateFilter("");
+                      setCustomerIdFilter("");
                       setInvoiceFilter("");
                       setPaymentFilter("");
                     }}
@@ -1251,42 +1186,28 @@ const FeedbackDisputesPage: React.FC = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label
-              htmlFor="feedback-message"
-              className="reusable-input-label-text"
-            >
-              Message
-            </label>
-            <textarea
-              id="feedback-message"
-              value={feedbackForm.message}
-              onChange={(e) => {
-                setFeedbackForm((prev) => ({
+          <TextArea
+            id="feedback-message"
+            label="Message"
+            value={feedbackForm.message}
+            onChange={(e) => {
+              setFeedbackForm((prev) => ({
+                ...prev,
+                message: e.target.value,
+              }));
+              // Clear message error when user types
+              if (formErrors.feedback?.message) {
+                setFormErrors((prev) => ({
                   ...prev,
-                  message: e.target.value,
+                  feedback: { ...prev.feedback, message: undefined },
                 }));
-                // Clear message error when user types
-                if (formErrors.feedback?.message) {
-                  setFormErrors((prev) => ({
-                    ...prev,
-                    feedback: { ...prev.feedback, message: undefined },
-                  }));
-                }
-              }}
-              placeholder="Please share your feedback..."
-              className={`form-textarea ${
-                formErrors.feedback?.message ? "error" : ""
-              }`}
-              rows={5}
-              required
-            />
-            {formErrors.feedback?.message && (
-              <div className="reusable-input-error">
-                {formErrors.feedback.message}
-              </div>
-            )}
-          </div>
+              }
+            }}
+            placeholder="Please share your feedback..."
+            rows={5}
+            error={formErrors.feedback?.message}
+            required
+          />
 
           <div className="form-actions">
             <SolidButton
@@ -1378,62 +1299,64 @@ const FeedbackDisputesPage: React.FC = () => {
             error={formErrors.dispute?.reason}
           />
 
-          <ListBox
-            label="Category"
-            options={disputeCategories.map((category) => ({
-              value: category,
-              label: category,
-            }))}
-            value={disputeForm.category}
-            onChange={(option) => {
-              setDisputeForm((prev) => ({ ...prev, category: option.value }));
-              // Clear category error when user selects
-              if (formErrors.dispute?.category) {
+          <TextArea
+            id="dispute-comments"
+            label="Additional Comments"
+            value={disputeForm.comments || ""}
+            onChange={(e) => {
+              setDisputeForm((prev) => ({
+                ...prev,
+                comments: e.target.value,
+              }));
+              // Clear comments error when user types
+              if (formErrors.dispute?.comments) {
                 setFormErrors((prev) => ({
                   ...prev,
-                  dispute: { ...prev.dispute, category: undefined },
+                  dispute: { ...prev.dispute, comments: undefined },
                 }));
               }
             }}
-            placeholder="Select a category"
-            error={formErrors.dispute?.category}
+            placeholder="Please provide additional details about your dispute..."
+            rows={4}
+            error={formErrors.dispute?.comments}
           />
 
-          <div>
-            <label
-              htmlFor="dispute-comments"
-              className="reusable-input-label-text"
-            >
-              Additional Comments
-            </label>
-            <textarea
-              id="dispute-comments"
-              value={disputeForm.comments || ""}
-              onChange={(e) => {
+          <FileUpload
+            id="dispute-attachment"
+            label="Attachment (optional)"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+            value={disputeForm.attachment}
+            fileName={disputeForm.attachmentFileName}
+            onChange={(file) => {
+              if (file) {
+                // Convert file to base64 for API submission
+                const reader = new FileReader();
+                reader.onload = () => {
+                  setDisputeForm((prev) => ({
+                    ...prev,
+                    attachment: reader.result as string,
+                    attachmentFileName: file.name,
+                  }));
+                };
+                reader.readAsDataURL(file);
+              } else {
                 setDisputeForm((prev) => ({
                   ...prev,
-                  comments: e.target.value,
+                  attachment: undefined,
+                  attachmentFileName: undefined,
                 }));
-                // Clear comments error when user types
-                if (formErrors.dispute?.comments) {
-                  setFormErrors((prev) => ({
-                    ...prev,
-                    dispute: { ...prev.dispute, comments: undefined },
-                  }));
-                }
-              }}
-              placeholder="Please provide additional details about your dispute..."
-              className={`form-textarea ${
-                formErrors.dispute?.comments ? "error" : ""
-              }`}
-              rows={4}
-            />
-            {formErrors.dispute?.comments && (
-              <div className="reusable-input-error">
-                {formErrors.dispute.comments}
-              </div>
-            )}
-          </div>
+              }
+              // Clear attachment error when user selects file
+              if (formErrors.dispute?.attachment) {
+                setFormErrors((prev) => ({
+                  ...prev,
+                  dispute: { ...prev.dispute, attachment: undefined },
+                }));
+              }
+            }}
+            hint="Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG, GIF (Max 10MB)"
+            error={formErrors.dispute?.attachment}
+          />
 
           <div className="form-actions">
             <SolidButton
@@ -1548,10 +1471,11 @@ const FeedbackDisputesPage: React.FC = () => {
                 <div className="form-group">
                   <ListBox
                     label="Update Status:"
-                    options={statusOptions.map((status) => ({
-                      value: status,
-                      label: status,
-                    }))}
+                    options={[
+                      { value: "IN_REVIEW", label: "In Review" },
+                      { value: "RESOLVED", label: "Resolved" },
+                      { value: "CLOSED", label: "Closed" },
+                    ]}
                     value={selectedDispute.status}
                     onChange={(option) => {
                       // Store the selected status for later use
@@ -1569,22 +1493,13 @@ const FeedbackDisputesPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label
-                    htmlFor="resolutionNotes"
-                    className="reusable-input-label-text"
-                    style={{ marginTop: "10px", marginBottom: "0px" }}
-                  >
-                    Resolution Notes:
-                  </label>
-                  <textarea
-                    id="resolutionNotes"
-                    placeholder="Add resolution notes..."
-                    className="form-textarea"
-                    rows={3}
-                    defaultValue={selectedDispute.resolutionNotes || ""}
-                  />
-                </div>
+                <TextArea
+                  id="resolutionNotes"
+                  label="Resolution Notes"
+                  placeholder="Add resolution notes..."
+                  rows={3}
+                  defaultValue={selectedDispute.resolutionNotes || ""}
+                />
 
                 <div className="form-actions">
                   <SolidButton

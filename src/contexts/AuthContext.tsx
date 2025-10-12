@@ -43,10 +43,11 @@ const API_ENDPOINTS = {
   GET_ALL_CUSTOMERS: `${API_BASE_URL}/api/faan/customers`,
   CHANGE_CUSTOMER_STATUS: `${API_BASE_URL}/api/faan/customers`,
   CREATE_CUSTOMER: `${API_BASE_URL}/auth/faan/register`,
-  SUBMIT_FEEDBACK: `${API_BASE_URL}/api/faan/feedback`,
+  SUBMIT_FEEDBACK: `${API_BASE_URL}/api/faan/feedbacks`,
+  GET_CUSTOMER_FEEDBACK: `${API_BASE_URL}/api/faan/feedbacks`,
   SUBMIT_DISPUTE: `${API_BASE_URL}/api/faan/disputes`,
-  CUSTOMER_DISPUTES: `${API_BASE_URL}/api/faan/disputes/customer`,
-  ADMIN_DISPUTES: `${API_BASE_URL}/api/faan/disputes/admin`,
+  CUSTOMER_DISPUTES: `${API_BASE_URL}/api/faan/disputes`,
+  ADMIN_DISPUTES: `${API_BASE_URL}/api/faan/disputes/search`,
   UPDATE_DISPUTE_STATUS: `${API_BASE_URL}/api/faan/disputes`,
 };
 
@@ -289,8 +290,8 @@ interface UpdateProfileResponse {
 
 // Feedback interfaces
 interface SubmitFeedbackRequest {
-  message: string;
   category: string;
+  message: string;
 }
 
 interface SubmitFeedbackResponse {
@@ -305,14 +306,26 @@ interface SubmitFeedbackResponse {
   };
 }
 
+interface CustomerFeedbackResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data: Array<{
+    id: string;
+    message: string;
+    category: string;
+    status: "Submitted" | "In Review" | "Resolved";
+    createdAt: string;
+  }>;
+}
+
 // Dispute interfaces
 interface SubmitDisputeRequest {
   invoiceId?: string;
   paymentId?: string;
   reason: string;
-  category: string;
   comments?: string;
-  attachment?: File;
+  attachment?: string;
 }
 
 interface SubmitDisputeResponse {
@@ -361,6 +374,7 @@ interface AdminDisputesResponse {
     invoiceId?: string;
     paymentId?: string;
     reason: string;
+    category?: string;
     comments?: string;
     status: "Pending" | "In Review" | "Resolved" | "Closed";
     resolutionNotes?: string;
@@ -373,8 +387,8 @@ interface AdminDisputesResponse {
 }
 
 interface UpdateDisputeStatusRequest {
-  status: "In Review" | "Resolved" | "Closed";
-  resolutionNotes?: string;
+  disputeId: string;
+  status: "IN_REVIEW" | "RESOLVED" | "CLOSED";
 }
 
 interface UpdateDisputeStatusResponse {
@@ -443,13 +457,16 @@ interface AuthContextType {
   submitFeedback: (
     request: SubmitFeedbackRequest
   ) => Promise<SubmitFeedbackResponse | null>;
+  getCustomerFeedback: () => Promise<CustomerFeedbackResponse | null>;
   submitDispute: (
     request: SubmitDisputeRequest
   ) => Promise<SubmitDisputeResponse | null>;
   getCustomerDisputes: () => Promise<CustomerDisputesResponse | null>;
   getAdminDisputes: (filters?: {
+    startDate?: string;
+    endDate?: string;
+    customerId?: string;
     status?: string;
-    date?: string;
     invoiceId?: string;
     paymentId?: string;
   }) => Promise<AdminDisputesResponse | null>;
@@ -2294,7 +2311,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
 
-        return data;
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            data.statusCode === HTTP_STATUS.CREATED ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error("Feedback", "Feedback submission failed", data.message);
+          return data; // Return the response even if failed so we can show the error message
+        }
       } catch (error) {
         logger.error("Feedback", "Submit feedback error", error);
         return null;
@@ -2302,6 +2332,89 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     },
     [checkTokenAndRedirect]
   );
+
+  const getCustomerFeedback =
+    useCallback(async (): Promise<CustomerFeedbackResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error(
+            "Feedback",
+            "No token found for fetching customer feedback"
+          );
+          return null;
+        }
+
+        logger.info("Feedback", "Fetching customer feedback");
+
+        const response = await fetch(API_ENDPOINTS.GET_CUSTOMER_FEEDBACK, {
+          method: "GET",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        logger.apiResponse(
+          API_ENDPOINTS.GET_CUSTOMER_FEEDBACK,
+          response.status
+        );
+
+        if (!response.ok) {
+          logger.error(
+            "Feedback",
+            `Failed to fetch customer feedback: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Feedback", "Empty customer feedback response");
+          return null;
+        }
+
+        let data: CustomerFeedbackResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success("Feedback", "Customer feedback loaded", {
+            count: data.data?.length,
+          });
+        } catch (error) {
+          logger.error("Feedback", "Failed to parse customer feedback", error);
+          return null;
+        }
+
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error(
+            "Feedback",
+            "Failed to fetch customer feedback",
+            data.message
+          );
+          return data; // Return the response even if failed so we can show the error message
+        }
+      } catch (error) {
+        logger.error("Feedback", "Get customer feedback error", error);
+        return null;
+      }
+    }, [checkTokenAndRedirect]);
 
   const submitDispute = useCallback(
     async (
@@ -2316,22 +2429,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Dispute", "Submitting dispute", request);
 
-        const formData = new FormData();
-        formData.append("reason", request.reason);
-        formData.append("category", request.category);
-        if (request.invoiceId) formData.append("invoiceId", request.invoiceId);
-        if (request.paymentId) formData.append("paymentId", request.paymentId);
-        if (request.comments) formData.append("comments", request.comments);
-        if (request.attachment)
-          formData.append("attachment", request.attachment);
-
         const response = await fetch(API_ENDPOINTS.SUBMIT_DISPUTE, {
           method: "POST",
           headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
             "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
             Authorization: `Bearer ${token}`,
           },
-          body: formData,
+          body: JSON.stringify(request),
         });
 
         logger.apiResponse(API_ENDPOINTS.SUBMIT_DISPUTE, response.status);
@@ -2366,7 +2471,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
 
-        return data;
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            data.statusCode === HTTP_STATUS.CREATED ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error("Dispute", "Dispute submission failed", data.message);
+          return data; // Return the response even if failed so we can show the error message
+        }
       } catch (error) {
         logger.error("Dispute", "Submit dispute error", error);
         return null;
@@ -2421,6 +2539,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
 
+        // Debug: Log the raw response to see what we're getting
+        logger.debug("Dispute", "Raw customer disputes response", {
+          length: responseText.length,
+          startsWith: responseText.substring(0, 100),
+          isHTML: responseText.includes("<!DOCTYPE"),
+        });
+
         let data: CustomerDisputesResponse;
         try {
           data = JSON.parse(responseText);
@@ -2428,11 +2553,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             count: data.data?.length,
           });
         } catch (error) {
-          logger.error("Dispute", "Failed to parse customer disputes", error);
+          logger.error("Dispute", "Failed to parse customer disputes", {
+            error: error instanceof Error ? error.message : String(error),
+            responsePreview: responseText.substring(0, 200),
+          });
           return null;
         }
 
-        return data;
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error(
+            "Dispute",
+            "Failed to fetch customer disputes",
+            data.message
+          );
+          return data; // Return the response even if failed so we can show the error message
+        }
       } catch (error) {
         logger.error("Dispute", "Get customer disputes error", error);
         return null;
@@ -2441,8 +2585,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const getAdminDisputes = useCallback(
     async (filters?: {
+      startDate?: string;
+      endDate?: string;
+      customerId?: string;
       status?: string;
-      date?: string;
       invoiceId?: string;
       paymentId?: string;
     }): Promise<AdminDisputesResponse | null> => {
@@ -2455,8 +2601,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // Build query parameters
         const params = new URLSearchParams();
+        if (filters?.startDate) params.append("startDate", filters.startDate);
+        if (filters?.endDate) params.append("endDate", filters.endDate);
+        if (filters?.customerId)
+          params.append("customerId", filters.customerId);
         if (filters?.status) params.append("status", filters.status);
-        if (filters?.date) params.append("date", filters.date);
         if (filters?.invoiceId) params.append("invoiceId", filters.invoiceId);
         if (filters?.paymentId) params.append("paymentId", filters.paymentId);
 
@@ -2508,7 +2657,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
 
-        return data;
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error(
+            "Dispute",
+            "Failed to fetch admin disputes",
+            data.message
+          );
+          return data; // Return the response even if failed so we can show the error message
+        }
       } catch (error) {
         logger.error("Dispute", "Get admin disputes error", error);
         return null;
@@ -2534,21 +2699,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           request,
         });
 
-        const response = await fetch(
-          `${API_ENDPOINTS.UPDATE_DISPUTE_STATUS}/${disputeId}/status`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-              "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(request),
-          }
-        );
+        // Create the request body with disputeId included
+        const requestBody = {
+          disputeId: disputeId,
+          status: request.status,
+        };
+
+        const response = await fetch(API_ENDPOINTS.UPDATE_DISPUTE_STATUS, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
 
         logger.apiResponse(
-          `${API_ENDPOINTS.UPDATE_DISPUTE_STATUS}/${disputeId}/status`,
+          API_ENDPOINTS.UPDATE_DISPUTE_STATUS,
           response.status
         );
 
@@ -2590,7 +2758,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
 
-        return data;
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error(
+            "Dispute",
+            "Failed to update dispute status",
+            data.message
+          );
+          return data; // Return the response even if failed so we can show the error message
+        }
       } catch (error) {
         logger.error("Dispute", "Update dispute status error", error);
         return null;
@@ -2621,6 +2805,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     createCustomer,
     updateProfile,
     submitFeedback,
+    getCustomerFeedback,
     submitDispute,
     getCustomerDisputes,
     getAdminDisputes,

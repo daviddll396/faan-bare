@@ -22,6 +22,8 @@ body,
   --bp-lg: 992px;
   --bp-xl: 1200px;
   --bp-xxl: 1600px;
+
+
 }
 
 :root {
@@ -76,7 +78,8 @@ select:-webkit-autofill:active {
   --green: #007948;
   --border-color: #e4e4e4;
   --page-bottom-padding-mobile: 60px;
-
+  --dark-grey: #7d7d7d;
+  --light-grey: #f0f0f0;
   /* Form control base sizes */
   --form-control-height: 56px;
   --form-control-font-size: 16px;

@@ -247,13 +247,7 @@
 
 /* Status badges now defined in Dashboard.css */
 /* Local override for this component's specific styling */
-.transactions-table .status-badge {
-  padding: 6px 10px;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 12px;
-  display: inline-block;
-}
+
 
 .transactions-row:hover {
   background: transparent !important;
