@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { logger } from "../../../utils/logger";
 import Modal from "../../reusables/Modal/Modal";
@@ -11,10 +11,11 @@ import ListBox from "../../reusables/ListBox/ListBox";
 import FeedbackCard from "../../reusables/FeedbackCard/FeedbackCard";
 import DisputeCard from "../../reusables/DisputeCard/DisputeCard";
 import Grid from "../../reusables/Grid/Grid";
-import FieldButton from "../../reusables/FieldButton/FieldButton";
+import SearchInput from "../../reusables/SearchInput/SearchInput";
 import FileUpload from "../../reusables/FileUpload/FileUpload";
 import TextArea from "../../reusables/TextArea/TextArea";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
+import EmptyState from "../../reusables/EmptyState/EmptyState";
 import "./feedbackdisputes.css";
 
 interface FeedbackFormData {
@@ -59,18 +60,17 @@ interface Dispute {
 }
 
 interface ApiCustomerDisputeData {
-  id: string;
-  reference: string;
-  invoiceId?: string;
+  disputeId: number;
+  customerId: string;
   paymentId?: string;
+  invoiceId?: string;
   reason: string;
-  category: string;
-  comments?: string;
-  status: "Pending" | "In Review" | "Resolved" | "Closed";
-  resolutionNotes?: string;
+  comment?: string;
+  attachment?: string;
+  status: string;
+  resolutionNote?: string;
   createdAt: string;
   updatedAt: string;
-  attachmentUrl?: string;
 }
 
 const FeedbackDisputesPage: React.FC = () => {
@@ -78,6 +78,7 @@ const FeedbackDisputesPage: React.FC = () => {
     user,
     submitFeedback,
     getCustomerFeedback,
+    getAdminFeedback,
     submitDispute,
     getCustomerDisputes,
     getAdminDisputes,
@@ -137,6 +138,7 @@ const FeedbackDisputesPage: React.FC = () => {
   const [customerIdFilter, setCustomerIdFilter] = useState<string>("");
   const [invoiceFilter, setInvoiceFilter] = useState<string>("");
   const [paymentFilter, setPaymentFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
 
   const isAdmin = user?.role === "Admin";
 
@@ -160,69 +162,39 @@ const FeedbackDisputesPage: React.FC = () => {
     "Other",
   ];
 
-  // Mock data for admin feedback
-  const mockAdminFeedback: FeedbackHistory[] = useMemo(
-    () => [
-      {
-        id: "admin-feedback-1",
-        message:
-          "The payment process is very smooth and user-friendly. Great job on the interface design!",
-        category: "User Experience",
-        createdAt: "2024-01-20T14:30:00Z",
-        status: "Submitted",
-        customerId: "CUST-001",
-        customerName: "John Doe",
-      },
-      {
-        id: "admin-feedback-2",
-        message:
-          "I experienced some delays in receiving payment confirmations. Could you please look into this?",
-        category: "Technical Issues",
-        createdAt: "2024-01-18T10:15:00Z",
-        status: "In Review",
-        customerId: "CUST-002",
-        customerName: "Jane Smith",
-      },
-      {
-        id: "admin-feedback-3",
-        message:
-          "It would be helpful to have email notifications for all transaction updates.",
-        category: "Suggestions",
-        createdAt: "2024-01-15T16:45:00Z",
-        status: "Resolved",
-        customerId: "CUST-003",
-        customerName: "Michael Johnson",
-      },
-      {
-        id: "admin-feedback-4",
-        message:
-          "The mobile app works well, but the desktop version could use some improvements in navigation.",
-        category: "User Experience",
-        createdAt: "2024-01-12T09:20:00Z",
-        status: "Submitted",
-        customerId: "CUST-004",
-        customerName: "Sarah Wilson",
-      },
-      {
-        id: "admin-feedback-5",
-        message:
-          "Payment processing is fast, but I'd like to see more payment options available.",
-        category: "Suggestions",
-        createdAt: "2024-01-10T11:30:00Z",
-        status: "In Review",
-        customerId: "CUST-005",
-        customerName: "David Brown",
-      },
-    ],
-    []
-  );
-
   // Load disputes data
   useEffect(() => {
     const loadDisputes = async () => {
       setLoading(true);
       try {
         if (isAdmin) {
+          // Load admin feedback using real API
+          const adminFeedbackResult = await getAdminFeedback({
+            startDate: startDateFilter || undefined,
+            endDate: endDateFilter || undefined,
+            customerId: customerIdFilter || undefined,
+            status: statusFilter || undefined,
+            category: categoryFilter || undefined,
+          });
+
+          if (adminFeedbackResult?.data) {
+            const feedbackData: FeedbackHistory[] =
+              adminFeedbackResult.data.map((f) => ({
+                id: f.id,
+                message: f.message,
+                category: f.category,
+                createdAt: f.createdAt,
+                status: f.status,
+                customerId: f.customerId,
+                customerName: f.customerName,
+              }));
+            setFeedbackHistory(feedbackData);
+            setFilteredFeedbackHistory(feedbackData);
+          } else {
+            setFeedbackHistory([]);
+            setFilteredFeedbackHistory([]);
+          }
+
           // Use real API for admin disputes
           const adminDisputesResult = await getAdminDisputes({
             startDate: startDateFilter || undefined,
@@ -252,6 +224,9 @@ const FeedbackDisputesPage: React.FC = () => {
                 attachmentUrl: d.attachmentUrl,
               })
             );
+            console.log("✅ === CUSTOMER DISPUTES DATA MAPPED ===");
+            console.log("📊 Disputes count:", disputesData.length);
+            console.log("📋 Disputes data:", disputesData);
             setDisputes(disputesData);
             setFilteredDisputes(disputesData);
           } else {
@@ -263,23 +238,33 @@ const FeedbackDisputesPage: React.FC = () => {
           // Use real API for customers
           const disputesResult = await getCustomerDisputes();
           if (disputesResult?.data) {
-            const disputesData: Dispute[] = disputesResult.data.map(
-              (d: ApiCustomerDisputeData) => ({
-                id: d.id,
-                reference: d.reference,
-                invoiceId: d.invoiceId,
-                paymentId: d.paymentId,
-                reason: d.reason,
-                category: d.category,
-                comments: d.comments,
-                status: d.status,
-                resolutionNotes: d.resolutionNotes,
-                customerId: user?.customerId || "",
-                createdAt: d.createdAt,
-                updatedAt: d.updatedAt,
-                attachmentUrl: d.attachmentUrl,
-              })
-            );
+            const disputesData: Dispute[] = (
+              disputesResult.data as unknown as ApiCustomerDisputeData[]
+            ).map((d: ApiCustomerDisputeData) => ({
+              id: d.disputeId.toString(),
+              reference: `DISP-${d.disputeId}`,
+              invoiceId: d.invoiceId || undefined,
+              paymentId: d.paymentId || undefined,
+              reason: d.reason,
+              category: "Others", // API doesn't provide category, defaulting to "Others"
+              comments: d.comment || undefined,
+              status:
+                d.status === "CREATED"
+                  ? "Pending"
+                  : (d.status as
+                      | "Pending"
+                      | "In Review"
+                      | "Resolved"
+                      | "Closed"),
+              resolutionNotes: d.resolutionNote || undefined,
+              customerId: d.customerId,
+              createdAt: d.createdAt,
+              updatedAt: d.updatedAt,
+              attachmentUrl: d.attachment || undefined,
+            }));
+            console.log("✅ === CUSTOMER DISPUTES DATA MAPPED ===");
+            console.log("📊 Disputes count:", disputesData.length);
+            console.log("📋 Disputes data:", disputesData);
             setDisputes(disputesData);
             setFilteredDisputes(disputesData);
           } else {
@@ -289,7 +274,16 @@ const FeedbackDisputesPage: React.FC = () => {
           }
 
           // Load customer feedback using real API
+          logger.info("FeedbackDisputes", "Loading customer feedback...");
           const feedbackResult = await getCustomerFeedback();
+          logger.info("FeedbackDisputes", "Customer feedback result", {
+            hasResult: !!feedbackResult,
+            hasData: !!feedbackResult?.data,
+            dataLength: feedbackResult?.data?.length,
+            status: feedbackResult?.status,
+            message: feedbackResult?.message,
+          });
+
           if (feedbackResult?.data) {
             const feedbackData: FeedbackHistory[] = feedbackResult.data.map(
               (f) => ({
@@ -300,8 +294,16 @@ const FeedbackDisputesPage: React.FC = () => {
                 status: f.status,
               })
             );
+            logger.success("FeedbackDisputes", "Customer feedback loaded", {
+              count: feedbackData.length,
+            });
             setFeedbackHistory(feedbackData);
             setFilteredFeedbackHistory(feedbackData);
+          } else {
+            // No feedback found or API failed
+            logger.warn("FeedbackDisputes", "No customer feedback data found");
+            setFeedbackHistory([]);
+            setFilteredFeedbackHistory([]);
           }
         }
       } catch (error) {
@@ -321,13 +323,14 @@ const FeedbackDisputesPage: React.FC = () => {
     user?.customerId,
     getCustomerDisputes,
     getAdminDisputes,
+    getAdminFeedback,
     statusFilter,
     startDateFilter,
     endDateFilter,
     customerIdFilter,
     invoiceFilter,
     paymentFilter,
-    mockAdminFeedback,
+    categoryFilter,
     getCustomerFeedback,
   ]);
 
@@ -343,19 +346,51 @@ const FeedbackDisputesPage: React.FC = () => {
   };
 
   const validateFeedbackForm = (): boolean => {
+    console.log("🔍 === VALIDATING FEEDBACK FORM ===");
+    console.log("📝 Form data being validated:", {
+      message: feedbackForm.message,
+      category: feedbackForm.category,
+      messageLength: feedbackForm.message?.length,
+    });
+
+    logger.info("FeedbackDisputes", "=== VALIDATING FEEDBACK FORM ===");
+    logger.info("FeedbackDisputes", "Form data being validated", {
+      message: feedbackForm.message,
+      category: feedbackForm.category,
+      messageLength: feedbackForm.message?.length,
+    });
+
     const errors: { message?: string; category?: string } = {};
 
     if (!feedbackForm.message.trim()) {
       errors.message = "Feedback message is required";
+      logger.warn("FeedbackDisputes", "Validation error: Message is empty");
     } else if (feedbackForm.message.trim().length < 10) {
       errors.message = "Feedback message must be at least 10 characters long";
+      logger.warn("FeedbackDisputes", "Validation error: Message too short", {
+        length: feedbackForm.message.trim().length,
+      });
     } else if (feedbackForm.message.trim().length > 1000) {
       errors.message = "Feedback message must be less than 1000 characters";
+      logger.warn("FeedbackDisputes", "Validation error: Message too long", {
+        length: feedbackForm.message.trim().length,
+      });
     }
 
     if (!feedbackForm.category) {
       errors.category = "Please select a category";
+      logger.warn("FeedbackDisputes", "Validation error: No category selected");
     }
+
+    console.log("✅ Validation result:", {
+      errors,
+      isValid: Object.keys(errors).length === 0,
+    });
+
+    logger.info("FeedbackDisputes", "Validation result", {
+      errors,
+      isValid: Object.keys(errors).length === 0,
+    });
 
     setFormErrors((prev) => ({ ...prev, feedback: errors }));
     return Object.keys(errors).length === 0;
@@ -441,17 +476,59 @@ const FeedbackDisputesPage: React.FC = () => {
   const handleFeedbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("🚀 === FEEDBACK SUBMIT FUNCTION CALLED ===");
+    console.log("📝 Form event:", e);
+    console.log("📋 Current form state:", feedbackForm);
+
+    logger.info("FeedbackDisputes", "=== FEEDBACK SUBMIT FUNCTION CALLED ===");
+    logger.info("FeedbackDisputes", "Form event", e);
+    logger.info("FeedbackDisputes", "Current form state", feedbackForm);
+
     if (!validateFeedbackForm()) {
+      logger.warn("FeedbackDisputes", "Form validation failed");
       showToast("Please fix the validation errors", "error");
       return;
     }
 
+    logger.info(
+      "FeedbackDisputes",
+      "Form validation passed, proceeding with submission"
+    );
+
     setLoading(true);
     try {
-      const result = await submitFeedback({
+      // Log exactly what we're sending to the API
+      const apiPayload = {
         category: feedbackForm.category,
         message: feedbackForm.message,
+      };
+
+      console.log("🚀 === SENDING TO API ENDPOINT ===");
+      console.log("📍 Endpoint: POST /api/faan/feedbacks");
+      console.log("📤 Payload being sent:", apiPayload);
+      console.log("📋 Full form data:", feedbackForm);
+
+      logger.info("FeedbackDisputes", "Submitting feedback", {
+        category: feedbackForm.category,
+        message: feedbackForm.message,
+        formData: feedbackForm,
+        apiPayload: apiPayload,
       });
+
+      const result = await submitFeedback(apiPayload);
+
+      logger.info("FeedbackDisputes", "Feedback submission result", {
+        hasResult: !!result,
+        status: result?.status,
+        statusCode: result?.statusCode,
+        message: result?.message,
+        data: result?.data,
+      });
+
+      console.log("✅ === FEEDBACK SUBMISSION SUCCESS ===");
+      console.log("📊 Result:", result);
+      console.log("📋 Result status:", result?.status);
+      console.log("📄 Result message:", result?.message);
 
       if (result?.status) {
         showToast("Feedback submitted successfully!", "success");
@@ -461,7 +538,24 @@ const FeedbackDisputesPage: React.FC = () => {
 
         // Refresh feedback list
         if (!isAdmin) {
+          console.log("🔄 === REFRESHING FEEDBACK LIST ===");
+          logger.info(
+            "FeedbackDisputes",
+            "Refreshing customer feedback after submission..."
+          );
           const feedbackResult = await getCustomerFeedback();
+          console.log("📥 === REFRESH RESULT ===");
+          console.log("📊 Has result:", !!feedbackResult);
+          console.log("📋 Has data:", !!feedbackResult?.data);
+          console.log("📏 Data length:", feedbackResult?.data?.length);
+          console.log("📄 Full result:", feedbackResult);
+
+          logger.info("FeedbackDisputes", "Refresh feedback result", {
+            hasResult: !!feedbackResult,
+            hasData: !!feedbackResult?.data,
+            dataLength: feedbackResult?.data?.length,
+          });
+
           if (feedbackResult?.data) {
             const feedbackData: FeedbackHistory[] = feedbackResult.data.map(
               (f) => ({
@@ -472,8 +566,22 @@ const FeedbackDisputesPage: React.FC = () => {
                 status: f.status,
               })
             );
+            console.log("✅ === UPDATING FEEDBACK STATE ===");
+            console.log("📊 Feedback data count:", feedbackData.length);
+            console.log("📋 Feedback data:", feedbackData);
             setFeedbackHistory(feedbackData);
             setFilteredFeedbackHistory(feedbackData);
+            console.log("✅ State updated successfully");
+          } else {
+            // No feedback found or API failed
+            console.log("⚠️ === NO FEEDBACK DATA FOUND ===");
+            console.log("📊 Setting empty arrays");
+            logger.warn(
+              "FeedbackDisputes",
+              "No customer feedback data found after refresh"
+            );
+            setFeedbackHistory([]);
+            setFilteredFeedbackHistory([]);
           }
         }
       } else {
@@ -566,23 +674,30 @@ const FeedbackDisputesPage: React.FC = () => {
           // For customers, refresh using real API
           const disputesResult = await getCustomerDisputes();
           if (disputesResult?.data) {
-            const disputesData: Dispute[] = disputesResult.data.map(
-              (d: ApiCustomerDisputeData) => ({
-                id: d.id,
-                reference: d.reference,
-                invoiceId: d.invoiceId,
-                paymentId: d.paymentId,
-                reason: d.reason,
-                category: d.category,
-                comments: d.comments,
-                status: d.status,
-                resolutionNotes: d.resolutionNotes,
-                customerId: user?.customerId || "",
-                createdAt: d.createdAt,
-                updatedAt: d.updatedAt,
-                attachmentUrl: d.attachmentUrl,
-              })
-            );
+            const disputesData: Dispute[] = (
+              disputesResult.data as unknown as ApiCustomerDisputeData[]
+            ).map((d: ApiCustomerDisputeData) => ({
+              id: d.disputeId.toString(),
+              reference: `DISP-${d.disputeId}`,
+              invoiceId: d.invoiceId || undefined,
+              paymentId: d.paymentId || undefined,
+              reason: d.reason,
+              category: "Others", // API doesn't provide category, defaulting to "Others"
+              comments: d.comment || undefined,
+              status:
+                d.status === "CREATED"
+                  ? "Pending"
+                  : (d.status as
+                      | "Pending"
+                      | "In Review"
+                      | "Resolved"
+                      | "Closed"),
+              resolutionNotes: d.resolutionNote || undefined,
+              customerId: d.customerId,
+              createdAt: d.createdAt,
+              updatedAt: d.updatedAt,
+              attachmentUrl: d.attachment || undefined,
+            }));
             setDisputes(disputesData);
             setFilteredDisputes(disputesData);
           } else {
@@ -773,48 +888,49 @@ const FeedbackDisputesPage: React.FC = () => {
             <div className="page-actions">
               <div className="feedback-search-section">
                 <div className="feedback-search-inputs feedback-action-buttons">
-                  <FieldButton
-                    inputs={[
-                      {
-                        placeholder: "Search feedback...",
-                        value: searchQuery,
-                        onChange: (
-                          e:
-                            | React.ChangeEvent<
-                                HTMLInputElement | HTMLSelectElement
-                              >
-                            | { target: { value: string } }
-                        ) => {
-                          const change = e as React.ChangeEvent<
-                            HTMLInputElement | HTMLSelectElement
-                          >;
-                          if (
-                            change &&
-                            (change.currentTarget || change.nativeEvent)
-                          ) {
-                            setSearchQuery(change.currentTarget.value);
-                            return;
-                          }
-                          const fallback = e as { target: { value: string } };
-                          setSearchQuery(fallback.target.value);
-                        },
-                      },
-                    ]}
-                    buttons={[
-                      { text: "Search", onClick: handleSearch },
-                      { text: "Clear", onClick: handleClearSearch },
-                      {
-                        text: "Submit Feedback",
-                        onClick: () => setShowFeedbackModal(true),
-                        variant: "primary",
-                      },
-                    ]}
-                  />
+                  <div className="search-controls">
+                    <SearchInput
+                      placeholder="Search feedback..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        const change = e as React.ChangeEvent<
+                          HTMLInputElement | HTMLSelectElement
+                        >;
+                        if (
+                          change &&
+                          (change.currentTarget || change.nativeEvent)
+                        ) {
+                          setSearchQuery(change.currentTarget.value);
+                          return;
+                        }
+                        const fallback = e as { target: { value: string } };
+                        setSearchQuery(fallback.target.value);
+                      }}
+                    />
+                    <SolidButton
+                      text="Search"
+                      onClick={handleSearch}
+                      variant="secondary"
+                      size="medium"
+                    />
+                    <SolidButton
+                      text="Clear"
+                      onClick={handleClearSearch}
+                      variant="secondary"
+                      size="medium"
+                    />
+                    <SolidButton
+                      text="Submit Feedback"
+                      onClick={() => setShowFeedbackModal(true)}
+                      variant="secondary"
+                      size="medium"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {filteredFeedbackHistory.length > 0 && (
+            {filteredFeedbackHistory.length > 0 ? (
               <div className="feedback-history-section">
                 <h3>Your Feedback:</h3>
                 <Grid>
@@ -834,6 +950,11 @@ const FeedbackDisputesPage: React.FC = () => {
                   ))}
                 </Grid>
               </div>
+            ) : (
+              <EmptyState
+                title="No Feedback Available"
+                message="You haven't submitted any feedback yet. Click 'Submit Feedback' to get started."
+              />
             )}
           </div>
         )}
@@ -843,48 +964,49 @@ const FeedbackDisputesPage: React.FC = () => {
             <div className="page-actions">
               <div className="disputes-search-section">
                 <div className="disputes-search-inputs disputes-action-buttons">
-                  <FieldButton
-                    inputs={[
-                      {
-                        placeholder: "Search disputes...",
-                        value: searchQuery,
-                        onChange: (
-                          e:
-                            | React.ChangeEvent<
-                                HTMLInputElement | HTMLSelectElement
-                              >
-                            | { target: { value: string } }
-                        ) => {
-                          const change = e as React.ChangeEvent<
-                            HTMLInputElement | HTMLSelectElement
-                          >;
-                          if (
-                            change &&
-                            (change.currentTarget || change.nativeEvent)
-                          ) {
-                            setSearchQuery(change.currentTarget.value);
-                            return;
-                          }
-                          const fallback = e as { target: { value: string } };
-                          setSearchQuery(fallback.target.value);
-                        },
-                      },
-                    ]}
-                    buttons={[
-                      { text: "Search", onClick: handleSearch },
-                      { text: "Clear", onClick: handleClearSearch },
-                      {
-                        text: "Raise New Dispute",
-                        onClick: () => setShowDisputeModal(true),
-                        variant: "primary",
-                      },
-                    ]}
-                  />
+                  <div className="search-controls">
+                    <SearchInput
+                      placeholder="Search disputes..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        const change = e as React.ChangeEvent<
+                          HTMLInputElement | HTMLSelectElement
+                        >;
+                        if (
+                          change &&
+                          (change.currentTarget || change.nativeEvent)
+                        ) {
+                          setSearchQuery(change.currentTarget.value);
+                          return;
+                        }
+                        const fallback = e as { target: { value: string } };
+                        setSearchQuery(fallback.target.value);
+                      }}
+                    />
+                    <SolidButton
+                      text="Search"
+                      onClick={handleSearch}
+                      variant="secondary"
+                      size="medium"
+                    />
+                    <SolidButton
+                      text="Clear"
+                      onClick={handleClearSearch}
+                      variant="secondary"
+                      size="medium"
+                    />
+                    <SolidButton
+                      text="Raise New Dispute"
+                      onClick={() => setShowDisputeModal(true)}
+                      variant="secondary"
+                      size="medium"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {filteredDisputes.length > 0 && (
+            {filteredDisputes.length > 0 ? (
               <div className="disputes-history-section">
                 <h3>Your Disputes:</h3>
                 <Grid>
@@ -905,6 +1027,11 @@ const FeedbackDisputesPage: React.FC = () => {
                   ))}
                 </Grid>
               </div>
+            ) : (
+              <EmptyState
+                title="No Disputes Available"
+                message="You haven't raised any disputes yet. Click 'Raise New Dispute' to get started."
+              />
             )}
           </div>
         )}
@@ -980,12 +1107,51 @@ const FeedbackDisputesPage: React.FC = () => {
                 </div>
 
                 <div className="filter-group">
-                  <Input
-                    label="Customer ID"
-                    type="text"
+                  <SearchInput
+                    placeholder="Customer ID"
                     value={customerIdFilter}
-                    onChange={(e) => setCustomerIdFilter(e.target.value)}
-                    placeholder="Enter Customer ID"
+                    onChange={(e) => {
+                      const change = e as React.ChangeEvent<
+                        HTMLInputElement | HTMLSelectElement
+                      >;
+                      if (
+                        change &&
+                        (change.currentTarget || change.nativeEvent)
+                      ) {
+                        setCustomerIdFilter(change.currentTarget.value);
+                        return;
+                      }
+                      const fallback = e as { target: { value: string } };
+                      setCustomerIdFilter(fallback.target.value);
+                    }}
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <ListBox
+                    label="Category"
+                    placeholder="All Categories"
+                    options={[
+                      { value: "", label: "All Categories" },
+                      ...feedbackCategories.map((category) => ({
+                        value: category,
+                        label: category,
+                      })),
+                    ]}
+                    value={categoryFilter}
+                    onChange={(option) => setCategoryFilter(option.value)}
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <SolidButton
+                    text="Search"
+                    onClick={() => {
+                      // Trigger the useEffect by updating a dependency
+                      // The filters will automatically trigger the API call
+                    }}
+                    variant="secondary"
+                    size="medium"
                   />
                 </div>
 
@@ -997,8 +1163,7 @@ const FeedbackDisputesPage: React.FC = () => {
                       setStartDateFilter("");
                       setEndDateFilter("");
                       setCustomerIdFilter("");
-                      setInvoiceFilter("");
-                      setPaymentFilter("");
+                      setCategoryFilter("");
                     }}
                     variant="secondary"
                     size="medium"
@@ -1009,22 +1174,29 @@ const FeedbackDisputesPage: React.FC = () => {
 
             <div className="admin-feedback-grid-section">
               <h3>All Feedback</h3>
-              <Grid>
-                {mockAdminFeedback.map((feedback) => (
-                  <FeedbackCard
-                    key={feedback.id}
-                    id={feedback.id}
-                    category={feedback.category}
-                    message={feedback.message}
-                    status={feedback.status}
-                    createdAt={feedback.createdAt}
-                    onViewDetails={() => {
-                      setSelectedFeedback(feedback);
-                      setShowFeedbackDetailsModal(true);
-                    }}
-                  />
-                ))}
-              </Grid>
+              {filteredFeedbackHistory.length > 0 ? (
+                <Grid>
+                  {filteredFeedbackHistory.map((feedback) => (
+                    <FeedbackCard
+                      key={feedback.id}
+                      id={feedback.id}
+                      category={feedback.category}
+                      message={feedback.message}
+                      status={feedback.status}
+                      createdAt={feedback.createdAt}
+                      onViewDetails={() => {
+                        setSelectedFeedback(feedback);
+                        setShowFeedbackDetailsModal(true);
+                      }}
+                    />
+                  ))}
+                </Grid>
+              ) : (
+                <EmptyState
+                  title="No Feedback Available"
+                  message="There are no feedback records to display at the moment."
+                />
+              )}
             </div>
           </div>
         )}
@@ -1069,32 +1241,77 @@ const FeedbackDisputesPage: React.FC = () => {
                 </div>
 
                 <div className="filter-group">
-                  <Input
-                    label="Customer ID"
-                    type="text"
+                  <SearchInput
+                    placeholder="Customer ID"
                     value={customerIdFilter}
-                    onChange={(e) => setCustomerIdFilter(e.target.value)}
-                    placeholder="Enter Customer ID"
+                    onChange={(e) => {
+                      const change = e as React.ChangeEvent<
+                        HTMLInputElement | HTMLSelectElement
+                      >;
+                      if (
+                        change &&
+                        (change.currentTarget || change.nativeEvent)
+                      ) {
+                        setCustomerIdFilter(change.currentTarget.value);
+                        return;
+                      }
+                      const fallback = e as { target: { value: string } };
+                      setCustomerIdFilter(fallback.target.value);
+                    }}
                   />
                 </div>
 
                 <div className="filter-group">
-                  <Input
-                    label="Invoice ID"
-                    type="text"
+                  <SearchInput
+                    placeholder="Invoice ID"
                     value={invoiceFilter}
-                    onChange={(e) => setInvoiceFilter(e.target.value)}
-                    placeholder="Enter Invoice ID"
+                    onChange={(e) => {
+                      const change = e as React.ChangeEvent<
+                        HTMLInputElement | HTMLSelectElement
+                      >;
+                      if (
+                        change &&
+                        (change.currentTarget || change.nativeEvent)
+                      ) {
+                        setInvoiceFilter(change.currentTarget.value);
+                        return;
+                      }
+                      const fallback = e as { target: { value: string } };
+                      setInvoiceFilter(fallback.target.value);
+                    }}
                   />
                 </div>
 
                 <div className="filter-group">
-                  <Input
-                    label="Payment ID"
-                    type="text"
+                  <SearchInput
+                    placeholder="Payment ID"
                     value={paymentFilter}
-                    onChange={(e) => setPaymentFilter(e.target.value)}
-                    placeholder="Enter Payment ID"
+                    onChange={(e) => {
+                      const change = e as React.ChangeEvent<
+                        HTMLInputElement | HTMLSelectElement
+                      >;
+                      if (
+                        change &&
+                        (change.currentTarget || change.nativeEvent)
+                      ) {
+                        setPaymentFilter(change.currentTarget.value);
+                        return;
+                      }
+                      const fallback = e as { target: { value: string } };
+                      setPaymentFilter(fallback.target.value);
+                    }}
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <SolidButton
+                    text="Search"
+                    onClick={() => {
+                      // Trigger the useEffect by updating a dependency
+                      // The filters will automatically trigger the API call
+                    }}
+                    variant="secondary"
+                    size="medium"
                   />
                 </div>
 
@@ -1118,23 +1335,30 @@ const FeedbackDisputesPage: React.FC = () => {
 
             <div className="admin-disputes-grid-section">
               <h3>All Disputes</h3>
-              <Grid>
-                {filteredDisputes.map((dispute) => (
-                  <DisputeCard
-                    key={dispute.id}
-                    reference={dispute.reference}
-                    type={dispute.invoiceId ? "Invoice" : "Payment"}
-                    reason={dispute.reason}
-                    category={dispute.category}
-                    status={dispute.status}
-                    createdAt={dispute.createdAt}
-                    onViewDetails={() => {
-                      setSelectedDispute(dispute);
-                      setShowDisputeDetailsModal(true);
-                    }}
-                  />
-                ))}
-              </Grid>
+              {filteredDisputes.length > 0 ? (
+                <Grid>
+                  {filteredDisputes.map((dispute) => (
+                    <DisputeCard
+                      key={dispute.id}
+                      reference={dispute.reference}
+                      type={dispute.invoiceId ? "Invoice" : "Payment"}
+                      reason={dispute.reason}
+                      category={dispute.category}
+                      status={dispute.status}
+                      createdAt={dispute.createdAt}
+                      onViewDetails={() => {
+                        setSelectedDispute(dispute);
+                        setShowDisputeDetailsModal(true);
+                      }}
+                    />
+                  ))}
+                </Grid>
+              ) : (
+                <EmptyState
+                  title="No Disputes Available"
+                  message="There are no dispute records to display at the moment."
+                />
+              )}
             </div>
           </div>
         )}
@@ -1522,7 +1746,7 @@ const FeedbackDisputesPage: React.FC = () => {
                         resolutionNotes
                       );
                     }}
-                    variant="primary"
+                    variant="secondary"
                     size="medium"
                   />
                 </div>

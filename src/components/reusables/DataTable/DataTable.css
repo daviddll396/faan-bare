@@ -208,48 +208,7 @@
 
 /* Removed legacy zoom-based responsiveness. Use explicit responsive rules instead. */
 
-/* No Data Indicator */
-.data-table-no-data {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 24px;
-  text-align: center;
-  min-height: 240px;
-  background: #fff;
-}
-
-.no-data-icon {
-  margin-bottom: 20px;
-  opacity: 0.4;
-}
-
-.no-data-icon img {
-  filter: grayscale(100%) brightness(0.6);
-}
-
-.no-data-icon .mobile-icon {
-  display: none;
-}
-
-.no-data-icon .desktop-icon {
-  display: block;
-}
-
-.no-data-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 12px;
-}
-
-.no-data-message {
-  font-size: 15px;
-  color: #969696;
-  line-height: 1.6;
-  max-width: 400px;
-}
+/* No Data Indicator - Now handled by EmptyState component */
 
 /* Animation */
 @keyframes slideInUp {
@@ -724,24 +683,7 @@
     padding: 3px 6px;
   }
 
-  /* No data state adjustments */
-  .data-table-no-data {
-    padding: 40px 18px;
-    min-height: 150px;
-  }
-  .no-data-icon {
-    margin-bottom: 12px;
-  }
-  .no-data-icon .desktop-icon {
-    width: 36px;
-    height: 36px;
-  }
-  .no-data-title {
-    font-size: 15px;
-  }
-  .no-data-message {
-    font-size: 12px;
-  }
+  /* No data state adjustments - Now handled by EmptyState component */
 }
 
 /* Large Tablet (992px - 1199px) */
@@ -814,24 +756,7 @@
     margin-right: 3px;
   }
 
-  /* No data state adjustments */
-  .data-table-no-data {
-    padding: 35px 16px;
-    min-height: 130px;
-  }
-  .no-data-icon {
-    margin-bottom: 10px;
-  }
-  .no-data-icon .desktop-icon {
-    width: 32px;
-    height: 32px;
-  }
-  .no-data-title {
-    font-size: 14px;
-  }
-  .no-data-message {
-    font-size: 11px;
-  }
+  /* No data state adjustments - Now handled by EmptyState component */
 }
 
 /* Tablet (768px - 1050px) */
@@ -903,24 +828,7 @@
     margin-right: 2px;
   }
 
-  /* No data state adjustments */
-  .data-table-no-data {
-    padding: 26px 12px;
-    min-height: 100px;
-  }
-  .no-data-icon {
-    margin-bottom: 8px;
-  }
-  .no-data-icon .desktop-icon {
-    width: 28px;
-    height: 28px;
-  }
-  .no-data-title {
-    font-size: 11px;
-  }
-  .no-data-message {
-    font-size: 8px;
-  }
+  /* No data state adjustments - Now handled by EmptyState component */
 
   .role-badge,
   .role-badge-table,
@@ -1056,27 +964,7 @@
     border-radius: 3px;
   }
 
-  /* No data state adjustments */
-  .data-table-no-data {
-    padding: 40px 16px;
-    min-height: 150px;
-  }
-
-  .no-data-icon .desktop-icon {
-    display: none;
-  }
-
-  .no-data-icon .mobile-icon {
-    display: block;
-  }
-
-  .no-data-title {
-    font-size: 16px;
-  }
-
-  .no-data-message {
-    font-size: 12px;
-  }
+  /* No data state adjustments - Now handled by EmptyState component */
 }
 
 /* Small Mobile (480px and below) */
@@ -1148,17 +1036,5 @@
     gap: 1px;
   }
 
-  /* No data state adjustments */
-  .data-table-no-data {
-    padding: 25px 10px;
-    min-height: 100px;
-  }
-
-  .no-data-title {
-    font-size: 12px;
-  }
-
-  .no-data-message {
-    font-size: 9px;
-  }
+  /* No data state adjustments - Now handled by EmptyState component */
 }

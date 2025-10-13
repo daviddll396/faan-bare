@@ -45,9 +45,10 @@ const API_ENDPOINTS = {
   CREATE_CUSTOMER: `${API_BASE_URL}/auth/faan/register`,
   SUBMIT_FEEDBACK: `${API_BASE_URL}/api/faan/feedbacks`,
   GET_CUSTOMER_FEEDBACK: `${API_BASE_URL}/api/faan/feedbacks`,
+  GET_ADMIN_FEEDBACK: `${API_BASE_URL}/api/faan/feedbacks/admin-fetch`,
   SUBMIT_DISPUTE: `${API_BASE_URL}/api/faan/disputes`,
   CUSTOMER_DISPUTES: `${API_BASE_URL}/api/faan/disputes`,
-  ADMIN_DISPUTES: `${API_BASE_URL}/api/faan/disputes/search`,
+  ADMIN_DISPUTES: `${API_BASE_URL}/api/faan/disputes/admin-fetch`,
   UPDATE_DISPUTE_STATUS: `${API_BASE_URL}/api/faan/disputes`,
 };
 
@@ -319,6 +320,21 @@ interface CustomerFeedbackResponse {
   }>;
 }
 
+interface AdminFeedbackResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data: Array<{
+    id: string;
+    message: string;
+    category: string;
+    status: "Submitted" | "In Review" | "Resolved";
+    createdAt: string;
+    customerId: string;
+    customerName?: string;
+  }>;
+}
+
 // Dispute interfaces
 interface SubmitDisputeRequest {
   invoiceId?: string;
@@ -458,6 +474,13 @@ interface AuthContextType {
     request: SubmitFeedbackRequest
   ) => Promise<SubmitFeedbackResponse | null>;
   getCustomerFeedback: () => Promise<CustomerFeedbackResponse | null>;
+  getAdminFeedback: (filters?: {
+    startDate?: string;
+    endDate?: string;
+    customerId?: string;
+    status?: string;
+    category?: string;
+  }) => Promise<AdminFeedbackResponse | null>;
   submitDispute: (
     request: SubmitDisputeRequest
   ) => Promise<SubmitDisputeResponse | null>;
@@ -2267,7 +2290,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return null;
         }
 
+        console.log("🌐 === AUTHCONTEXT: MAKING API CALL ===");
+        console.log("📍 Endpoint:", API_ENDPOINTS.SUBMIT_FEEDBACK);
+        console.log("📤 Request payload:", request);
+        console.log("📋 JSON body:", JSON.stringify(request));
+        console.log(
+          "🔑 Token (first 20 chars):",
+          token.substring(0, 20) + "..."
+        );
+
         logger.info("Feedback", "Submitting feedback", request);
+        logger.info("Feedback", "Request details", {
+          endpoint: API_ENDPOINTS.SUBMIT_FEEDBACK,
+          method: "POST",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token.substring(0, 20)}...`,
+          },
+          body: JSON.stringify(request),
+        });
 
         const response = await fetch(API_ENDPOINTS.SUBMIT_FEEDBACK, {
           method: "POST",
@@ -2297,6 +2339,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         const responseText = await response.text();
 
+        console.log("📥 === API RESPONSE RECEIVED ===");
+        console.log("📊 Status:", response.status);
+        console.log("📄 Status Text:", response.statusText);
+        console.log("📏 Response Length:", responseText.length);
+        console.log("📋 Response Preview:", responseText.substring(0, 200));
+        console.log("📄 Full Response:", responseText);
+
+        logger.info("Feedback", "Raw response", {
+          status: response.status,
+          statusText: response.statusText,
+          responseLength: responseText.length,
+          responsePreview: responseText.substring(0, 200),
+        });
+
         if (!responseText || responseText.trim() === "") {
           logger.warn("Feedback", "Empty feedback response");
           return null;
@@ -2305,7 +2361,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         let data: SubmitFeedbackResponse;
         try {
           data = JSON.parse(responseText);
-          logger.success("Feedback", "Feedback submitted successfully", data);
+          logger.success("Feedback", "Feedback submitted successfully", {
+            status: data.status,
+            statusCode: data.statusCode,
+            message: data.message,
+            data: data.data,
+          });
         } catch (error) {
           logger.error("Feedback", "Failed to parse feedback response", error);
           return null;
@@ -2387,9 +2448,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           data = JSON.parse(responseText);
           logger.success("Feedback", "Customer feedback loaded", {
             count: data.data?.length,
+            status: data.status,
+            statusCode: data.statusCode,
+            message: data.message,
           });
         } catch (error) {
-          logger.error("Feedback", "Failed to parse customer feedback", error);
+          logger.error("Feedback", "Failed to parse customer feedback", {
+            error: error instanceof Error ? error.message : String(error),
+            responsePreview: responseText.substring(0, 200),
+          });
           return null;
         }
 
@@ -2415,6 +2482,106 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
     }, [checkTokenAndRedirect]);
+
+  const getAdminFeedback = useCallback(
+    async (filters?: {
+      startDate?: string;
+      endDate?: string;
+      customerId?: string;
+      status?: string;
+      category?: string;
+    }): Promise<AdminFeedbackResponse | null> => {
+      try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        if (!token) {
+          logger.error(
+            "Feedback",
+            "No token found for fetching admin feedback"
+          );
+          return null;
+        }
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (filters?.startDate) params.append("startDate", filters.startDate);
+        if (filters?.endDate) params.append("endDate", filters.endDate);
+        if (filters?.customerId)
+          params.append("customerId", filters.customerId);
+        if (filters?.status) params.append("status", filters.status);
+        if (filters?.category) params.append("category", filters.category);
+
+        const url = `${API_ENDPOINTS.GET_ADMIN_FEEDBACK}?${params.toString()}`;
+
+        logger.info("Feedback", "Fetching admin feedback", filters);
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        logger.apiResponse(API_ENDPOINTS.GET_ADMIN_FEEDBACK, response.status);
+
+        if (!response.ok) {
+          logger.error(
+            "Feedback",
+            `Failed to fetch admin feedback: ${response.status}`
+          );
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return null;
+          }
+
+          return null;
+        }
+
+        const responseText = await response.text();
+
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Feedback", "Empty admin feedback response");
+          return null;
+        }
+
+        let data: AdminFeedbackResponse;
+        try {
+          data = JSON.parse(responseText);
+          logger.success("Feedback", "Admin feedback loaded", {
+            count: data.data?.length,
+            filters,
+          });
+        } catch (error) {
+          logger.error("Feedback", "Failed to parse admin feedback", error);
+          return null;
+        }
+
+        // Check if the API response indicates success
+        if (
+          data &&
+          (data.status === true ||
+            data.statusCode === HTTP_STATUS.OK ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0")
+        ) {
+          return data;
+        } else {
+          logger.error(
+            "Feedback",
+            "Failed to fetch admin feedback",
+            data.message
+          );
+          return data; // Return the response even if failed so we can show the error message
+        }
+      } catch (error) {
+        logger.error("Feedback", "Get admin feedback error", error);
+        return null;
+      }
+    },
+    [checkTokenAndRedirect]
+  );
 
   const submitDispute = useCallback(
     async (
@@ -2806,6 +2973,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateProfile,
     submitFeedback,
     getCustomerFeedback,
+    getAdminFeedback,
     submitDispute,
     getCustomerDisputes,
     getAdminDisputes,

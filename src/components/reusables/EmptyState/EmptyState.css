@@ -1,0 +1,181 @@
+/* ======================================== */
+/* EMPTY STATE COMPONENT */
+/* ======================================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+  min-height: 240px;
+  background: #fff;
+}
+
+.empty-state-icon {
+  margin-bottom: 20px;
+  opacity: 0.4;
+}
+
+.empty-state-icon img {
+  filter: grayscale(100%) brightness(0.6);
+}
+
+.empty-state-icon .mobile-icon {
+  display: none;
+}
+
+.empty-state-icon .desktop-icon {
+  display: block;
+}
+
+.empty-state-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 12px;
+}
+
+.empty-state-message {
+  font-size: 15px;
+  color: #969696;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+/* ===================== RESPONSIVE DESIGN BREAKPOINTS ===================== */
+
+/* Large Desktop (1400px+) */
+@media (min-width: 1400px) {
+  .empty-state {
+    padding: 80px 24px;
+    min-height: 240px;
+  }
+
+  .empty-state-icon {
+    margin-bottom: 20px;
+  }
+
+  .empty-state-title {
+    font-size: 20px;
+  }
+
+  .empty-state-message {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 1599px) {
+  .empty-state {
+    padding: 40px 18px;
+    min-height: 150px;
+  }
+
+  .empty-state-icon {
+    margin-bottom: 12px;
+  }
+
+  .empty-state-icon .desktop-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .empty-state-title {
+    font-size: 15px;
+  }
+
+  .empty-state-message {
+    font-size: 12px;
+  }
+}
+
+/* Large Tablet (992px - 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .empty-state {
+    padding: 35px 16px;
+    min-height: 130px;
+  }
+
+  .empty-state-icon {
+    margin-bottom: 10px;
+  }
+
+  .empty-state-icon .desktop-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .empty-state-title {
+    font-size: 14px;
+  }
+
+  .empty-state-message {
+    font-size: 11px;
+  }
+}
+
+/* Tablet (768px - 1050px) */
+@media (max-width: 1050px) {
+  .empty-state {
+    padding: 26px 12px;
+    min-height: 100px;
+  }
+
+  .empty-state-icon {
+    margin-bottom: 8px;
+  }
+
+  .empty-state-icon .desktop-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .empty-state-title {
+    font-size: 11px;
+  }
+
+  .empty-state-message {
+    font-size: 8px;
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 40px 16px;
+    min-height: 150px;
+  }
+
+  .empty-state-icon .desktop-icon {
+    display: none;
+  }
+
+  .empty-state-icon .mobile-icon {
+    display: block;
+  }
+
+  .empty-state-title {
+    font-size: 16px;
+  }
+
+  .empty-state-message {
+    font-size: 12px;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  .empty-state {
+    padding: 25px 10px;
+    min-height: 100px;
+  }
+
+  .empty-state-title {
+    font-size: 12px;
+  }
+
+  .empty-state-message {
+    font-size: 9px;
+  }
+}

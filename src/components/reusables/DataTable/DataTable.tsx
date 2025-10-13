@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./DataTable.css";
-import AirplaneIcon from "/icons/airplane-icon.svg";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import EmptyState from "../EmptyState/EmptyState";
 
 interface DataTableProps {
   headers: string[];
@@ -80,28 +80,11 @@ const DataTable: React.FC<DataTableProps> = ({
       <div className={`data-table-card ${className}`}>
         {header && <div className="data-table-header">{header}</div>}
         {orderedData.length === 0 ? (
-          <div className="data-table-no-data">
-            <div className="no-data-icon">
-              <img
-                src={AirplaneIcon}
-                alt="No data"
-                width={48}
-                height={48}
-                className="desktop-icon"
-              />
-              <img
-                src={AirplaneIcon}
-                alt="No data"
-                width={36}
-                height={36}
-                className="mobile-icon"
-              />
-            </div>
-            <div className="no-data-title">No Data Available</div>
-            <div className="no-data-message">
-              There are no records to display at the moment.
-            </div>
-          </div>
+          <EmptyState
+            title="No Data Available"
+            message="There are no records to display at the moment."
+            className="data-table-no-data"
+          />
         ) : (
           <>
             <table className="data-table">
