@@ -20,84 +20,39 @@
 /* Responsive zoom scaling for the sidebar to handle different desktop sizes and scaling */
 /* Progressive zoom scaling with aggressive scaling for high DPI displays */
 
-
-@media (max-width: 1800px) {
+@media (max-width: 2100px) {
   .sidebar {
-    zoom: 1;
+    zoom: .8;
   }
 }
 
-@media (max-width: 1700px) {
+@media (max-width: 1800px) {
   .sidebar {
-    zoom: 0.9;
+    zoom: 0.7;
   }
 }
 
 @media (max-width: 1600px) {
   .sidebar {
-    zoom: 0.9;
+    zoom: 0.5;
   }
 }
 
 @media (max-width: 1500px) {
   .sidebar {
-    zoom: 0.9;
+    zoom: 0.4;
   }
 }
 
-@media (max-width: 1450px) {
-  .sidebar {
-    zoom: 0.8;
-  }
-}
 
-@media (max-width: 1400px) {
-  .sidebar {
-    zoom: 0.8;
-  }
-}
 
-@media (max-width: 1350px) {
-  .sidebar {
-    zoom: 0.8;
-  }
-}
 
-@media (max-width: 1300px) {
-  .sidebar {
-    zoom: 0.8;
-  }
-}
 
-@media (max-width: 1250px) {
-  .sidebar {
-    zoom: 0.8;
-  }
-}
 
-@media (max-width: 1200px) {
-  .sidebar {
-    zoom: 0.8;
-  }
-}
 
-@media (max-width: 1170px) {
-  .sidebar {
-    zoom: 0.6;
-  }
-}
 
-@media (max-width: 1100px) {
-  .sidebar {
-    zoom: 0.45;
-  }
-}
 
-@media (max-width: 1050px) {
-  .sidebar {
-    zoom: 0.45;
-  }
-}
+
 
 /* Reset zoom for mobile devices to use standard responsive behavior */
 @media (max-width: 768px) {
