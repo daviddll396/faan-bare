@@ -68,6 +68,9 @@ const STORAGE_KEYS = {
   TOKEN: "faan_token",
 };
 
+// Key used to persist recent funding records locally
+const FUNDING_STORAGE_KEY = "faan_funding_records";
+
 const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
@@ -1013,17 +1016,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .replace(/-/g, "")}-${Math.random().toString(36).substring(2, 8)}`;
 
       // Prevent duplicate fund calls for the same reference (idempotency guard)
-      // Use a module-scoped set to track in-flight references
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (!(globalThis as any)._pendingFundRefs) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        (globalThis as any)._pendingFundRefs = new Set<string>();
+      // Use a module-scoped set on globalThis to track in-flight references
+      type PendingRefsHolder = { _pendingFundRefs?: Set<string> };
+      const holder = globalThis as unknown as PendingRefsHolder;
+      if (!holder._pendingFundRefs) {
+        holder._pendingFundRefs = new Set<string>();
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const pendingFundRefs: Set<string> = (globalThis as any)._pendingFundRefs;
+      const pendingFundRefs: Set<string> =
+        holder._pendingFundRefs as Set<string>;
 
       const refToUse = externalReference ?? reference;
 
@@ -1050,7 +1050,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             return true;
           }
         }
-      } catch (err) {
+      } catch {
         // ignore parsing errors
       }
 

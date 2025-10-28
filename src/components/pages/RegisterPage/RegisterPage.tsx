@@ -1624,11 +1624,7 @@ const RegisterPage: React.FC = () => {
                 style={{ gridColumn: "1 / span 2" }}
               >
                 <InputUpload
-                  label={
-                    <span>
-                      TIN
-                    </span>
-                  }
+                  label={<span>TIN</span>}
                   name="tinNumber"
                   value={corporateForm.tinNumber}
                   onChange={handleCorporateChange}
