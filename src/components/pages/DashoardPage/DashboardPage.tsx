@@ -506,8 +506,7 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
                 );
                 // update fundingRecords state so Recent Funding Records table updates
                 setFundingRecords((prev) => [record, ...prev].slice(0, 50));
-                // also update local wallet balance optimistically
-                setLocalWalletBalance((b) => b + Math.round(amount));
+                // local wallet balance will be refreshed from server via refreshUserDetails
               } catch (err) {
                 logger.warn("Wallet", "Failed to persist funding record", err);
               }
@@ -574,7 +573,7 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
             const updated = [record, ...existing].slice(0, 50);
             localStorage.setItem(FUNDING_STORAGE_KEY, JSON.stringify(updated));
             setTransactions((prev) => [record as Transaction, ...prev]);
-            setLocalWalletBalance((b) => b + Math.round(amount));
+            // local wallet balance will be refreshed from server via refreshUserDetails
           } catch (err) {
             logger.warn(
               "Wallet",

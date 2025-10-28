@@ -22,7 +22,7 @@
 
 @media (max-width: 2100px) {
   .sidebar {
-    zoom: .8;
+    zoom: 0.8;
   }
 }
 
@@ -43,16 +43,6 @@
     zoom: 0.4;
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 /* Reset zoom for mobile devices to use standard responsive behavior */
 @media (max-width: 768px) {

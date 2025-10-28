@@ -557,14 +557,13 @@
 .booking-tab:hover {
   background: #e9eef0;
   color: #5f5f5f;
- 
 }
 
 .booking-tab.active {
   color: #047857; /* green text */
   background: #eafaf3; /* light green background */
   box-shadow: 0 6px 18px rgba(4, 120, 87, 0.06);
- 
+
   font-weight: 700;
 }
 
@@ -585,6 +584,15 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+/* Ensure inputs inside booking form are above adjacent dropdowns and receive pointer events */
+.booking-form-field-col input.reusable-input,
+.booking-form-field-col input,
+.booking-form-field-col .reusable-input {
+  position: relative;
+  z-index: 5;
+  pointer-events: auto;
 }
 
 .booking-form-error-text {
@@ -638,7 +646,7 @@
   background: #ffffff; /* light grey background */
   border-radius: 5px;
   padding: 12px 14px;
-border:1px solid #f0f0f0;
+  border: 1px solid #f0f0f0;
 }
 
 .passenger-pill-left {
@@ -1630,8 +1638,6 @@ border:1px solid #f0f0f0;
     border-radius: 8px;
     margin-top: 10px;
   }
-
-
 
   .form-row-full {
     width: 100%;

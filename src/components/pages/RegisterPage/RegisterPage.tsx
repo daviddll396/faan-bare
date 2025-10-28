@@ -3,11 +3,13 @@ import { useNavigate, Link } from "react-router-dom";
 import MessageToast from "../../reusables/MessageToast";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import Input from "../../reusables/Input/Input";
+import InputUpload from "../../reusables/InputUpload/InputUpload";
 import ListBox, { type ListBoxOption } from "../../reusables/ListBox/ListBox";
 import Modal from "../../reusables/Modal/Modal";
 import FaanLogo from "/images/faan-logo.svg";
 import OnboardingImage from "/images/boarding1.jpg";
 import CryptoJS from "crypto-js";
+import DatePicker from "../../reusables/DatePicker/DatePicker";
 import "./RegisterPage.css";
 
 // API Base URL - configure for different environments
@@ -175,6 +177,7 @@ const initialCorporateForm = {
   phoneNumber: "",
   password: "",
   confirmPassword: "",
+  tinNumber: "",
 };
 
 const initialGovernmentForm = {
@@ -258,6 +261,29 @@ const RegisterPage: React.FC = () => {
   }>({});
 
   // Corporate document upload state
+  const handleTinFiles = (files: File[]) => {
+    // Validate and add uploaded TIN file to uploadedFiles (separate from TIN text input)
+    const newFiles: UploadedFile[] = [];
+    for (const file of files) {
+      if (!/(pdf|jpeg|jpg)$/i.test(file.name.split(".").pop() || "")) {
+        setFileError("Only PDF or JPEG files are allowed.");
+        continue;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        setFileError("File size must not exceed 2MB.");
+        continue;
+      }
+      newFiles.push({
+        file,
+        name: file.name,
+        size: file.size,
+        progress: 100,
+        type: file.type,
+        id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`,
+      });
+    }
+    if (newFiles.length > 0) setUploadedFiles((prev) => [...prev, ...newFiles]);
+  };
   interface UploadedFile {
     id: string;
     file: File;
@@ -1006,6 +1032,8 @@ const RegisterPage: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
+  // (removed unused credentialErrors variable)
+
   return (
     <div className="auth-split-screen">
       <MessageToast
@@ -1267,14 +1295,22 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               <div className="form-row-modern">
-                <Input
-                  label="Date of Birth"
-                  name="dob"
-                  type="date"
+                <DatePicker
                   value={individualForm.dob}
-                  onChange={handleIndividualChange}
-                  autoComplete="off"
+                  onChange={(v) =>
+                    setIndividualForm((prev) => ({ ...prev, dob: v }))
+                  }
+                  label="Date of Birth"
                   error={formErrors.dob || false}
+                  max={
+                    new Date(
+                      new Date().getFullYear() - 18,
+                      new Date().getMonth(),
+                      new Date().getDate()
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
                 />
               </div>
             </div>
@@ -1580,6 +1616,31 @@ const RegisterPage: React.FC = () => {
                   placeholder="Registration Number"
                   autoComplete="off"
                   error={corporateFormErrors.registrationNumber || false}
+                />
+              </div>
+
+              <div
+                className="form-row-modern"
+                style={{ gridColumn: "1 / span 2" }}
+              >
+                <InputUpload
+                  label={
+                    <span>
+                      TIN
+                    </span>
+                  }
+                  name="tinNumber"
+                  value={corporateForm.tinNumber}
+                  onChange={handleCorporateChange}
+                  onFilesChange={handleTinFiles}
+                  placeholder="Enter TIN and upload document"
+                  accept=".pdf,.jpg,.jpeg"
+                  multiple={false}
+                  error={
+                    corporateFormErrors.tinNumber ||
+                    (fileError ? fileError : false)
+                  }
+                  className="booking-form-input"
                 />
               </div>
               <div className="form-row-modern">
@@ -2068,7 +2129,9 @@ const RegisterPage: React.FC = () => {
                   value={governmentForm.password}
                   onChange={(e) => {
                     const value = e.target.value;
+                    // Keep both the government form and the shared credential state in sync
                     setGovernmentForm((prev) => ({ ...prev, password: value }));
+                    setPassword(value);
                     setGovernmentFormErrors((prev) => ({
                       ...prev,
                       password: validateField("password", value),
@@ -2093,10 +2156,12 @@ const RegisterPage: React.FC = () => {
                   value={governmentForm.confirmPassword}
                   onChange={(e) => {
                     const value = e.target.value;
+                    // Keep both the government form and the shared credential state in sync
                     setGovernmentForm((prev) => ({
                       ...prev,
                       confirmPassword: value,
                     }));
+                    setConfirmPassword(value);
                     setGovernmentFormErrors((prev) => ({
                       ...prev,
                       confirmPassword: !value
@@ -2375,14 +2440,22 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               <div className="form-row-modern">
-                <Input
-                  label="Date of Birth"
-                  name="dob"
-                  type="date"
+                <DatePicker
                   value={familyForm.dob}
-                  onChange={handleFamilyChange}
-                  autoComplete="off"
+                  onChange={(v) =>
+                    setFamilyForm((prev) => ({ ...prev, dob: v }))
+                  }
+                  label="Date of Birth"
                   error={familyFormErrors.dob || false}
+                  max={
+                    new Date(
+                      new Date().getFullYear() - 18,
+                      new Date().getMonth(),
+                      new Date().getDate()
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
                 />
               </div>
             </div>
@@ -2622,10 +2695,12 @@ const RegisterPage: React.FC = () => {
                   value={governmentForm.password}
                   onChange={(e) => {
                     const value = e.target.value;
+                    // sync with shared credential state so validators work
                     setGovernmentForm((prev) => ({
                       ...prev,
                       password: value,
                     }));
+                    setPassword(value);
                     setGovernmentFormErrors((prev) => ({
                       ...prev,
                       password: validateField("password", value),
@@ -2654,6 +2729,7 @@ const RegisterPage: React.FC = () => {
                       ...prev,
                       confirmPassword: value,
                     }));
+                    setConfirmPassword(value);
                     setGovernmentFormErrors((prev) => ({
                       ...prev,
                       confirmPassword: !value

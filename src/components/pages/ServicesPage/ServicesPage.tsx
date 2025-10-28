@@ -21,6 +21,10 @@ import SlideIndicator from "../../reusables/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Input from "../../reusables/Input/Input";
 import ListBox, { type ListBoxOption } from "../../reusables/ListBox/ListBox";
+import TimePicker, {
+  type TimeOption,
+} from "../../reusables/TimePicker/TimePicker";
+import DatePicker from "../../reusables/DatePicker/DatePicker";
 import SolidButton from "../../reusables/SolidButton";
 
 // ITEXPay inline types (local)
@@ -253,7 +257,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   ];
   const [passengers, setPassengers] = React.useState<BookingPassenger[]>([]);
   const [fieldErrors, setFieldErrors] = React.useState<{
-    [key: string]: boolean;
+    [key: string]: string | false;
   }>({});
   const [bookingFormError, setBookingFormError] = React.useState<string | null>(
     null
@@ -482,21 +486,28 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   const handleBookingFormChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setBookingForm({ ...bookingForm, [e.target.name]: e.target.value });
-    // Clear field error when user starts typing/selecting
-    if (fieldErrors[e.target.name]) {
-      setFieldErrors((prev) => ({ ...prev, [e.target.name]: false }));
+    const fieldName = e.target.name as keyof BookingPassenger;
+    const prevHadError = !!fieldErrors[fieldName];
+
+    // Use functional update to avoid stale state
+    setBookingForm((prev) => ({ ...prev, [fieldName]: e.target.value }));
+
+    // Clear field error when user starts typing/selecting (only if it was set)
+    if (prevHadError) {
+      setFieldErrors((prev) => ({ ...prev, [fieldName]: false }));
+      // Clear any form-level error message only when the user addresses a missing field
+      if (bookingFormError) setBookingFormError(null);
     }
-    // Clear any form-level error message when user edits fields
-    if (bookingFormError) setBookingFormError(null);
   };
 
   // Helper to set a single booking form field (used by ListBox onChange)
   const setBookingField = (name: keyof BookingPassenger, value: string) => {
+    const prevHadError = !!fieldErrors[name];
     setBookingForm((prev) => ({ ...prev, [name]: value }));
-    if (fieldErrors[name])
+    if (prevHadError) {
       setFieldErrors((prev) => ({ ...prev, [name]: false }));
-    if (bookingFormError) setBookingFormError(null);
+      if (bookingFormError) setBookingFormError(null);
+    }
   };
 
   const handleCreateServices = async (e: React.FormEvent) => {
@@ -580,43 +591,43 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
 
   const handleAddPassenger = () => {
     // Check each required field and set field errors
-    const newFieldErrors: { [key: string]: boolean } = {};
+    const newFieldErrors: { [key: string]: string | false } = {};
 
     if (!bookingForm.firstName.trim()) {
-      newFieldErrors.firstName = true;
+      newFieldErrors.firstName = "First name is required";
     }
     if (!bookingForm.lastName.trim()) {
-      newFieldErrors.lastName = true;
+      newFieldErrors.lastName = "Last name is required";
     }
     if (!bookingForm.designation) {
-      newFieldErrors.designation = true;
+      newFieldErrors.designation = "Designation is required";
     }
     if (!bookingForm.gender) {
-      newFieldErrors.gender = true;
+      newFieldErrors.gender = "Gender is required";
     }
     if (!bookingForm.mobile.trim()) {
-      newFieldErrors.mobile = true;
+      newFieldErrors.mobile = "Mobile number is required";
     }
     if (!bookingForm.specialReq) {
-      newFieldErrors.specialReq = true;
+      newFieldErrors.specialReq = "Special requirement is required";
     }
     if (!bookingForm.airport) {
-      newFieldErrors.airport = true;
+      newFieldErrors.airport = "Airport is required";
     }
     if (!bookingForm.travelDate) {
-      newFieldErrors.travelDate = true;
+      newFieldErrors.travelDate = "Travel date is required";
     }
     if (!bookingForm.flightNumber.trim()) {
-      newFieldErrors.flightNumber = true;
+      newFieldErrors.flightNumber = "Flight number is required";
     }
     if (!bookingForm.airportTime) {
-      newFieldErrors.airportTime = true;
+      newFieldErrors.airportTime = "Airport time is required";
     }
     if (!bookingForm.airline) {
-      newFieldErrors.airline = true;
+      newFieldErrors.airline = "Airline is required";
     }
     if (!bookingForm.destination) {
-      newFieldErrors.destination = true;
+      newFieldErrors.destination = "Destination is required";
     }
 
     if (Object.keys(newFieldErrors).length > 0) {
@@ -964,7 +975,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   <div className="booking-form-fields-row">
                     <div className="booking-form-field-col">
                       <Input
-                        label="First Name"
+                        label={
+                          <span className="booking-form-label required">
+                            First Name
+                          </span>
+                        }
                         className={`booking-form-input ${
                           fieldErrors.firstName ? "error" : ""
                         }`}
@@ -975,7 +990,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                     <div className="booking-form-field-col">
                       <Input
-                        label="Last Name"
+                        label={
+                          <span className="booking-form-label required">
+                            Last Name
+                          </span>
+                        }
                         className={`booking-form-input ${
                           fieldErrors.lastName ? "error" : ""
                         }`}
@@ -1048,7 +1067,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
                     <div className="booking-form-field-col">
                       <Input
-                        label="Mobile Number"
+                        label={
+                          <span className="booking-form-label required">
+                            Mobile Number
+                          </span>
+                        }
                         className={`booking-form-input ${
                           fieldErrors.mobile ? "error" : ""
                         }`}
@@ -1106,10 +1129,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                 ) : (
                   <div className="booking-form-fields-row-mobile">
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label required">
-                        First Name
-                      </label>
                       <Input
+                        label={
+                          <span className="booking-form-label required">
+                            First Name
+                          </span>
+                        }
                         className={`booking-form-input ${
                           fieldErrors.firstName ? "error" : ""
                         }`}
@@ -1120,10 +1145,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
 
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label required">
-                        Last Name
-                      </label>
                       <Input
+                        label={
+                          <span className="booking-form-label required">
+                            Last Name
+                          </span>
+                        }
                         className={`booking-form-input ${
                           fieldErrors.lastName ? "error" : ""
                         }`}
@@ -1196,10 +1223,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     </div>
 
                     <div className="booking-form-field-col-mobile">
-                      <label className="booking-form-label required">
-                        Mobile Number
-                      </label>
                       <Input
+                        label={
+                          <span className="booking-form-label required">
+                            Mobile Number
+                          </span>
+                        }
                         className={`booking-form-input ${
                           fieldErrors.mobile ? "error" : ""
                         }`}
@@ -1323,28 +1352,36 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               (o) => o.value === bookingForm.airport
                             ) as ListBoxOption | null) ?? null
                           }
-                          onChange={(opt) =>
-                            setBookingField("airport", opt.value)
-                          }
+                          onChange={(opt) => {
+                            setBookingField("airport", opt.value);
+                          }}
                           placeholder="Select airport"
                           className={fieldErrors.airport ? "error" : ""}
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <Input
+                        <DatePicker
                           className={`booking-form-input ${
                             fieldErrors.travelDate ? "error" : ""
                           }`}
-                          name="travelDate"
                           value={bookingForm.travelDate}
-                          onChange={handleBookingFormChange}
-                          type="date"
-                          label="Travel Date"
+                          onChange={(v) => setBookingField("travelDate", v)}
+                          label={
+                            <span className="booking-form-label required">
+                              Travel Date
+                            </span>
+                          }
+                          min={new Date().toISOString().split("T")[0]}
+                          error={fieldErrors.travelDate}
                         />
                       </div>
                       <div className="booking-form-field-col">
                         <Input
-                          label="Flight Number"
+                          label={
+                            <span className="booking-form-label required">
+                              Flight Number
+                            </span>
+                          }
                           className={`booking-form-input ${
                             fieldErrors.flightNumber ? "error" : ""
                           }`}
@@ -1354,18 +1391,27 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         />
                       </div>
                       <div className="booking-form-field-col">
-                        <Input
+                        <TimePicker
                           className={`booking-form-input ${
                             fieldErrors.airportTime ? "error" : ""
                           }`}
-                          name="airportTime"
                           value={bookingForm.airportTime}
-                          onChange={handleBookingFormChange}
-                          type="time"
-                          lang="en-US"
-                          step={60}
+                          onChange={(opt: TimeOption) =>
+                            handleBookingFormChange({
+                              target: {
+                                name: "airportTime",
+                                value: opt.label || opt.value,
+                              },
+                            } as unknown as React.ChangeEvent<HTMLInputElement>)
+                          }
                           placeholder="hh:mm AM/PM"
-                          label="Airport Time"
+                          label={
+                            <span className="booking-form-label required">
+                              Airport Time
+                            </span>
+                          }
+                          step={60}
+                          error={fieldErrors.airportTime}
                         />
                       </div>
                       <div className="booking-form-field-col">
@@ -1484,7 +1530,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           value={bookingForm.travelDate}
                           onChange={handleBookingFormChange}
                           type="date"
-                          label="Travel Date"
+                          label={
+                            <span className="booking-form-label required">
+                              Travel Date
+                            </span>
+                          }
                         />
                       </div>
 

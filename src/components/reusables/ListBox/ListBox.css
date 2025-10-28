@@ -36,6 +36,7 @@
   justify-content: space-between;
   transition: all 0.15s ease;
   font-family: "Poppins", sans-serif;
+  z-index: 2; /* ensure listbox buttons are above nearby elements */
 }
 
 .listbox-button:hover {
@@ -223,7 +224,6 @@
   .listbox-button {
     min-width: 180px;
     padding: 0 10px;
-
   }
   .listbox-option {
     padding: 10px 14px;
@@ -261,4 +261,24 @@
   .listbox-option {
     padding: 8px 12px;
   }
+}
+
+/* TimePicker and DatePicker overrides: allow three ListBox controls to share a single row */
+.timepicker-row {
+  display: flex; /* ensure row layout */
+  gap: 5px;
+  width: 100%;
+  align-items: center;
+}
+.timepicker-row .listbox-wrapper {
+  width: 100%;
+}
+.timepicker-row .listbox-button {
+  min-width: 0; /* override default min-width to allow shrinking */
+}
+
+/* Error state styling for TimePicker and DatePicker */
+.timepicker-row.error .listbox-button {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
 }

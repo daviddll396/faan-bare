@@ -1012,98 +1012,151 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .slice(0, 10)
         .replace(/-/g, "")}-${Math.random().toString(36).substring(2, 8)}`;
 
-      // Prefer amount from providerResponse if available (ensure we record actual paid amount)
-      // Safely inspect providerResponse without using `any` by treating it as a Record
-      let paidAmount: number = amount;
-      if (providerResponse && typeof providerResponse === "object") {
-        const resp = providerResponse as Record<string, unknown>;
-        if (
-          Object.prototype.hasOwnProperty.call(resp, "amount") &&
-          typeof resp.amount === "number"
-        ) {
-          paidAmount = resp.amount as number;
+      // Prevent duplicate fund calls for the same reference (idempotency guard)
+      // Use a module-scoped set to track in-flight references
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (!(globalThis as any)._pendingFundRefs) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        (globalThis as any)._pendingFundRefs = new Set<string>();
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const pendingFundRefs: Set<string> = (globalThis as any)._pendingFundRefs;
+
+      const refToUse = externalReference ?? reference;
+
+      // If this reference is already being processed, avoid duplicate POST
+      if (pendingFundRefs.has(refToUse)) {
+        logger.warn(
+          "Wallet",
+          "Duplicate fundWallet call prevented for:",
+          refToUse
+        );
+        return true;
+      }
+      // Also check persisted funding records to skip re-submission if already recorded
+      try {
+        const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+        if (stored) {
+          const existing = JSON.parse(stored) as { reference?: string }[];
+          if (existing.some((r) => r.reference === refToUse)) {
+            logger.info(
+              "Wallet",
+              "Funding already recorded locally, skipping:",
+              refToUse
+            );
+            return true;
+          }
         }
+      } catch (err) {
+        // ignore parsing errors
       }
 
-      const requestBody: Record<string, unknown> = {
-        reference: externalReference ?? reference,
-        amount: paidAmount,
-      };
-      if (providerResponse !== undefined) {
-        requestBody.providerResponse = providerResponse;
-      }
+      pendingFundRefs.add(refToUse);
 
-      logger.debug("Wallet", "Request details", {
-        reference: externalReference ?? reference,
-        amount: paidAmount,
-      });
+      try {
+        // Prefer amount from providerResponse if available (ensure we record actual paid amount)
+        // Safely inspect providerResponse without using `any` by treating it as a Record
+        let paidAmount: number = amount;
+        if (providerResponse && typeof providerResponse === "object") {
+          const resp = providerResponse as Record<string, unknown>;
+          if (
+            Object.prototype.hasOwnProperty.call(resp, "amount") &&
+            typeof resp.amount === "number"
+          ) {
+            paidAmount = resp.amount as number;
+          }
+        }
 
-      const response = await fetch(API_ENDPOINTS.FUND_WALLET, {
-        method: "POST",
-        headers: {
-          "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
-          "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
+        const requestBody: Record<string, unknown> = {
+          reference: externalReference ?? reference,
+          amount: paidAmount,
+        };
+        if (providerResponse !== undefined) {
+          requestBody.providerResponse = providerResponse;
+        }
 
-      logger.apiResponse(API_ENDPOINTS.FUND_WALLET, response.status);
+        logger.debug("Wallet", "Request details", {
+          reference: externalReference ?? reference,
+          amount: paidAmount,
+        });
 
-      if (!response.ok) {
-        logger.error("Wallet", `Failed to fund wallet: ${response.status}`);
+        const response = await fetch(API_ENDPOINTS.FUND_WALLET, {
+          method: "POST",
+          headers: {
+            "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
+            "Client-Auth": REQUEST_HEADERS.CLIENT_AUTH,
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
 
-        // Check if token is expired and redirect if needed
-        if (checkTokenAndRedirect(response)) {
+        logger.apiResponse(API_ENDPOINTS.FUND_WALLET, response.status);
+
+        if (!response.ok) {
+          logger.error("Wallet", `Failed to fund wallet: ${response.status}`);
+
+          // Check if token is expired and redirect if needed
+          if (checkTokenAndRedirect(response)) {
+            return false;
+          }
+
           return false;
         }
 
-        return false;
-      }
+        const responseText = await response.text();
 
-      const responseText = await response.text();
-
-      if (!responseText || responseText.trim() === "") {
-        logger.warn("Wallet", "Empty fund wallet response");
-        return false;
-      }
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-        logger.debug("Wallet", "Response parsed successfully");
-      } catch (error) {
-        logger.error("Wallet", "Failed to parse fund wallet JSON", error);
-        return false;
-      }
-
-      if (
-        data &&
-        (data.status === true ||
-          String(data.statusCode) === "00" ||
-          String(data.statusCode) === "0" ||
-          Number(data.statusCode) === HTTP_STATUS.OK)
-      ) {
-        logger.success("Wallet", "Wallet funded successfully", {
-          reference,
-          newBalance: data.data.balance,
-        });
-
-        // Update user's wallet balance from the API response
-        if (user && data.data?.balance !== undefined) {
-          const updatedUser: User = {
-            ...user,
-            walletBalance: data.data.balance,
-          };
-          setUser(updatedUser);
-          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
+        if (!responseText || responseText.trim() === "") {
+          logger.warn("Wallet", "Empty fund wallet response");
+          return false;
         }
 
-        return true;
-      } else {
-        logger.error("Wallet", "Wallet funding failed", data.message);
-        return false;
+        let data;
+        try {
+          data = JSON.parse(responseText);
+          logger.debug("Wallet", "Response parsed successfully");
+        } catch (error) {
+          logger.error("Wallet", "Failed to parse fund wallet JSON", error);
+          return false;
+        }
+
+        if (
+          data &&
+          (data.status === true ||
+            String(data.statusCode) === "00" ||
+            String(data.statusCode) === "0" ||
+            Number(data.statusCode) === HTTP_STATUS.OK)
+        ) {
+          logger.success("Wallet", "Wallet funded successfully", {
+            reference,
+            newBalance: data.data.balance,
+          });
+
+          // Update user's wallet balance from the API response
+          if (user && data.data?.balance !== undefined) {
+            const updatedUser: User = {
+              ...user,
+              walletBalance: data.data.balance,
+            };
+            setUser(updatedUser);
+            localStorage.setItem(
+              STORAGE_KEYS.USER,
+              JSON.stringify(updatedUser)
+            );
+          }
+
+          return true;
+        } else {
+          logger.error("Wallet", "Wallet funding failed", data.message);
+          return false;
+        }
+      } finally {
+        // always remove pending ref so future attempts can proceed
+        pendingFundRefs.delete(refToUse);
       }
+      // outer try/catch will handle errors
     } catch (error) {
       logger.error("Wallet", "Wallet funding error", error);
       return false;
