@@ -401,6 +401,14 @@
 /* ======================================== */
 
 /* Slight, uniform zoom scaling shared by Login and Register (x3 intensity) */
+
+@media (max-width: 1900px) {
+  
+  .auth-form-modern {
+    zoom: 0.8;
+  }
+}
+
 @media (max-width: 1700px) {
   .auth-form-side {
     zoom: 0.97;
@@ -411,7 +419,7 @@
     zoom: 0.94;
   }
   .auth-form-modern {
-    zoom: 0.95;
+    zoom: 0.8;
   }
 }
 @media (max-width: 1500px) {
@@ -421,7 +429,7 @@
 }
 @media (max-width: 1450px) {
   .auth-form-side {
-    zoom: 0.88;
+    zoom: 0.8;
   }
 }
 @media (max-width: 1400px) {
