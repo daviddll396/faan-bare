@@ -300,7 +300,7 @@
   padding: 12px 16px;
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1150px) {
   .dashboard-content {
     padding: 10px 20px;
   }

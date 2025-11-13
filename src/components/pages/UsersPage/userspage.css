@@ -36,7 +36,7 @@
 
 .userspage-search-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   width: 100%;
   justify-content: space-between;
@@ -45,7 +45,7 @@
 .userspage-search-left {
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: flex-start;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -450,6 +450,9 @@
     margin-bottom: 20px !important;
   }
 
+  .userspage-search-row {
+  }
+
   .userspage-search-section {
     padding: 0;
     gap: 12px;
@@ -492,11 +495,13 @@
     flex-direction: column;
     gap: 8px;
     width: 100%;
+   
   }
 
   .userspage-search-fieldbutton .fieldbutton-input {
     width: 100%;
     min-width: unset;
+  
   }
 
   .userspage-role-listbox {

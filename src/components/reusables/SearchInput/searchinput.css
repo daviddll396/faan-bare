@@ -6,17 +6,20 @@
   border: 1px solid #f0f0f0;
   border-radius:5px;
   padding: 0 16px;
-  max-width: 260px;
+  max-width: 200px;
   position: relative;
   cursor: pointer;
+  box-sizing: border-box;
+  /* Height will be set by media queries to match SolidButton exactly */
 }
 
 .search-input-icon {
-  width: 24px;
-  height: 24px;
+  width: 17px; /* 70% of 24px */
+  height: 17px; /* 70% of 24px */
   margin-right: 8px;
   pointer-events: none;
   flex-shrink: 0;
+  display: block;
 }
 
 .search-input::placeholder {
@@ -34,6 +37,9 @@
   font-family: "Poppins", sans-serif;
   cursor: text;
   width: 95%;
+  height: 100%;
+  /* Font size will be set by global overrides to match SolidButton */
+  box-sizing: border-box;
 }
 
 .search-input-select {
@@ -49,6 +55,9 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  height: 100%;
+  /* Font size will be set by global overrides to match SolidButton */
+  box-sizing: border-box;
 }
 
 .search-input-select option {
@@ -57,7 +66,7 @@
 
 .search-input-dropdown-wrapper {
   padding-right: 12px;
-  width: 268px;
+  width: 208px;
   cursor: pointer;
   z-index: 999;
 }
@@ -70,6 +79,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Font size will be set by global overrides to match SolidButton */
 }
 
 .search-dropdown-placeholder {
@@ -99,6 +109,7 @@
   cursor: pointer;
   transition: background 0.15s;
   z-index: 999;
+  /* Font size will be set by global overrides to match SolidButton */
 }
 
 .search-dropdown-option:hover,
@@ -111,9 +122,10 @@
   position: absolute;
   right: 16px;
   width: 12px;
-  height: 7px;
+  height: 12px;
   pointer-events: none;
   transition: transform 0.2s;
+  display: block;
 }
 
 .search-input-dropdown-wrapper.open .search-input-chevron {
@@ -127,76 +139,107 @@
 @media (max-width: 1600px) {
   .search-input-wrapper {
     padding: 0 14px;
-    max-width: 250px;
+    max-width: 190px;
    
   }
   .search-input-icon {
-    width: 22px;
-    height: 22px;
+    width: 15px; /* 70% of 22px */
+    height: 15px; /* 70% of 22px */
   }
   .search-input-chevron {
     width: 11px;
     height: 6px;
   }
   .search-input-dropdown-wrapper {
-    width: 258px;
+    width: 198px;
   }
 }
 
 @media (max-width: 1200px) {
   .search-input-wrapper {
     padding: 0 12px;
-    max-width: 240px;
-  
+    max-width: 180px;
+    /* Match SolidButton height at this breakpoint exactly */
+    height: 48px !important;
+    min-height: 48px !important;
   }
   .search-input-icon {
-    width: 20px;
-    height: 20px;
+    width: 14px; /* 70% of 20px */
+    height: 14px; /* 70% of 20px */
   }
   .search-input-chevron {
     width: 10px;
     height: 6px;
   }
   .search-input-dropdown-wrapper {
-    width: 248px;
+    width: 188px;
+    height: 48px !important;
+    min-height: 48px !important;
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1150px) {
   .search-input-wrapper {
     padding: 0 10px;
-    max-width: 220px;
-   
+    max-width: 170px;
+    /* Match SolidButton height at this breakpoint exactly */
+    height: 30px !important;
+    min-height: 30px !important;
   }
   .search-input-icon {
-    width: 18px;
-    height: 18px;
+    width: 13px; /* 70% of 18px */
+    height: 13px; /* 70% of 18px */
   }
   .search-input-chevron {
     width: 9px;
     height: 5px;
   }
   .search-input-dropdown-wrapper {
-    width: 228px;
+    width: 178px;
+    height: 30px !important;
+    min-height: 30px !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .search-input-wrapper {
+    padding: 0 10px;
+    max-width: 170px;
+  }
+  .search-input-icon {
+    width: 13px; /* 70% of 18px */
+    height: 13px; /* 70% of 18px */
+  }
+  .search-input-chevron {
+    width: 9px;
+    height: 5px;
+  }
+  .search-input-dropdown-wrapper {
+    width: 178px;
   }
 }
 
 @media (max-width: 768px) {
   .search-input-wrapper {
     padding: 0 8px;
-    max-width: 200px;
+    max-width: 160px;
     border-radius: 6px;
+    /* Match SolidButton height at this breakpoint exactly */
+    height: 40px !important;
+    min-height: 40px !important;
   }
   .search-input-icon {
-    width: 16px;
-    height: 16px;
+    width: 11px; /* 70% of 16px */
+    height: 11px; /* 70% of 16px */
   }
   .search-input-chevron {
     width: 8px;
     height: 5px;
   }
   .search-input-dropdown-wrapper {
-    width: 208px;
+    width: 168px;
+    height: 40px !important;
+    min-height: 40px !important;
   }
 }
 
@@ -205,10 +248,13 @@
     padding: 0 6px;
     max-width: 100%;
     border-radius: 6px;
+    /* Match SolidButton height at this breakpoint exactly */
+    height: 36px !important;
+    min-height: 36px !important;
   }
   .search-input-icon {
-    width: 14px;
-    height: 14px;
+    width: 10px; /* 70% of 14px */
+    height: 10px; /* 70% of 14px */
   }
   .search-input-chevron {
     width: 7px;
@@ -216,5 +262,7 @@
   }
   .search-input-dropdown-wrapper {
     width: 100%;
+    height: 36px !important;
+    min-height: 36px !important;
   }
 }

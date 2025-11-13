@@ -115,21 +115,21 @@
 .bill-items-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .bill-item-card {
   border-radius: 12px;
-  padding: 20px;
+  padding: 12px;
   border: 1px solid #f0f0f0;
 }
 
 .bill-item-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -137,17 +137,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   background: #007948;
   color: #fff;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .bill-item-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #000;
   margin: 0;
@@ -160,8 +161,9 @@
   color: #d32f2f;
   font-weight: 600;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 6px;
+  font-size: 13px;
   transition: color 0.15s ease, background 0.15s ease;
 }
 
@@ -173,13 +175,13 @@
 .bill-item-fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .bill-field-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .bill-field-group.bill-quantity-group {
@@ -255,15 +257,15 @@
 .bill-creation-actions {
   display: flex;
   justify-content: flex-end;
-  padding-top: 8px;
-  border-top: 1px solid #f5f5f5;
+  padding-top: 4px;
+  margin-top: 8px;
 }
 
 .bill-submit-actions {
   display: flex;
   justify-content: center;
-  padding-top: 8px;
-  border-top: 1px solid #f5f5f5;
+  padding-top: 4px;
+  margin-top: 8px;
 }
 
 /* Customer Details Section - ProfilePage Style */
@@ -687,39 +689,233 @@
   max-width: 800px;
 }
 
-.bill-receipt-content {
+/* Receipt Paper Styles (matching PaymentPage) */
+.receipt-paper {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
+  color: #000;
+  min-height: 450px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.receipt-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 16px;
+  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
+      top / 16px 16px repeat-x,
+    linear-gradient(#f0f0f0, #f0f0f0);
+}
+
+.receipt-head {
+  text-align: center;
+  margin: 8px 0;
+}
+
+.receipt-brand {
+  font-weight: 700;
+  color: #000;
+  font-size: 14px;
+}
+
+.receipt-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.receipt-sub {
+  font-size: 12px;
+  color: #969696;
+  margin-top: 2px;
+}
+
+.receipt-meta {
+  border: 1px dashed #f0f0f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px 0;
+}
+
+.receipt-meta .meta-row {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  width: 100%;
+  padding: 8px 4px;
+  border-bottom: 1px dashed #f0f0f0;
 }
 
-.bill-receipt-cards {
+.receipt-meta .meta-row:last-child {
+  border-bottom: none;
+}
+
+.receipt-meta .meta-row span:first-child {
+  color: #969696;
+  font-size: 12px;
+}
+
+.receipt-items {
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.receipt-items .thead,
+.receipt-items .row,
+.receipt-items .total {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.receipt-items .thead {
+  color: #969696;
+  font-size: 12px;
+}
+
+.receipt-items .row {
+  border-top: 1px dashed #f0f0f0;
+}
+
+.receipt-items .right {
+  text-align: right;
+}
+
+.receipt-items .total {
+  border-top: 2px solid #f0f0f0;
+  font-weight: 800;
+}
+
+.receipt-foot {
+  margin-top: 10px;
+  color: #969696;
+  font-size: 12px;
+  text-align: center;
+}
+
+.receipt-download {
+  margin-top: 12px;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-weight: 700;
+}
+
+/* Invoice Details Paper Styles (matching InvoicesPage) */
+.invoice-details-paper {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
+  color: #000;
+  min-height: 400px;
   width: 100%;
-  margin-bottom: 18px;
+  max-width: 580px;
+}
+
+.invoice-details-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 16px;
+  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
+      top / 16px 16px repeat-x,
+    linear-gradient(#f0f0f0, #f0f0f0);
+}
+
+.invoice-details-head {
+  text-align: center;
+  margin: 8px 0;
+}
+
+.invoice-details-brand {
+  font-weight: 700;
+  color: #000;
+  font-size: 14px;
+}
+
+.invoice-details-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.invoice-details-sub {
+  font-size: 12px;
+  color: #969696;
+  margin-top: 2px;
+}
+
+.invoice-details-meta {
+  border: 1px dashed #f0f0f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px 0;
+}
+
+.invoice-details-meta .meta-row {
   display: flex;
-  gap: 18px;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px dashed #f0f0f0;
 }
 
-.bill-receipt-table {
-  width: 100%;
-  margin-bottom: 18px;
+.invoice-details-meta .meta-row:last-child {
+  border-bottom: none;
 }
 
-.bill-receipt-table table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
+.invoice-details-meta .meta-row span:first-child {
+  color: #969696;
+  font-size: 12px;
 }
 
-.bill-receipt-table thead tr {
-  background: #fafafa;
+.invoice-details-items {
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.bill-receipt-actions {
-  margin-top: 8px;
-  width: 100%;
+.invoice-details-items .thead,
+.invoice-details-items .row,
+.invoice-details-items .total {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.invoice-details-items .thead {
+  color: #969696;
+  font-size: 12px;
+}
+
+.invoice-details-items .row {
+  border-top: 1px dashed #f0f0f0;
+}
+
+.invoice-details-items .right {
+  text-align: right;
+}
+
+.invoice-details-items .total {
+  border-top: 2px solid #f0f0f0;
+  font-weight: 800;
 }
 
 /* Bill Success Modal Styles */
@@ -1532,6 +1728,51 @@
   .bill-receipt-modal {
     min-width: 90vw;
     max-width: 95vw;
+  }
+
+  .receipt-paper {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .receipt-brand {
+    font-size: 12px;
+  }
+
+  .receipt-title {
+    font-size: 14px;
+  }
+
+  .receipt-sub {
+    font-size: 10px;
+  }
+
+  .receipt-meta {
+    padding: 10px 12px;
+    margin: 10px 0 12px 0;
+  }
+
+  .receipt-meta .meta-row {
+    padding: 6px 4px;
+  }
+
+  .receipt-meta .meta-row span:first-child {
+    font-size: 11px;
+  }
+
+  .receipt-items .thead,
+  .receipt-items .row,
+  .receipt-items .total {
+    gap: 8px;
+    padding: 8px 0;
+  }
+
+  .receipt-items .thead {
+    font-size: 11px;
+  }
+
+  .receipt-foot {
+    font-size: 11px;
   }
 
   .bill-receipt-cards {

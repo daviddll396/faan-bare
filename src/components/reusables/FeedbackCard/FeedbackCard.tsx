@@ -48,49 +48,60 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({
     }
   };
 
+  const statusClass = (status || "").toLowerCase().replace(/\s+/g, "-");
+  
+  // Get category class for color coding
+  const getCategoryClass = (category: string) => {
+    const normalizedCategory = category.toUpperCase();
+    switch (normalizedCategory) {
+      case "GENERAL":
+        return "category-general";
+      case "PAYMENT":
+        return "category-payment";
+      case "FUNDING":
+        return "category-funding";
+      case "TECHNICAL":
+        return "category-technical";
+      case "OTHER":
+        return "category-other";
+      default:
+        return "category-general";
+    }
+  };
+
+  const categoryClass = getCategoryClass(category);
+
   return (
-    <div
-      className={`feedback-card ${status
-        .toLowerCase()
-        .replace(" ", "-")} ${className}`}
-      data-id={id}
-    >
-      {/* Feedback Header */}
-      <div className="feedback-header">
-        <div className="feedback-category">{category}</div>
-        <div
-          className={`status-badge ${status.toLowerCase().replace(" ", "-")}`}
-        >
-          {getStatusIcon(status)}
+    <div className={`dispute-card feedback-card ${categoryClass} ${className}`} data-id={id}>
+      <div className="dispute-header">
+        <div className="dispute-reference">{category}</div>
+        <div className={`status-badge ${statusClass}`}>
+          {getStatusIcon(status || "")}
           {status}
         </div>
       </div>
 
-      {/* Feedback Content Area */}
-      <div className="feedback-content-area">
-        {/* Feedback Message */}
-        <div className="feedback-message">
-          <div className="feedback-message-text">
-            {truncateMessage(message)}
+      <div className="dispute-content-area">
+        <div className="dispute-details">
+          <div className="dispute-detail-item">
+            <span className="detail-label">Message:</span>
+            <span className="detail-value">{truncateMessage(message)}</span>
           </div>
-        </div>
 
-        {/* Feedback Details */}
-        <div className="feedback-details">
-          <div style={{color:"#000"}}>
-            <strong>Date:</strong> {formatDate(createdAt)}
+          <div className="dispute-detail-item">
+            <span className="detail-label">Submitted:</span>
+            <span className="detail-value">{formatDate(createdAt)}</span>
           </div>
         </div>
       </div>
 
-      {/* Feedback Actions */}
-      <div className="feedback-actions">
+      <div className="dispute-actions">
         {onViewDetails && (
           <SolidButton
             text="View Details"
+            onClick={onViewDetails}
             size="small"
             variant="secondary"
-            onClick={onViewDetails}
           />
         )}
       </div>

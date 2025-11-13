@@ -14,6 +14,27 @@
   animation-delay: var(--enter-delay, 0ms);
 }
 
+/* Category Color Coding - Only text color */
+.feedback-card.category-general .dispute-reference {
+  color: #3b82f6;
+}
+
+.feedback-card.category-payment .dispute-reference {
+  color: #10b981;
+}
+
+.feedback-card.category-funding .dispute-reference {
+  color: #8b5cf6;
+}
+
+.feedback-card.category-technical .dispute-reference {
+  color: #f59e0b;
+}
+
+.feedback-card.category-other .dispute-reference {
+  color: #6b7280;
+}
+
 /* Feedback Header */
 .feedback-header {
   display: flex;

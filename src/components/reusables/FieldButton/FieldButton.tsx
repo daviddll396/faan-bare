@@ -21,6 +21,8 @@ interface FieldInputConfig {
 
 interface FieldButtonProps {
   inputs?: FieldInputConfig[]; // optional array of search inputs
+  /** arbitrary react nodes (ListBox, custom controls) to render inline between inputs and buttons */
+  components?: React.ReactNode[];
   buttons?: Array<{
     text?: string;
     icon?: string; // optional svg path
@@ -36,6 +38,7 @@ interface FieldButtonProps {
 
 const FieldButton: React.FC<FieldButtonProps> = ({
   inputs = [],
+  components = [],
   buttons = [],
   gap = 12,
   className = "",
@@ -96,7 +99,20 @@ const FieldButton: React.FC<FieldButtonProps> = ({
           </div>
         ))}
 
-        {/* render buttons immediately after inputs so they sit next to them */}
+        {/* render arbitrary components (ListBox, custom controls) inline */}
+        {components.length > 0 && (
+          <div className="fieldbutton-components">
+            {components.map((comp, idx) => (
+              <div className="fieldbutton-component" key={`comp-${idx}`}>
+                {comp}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Buttons placed in their own container to improve responsive layout */}
+      <div className="fieldbutton-actions">
         {buttons.map((btn, idx) => (
           <SolidButton
             key={`inline-btn-${idx}`}
@@ -107,7 +123,6 @@ const FieldButton: React.FC<FieldButtonProps> = ({
             variant={btn.variant ?? "secondary"}
             rounded={false}
             className={btn.className}
-            style={{ height: "56px" }}
           >
             {btn.icon && (
               <img

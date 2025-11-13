@@ -3,6 +3,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { logger } from "../../../utils/logger";
 import Modal from "../../reusables/Modal/Modal";
 import SolidButton from "../../reusables/SolidButton/SolidButton";
+import FieldButton from "../../reusables/FieldButton/FieldButton";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Input from "../../reusables/Input/Input";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
@@ -16,6 +17,7 @@ import FileUpload from "../../reusables/FileUpload/FileUpload";
 import TextArea from "../../reusables/TextArea/TextArea";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import EmptyState from "../../reusables/EmptyState/EmptyState";
+import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import "./feedbackdisputes.css";
 
 interface FeedbackFormData {
@@ -162,180 +164,284 @@ const FeedbackDisputesPage: React.FC = () => {
     "Other",
   ];
 
-  // Load disputes data
-  useEffect(() => {
-    const loadDisputes = async () => {
-      setLoading(true);
-      try {
-        if (isAdmin) {
-          // Load admin feedback using real API
-          const adminFeedbackResult = await getAdminFeedback({
-            startDate: startDateFilter || undefined,
-            endDate: endDateFilter || undefined,
-            customerId: customerIdFilter || undefined,
-            status: statusFilter || undefined,
-            category: categoryFilter || undefined,
-          });
+  // Load all data initially (without filters)
+  const loadDisputes = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      if (isAdmin) {
+        // Load ALL admin feedback (no filters)
+        const adminFeedbackResult = await getAdminFeedback({});
 
-          if (adminFeedbackResult?.data) {
-            const feedbackData: FeedbackHistory[] =
-              adminFeedbackResult.data.map((f) => ({
-                id: f.id,
-                message: f.message,
-                category: f.category,
-                createdAt: f.createdAt,
-                status: f.status,
-                customerId: f.customerId,
-                customerName: f.customerName,
-              }));
-            setFeedbackHistory(feedbackData);
-            setFilteredFeedbackHistory(feedbackData);
-          } else {
-            setFeedbackHistory([]);
-            setFilteredFeedbackHistory([]);
-          }
-
-          // Use real API for admin disputes
-          const adminDisputesResult = await getAdminDisputes({
-            startDate: startDateFilter || undefined,
-            endDate: endDateFilter || undefined,
-            customerId: customerIdFilter || undefined,
-            status: statusFilter || undefined,
-            invoiceId: invoiceFilter || undefined,
-            paymentId: paymentFilter || undefined,
-          });
-
-          if (adminDisputesResult?.data) {
-            const disputesData: Dispute[] = adminDisputesResult.data.map(
-              (d) => ({
-                id: d.id,
-                reference: d.reference,
-                invoiceId: d.invoiceId,
-                paymentId: d.paymentId,
-                reason: d.reason,
-                category: d.category || "Others", // Default category if not provided
-                comments: d.comments,
-                status: d.status,
-                resolutionNotes: d.resolutionNotes,
-                customerId: d.customerId,
-                customerName: d.customerName,
-                createdAt: d.createdAt,
-                updatedAt: d.updatedAt,
-                attachmentUrl: d.attachmentUrl,
-              })
-            );
-            console.log("✅ === CUSTOMER DISPUTES DATA MAPPED ===");
-            console.log("📊 Disputes count:", disputesData.length);
-            console.log("📋 Disputes data:", disputesData);
-            setDisputes(disputesData);
-            setFilteredDisputes(disputesData);
-          } else {
-            // No disputes found or API failed
-            setDisputes([]);
-            setFilteredDisputes([]);
-          }
+        if (adminFeedbackResult?.data) {
+          const feedbackData: FeedbackHistory[] =
+            adminFeedbackResult.data.map((f) => ({
+              id: f.id,
+              message: f.message,
+              category: f.category,
+              createdAt: f.createdAt,
+              status: f.status,
+              customerId: f.customerId,
+              customerName: f.customerName,
+            }));
+          setFeedbackHistory(feedbackData);
         } else {
-          // Use real API for customers
-          const disputesResult = await getCustomerDisputes();
-          if (disputesResult?.data) {
-            const disputesData: Dispute[] = (
-              disputesResult.data as unknown as ApiCustomerDisputeData[]
-            ).map((d: ApiCustomerDisputeData) => ({
-              id: d.disputeId.toString(),
-              reference: `DISP-${d.disputeId}`,
-              invoiceId: d.invoiceId || undefined,
-              paymentId: d.paymentId || undefined,
+          setFeedbackHistory([]);
+        }
+
+        // Load ALL admin disputes (no filters)
+        const adminDisputesResult = await getAdminDisputes({});
+
+        if (adminDisputesResult?.data) {
+          const disputesData: Dispute[] = adminDisputesResult.data.map(
+            (d) => ({
+              id: d.id,
+              reference: d.reference,
+              invoiceId: d.invoiceId,
+              paymentId: d.paymentId,
               reason: d.reason,
-              category: "Others", // API doesn't provide category, defaulting to "Others"
-              comments: d.comment || undefined,
-              status:
-                d.status === "CREATED"
-                  ? "Pending"
-                  : (d.status as
-                      | "Pending"
-                      | "In Review"
-                      | "Resolved"
-                      | "Closed"),
-              resolutionNotes: d.resolutionNote || undefined,
+              category: d.category || "Others",
+              comments: d.comments,
+              status: d.status,
+              resolutionNotes: d.resolutionNotes,
               customerId: d.customerId,
+              customerName: d.customerName,
               createdAt: d.createdAt,
               updatedAt: d.updatedAt,
-              attachmentUrl: d.attachment || undefined,
-            }));
-            console.log("✅ === CUSTOMER DISPUTES DATA MAPPED ===");
-            console.log("📊 Disputes count:", disputesData.length);
-            console.log("📋 Disputes data:", disputesData);
-            setDisputes(disputesData);
-            setFilteredDisputes(disputesData);
-          } else {
-            // No disputes found or API failed
-            setDisputes([]);
-            setFilteredDisputes([]);
-          }
-
-          // Load customer feedback using real API
-          logger.info("FeedbackDisputes", "Loading customer feedback...");
-          const feedbackResult = await getCustomerFeedback();
-          logger.info("FeedbackDisputes", "Customer feedback result", {
-            hasResult: !!feedbackResult,
-            hasData: !!feedbackResult?.data,
-            dataLength: feedbackResult?.data?.length,
-            status: feedbackResult?.status,
-            message: feedbackResult?.message,
-          });
-
-          if (feedbackResult?.data) {
-            const feedbackData: FeedbackHistory[] = feedbackResult.data.map(
-              (f) => ({
-                id: f.id,
-                message: f.message,
-                category: f.category,
-                createdAt: f.createdAt,
-                status: f.status,
-              })
-            );
-            logger.success("FeedbackDisputes", "Customer feedback loaded", {
-              count: feedbackData.length,
-            });
-            setFeedbackHistory(feedbackData);
-            setFilteredFeedbackHistory(feedbackData);
-          } else {
-            // No feedback found or API failed
-            logger.warn("FeedbackDisputes", "No customer feedback data found");
-            setFeedbackHistory([]);
-            setFilteredFeedbackHistory([]);
-          }
+              attachmentUrl: d.attachmentUrl,
+            })
+          );
+          setDisputes(disputesData);
+        } else {
+          setDisputes([]);
         }
-      } catch (error) {
-        logger.error("FeedbackDisputes", "Failed to load disputes", error);
-        showToast("Failed to load disputes. Please try again.", "error");
-        // Set empty arrays on error
-        setDisputes([]);
-        setFilteredDisputes([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+      } else {
+        // Use real API for customers
+        const disputesResult = await getCustomerDisputes();
+        if (disputesResult?.data) {
+          const disputesData: Dispute[] = (
+            disputesResult.data as unknown as ApiCustomerDisputeData[]
+          ).map((d: ApiCustomerDisputeData) => ({
+            id: d.disputeId.toString(),
+            reference: `DISP-${d.disputeId}`,
+            invoiceId: d.invoiceId || undefined,
+            paymentId: d.paymentId || undefined,
+            reason: d.reason,
+            category: "Others",
+            comments: d.comment || undefined,
+            status:
+              d.status === "CREATED"
+                ? "Pending"
+                : (d.status as
+                    | "Pending"
+                    | "In Review"
+                    | "Resolved"
+                    | "Closed"),
+            resolutionNotes: d.resolutionNote || undefined,
+            customerId: d.customerId,
+            createdAt: d.createdAt,
+            updatedAt: d.updatedAt,
+            attachmentUrl: d.attachment || undefined,
+          }));
+          setDisputes(disputesData);
+        } else {
+          setDisputes([]);
+        }
 
-    loadDisputes();
+        // Load customer feedback using real API
+        logger.info("FeedbackDisputes", "Loading customer feedback...");
+        const feedbackResult = await getCustomerFeedback();
+        logger.info("FeedbackDisputes", "Customer feedback result", {
+          hasResult: !!feedbackResult,
+          hasData: !!feedbackResult?.data,
+          dataLength: feedbackResult?.data?.length,
+          status: feedbackResult?.status,
+          message: feedbackResult?.message,
+        });
+
+        if (feedbackResult?.data) {
+          const feedbackData: FeedbackHistory[] = feedbackResult.data.map(
+            (f) => ({
+              id: f.id,
+              message: f.message,
+              category: f.category,
+              createdAt: f.createdAt,
+              status: f.status,
+            })
+          );
+          logger.success("FeedbackDisputes", "Customer feedback loaded", {
+            count: feedbackData.length,
+          });
+          setFeedbackHistory(feedbackData);
+        } else {
+          logger.warn("FeedbackDisputes", "No customer feedback data found");
+          setFeedbackHistory([]);
+        }
+      }
+    } catch (error) {
+      logger.error("FeedbackDisputes", "Failed to load disputes", error);
+      showToast("Failed to load disputes. Please try again.", "error");
+      setDisputes([]);
+      setFeedbackHistory([]);
+    } finally {
+      setLoading(false);
+    }
   }, [
     isAdmin,
-    user?.customerId,
     getCustomerDisputes,
     getAdminDisputes,
     getAdminFeedback,
-    statusFilter,
-    startDateFilter,
-    endDateFilter,
-    customerIdFilter,
-    invoiceFilter,
-    paymentFilter,
-    categoryFilter,
     getCustomerFeedback,
   ]);
 
-  // Note: Admin filtering is now handled by the API call with query parameters
-  // No need for client-side filtering since the API returns filtered results
+  // Load all data on mount and when admin status changes
+  useEffect(() => {
+    loadDisputes();
+  }, [loadDisputes]);
+
+  // Client-side filtering function
+  const applyFilters = React.useCallback(() => {
+    if (activeTab === "feedback") {
+      let filtered = [...feedbackHistory];
+
+      // Filter by status
+      if (statusFilter) {
+        filtered = filtered.filter(
+          (f) => f.status.toLowerCase() === statusFilter.toLowerCase()
+        );
+      }
+
+      // Filter by category
+      if (categoryFilter) {
+        filtered = filtered.filter(
+          (f) => f.category.toUpperCase() === categoryFilter.toUpperCase()
+        );
+      }
+
+      // Filter by customer ID
+      if (customerIdFilter) {
+        filtered = filtered.filter(
+          (f) =>
+            f.customerId
+              ?.toLowerCase()
+              .includes(customerIdFilter.toLowerCase())
+        );
+      }
+
+      // Filter by start date
+      if (startDateFilter) {
+        filtered = filtered.filter((f) => {
+          const feedbackDate = new Date(f.createdAt);
+          const startDate = new Date(startDateFilter);
+          return feedbackDate >= startDate;
+        });
+      }
+
+      // Filter by end date
+      if (endDateFilter) {
+        filtered = filtered.filter((f) => {
+          const feedbackDate = new Date(f.createdAt);
+          const endDate = new Date(endDateFilter);
+          endDate.setHours(23, 59, 59, 999); // Include the entire end date
+          return feedbackDate <= endDate;
+        });
+      }
+
+      setFilteredFeedbackHistory(filtered);
+    } else {
+      // Disputes filtering
+      let filtered = [...disputes];
+
+      // Filter by status
+      if (statusFilter) {
+        // Convert API status format to display format for comparison
+        const statusMap: { [key: string]: string } = {
+          IN_REVIEW: "In Review",
+          RESOLVED: "Resolved",
+          CLOSED: "Closed",
+        };
+        const displayStatus = statusMap[statusFilter] || statusFilter;
+        filtered = filtered.filter(
+          (d) => d.status.toLowerCase() === displayStatus.toLowerCase()
+        );
+      }
+
+      // Filter by customer ID
+      if (customerIdFilter) {
+        filtered = filtered.filter(
+          (d) =>
+            d.customerId
+              ?.toLowerCase()
+              .includes(customerIdFilter.toLowerCase())
+        );
+      }
+
+      // Filter by invoice ID
+      if (invoiceFilter) {
+        filtered = filtered.filter(
+          (d) =>
+            d.invoiceId
+              ?.toLowerCase()
+              .includes(invoiceFilter.toLowerCase())
+        );
+      }
+
+      // Filter by payment ID
+      if (paymentFilter) {
+        filtered = filtered.filter(
+          (d) =>
+            d.paymentId
+              ?.toLowerCase()
+              .includes(paymentFilter.toLowerCase())
+        );
+      }
+
+      // Filter by start date
+      if (startDateFilter) {
+        filtered = filtered.filter((d) => {
+          const disputeDate = new Date(d.createdAt);
+          const startDate = new Date(startDateFilter);
+          return disputeDate >= startDate;
+        });
+      }
+
+      // Filter by end date
+      if (endDateFilter) {
+        filtered = filtered.filter((d) => {
+          const disputeDate = new Date(d.createdAt);
+          const endDate = new Date(endDateFilter);
+          endDate.setHours(23, 59, 59, 999);
+          return disputeDate <= endDate;
+        });
+      }
+
+      setFilteredDisputes(filtered);
+    }
+  }, [
+    activeTab,
+    feedbackHistory,
+    disputes,
+    statusFilter,
+    categoryFilter,
+    customerIdFilter,
+    invoiceFilter,
+    paymentFilter,
+    startDateFilter,
+    endDateFilter,
+  ]);
+
+  // Apply filters when filter values change
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
+
+  // Initialize filtered data when main data loads
+  useEffect(() => {
+    if (activeTab === "feedback") {
+      setFilteredFeedbackHistory(feedbackHistory);
+    } else {
+      setFilteredDisputes(disputes);
+    }
+  }, [feedbackHistory, disputes, activeTab]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({
@@ -889,41 +995,36 @@ const FeedbackDisputesPage: React.FC = () => {
               <div className="feedback-search-section">
                 <div className="feedback-search-inputs feedback-action-buttons">
                   <div className="search-controls">
-                    <SearchInput
-                      placeholder="Search feedback..."
-                      value={searchQuery}
-                      onChange={(e) => {
-                        const change = e as React.ChangeEvent<
-                          HTMLInputElement | HTMLSelectElement
-                        >;
-                        if (
-                          change &&
-                          (change.currentTarget || change.nativeEvent)
-                        ) {
-                          setSearchQuery(change.currentTarget.value);
-                          return;
-                        }
-                        const fallback = e as { target: { value: string } };
-                        setSearchQuery(fallback.target.value);
-                      }}
-                    />
-                    <SolidButton
-                      text="Search"
-                      onClick={handleSearch}
-                      variant="secondary"
-                      size="medium"
-                    />
-                    <SolidButton
-                      text="Clear"
-                      onClick={handleClearSearch}
-                      variant="secondary"
-                      size="medium"
-                    />
-                    <SolidButton
-                      text="Submit Feedback"
-                      onClick={() => setShowFeedbackModal(true)}
-                      variant="secondary"
-                      size="medium"
+                    <FieldButton
+                      inputs={[
+                        {
+                          placeholder: "Search feedback",
+                          value: searchQuery,
+                          onChange: (e) => {
+                            const change = e as React.ChangeEvent<
+                              HTMLInputElement | HTMLSelectElement
+                            >;
+                            if (
+                              change &&
+                              (change.currentTarget || change.nativeEvent)
+                            ) {
+                              setSearchQuery(change.currentTarget.value);
+                              return;
+                            }
+                            const fallback = e as { target: { value: string } };
+                            setSearchQuery(fallback.target.value);
+                          },
+                        },
+                      ]}
+                      buttons={[
+                        { text: "Search", onClick: handleSearch },
+                        { text: "Clear", onClick: handleClearSearch },
+                        {
+                          text: "Submit Feedback",
+                          onClick: () => setShowFeedbackModal(true),
+                        },
+                      ]}
+                      className="feedback-fieldbutton"
                     />
                   </div>
                 </div>
@@ -933,10 +1034,10 @@ const FeedbackDisputesPage: React.FC = () => {
             {filteredFeedbackHistory.length > 0 ? (
               <div className="feedback-history-section">
                 <h3>Your Feedback:</h3>
-                <Grid>
-                  {filteredFeedbackHistory.map((feedback) => (
+                <Grid className="grid-no-max">
+                  {filteredFeedbackHistory.map((feedback, idx) => (
                     <FeedbackCard
-                      key={feedback.id}
+                      key={feedback.id || `feedback-${idx}`}
                       id={feedback.id}
                       category={feedback.category}
                       message={feedback.message}
@@ -965,41 +1066,36 @@ const FeedbackDisputesPage: React.FC = () => {
               <div className="disputes-search-section">
                 <div className="disputes-search-inputs disputes-action-buttons">
                   <div className="search-controls">
-                    <SearchInput
-                      placeholder="Search disputes..."
-                      value={searchQuery}
-                      onChange={(e) => {
-                        const change = e as React.ChangeEvent<
-                          HTMLInputElement | HTMLSelectElement
-                        >;
-                        if (
-                          change &&
-                          (change.currentTarget || change.nativeEvent)
-                        ) {
-                          setSearchQuery(change.currentTarget.value);
-                          return;
-                        }
-                        const fallback = e as { target: { value: string } };
-                        setSearchQuery(fallback.target.value);
-                      }}
-                    />
-                    <SolidButton
-                      text="Search"
-                      onClick={handleSearch}
-                      variant="secondary"
-                      size="medium"
-                    />
-                    <SolidButton
-                      text="Clear"
-                      onClick={handleClearSearch}
-                      variant="secondary"
-                      size="medium"
-                    />
-                    <SolidButton
-                      text="Raise New Dispute"
-                      onClick={() => setShowDisputeModal(true)}
-                      variant="secondary"
-                      size="medium"
+                    <FieldButton
+                      inputs={[
+                        {
+                          placeholder: "Search disputes",
+                          value: searchQuery,
+                          onChange: (e) => {
+                            const change = e as React.ChangeEvent<
+                              HTMLInputElement | HTMLSelectElement
+                            >;
+                            if (
+                              change &&
+                              (change.currentTarget || change.nativeEvent)
+                            ) {
+                              setSearchQuery(change.currentTarget.value);
+                              return;
+                            }
+                            const fallback = e as { target: { value: string } };
+                            setSearchQuery(fallback.target.value);
+                          },
+                        },
+                      ]}
+                      buttons={[
+                        { text: "Search", onClick: handleSearch },
+                        { text: "Clear", onClick: handleClearSearch },
+                        {
+                          text: "Raise New Dispute",
+                          onClick: () => setShowDisputeModal(true),
+                        },
+                      ]}
+                      className="disputes-fieldbutton"
                     />
                   </div>
                 </div>
@@ -1009,10 +1105,10 @@ const FeedbackDisputesPage: React.FC = () => {
             {filteredDisputes.length > 0 ? (
               <div className="disputes-history-section">
                 <h3>Your Disputes:</h3>
-                <Grid>
-                  {filteredDisputes.map((dispute) => (
+                <Grid className="grid-no-max">
+                  {filteredDisputes.map((dispute, idx) => (
                     <DisputeCard
-                      key={dispute.id}
+                      key={dispute.id || `dispute-${idx}`}
                       reference={dispute.reference}
                       type={dispute.invoiceId ? "Invoice" : "Payment"}
                       reason={dispute.reason}
@@ -1111,18 +1207,8 @@ const FeedbackDisputesPage: React.FC = () => {
                     placeholder="Customer ID"
                     value={customerIdFilter}
                     onChange={(e) => {
-                      const change = e as React.ChangeEvent<
-                        HTMLInputElement | HTMLSelectElement
-                      >;
-                      if (
-                        change &&
-                        (change.currentTarget || change.nativeEvent)
-                      ) {
-                        setCustomerIdFilter(change.currentTarget.value);
-                        return;
-                      }
-                      const fallback = e as { target: { value: string } };
-                      setCustomerIdFilter(fallback.target.value);
+                      const value = (e.target as HTMLInputElement).value;
+                      setCustomerIdFilter(value);
                     }}
                   />
                 </div>
@@ -1145,18 +1231,6 @@ const FeedbackDisputesPage: React.FC = () => {
 
                 <div className="filter-group">
                   <SolidButton
-                    text="Search"
-                    onClick={() => {
-                      // Trigger the useEffect by updating a dependency
-                      // The filters will automatically trigger the API call
-                    }}
-                    variant="secondary"
-                    size="medium"
-                  />
-                </div>
-
-                <div className="filter-group">
-                  <SolidButton
                     text="Clear Filters"
                     onClick={() => {
                       setStatusFilter("");
@@ -1164,6 +1238,7 @@ const FeedbackDisputesPage: React.FC = () => {
                       setEndDateFilter("");
                       setCustomerIdFilter("");
                       setCategoryFilter("");
+                      // Filters will auto-apply via useEffect
                     }}
                     variant="secondary"
                     size="medium"
@@ -1245,18 +1320,8 @@ const FeedbackDisputesPage: React.FC = () => {
                     placeholder="Customer ID"
                     value={customerIdFilter}
                     onChange={(e) => {
-                      const change = e as React.ChangeEvent<
-                        HTMLInputElement | HTMLSelectElement
-                      >;
-                      if (
-                        change &&
-                        (change.currentTarget || change.nativeEvent)
-                      ) {
-                        setCustomerIdFilter(change.currentTarget.value);
-                        return;
-                      }
-                      const fallback = e as { target: { value: string } };
-                      setCustomerIdFilter(fallback.target.value);
+                      const value = (e.target as HTMLInputElement).value;
+                      setCustomerIdFilter(value);
                     }}
                   />
                 </div>
@@ -1266,18 +1331,8 @@ const FeedbackDisputesPage: React.FC = () => {
                     placeholder="Invoice ID"
                     value={invoiceFilter}
                     onChange={(e) => {
-                      const change = e as React.ChangeEvent<
-                        HTMLInputElement | HTMLSelectElement
-                      >;
-                      if (
-                        change &&
-                        (change.currentTarget || change.nativeEvent)
-                      ) {
-                        setInvoiceFilter(change.currentTarget.value);
-                        return;
-                      }
-                      const fallback = e as { target: { value: string } };
-                      setInvoiceFilter(fallback.target.value);
+                      const value = (e.target as HTMLInputElement).value;
+                      setInvoiceFilter(value);
                     }}
                   />
                 </div>
@@ -1287,31 +1342,9 @@ const FeedbackDisputesPage: React.FC = () => {
                     placeholder="Payment ID"
                     value={paymentFilter}
                     onChange={(e) => {
-                      const change = e as React.ChangeEvent<
-                        HTMLInputElement | HTMLSelectElement
-                      >;
-                      if (
-                        change &&
-                        (change.currentTarget || change.nativeEvent)
-                      ) {
-                        setPaymentFilter(change.currentTarget.value);
-                        return;
-                      }
-                      const fallback = e as { target: { value: string } };
-                      setPaymentFilter(fallback.target.value);
+                      const value = (e.target as HTMLInputElement).value;
+                      setPaymentFilter(value);
                     }}
-                  />
-                </div>
-
-                <div className="filter-group">
-                  <SolidButton
-                    text="Search"
-                    onClick={() => {
-                      // Trigger the useEffect by updating a dependency
-                      // The filters will automatically trigger the API call
-                    }}
-                    variant="secondary"
-                    size="medium"
                   />
                 </div>
 
@@ -1325,6 +1358,7 @@ const FeedbackDisputesPage: React.FC = () => {
                       setCustomerIdFilter("");
                       setInvoiceFilter("");
                       setPaymentFilter("");
+                      // Filters will auto-apply via useEffect
                     }}
                     variant="secondary"
                     size="medium"
@@ -1368,6 +1402,10 @@ const FeedbackDisputesPage: React.FC = () => {
 
   return (
     <>
+      <LoadingSpinner
+        isVisible={loading}
+        message="Loading feedback and disputes..."
+      />
       <MessageToast
         message={toast.message}
         type={toast.type}
@@ -1654,11 +1692,11 @@ const FeedbackDisputesPage: React.FC = () => {
                 <span className="label">Status:</span>
                 <span className="value status-value">
                   <span
-                    className={`status-badge ${selectedDispute.status
+                    className={`status-badge ${(selectedDispute.status || "")
                       .toLowerCase()
-                      .replace(" ", "-")}`}
+                      .replace(/\s+/g, "-")}`}
                   >
-                    {getStatusIcon(selectedDispute.status)}
+                    {getStatusIcon(selectedDispute.status || "")}
                     {selectedDispute.status}
                   </span>
                 </span>
@@ -1680,10 +1718,8 @@ const FeedbackDisputesPage: React.FC = () => {
 
               {selectedDispute.resolutionNotes && (
                 <div className="info-row">
-                  <span className="reusable-input-label-text">
-                    Resolution Notes:
-                  </span>
-                  <span className="value">
+                  <span className="label">Resolution Notes:</span>
+                  <span className="value resolution-notes-value">
                     {selectedDispute.resolutionNotes}
                   </span>
                 </div>
@@ -1778,11 +1814,11 @@ const FeedbackDisputesPage: React.FC = () => {
                 <span className="label">Status:</span>
                 <span className="value status-value">
                   <span
-                    className={`status-badge ${selectedFeedback.status
+                    className={`status-badge ${(selectedFeedback.status || "")
                       .toLowerCase()
-                      .replace(" ", "-")}`}
+                      .replace(/\s+/g, "-")}`}
                   >
-                    {getFeedbackStatusIcon(selectedFeedback.status)}
+                    {getFeedbackStatusIcon(selectedFeedback.status || "")}
                     {selectedFeedback.status}
                   </span>
                 </span>

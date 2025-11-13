@@ -87,31 +87,41 @@ const DataTable: React.FC<DataTableProps> = ({
           />
         ) : (
           <>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  {headers.map((header, index) => (
-                    <th key={index} className="table-header-item">
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {currentData.map((row, rowIndex) => (
-                  <tr
-                    key={rowIndex}
-                    className={rowIndex % 2 === 1 ? "alt-row" : ""}
-                  >
-                    {row.map((cell, cellIndex) => (
-                      <td key={cellIndex} className="table-data-item">
-                        {cell}
-                      </td>
+            <div className="table-responsive">
+              <table className="data-table" role="table">
+                <thead>
+                  <tr>
+                    {headers.map((header, index) => (
+                      <th key={index} className="table-header-item">
+                        {header}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentData.map((row, rowIndex) => {
+                    const globalIndex = startIndex + rowIndex;
+                    return (
+                      <tr
+                        key={`row-${globalIndex}`}
+                        className={rowIndex % 2 === 1 ? "alt-row" : ""}
+                      >
+                        {row.map((cell, cellIndex) => (
+                          <td
+                            key={`cell-${globalIndex}-${cellIndex}`}
+                            className="table-data-item"
+                            data-label={headers[cellIndex] || ""}
+                            role="cell"
+                          >
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>

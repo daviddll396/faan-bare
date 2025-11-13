@@ -162,7 +162,7 @@
   }
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1150) {
   .loading-spinner-container {
     zoom: 0.46;
   }

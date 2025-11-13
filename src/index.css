@@ -22,8 +22,6 @@ body,
   --bp-lg: 992px;
   --bp-xl: 1200px;
   --bp-xxl: 1600px;
-
-
 }
 
 :root {
@@ -93,42 +91,43 @@ select:-webkit-autofill:active {
   --bp-xxl: 1600px;
 }
 
-  /* Height overrides for form controls */
-  .solid-button--small,
-  .solid-button--medium,
-  .solid-button--large,
-  .border-button,
-  .search-input-wrapper,
-  .listbox-button,
-  .input-field,
-  .fieldbutton-search-wrapper,
-  .reusable-input {
-    height: 48px !important;
-    min-height: 48px !important;
-  }
+/* Height overrides for form controls */
+.solid-button--small,
+.solid-button--medium,
+.solid-button--large,
+.border-button,
+.listbox-button,
+.input-field,
+.reusable-input,
+.search-input-wrapper,
+.search-input-dropdown-wrapper,
+.fieldbutton-search-wrapper,
+.fieldbutton-search-dropdown-wrapper {
+  height: 48px !important;
+  min-height: 48px !important;
+}
 
-
-
-  /* Force font-size and height override for all form controls */
-  .solid-button--small,
-  .solid-button--medium,
-  .solid-button--large,
-  .border-button,
-  .search-input-wrapper,
-  .search-input,
-  .search-input-select,
-  .listbox-button,
-  .listbox-button-text,
-  .listbox-option-text,
-  .input-field,
-  .fieldbutton-search-wrapper,
-  .fieldbutton-search-input,
-  .fieldbutton-search-select,
-  .switching-tab,
-  .reusable-input,
-  .reusable-input-label-text,.listbox-label {
-    font-size: 14px !important;
-  }
+/* Force font-size and height override for all form controls */
+.solid-button--small,
+.solid-button--medium,
+.solid-button--large,
+.border-button,
+.listbox-button,
+.listbox-button-text,
+.listbox-option-text,
+.input-field,
+.switching-tab,
+.reusable-input,
+.reusable-input-label-text,
+.listbox-label,
+.search-input,
+.search-input-select,
+.search-dropdown-value,
+.search-dropdown-option,
+.fieldbutton-search-input,
+.fieldbutton-search-select {
+  font-size: 14px !important;
+}
 
 /* ======================================== */
 /* RESPONSIVE FORM CONTROL SIZING (largest -> smallest) */
@@ -152,19 +151,20 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
-  .search-input,
-  .search-input-select,
   .listbox-button,
   .listbox-button-text,
   .listbox-option-text,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .fieldbutton-search-input,
-  .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text,.listbox-label {
+  .reusable-input-label-text,
+  .listbox-label,
+  .search-input,
+  .search-input-select,
+  .search-dropdown-value,
+  .search-dropdown-option,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select {
     font-size: 14px !important;
   }
 
@@ -173,17 +173,13 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
   .listbox-button,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .reusable-input {
+  .reusable-input,
+  .search-input-wrapper,
+  .search-input-dropdown-wrapper {
     height: 48px !important;
     min-height: 48px !important;
-  }
-
-  .fieldbutton-search-input {
-    height: 44px !important; /* wrapper height - 4px */
   }
   .solid-button--small {
     font-size: 12px !important; /* 14px - 2px */
@@ -193,10 +189,7 @@ select:-webkit-autofill:active {
   }
 }
 
-
-
-
-@media (max-width: 1050px) {
+@media (max-width: 1150px) {
   :root {
     --form-control-height: 30px;
     --form-control-font-size: 9px;
@@ -207,19 +200,20 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
-  .search-input,
-  .search-input-select,
   .listbox-button,
   .listbox-button-text,
   .listbox-option-text,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .fieldbutton-search-input,
-  .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text,.listbox-label {
+  .reusable-input-label-text,
+  .listbox-label,
+  .search-input,
+  .search-input-select,
+  .search-dropdown-value,
+  .search-dropdown-option,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select {
     font-size: 9px !important;
   }
 
@@ -228,17 +222,13 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
   .listbox-button,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .reusable-input {
+  .reusable-input,
+  .search-input-wrapper,
+  .search-input-dropdown-wrapper {
     height: 30px !important;
     min-height: 30px !important;
-  }
-
-  .fieldbutton-search-input {
-    height: 30px !important; /* wrapper height - 4px */
   }
   .solid-button--small {
     font-size: 9px !important; /* 14px - 2px */
@@ -258,19 +248,20 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
-  .search-input,
-  .search-input-select,
   .listbox-button,
   .listbox-button-text,
   .listbox-option-text,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .fieldbutton-search-input,
-  .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text,.listbox-label {
+  .reusable-input-label-text,
+  .listbox-label,
+  .search-input,
+  .search-input-select,
+  .search-dropdown-value,
+  .search-dropdown-option,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select {
     font-size: 12px !important;
   }
 
@@ -279,17 +270,13 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
   .listbox-button,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .reusable-input {
+  .reusable-input,
+  .search-input-wrapper,
+  .search-input-dropdown-wrapper {
     height: 40px !important;
     min-height: 40px !important;
-  }
-
-  .fieldbutton-search-input {
-    height: 36px !important;
   }
   .solid-button--small {
     font-size: 10px !important;
@@ -309,19 +296,20 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
-  .search-input,
-  .search-input-select,
   .listbox-button,
   .listbox-button-text,
   .listbox-option-text,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .fieldbutton-search-input,
-  .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text,.listbox-label {
+  .reusable-input-label-text,
+  .listbox-label,
+  .search-input,
+  .search-input-select,
+  .search-dropdown-value,
+  .search-dropdown-option,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select {
     font-size: 11px !important;
   }
 
@@ -330,17 +318,13 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
   .listbox-button,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .reusable-input {
+  .reusable-input,
+  .search-input-wrapper,
+  .search-input-dropdown-wrapper {
     height: 36px !important;
     min-height: 36px !important;
-  }
-
-  .fieldbutton-search-input {
-    height: 32px !important;
   }
   .solid-button--small {
     font-size: 9px !important;
@@ -361,19 +345,20 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
-  .search-input,
-  .search-input-select,
   .listbox-button,
   .listbox-button-text,
   .listbox-option-text,
   .input-field,
-  .fieldbutton-search-wrapper,
-  .fieldbutton-search-input,
-  .fieldbutton-search-select,
   .switching-tab,
   .reusable-input,
-  .reusable-input-label-text,.listbox-label {
+  .reusable-input-label-text,
+  .listbox-label,
+  .search-input,
+  .search-input-select,
+  .search-dropdown-value,
+  .search-dropdown-option,
+  .fieldbutton-search-input,
+  .fieldbutton-search-select {
     font-size: 10px !important;
   }
 
@@ -382,17 +367,11 @@ select:-webkit-autofill:active {
   .solid-button--medium,
   .solid-button--large,
   .border-button,
-  .search-input-wrapper,
   .listbox-button,
   .input-field,
-  .fieldbutton-search-wrapper,
   .reusable-input {
     height: 34px !important;
     min-height: 34px !important;
-  }
-
-  .fieldbutton-search-input {
-    height: 30px !important;
   }
   .solid-button--small {
     font-size: 8px !important;

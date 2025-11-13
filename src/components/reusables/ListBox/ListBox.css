@@ -69,13 +69,7 @@
   color: #000; /* darker when a value is selected */
   font-weight: 500;
 }
-.listbox-button-text,
-.listbox-button-icon {
-  display: inline-flex;
-  align-items: center;
-  height: var(--form-control-height, 56px);
-  line-height: var(--form-control-height, 56px);
-}
+
 
 .listbox-button-icon {
   color: #9ca3af;

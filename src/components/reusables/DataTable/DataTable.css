@@ -102,9 +102,19 @@
   background: var(--bg-color);
 }
 
+/* Responsive wrapper to enable horizontal scrolling on small screens */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+/* Optional subtle fade to indicate scrollable overflow */
+/* Fade masks removed per design request */
+
 /* Pagination Controls - Always outside table container */
 .data-table-pagination-outer {
-  background: #fff;
+  background: #fff !important;
   border-radius: 5px;
   border: 1px solid #f0f0f0;
   padding: 20px 24px;
@@ -759,8 +769,8 @@
   /* No data state adjustments - Now handled by EmptyState component */
 }
 
-/* Tablet (768px - 1050px) */
-@media (max-width: 1050px) {
+/* Tablet (768px - 1150) */
+@media (max-width: 1150) {
   .data-table-card {
     padding-bottom: 10px;
     border-radius: 8px;
@@ -855,16 +865,15 @@
   }
 
   .data-table {
-    font-size: 9px;
-    min-width: 280px; /* Very aggressive reduction for mobile */
+    font-size: 14px;
+    min-width: 720px; /* Force horizontal scroll on small screens to preserve columns */
   }
 
   .data-table .table-header-item,
   .data-table .table-data-item {
-    padding: 4px 6px !important; /* Minimal padding for mobile */
-    white-space: normal; /* Allow text wrapping on mobile */
-    word-break: break-word; /* Allow word breaking */
-    line-height: 1.2; /* Tighter line height for wrapping */
+    padding: 8px 10px !important; /* Slightly reduced padding for mobile */
+    white-space: nowrap; /* Keep cells single-line, allow horizontal scroll */
+    line-height: 1.3;
   }
 
   /* Override Dashboard.css massive padding for first and last items */
@@ -876,11 +885,11 @@
   }
 
   .table-header-item {
-    font-size: 8px;
+    font-size: 11px;
   }
 
   .table-data-item {
-    font-size: 8px;
+    font-size: 13px;
   }
 
   .pagination-info {
@@ -980,16 +989,15 @@
   }
 
   .data-table {
-    font-size: 7px;
-    min-width: 240px; /* Extremely aggressive reduction for small mobile */
+    font-size: 13px;
+    min-width: 720px; /* Preserve horizontal scroll on very small screens */
   }
 
   .data-table .table-header-item,
   .data-table .table-data-item {
-    padding: 3px 4px !important; /* Minimal possible padding */
-    white-space: normal; /* Allow text wrapping on small mobile */
-    word-break: break-word; /* Allow word breaking */
-    line-height: 1.1; /* Very tight line height for maximum space efficiency */
+    padding: 6px 8px !important; /* Tight but readable */
+    white-space: nowrap; /* Keep single-line cells and enable horizontal scroll */
+    line-height: 1.2;
   }
 
   /* Override Dashboard.css massive padding for first and last items */
@@ -1001,11 +1009,11 @@
   }
 
   .table-header-item {
-    font-size: 6px; /* Very small but still readable */
+    font-size: 10px; /* Very small but still readable */
   }
 
   .table-data-item {
-    font-size: 6px; /* Very small but still readable */
+    font-size: 9px; /* Very small but still readable */
   }
 
   .pagination-info {

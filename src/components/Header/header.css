@@ -414,24 +414,22 @@
   }
 }
 
-
-
-@media (max-width: 1050px) {
+@media (max-width: 1150) {
   .header {
     padding: 7px 20px;
   }
   .page-title-header {
     font-size: 14px;
   }
- .desktop-only-header .user-profile{
+  .desktop-only-header .user-profile {
     padding: 3px 6px;
   }
- 
-    .desktop-only-header .user-avatar {
+
+  .desktop-only-header .user-avatar {
     width: 20px;
     height: 20px;
   }
- .desktop-only-header .user-name {
+  .desktop-only-header .user-name {
     font-size: 10px;
   }
   .desktop-only-header .user-role {
@@ -439,26 +437,23 @@
   }
 
   .user-dropdown {
-   
     right: 66px;
     top: 50px;
     min-width: 150px;
     z-index: 60;
     padding: 6px 4px;
     display: flex;
-    
   }
-   .profile-chevron {
+  .profile-chevron {
     width: 12px;
     height: 12px;
   }
-  .dropdown-item{
-    font-size:11px;
-    padding:0px 6px;
+  .dropdown-item {
+    font-size: 11px;
+    padding: 0px 6px;
   }
 
   .notif-btn {
- 
     padding: 4px;
     display: flex;
     justify-content: center;
@@ -502,8 +497,6 @@
   .notif-time {
     font-size: 8px;
   }
-  
-
 }
 
 @media (max-width: 768px) {

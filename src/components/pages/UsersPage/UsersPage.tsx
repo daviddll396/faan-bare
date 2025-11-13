@@ -2,6 +2,7 @@ import React from "react";
 import { Edit, Trash2 } from "lucide-react";
 import AddIcon from "/icons/add-icon.svg";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 // Card wrapper removed for modal-based add/edit UX
 import Input from "../../reusables/Input/Input";
@@ -362,7 +363,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                     ]}
                     className="userspage-search-fieldbutton"
                   />
-                  {windowWidth > 768 && (
+                  {windowWidth > 860 && (
                     <div className="userspage-role-wrap">
                       <ListBox
                         options={roleOptions}
@@ -377,14 +378,12 @@ const UsersPage: React.FC<UsersPageProps> = () => {
 
                 <div className="userspage-search-right">
                   <div className="userspage-add-action">
-                    <FieldButton
-                      buttons={[
-                        {
-                          text: "Add New User",
-                          icon: AddIcon,
-                          onClick: handleAddNewUser,
-                        },
-                      ]}
+                    <SolidButton
+                      text="Add New User"
+                      onClick={handleAddNewUser}
+                      icon={<img src={AddIcon} alt="Add" />}
+                      variant="secondary"
+                      size="medium"
                       className="userspage-add-fieldbutton"
                     />
                   </div>
@@ -412,7 +411,11 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                   </span>,
                   <span
                     key={`s-${user.id}`}
-                    className={`status-badge ${user.status.toLowerCase() === 'inactive' ? 'failed' : 'completed'}`}
+                    className={`status-badge ${
+                      user.status.toLowerCase() === "inactive"
+                        ? "failed"
+                        : "completed"
+                    }`}
                   >
                     {user.status}
                   </span>,
@@ -420,17 +423,17 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                   <div key={`a-${user.id}`}>
                     <button
                       className="action-btn-table edit"
-                      style={{marginRight: '5px'}}
+                      style={{ marginRight: "5px" }}
                       onClick={() => handleEdit(user)}
                     >
                       <Edit size={16} />
-                       {/* Edit */}
+                      {/* Edit */}
                     </button>
                     <button
                       className="action-btn-table delete"
                       onClick={() => handleDelete(user)}
                     >
-                      <Trash2 size={16} /> 
+                      <Trash2 size={16} />
                       {/* Delete */}
                     </button>
                   </div>,

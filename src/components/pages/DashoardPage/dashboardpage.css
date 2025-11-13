@@ -418,7 +418,7 @@
   .dashboard-bottom-grid {
     display: flex;
     flex-direction: column;
-    padding-bottom: var(--page-bottom-padding-mobile);
+    
   }
 
   .dashboard-page-content {
@@ -500,6 +500,7 @@
 .funding-records-section {
   margin-top: 0px;
   animation: fadeIn 0.4s ease-out 0.2s both;
+  padding-bottom: var(--page-bottom-padding-mobile);
 }
 .funding-records-title {
   font-size: 18px;

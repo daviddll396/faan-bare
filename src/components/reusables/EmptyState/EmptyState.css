@@ -115,8 +115,8 @@
   }
 }
 
-/* Tablet (768px - 1050px) */
-@media (max-width: 1050px) {
+/* Tablet (768px - 1150) */
+@media (max-width: 1150) {
   .empty-state {
     padding: 26px 12px;
     min-height: 100px;

@@ -163,12 +163,12 @@ const TimePicker: React.FC<TimePickerProps> = ({
         </div>
 
         <div style={{ flex: "1 1 0" }}>
-          <ListBox
+      <ListBox
             options={minuteOptions.map((o) => ({
-              id: o.id,
-              name: o.name,
-              value: o.value,
-            }))}
+          id: o.id,
+          name: o.name,
+          value: o.value,
+        }))}
             selected={
               minuteOptions.find((o) => o.value === selectedMinute) ?? null
             }
@@ -186,11 +186,11 @@ const TimePicker: React.FC<TimePickerProps> = ({
               periodOptions.find((o) => o.value === selectedPeriod) ?? null
             }
             onChange={(opt) => setSelectedPeriod(String(opt.value))}
-            placeholder="AM/PM"
+        placeholder="AM/PM"
             className="timepicker-period"
             disabled={disabled}
-          />
-        </div>
+      />
+    </div>
       </div>
 
       {hasError && (

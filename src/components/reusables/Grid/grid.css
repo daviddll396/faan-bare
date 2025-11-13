@@ -12,6 +12,12 @@
   margin: 0 auto;
 }
 
+/* Allow opting out of the single-item max-width when desired */
+.grid.grid-no-max > *:only-child {
+  max-width: none;
+  margin: 0;
+}
+
 /* Animation delays for staggered entrance */
 .grid > *:nth-child(1) {
   --enter-delay: 0ms;

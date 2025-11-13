@@ -30,11 +30,46 @@
   font-family: monospace;
 }
 
+/* Category Color Coding - Only text color */
+.dispute-card.category-incorrect-amount .dispute-reference {
+  color: #ef4444;
+}
+
+.dispute-card.category-service-not-received .dispute-reference {
+  color: #f97316;
+}
+
+.dispute-card.category-payment-not-processed .dispute-reference {
+  color: #eab308;
+}
+
+.dispute-card.category-duplicate-charge .dispute-reference {
+  color: #ec4899;
+}
+
+.dispute-card.category-refund-not-received .dispute-reference {
+  color: #14b8a6;
+}
+
+.dispute-card.category-technical-error .dispute-reference {
+  color: #f59e0b;
+}
+
+.dispute-card.category-other .dispute-reference,
+.dispute-card.category-others .dispute-reference {
+  color: #6b7280;
+}
+
 /* Dispute Content Area */
 .dispute-content-area {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+/* Admin view - header without status badge */
+.dispute-card.admin-view .dispute-header {
+  justify-content: flex-start;
 }
 
 /* Dispute Details */

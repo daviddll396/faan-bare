@@ -167,35 +167,19 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     Array<{ [k: string]: string }>
   >(billItems.map(() => ({})));
 
-  // Sample invoice data
-  const invoiceNumber = "201564";
-  const invoiceCustomerId = customer.idNo;
-  const invoiceAmount = "54,400";
-  const invoiceItems = [
-    {
-      id: "1001",
-      name: "Bricks & Mortar",
-      qty: 5,
-      amount: "10,000",
-      total: "50,000",
-    },
-    { id: "1002", name: "Titanium", qty: 2, amount: "5,000", total: "10,000" },
-    {
-      id: "1003",
-      name: "Boarding Bridge",
-      qty: 2,
-      amount: "2,500",
-      total: "5,000",
-    },
-    {
-      id: "1004",
-      name: "Bricks & Mortar",
-      qty: 5,
-      amount: "2,000",
-      total: "10,000",
-    },
-  ];
-  const invoiceTotal = "75,000";
+  // Generated invoice data from bill items
+  const [generatedInvoice, setGeneratedInvoice] = React.useState<{
+    invoiceNumber: string;
+    customerId: string;
+    items: Array<{
+      id: string;
+      name: string;
+      qty: number;
+      amount: string;
+      total: string;
+    }>;
+    total: string;
+  } | null>(null);
 
   function formatNumberWithCommas(value: string) {
     const num = value.replace(/,/g, "");
@@ -289,7 +273,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
               "To create a bill, search for the customer using their ID, NIN, or name. Enter at least one field to search."
             }
           />
-        ) : !showBillCreation ? (
+        ) : (
           <>
             {windowWidth <= 768 ? (
               <PageTitle icon={BillTitleIcon} title="Bill Search" />
@@ -303,30 +287,6 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 ]}
                 onBreadcrumbClick={(idx) => {
                   if (idx === 0) setShowResults(false);
-                }}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            {windowWidth <= 768 ? (
-              <PageTitle icon={BillTitleIcon} title="Bill Creation" />
-            ) : (
-              <PageTitle
-                icon={BillTitleIcon}
-                title="Bill Search"
-                breadcrumb={[
-                  { label: "Bill Search", icon: BillTitleIcon },
-                  { label: "Customer Details" },
-                  { label: "Bill Creation" },
-                ]}
-                onBreadcrumbClick={(idx) => {
-                  if (idx === 0) {
-                    setShowResults(false);
-                    setShowBillCreation(false);
-                  } else if (idx === 1) {
-                    setShowBillCreation(false);
-                  }
                 }}
               />
             )}
@@ -389,7 +349,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
             </form>
           </div>
         )}
-        {showResults && !showBillCreation && (
+        {showResults && (
           <div className="bills-customer-details">
             {/* Customer Header */}
             <div className="bills-customer-header">
@@ -509,334 +469,286 @@ const BillsPage: React.FC<BillsPageProps> = () => {
             {windowWidth <= 768 && <SlideIndicator />}
           </div>
         )}
+        {/* Bill Creation Modal */}
         {showBillCreation && (
-          <div className="bill-creation-section">
-            <div className="bill-creation-header">
-              {/* <h3 className="bill-creation-title">Bill Creation</h3> */}
-              <p className="bill-creation-subtitle">
-                Create a bill for the customer by adding items, setting tariffs,
-                quantities, and amounts.
-              </p>
-            </div>
+          <Modal
+            isOpen={showBillCreation}
+            onClose={() => {
+              setShowBillCreation(false);
+              // Reset form when closing
+              setBillItems([{ ...initialBillItem }]);
+              setBillItemErrors([{}]);
+            }}
+            showHeader={true}
+            showLogo={false}
+            headerTitle="Create New Bill"
+            className="add-bill-modal"
+          >
+            <div className="service-creation-section">
+              <div className="modal-form-header">
+                <p className="modal-form-helper">
+                  Create a bill for the customer by adding items, setting tariffs,
+                  quantities, and amounts.
+                </p>
+              </div>
 
-            <form
-              className="bill-creation-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                // client-side validation
-                if (!validateBillItems()) {
-                  showToast(
-                    "Please fix validation errors in the bill items",
-                    "error"
+              <form
+                className="service-creation-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  // client-side validation
+                  if (!validateBillItems()) {
+                    showToast(
+                      "Please fix validation errors in the bill items",
+                      "error"
+                    );
+                    return;
+                  }
+                  showLoading("Generating invoice...");
+                  
+                  // Generate invoice from bill items
+                  const invoiceNumber = `INV-${Date.now()}-${Math.random()
+                    .toString(36)
+                    .substring(2, 8)}`;
+                  
+                  const invoiceItems = billItems
+                    .filter((item) => item.item && item.amount && item.qty)
+                    .map((item, idx) => {
+                      const amountNum = parseFloat(item.amount.replace(/,/g, "")) || 0;
+                      const qtyNum = parseFloat(item.qty) || 0;
+                      const totalNum = amountNum * qtyNum;
+                      
+                      return {
+                        id: `${Date.now()}-${idx}`,
+                        name: item.item,
+                        qty: qtyNum,
+                        amount: formatNumberWithCommas(String(amountNum)),
+                        total: formatNumberWithCommas(String(totalNum)),
+                      };
+                    });
+                  
+                  const totalAmount = invoiceItems.reduce(
+                    (sum, item) => sum + parseFloat(item.total.replace(/,/g, "")),
+                    0
                   );
-                  return;
-                }
-                showLoading("Generating invoice...");
-                setTimeout(() => {
-                  hideLoading();
-                  setShowInvoiceModal(true);
-                }, 2000);
-              }}
-            >
-              <div className="bill-items-container">
-                {billItems.map((bill, idx) => (
-                  <div className="bill-item-card" key={idx}>
-                    <div className="bill-item-header">
-                      <div className="bill-item-number">{idx + 1}</div>
-                      <h4 className="bill-item-title">Item {idx + 1}</h4>
-                      <button
-                        type="button"
-                        className="bill-item-remove"
-                        onClick={() => removeBillItem(idx)}
-                        aria-label={`Delete item ${idx + 1}`}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <div className="bill-item-fields">
-                      <div className="bill-field-group">
-                        <ListBox
-                          label="Item"
-                          options={itemOptions}
-                          selected={
-                            itemOptions.find(
-                              (option) => option.value === bill.item
-                            ) || null
-                          }
-                          onChange={(option: ListBoxOption) =>
-                            handleBillItemChange(idx, "item", option)
-                          }
-                          placeholder="Select item"
-                          className="bill-item-listbox"
-                        />
-                        {billItemErrors[idx]?.item && (
-                          <div className="validation-error">
-                            {billItemErrors[idx].item}
-                          </div>
+                  
+                  setGeneratedInvoice({
+                    invoiceNumber,
+                    customerId: customer.idNo,
+                    items: invoiceItems,
+                    total: formatNumberWithCommas(String(totalAmount)),
+                  });
+                  
+                  setTimeout(() => {
+                    hideLoading();
+                    setShowBillCreation(false);
+                    setShowInvoiceModal(true);
+                    // Reset form after submission
+                    setBillItems([{ ...initialBillItem }]);
+                    setBillItemErrors([{}]);
+                  }, 2000);
+                }}
+              >
+                <div className="bill-items-container">
+                  {billItems.map((bill, idx) => (
+                    <div className="bill-item-card" key={idx}>
+                      <div className="bill-item-header">
+                        <h4 className="bill-item-title">Item {idx + 1}</h4>
+                        {billItems.length > 1 && (
+                          <button
+                            type="button"
+                            className="bill-item-remove"
+                            onClick={() => removeBillItem(idx)}
+                            aria-label={`Delete item ${idx + 1}`}
+                          >
+                            Delete
+                          </button>
                         )}
                       </div>
-
-                      <div className="bill-main-row">
-                        <div className="bill-base-wrapper">
-                          <Input
-                            label="Base Tariff"
-                            placeholder="Enter base tariff"
-                            value={formatNumberWithCommas(bill.baseTariff)}
-                            onChange={(e) =>
-                              handleBillItemChange(
-                                idx,
-                                "baseTariff",
-                                e.target.value
-                              )
-                            }
-                          />
-                          {billItemErrors[idx]?.baseTariff && (
-                            <div className="validation-error">
-                              {billItemErrors[idx].baseTariff}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="bill-qty-wrapper">
-                          <Input
-                            label="Quantity"
-                            placeholder="Qty"
-                            value={bill.qty}
-                            onChange={(e) =>
-                              handleBillItemChange(idx, "qty", e.target.value)
-                            }
-                          />
-                          {billItemErrors[idx]?.qty && (
-                            <div className="validation-error">
-                              {billItemErrors[idx].qty}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="bill-amount-wrapper">
-                          <Input
-                            label="Amount"
-                            placeholder="Enter amount"
-                            value={formatNumberWithCommas(bill.amount)}
-                            onChange={(e) =>
-                              handleBillItemChange(
-                                idx,
-                                "amount",
-                                e.target.value
-                              )
-                            }
-                            className="bill-amount-input"
-                          />
-                          {billItemErrors[idx]?.amount && (
-                            <div className="validation-error">
-                              {billItemErrors[idx].amount}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="bill-currency-wrapper">
+                      <div className="bill-item-fields">
+                        <div className="bill-field-group">
                           <ListBox
-                            label="Currency"
-                            options={currencyOptions}
+                            label="Item"
+                            options={itemOptions}
                             selected={
-                              currencyOptions.find(
-                                (option) => option.value === bill.currency
-                              ) || currencyOptions[0]
+                              itemOptions.find(
+                                (option) => option.value === bill.item
+                              ) || null
                             }
                             onChange={(option: ListBoxOption) =>
-                              handleBillItemChange(idx, "currency", option)
+                              handleBillItemChange(idx, "item", option)
                             }
-                            placeholder="Currency"
+                            placeholder="Select item"
+                            className="bill-item-listbox"
                           />
+                          {billItemErrors[idx]?.item && (
+                            <div className="validation-error">
+                              {billItemErrors[idx].item}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="bill-main-row">
+                          <div className="bill-base-wrapper">
+                            <Input
+                              label="Base Tariff"
+                              placeholder="Enter base tariff"
+                              value={formatNumberWithCommas(bill.baseTariff)}
+                              onChange={(e) =>
+                                handleBillItemChange(
+                                  idx,
+                                  "baseTariff",
+                                  e.target.value
+                                )
+                              }
+                            />
+                            {billItemErrors[idx]?.baseTariff && (
+                              <div className="validation-error">
+                                {billItemErrors[idx].baseTariff}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="bill-qty-wrapper">
+                            <Input
+                              label="Quantity"
+                              placeholder="Qty"
+                              value={bill.qty}
+                              onChange={(e) =>
+                                handleBillItemChange(idx, "qty", e.target.value)
+                              }
+                            />
+                            {billItemErrors[idx]?.qty && (
+                              <div className="validation-error">
+                                {billItemErrors[idx].qty}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="bill-amount-wrapper">
+                            <Input
+                              label="Amount"
+                              placeholder="Enter amount"
+                              value={formatNumberWithCommas(bill.amount)}
+                              onChange={(e) =>
+                                handleBillItemChange(
+                                  idx,
+                                  "amount",
+                                  e.target.value
+                                )
+                              }
+                              className="bill-amount-input"
+                            />
+                            {billItemErrors[idx]?.amount && (
+                              <div className="validation-error">
+                                {billItemErrors[idx].amount}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="bill-currency-wrapper">
+                            <ListBox
+                              label="Currency"
+                              options={currencyOptions}
+                              selected={
+                                currencyOptions.find(
+                                  (option) => option.value === bill.currency
+                                ) || currencyOptions[0]
+                              }
+                              onChange={(option: ListBoxOption) =>
+                                handleBillItemChange(idx, "currency", option)
+                              }
+                              placeholder="Currency"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+
+                <div className="service-actions-row">
+                  <div className="service-submit-actions">
+                    <GradientButton type="submit" fullWidth>
+                      GENERATE INVOICE
+                    </GradientButton>
                   </div>
-                ))}
-              </div>
-
-              <div className="bill-creation-actions">
-                <FieldButton
-                  buttons={[
-                    {
-                      text: "+ Add More Items",
-                      onClick: addMoreBillItem,
-                      type: "button",
-                    },
-                  ]}
-                  className="bill-add-items-fieldbutton"
-                />
-              </div>
-
-              <div className="bill-submit-actions">
-                <GradientButton type="submit" fullWidth>
-                  GENERATE INVOICE
-                </GradientButton>
-              </div>
-            </form>
-          </div>
+                </div>
+              </form>
+            </div>
+          </Modal>
         )}
       </div>
       {/* Invoice Modal */}
       <Modal
         isOpen={showInvoiceModal}
-        onClose={() => setShowInvoiceModal(false)}
+        onClose={() => {
+          setShowInvoiceModal(false);
+          setGeneratedInvoice(null);
+        }}
         showHeader={true}
-        headerTitle="FEDERAL AIRPORT AUTHORITY OF NIGERIA"
+        headerTitle="INVOICE DETAILS"
+        className="view-details-modal"
       >
-        <div style={{ width: "100%", marginBottom: 8 }}>
-          <div className="bill-invoice-title">Invoice Details:</div>
-        </div>
-        <div className="bill-invoice-cards">
-          <div className="bill-customer-card">
-            <img
-              src={InvoiceFormIcon}
-              alt="Invoice Number"
-              className="bill-customer-icon"
-            />
-
-            <div
-              className="bill-customer-info-col"
-              style={{ alignItems: "center" }}
-            >
-              <div className="bill-customer-label">Invoice Number</div>
-              <div className="bill-customer-value highlight">
-                {invoiceNumber}
+        {generatedInvoice && (
+          <div className="invoice-details-paper">
+            <div className="invoice-details-head">
+              <div className="invoice-details-brand">
+                Federal Airports Authority of Nigeria
+              </div>
+              <div className="invoice-details-title">INVOICE DETAILS</div>
+              <div className="invoice-details-sub">Transaction Information</div>
+            </div>
+            <div className="invoice-details-meta">
+              <div className="meta-row">
+                <span>Invoice Number</span>
+                <span className="mono">{generatedInvoice.invoiceNumber}</span>
+              </div>
+              <div className="meta-row">
+                <span>Customer ID</span>
+                <span className="mono">{generatedInvoice.customerId}</span>
+              </div>
+              <div className="meta-row">
+                <span>Created At</span>
+                <span>{new Date().toLocaleDateString()}</span>
               </div>
             </div>
-          </div>
-          <div className="bill-customer-card">
-            <img
-              src={IdFormIcon}
-              alt="Customer ID"
-              className="bill-customer-icon"
-            />
-
-            <div
-              className="bill-customer-info-col"
-              style={{ alignItems: "center" }}
-            >
-              <div className="bill-customer-label">Customer ID</div>
-              <div className="bill-customer-value highlight">
-                {invoiceCustomerId}
+            <div className="invoice-details-items">
+              <div className="thead">
+                <span>Item</span>
+                <span className="right">Amount</span>
               </div>
-            </div>
-          </div>
-          <div className="bill-customer-card">
-            <img
-              src={InvoiceAmountFormIcon}
-              alt="Invoice Amount"
-              className="bill-customer-icon"
-            />
-
-            <div
-              className="bill-customer-info-col"
-              style={{ alignItems: "center" }}
-            >
-              <div className="bill-customer-label">Invoice Amount</div>
-              <div className="bill-customer-value highlight">
-                ₦{invoiceAmount}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style={{ width: "100%", marginBottom: 18, overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: 15,
-            }}
-            className="no-min-width-table"
-          >
-            <thead>
-              <tr style={{ background: "#fafafa" }}>
-                <th className="table-header-item">ID</th>
-                <th className="table-header-item">Item Name</th>
-                <th className="table-header-item">Qty</th>
-                <th className="table-header-item">Amount</th>
-                <th className="table-header-item">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoiceItems.map((item, idx) => (
-                <tr
-                  key={item.id}
-                  style={{
-                    background: idx % 2 === 1 ? "#f7f7f7" : "#fff",
-                  }}
-                >
-                  <td
-                    style={{ padding: "8px 8px" }}
-                    className="table-data-item"
-                  >
-                    {item.id}
-                  </td>
-                  <td
-                    style={{ padding: "8px 8px" }}
-                    className="table-data-item"
-                  >
-                    {item.name}
-                  </td>
-                  <td
-                    style={{ padding: "8px 8px" }}
-                    className="table-data-item"
-                  >
-                    {item.qty}
-                  </td>
-                  <td
-                    style={{ padding: "8px 8px" }}
-                    className="table-data-item"
-                  >
-                    ₦{item.amount}
-                  </td>
-                  <td
-                    style={{ padding: "8px 8px" }}
-                    className="table-data-item"
-                  >
-                    ₦{item.total}
-                  </td>
-                </tr>
+              {generatedInvoice.items.map((item, index) => (
+                <div key={item.id} className="row">
+                  <span>
+                    {item.name} x{item.qty}
+                  </span>
+                  <span className="right mono">₦{item.total}</span>
+                </div>
               ))}
-              <tr>
-                <td
-                  colSpan={4}
-                  style={{
-                    textAlign: "left",
-                    fontWeight: 700,
-                    color: "#000",
-                    padding: "10px 8px",
-                  }}
-                >
-                  TOTAL
-                </td>
-                <td
-                  style={{
-                    fontWeight: 700,
-                    color: "#000",
-                    padding: "10px 8px",
-                    textAlign: "right",
-                  }}
-                >
-                  ₦{invoiceTotal}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <GradientButton
-          fullWidth
-          onClick={() => {
-            showLoading("Processing payment...");
-            setTimeout(() => {
-              hideLoading();
-              setShowInvoiceModal(false);
-              setShowPaymentSuccess(true);
-            }, 2000);
-          }}
-        >
-          PAY
-        </GradientButton>
+              <div className="total">
+                <span>Total</span>
+                <span className="right mono">₦{generatedInvoice.total}</span>
+              </div>
+            </div>
+            <div style={{ width: "100%", marginTop: 16 }}>
+              <GradientButton
+                fullWidth
+                onClick={() => {
+                  showLoading("Processing payment...");
+                  setTimeout(() => {
+                    hideLoading();
+                    setShowInvoiceModal(false);
+                    setShowPaymentSuccess(true);
+                    setGeneratedInvoice(null);
+                  }, 2000);
+                }}
+              >
+                PAY
+              </GradientButton>
+            </div>
+          </div>
+        )}
       </Modal>
       {/* Payment Success Modal */}
       <Modal
@@ -867,81 +779,121 @@ const BillsPage: React.FC<BillsPageProps> = () => {
         isOpen={showReceiptModal}
         onClose={() => setShowReceiptModal(false)}
         showHeader={true}
-        headerTitle="FEDERAL AIRPORT AUTHORITY OF NIGERIA"
+        headerTitle="PAYMENT RECEIPT"
         className="bill-receipt-modal"
       >
         {selectedBill && (
-          <div className="bill-receipt-content">
-            <div className="bills-receipt-cards">
-              <div className="bills-receipt-card">
-                <div className="bills-receipt-card-icon">
-                  <img src={InvoiceFormIcon} alt="Receipt Number" />
-                </div>
-                <div className="bills-receipt-card-content">
-                  <div className="bills-receipt-card-label">Receipt Number</div>
-                  <div className="bills-receipt-card-value">
-                    {selectedBill.billNo}
-                  </div>
-                </div>
+          <div className="receipt-paper">
+            <div className="receipt-head">
+              <div className="receipt-brand">
+                Federal Airports Authority of Nigeria
               </div>
-              <div className="bills-receipt-card">
-                <div className="bills-receipt-card-icon">
-                  <img src={IdFormIcon} alt="Customer ID" />
-                </div>
-                <div className="bills-receipt-card-content">
-                  <div className="bills-receipt-card-label">Customer ID</div>
-                  <div className="bills-receipt-card-value">
-                    {customer.idNo}
-                  </div>
-                </div>
+              <div className="receipt-title">PAYMENT RECEIPT</div>
+              <div className="receipt-sub">Thank you for your payment.</div>
+            </div>
+            <div className="receipt-meta">
+              <div className="meta-row">
+                <span>Transaction ID</span>
+                <span className="mono">{selectedBill.billNo}</span>
               </div>
-              <div className="bills-receipt-card">
-                <div className="bills-receipt-card-icon">
-                  <img src={InvoiceAmountFormIcon} alt="Amount Paid" />
-                </div>
-                <div className="bills-receipt-card-content">
-                  <div className="bills-receipt-card-label">Amount Paid</div>
-                  <div className="bills-receipt-card-value">
-                    {selectedBill.paid}
-                  </div>
-                </div>
+              <div className="meta-row">
+                <span>Payment Date</span>
+                <span>{selectedBill.date}</span>
+              </div>
+              <div className="meta-row">
+                <span>Payment Channel</span>
+                <span>Web</span>
+              </div>
+              <div className="meta-row">
+                <span>Payment Method</span>
+                <span>Wallet</span>
               </div>
             </div>
-            <div className="bill-receipt-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th className="table-header-item">ID</th>
-                    <th className="table-header-item">Item Name</th>
-                    <th className="table-header-item">Qty</th>
-                    <th className="table-header-item">Amount</th>
-                    <th className="table-header-item">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="table-data-item">{selectedBill.billNo}</td>
-                    <td className="table-data-item">{selectedBill.itemName}</td>
-                    <td className="table-data-item">{selectedBill.qty}</td>
-                    <td className="table-data-item">{selectedBill.amount}</td>
-                    <td className="table-data-item">{selectedBill.paid}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={4} className="bill-total-label">
-                      TOTAL
-                    </td>
-                    <td className="bill-total-value">{selectedBill.paid}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="receipt-items">
+              <div className="thead">
+                <span>Item</span>
+                <span className="right">Amount</span>
+              </div>
+              <div className="row">
+                <span>{selectedBill.itemName} (Qty: {selectedBill.qty})</span>
+                <span className="right mono">{selectedBill.paid}</span>
+              </div>
+              <div className="total">
+                <span>Total</span>
+                <span className="right mono">{selectedBill.paid}</span>
+              </div>
             </div>
-            <div className="bill-receipt-actions">
-              <GradientButton
-                onClick={() => setShowReceiptModal(false)}
+            <div className="receipt-foot">Customer ID: {customer.idNo}</div>
+            <div className="receipt-download" style={{ marginTop: 12 }}>
+              <SolidButton
+                text="Download PDF"
                 fullWidth
-              >
-                CLOSE
-              </GradientButton>
+                onClick={() => {
+                  const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
+                    selectedBill.billNo
+                  }</title>
+                  <style>
+                    @page { margin: 10mm; }
+                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
+                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #f0f0f0;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
+                    .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#f0f0f0,#f0f0f0)}
+                    .receipt-head{text-align:center;margin:8px 0}
+                    .receipt-brand{font-weight:700;color:#000;font-size:14px}
+                    .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
+                    .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
+                    .receipt-meta{border:1px dashed #f0f0f0;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
+                    .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #f0f0f0}
+                    .receipt-meta .meta-row:last-child{border-bottom:none}
+                    .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
+                    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
+                    .receipt-items{border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
+                    .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
+                    .receipt-items .thead{color:#969696;font-size:12px}
+                    .receipt-items .row{border-top:1px dashed #f0f0f0}
+                    .right{text-align:right}
+                    .receipt-items .total{border-top:2px solid #f0f0f0;font-weight:800}
+                    .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
+                  </style>
+                  </head><body>
+                    <div class='receipt-paper'>
+                      <div class='receipt-head'>
+                        <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
+                        <div class='receipt-title'>PAYMENT RECEIPT</div>
+                        <div class='receipt-sub'>Thank you for your payment.</div>
+                      </div>
+                      <div class='receipt-meta'>
+                        <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
+                          selectedBill.billNo
+                        }</span></div>
+                        <div class='meta-row'><span>Payment Date</span><span>${selectedBill.date}</span></div>
+                        <div class='meta-row'><span>Payment Channel</span><span>Web</span></div>
+                        <div class='meta-row'><span>Payment Method</span><span>Wallet</span></div>
+                      </div>
+                      <div class='receipt-items'>
+                        <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
+                        <div class='row'><span>${
+                          selectedBill.itemName
+                        } (Qty: ${selectedBill.qty})</span><span class='right mono'>${
+                    selectedBill.paid
+                  }</span></div>
+                        <div class='total'><span>Total</span><span class='right mono'>${
+                          selectedBill.paid
+                        }</span></div>
+                      </div>
+                      <div class='receipt-foot'>Customer ID: ${customer.idNo}</div>
+                    </div>
+                    <script>
+                      window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
+                    </script>
+                  </body></html>`;
+                  const win = window.open("", "_blank");
+                  if (win) {
+                    win.document.open();
+                    win.document.write(html);
+                    win.document.close();
+                  }
+                }}
+              />
             </div>
           </div>
         )}

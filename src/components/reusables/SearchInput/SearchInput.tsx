@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { FiSearch, FiChevronDown } from "react-icons/fi";
 import "./searchinput.css";
 
 interface SearchInputProps {
@@ -12,9 +13,6 @@ interface SearchInputProps {
   ) => void;
   options?: string[];
 }
-
-import SearchIcon from "/icons/search-icon.svg";
-import ChevronDown from "/icons/chevron-down.svg";
 
 const SearchInput: React.FC<SearchInputProps> = ({
   placeholder,
@@ -52,7 +50,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         className={`search-input-wrapper search-input-dropdown-wrapper`}
         ref={wrapperRef}
       >
-        <img src={SearchIcon} alt="search" className="search-input-icon" />
+        <FiSearch className="search-input-icon" color="#626262" />
         <select
           className="search-input-select"
           value={value ?? ""}
@@ -68,11 +66,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           ))}
         </select>
         {withDropdown && (
-          <img
-            src={ChevronDown}
-            alt="dropdown"
-            className="search-input-chevron"
-          />
+          <FiChevronDown className="search-input-chevron" color="#969696" />
         )}
       </div>
     );
@@ -80,7 +74,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <div className="search-input-wrapper">
-      <img src={SearchIcon} alt="search" className="search-input-icon" />
+      <FiSearch className="search-input-icon" color="#626262" />
       <input
         className="search-input"
         type="text"
@@ -89,11 +83,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         onChange={onChange}
       />
       {withDropdown && (
-        <img
-          src={ChevronDown}
-          alt="dropdown"
-          className="search-input-chevron"
-        />
+        <FiChevronDown className="search-input-chevron" color="#969696" />
       )}
     </div>
   );

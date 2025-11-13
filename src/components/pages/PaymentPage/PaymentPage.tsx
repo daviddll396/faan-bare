@@ -31,6 +31,7 @@ interface PaymentItem {
   customerName?: string;
   action: string;
   actionType: string;
+  isRealData?: boolean; // Flag to distinguish real data from mock data
 }
 
 interface PaymentPageProps {
@@ -135,6 +136,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   : status === "PENDING"
                   ? "invoice"
                   : "reason",
+              isRealData: true, // Mark as real data
             };
 
             // console.log(`🔍 Mapped transaction ${billNo}:`, {
@@ -181,6 +183,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   : undefined,
               action: status === "PENDING" ? "View Invoice" : "View Reason",
               actionType: status === "PENDING" ? "invoice" : "reason",
+              isRealData: false, // Mark as mock data
             };
           };
 
@@ -195,13 +198,28 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             dummyTransactions.push(makeFake("D-CANC", svc, i, "CANCELLED"));
           }
 
+          // Combine real data and mock data
+          // Ensure real data always appears first by sorting
+          const finalPayments: PaymentItem[] = [];
+          
+          // Add all data
+          finalPayments.push(...mappedPayments);
           for (const d of dummyTransactions) {
-            if (!mappedPayments.find((m) => m.billNo === d.billNo))
-              mappedPayments.push(d);
+            if (!mappedPayments.find((m) => m.billNo === d.billNo)) {
+              finalPayments.push(d);
+            }
           }
+          
+          // Sort to ensure real data comes first after DataTable reverses
+          // Since DataTable reverses, we sort so real data is LAST before reversal
+          finalPayments.sort((a, b) => {
+            const aIsReal = a.isRealData === true ? 1 : 0;
+            const bIsReal = b.isRealData === true ? 1 : 0;
+            return aIsReal - bIsReal; // Mock (0) comes before real (1), so after reverse, real comes first
+          });
 
-          // console.log("✅ Final mapped payments:", mappedPayments);
-          setPayments(mappedPayments);
+          // console.log("✅ Final mapped payments:", finalPayments);
+          setPayments(finalPayments);
         }
       } catch (error) {
         console.error("Error fetching transactions:", error);

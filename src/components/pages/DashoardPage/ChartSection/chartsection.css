@@ -126,7 +126,7 @@
     }
   }
 
-  @media (max-width: 1050px) {
+  @media (max-width: 1150) {
     .chart-section {
       zoom: 0.54;
     }

@@ -496,7 +496,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     if (prevHadError) {
       setFieldErrors((prev) => ({ ...prev, [fieldName]: false }));
       // Clear any form-level error message only when the user addresses a missing field
-      if (bookingFormError) setBookingFormError(null);
+    if (bookingFormError) setBookingFormError(null);
     }
   };
 
@@ -506,7 +506,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     setBookingForm((prev) => ({ ...prev, [name]: value }));
     if (prevHadError) {
       setFieldErrors((prev) => ({ ...prev, [name]: false }));
-      if (bookingFormError) setBookingFormError(null);
+    if (bookingFormError) setBookingFormError(null);
     }
   };
 

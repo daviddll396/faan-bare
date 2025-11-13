@@ -10,6 +10,8 @@ interface DisputeCardProps {
   category: string;
   status: "Pending" | "In Review" | "Resolved" | "Closed";
   createdAt: string;
+  customerId?: string;
+  isAdmin?: boolean;
   onViewDetails: () => void;
 }
 
@@ -20,6 +22,8 @@ const DisputeCard: React.FC<DisputeCardProps> = ({
   category,
   status,
   createdAt,
+  customerId,
+  isAdmin = false,
   onViewDetails,
 }) => {
   const getStatusIcon = (status: string) => {
@@ -50,20 +54,55 @@ const DisputeCard: React.FC<DisputeCardProps> = ({
     });
   };
 
+  // Get reason class for color coding (reason is shown in header)
+  const getReasonClass = (reason: string) => {
+    const normalizedReason = reason.toUpperCase();
+    // Map dispute reasons to color classes
+    switch (normalizedReason) {
+      case "INCORRECT AMOUNT":
+        return "category-incorrect-amount";
+      case "SERVICE NOT RECEIVED":
+        return "category-service-not-received";
+      case "PAYMENT NOT PROCESSED":
+        return "category-payment-not-processed";
+      case "DUPLICATE CHARGE":
+        return "category-duplicate-charge";
+      case "REFUND NOT RECEIVED":
+        return "category-refund-not-received";
+      case "TECHNICAL ERROR":
+        return "category-technical-error";
+      case "OTHER":
+        return "category-other";
+      default:
+        // For any other reason, create a class based on the reason name
+        return `category-${normalizedReason.toLowerCase().replace(/\s+/g, "-")}`;
+    }
+  };
+
+  const reasonClass = getReasonClass(reason);
+
   return (
-    <div className="dispute-card">
+    <div className={`dispute-card ${reasonClass} ${isAdmin ? "admin-view" : ""}`}>
       <div className="dispute-header">
-        <div className="dispute-reference">{reference}</div>
-        <div
-          className={`status-badge ${status.toLowerCase().replace(" ", "-")}`}
-        >
-          {getStatusIcon(status)}
-          {status}
-        </div>
+        <div className="dispute-reference">{reason}</div>
+        {!isAdmin && (
+          <div
+            className={`status-badge ${status.toLowerCase().replace(" ", "-")}`}
+          >
+            {getStatusIcon(status)}
+            {status}
+          </div>
+        )}
       </div>
 
       <div className="dispute-content-area">
         <div className="dispute-details">
+          {customerId && (
+            <div className="dispute-detail-item">
+              <span className="detail-label">Customer ID:</span>
+              <span className="detail-value">{customerId}</span>
+            </div>
+          )}
           <div className="dispute-detail-item">
             <span className="detail-label">Type:</span>
             <span className="detail-value">{type}</span>
@@ -71,10 +110,6 @@ const DisputeCard: React.FC<DisputeCardProps> = ({
           <div className="dispute-detail-item">
             <span className="detail-label">Category:</span>
             <span className="detail-value">{category}</span>
-          </div>
-          <div className="dispute-detail-item">
-            <span className="detail-label">Reason:</span>
-            <span className="detail-value">{truncateText(reason)}</span>
           </div>
           <div className="dispute-detail-item">
             <span className="detail-label">Created:</span>

@@ -35,7 +35,7 @@
 /* Confirmation Modal Container */
 .confirmation-modal {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
   padding: 36px 32px 32px 32px;
   min-width: 400px;
@@ -245,7 +245,7 @@
   }
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1150) {
   .confirmation-modal {
     zoom: 0.48;
   }

@@ -15,7 +15,7 @@ All status badge styles have been successfully consolidated into **`Dashboard.cs
 - ✅ `.status-badge.cancelled` - New variant for cancelled status
 - ✅ `.status-badge.success` - New variant for success status
 - ✅ Complete `.status-badge-table` definitions (text-only variant)
-- ✅ Responsive breakpoints for `.status-badge-table` at 1450px, 1050px, and 768px
+- ✅ Responsive breakpoints for `.status-badge-table` at 1450px, 1150, and 768px
 
 **Total Status Badge Variants in Dashboard.css:**
 
@@ -236,7 +236,7 @@ Status badges automatically adjust at different screen sizes:
 
 - **Desktop (>1450px):** Normal size
 - **Tablet (≤1450px):** Font-size: 10px, `.status-badge-table` 11px
-- **Mobile landscape (≤1050px):** `.status-badge-table` 10px
+- **Mobile landscape (≤1150):** `.status-badge-table` 10px
 - **Mobile (≤768px):** `.status-badge-table` 9px
 
 All responsive rules are defined in `Dashboard.css` media queries.
