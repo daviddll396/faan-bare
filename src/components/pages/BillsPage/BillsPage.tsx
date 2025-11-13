@@ -4,17 +4,11 @@ import PageTitle from "../../reusables/PageTitle/PageTitle";
 import BillTitleIcon from "/icons/bill-title-icon.svg";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import { useLoading } from "../../../contexts/LoadingContext";
-import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Input from "../../reusables/Input/Input";
 import DataTable from "../../reusables/DataTable/DataTable";
 import ListBox, { type ListBoxOption } from "../../reusables/ListBox";
 
 import { Eye, User, Mail } from "lucide-react";
-// RemoveFormIcon unused after replacing with text button
-// import RemoveFormIcon from "/icons/trash-can-icon.svg";
-import InvoiceFormIcon from "/icons/invoice-form-icon.svg";
-import IdFormIcon from "/icons/id-form-icon.svg";
-import InvoiceAmountFormIcon from "/icons/invoice-amount-form-icon.svg";
 import CheckCircle from "/icons/check-circle.svg";
 
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
@@ -212,10 +206,6 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     });
   };
 
-  const addMoreBillItem = () => {
-    setBillItems([...billItems, { ...initialBillItem }]);
-    setBillItemErrors((prev) => [...prev, {}]);
-  };
 
   const removeBillItem = (idx: number) => {
     if (billItems.length === 1) return;
@@ -718,7 +708,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 <span>Item</span>
                 <span className="right">Amount</span>
               </div>
-              {generatedInvoice.items.map((item, index) => (
+              {generatedInvoice.items.map((item) => (
                 <div key={item.id} className="row">
                   <span>
                     {item.name} x{item.qty}

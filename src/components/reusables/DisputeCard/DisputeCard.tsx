@@ -16,7 +16,7 @@ interface DisputeCardProps {
 }
 
 const DisputeCard: React.FC<DisputeCardProps> = ({
-  reference,
+  reference: _reference,
   type,
   reason,
   category,
@@ -39,11 +39,6 @@ const DisputeCard: React.FC<DisputeCardProps> = ({
       default:
         return <Clock size={16} className="status-icon" />;
     }
-  };
-
-  const truncateText = (text: string, maxLength: number = 100) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
   };
 
   const formatDate = (dateString: string) => {
