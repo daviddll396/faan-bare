@@ -75,6 +75,57 @@
   width: 100%;
 }
 
+/* Upload input container */
+.input-upload-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Filename display inside the upload field (right side) */
+.input-upload-filename {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: #374151;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+/* Prominent upload button shown when no file is selected */
+.input-upload-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #007948;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 3px;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.input-upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-upload-text {
+  font-size: 13px;
+  line-height: 1;
+}
+
 /* Calendar and Time icon styling (applies to native date/time inputs rendered by the reusable Input) */
 .reusable-input[type="date"]::-webkit-calendar-picker-indicator,
 .reusable-input[type="time"]::-webkit-calendar-picker-indicator {

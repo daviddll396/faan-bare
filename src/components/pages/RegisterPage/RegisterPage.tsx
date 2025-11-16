@@ -262,6 +262,8 @@ const RegisterPage: React.FC = () => {
 
   // Corporate document upload state
   const handleTinFiles = (files: File[]) => {
+    // Clear previous file errors before validation
+    setFileError("");
     // Validate and add uploaded TIN file to uploadedFiles (separate from TIN text input)
     const newFiles: UploadedFile[] = [];
     for (const file of files) {
@@ -282,7 +284,11 @@ const RegisterPage: React.FC = () => {
         id: `${file.name}-${file.size}-${Date.now()}-${Math.random()}`,
       });
     }
-    if (newFiles.length > 0) setUploadedFiles((prev) => [...prev, ...newFiles]);
+    if (newFiles.length > 0) {
+      setUploadedFiles((prev) => [...prev, ...newFiles]);
+      // Clear any file error if we successfully added valid files
+      setFileError("");
+    }
   };
   interface UploadedFile {
     id: string;
@@ -712,6 +718,20 @@ const RegisterPage: React.FC = () => {
       errors.confirmPassword = "Confirm your password";
     else if (corporateForm.password !== corporateForm.confirmPassword)
       errors.confirmPassword = "Passwords do not match";
+
+    // Require TIN number and uploaded TIN document for corporate registration.
+    // Also prevent continue when there is a file upload validation error.
+    if (!corporateForm.tinNumber || !corporateForm.tinNumber.trim()) {
+      errors.tinNumber = "TIN number is required";
+    }
+
+    if (uploadedFiles.length === 0) {
+      // Use a dedicated key so UI can show the file-related error separately if needed
+      errors.tinFiles = fileError || "Please upload TIN document";
+    } else if (fileError) {
+      // If there's an existing file validation error, surface it here
+      errors.tinFiles = fileError;
+    }
 
     return errors;
   };
@@ -1624,7 +1644,12 @@ const RegisterPage: React.FC = () => {
                 style={{ gridColumn: "1 / span 2" }}
               >
                 <InputUpload
-                  label={<span>TIN</span>}
+                  label={
+                    <span>
+                      TIN File Upload{" "}
+                      {/* <span style={{ color: "#dc2626", marginLeft: 6 }}>*</span> */}
+                    </span>
+                  }
                   name="tinNumber"
                   value={corporateForm.tinNumber}
                   onChange={handleCorporateChange}
@@ -1632,12 +1657,19 @@ const RegisterPage: React.FC = () => {
                   placeholder="Enter TIN and upload document"
                   accept=".pdf,.jpg,.jpeg"
                   multiple={false}
+                  digitsOnly={true}
                   error={
                     corporateFormErrors.tinNumber ||
                     (fileError ? fileError : false)
                   }
                   className="booking-form-input"
                 />
+                {/* Inline helper to make it clear why Continue is disabled */}
+                {uploadedFiles.length === 0 ? (
+                  <div className="tin-upload-helper">
+                    Please upload your TIN document (PDF or JPEG, max 2MB).
+                  </div>
+                ) : null}
               </div>
               <div className="form-row-modern">
                 <Input
@@ -2016,7 +2048,10 @@ const RegisterPage: React.FC = () => {
               type="submit"
               fullWidth
               disabled={
-                uploadedFiles.length === 0 || isSubmitting || !acceptedTerms
+                uploadedFiles.length === 0 ||
+                !!fileError ||
+                isSubmitting ||
+                !acceptedTerms
               }
               loading={isSubmitting}
             >

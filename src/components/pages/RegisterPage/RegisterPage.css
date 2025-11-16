@@ -931,6 +931,13 @@ input[type="date"]::-moz-calendar-picker-indicator {
   text-align: center;
 }
 
+/* Helper text for TIN upload */
+.tin-upload-helper {
+  color: #7A7D80;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
 .register-footer {
   margin-top: 28px;
   text-align: center;

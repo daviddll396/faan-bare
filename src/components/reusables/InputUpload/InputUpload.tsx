@@ -15,6 +15,7 @@ type InputUploadProps = {
   multiple?: boolean;
   error?: boolean | string;
   width?: string | number;
+  digitsOnly?: boolean;
 };
 
 const InputUpload: React.FC<InputUploadProps> = ({
@@ -30,6 +31,7 @@ const InputUpload: React.FC<InputUploadProps> = ({
   multiple = false,
   error,
   width,
+  digitsOnly = false,
 }) => {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [fileNames, setFileNames] = useState<string[]>([]);
@@ -53,6 +55,23 @@ const InputUpload: React.FC<InputUploadProps> = ({
     if (onFilesChange) onFilesChange(files);
   };
 
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (digitsOnly) {
+      const filtered = val.replace(/\D/g, "");
+      if (filtered !== val) {
+        // create a synthetic event with filtered value to pass to parent's onChange
+        const synthetic = {
+          ...e,
+          target: { ...e.target, value: filtered },
+        } as React.ChangeEvent<HTMLInputElement>;
+        onChange?.(synthetic);
+        return;
+      }
+    }
+    onChange?.(e);
+  };
+
   return (
     <label className="reusable-input-label" style={{ width: widthStyle }}>
       {label && <span className="reusable-input-label-text">{label}</span>}
@@ -61,7 +80,6 @@ const InputUpload: React.FC<InputUploadProps> = ({
         className={`input-upload-container ${className} ${
           hasError ? "error" : ""
         }`}
-        style={{ position: "relative", width: "100%" }}
       >
         <input
           type="text"
@@ -69,10 +87,12 @@ const InputUpload: React.FC<InputUploadProps> = ({
           className={`reusable-input ${hasError ? "error" : ""}`}
           placeholder={placeholder}
           value={value ?? ""}
-          onChange={onChange}
+          onChange={handleTextChange}
+          inputMode={digitsOnly ? "numeric" : undefined}
+          pattern={digitsOnly ? "[0-9]*" : undefined}
           disabled={disabled}
           readOnly={false}
-          style={{ paddingRight: 140 }}
+          style={{ paddingRight: 240 }}
         />
 
         {/* show uploaded filename at the far right inside the field, else show upload icon */}
@@ -85,19 +105,6 @@ const InputUpload: React.FC<InputUploadProps> = ({
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") triggerFileDialog();
             }}
-            style={{
-              position: "absolute",
-              right: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-              fontSize: 13,
-              color: "#374151",
-              maxWidth: 220,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              cursor: "pointer",
-            }}
             title={fileNames.join(", ")}
           >
             {fileNames[0]}
@@ -109,21 +116,9 @@ const InputUpload: React.FC<InputUploadProps> = ({
             onClick={triggerFileDialog}
             aria-label="Upload file"
             disabled={disabled}
-            style={{
-              position: "absolute",
-              right: 8,
-              top: "50%",
-              transform: "translateY(-50%)",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "none",
-              background: "transparent",
-              cursor: disabled ? "not-allowed" : "pointer",
-              padding: 6,
-            }}
           >
-            <Upload size={18} color="#9CA3AF" />
+            <Upload size={18} color="#fff" />
+            <span className="input-upload-text">Upload</span>
           </button>
         )}
 
