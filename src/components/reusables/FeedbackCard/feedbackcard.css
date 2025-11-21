@@ -1,38 +1,38 @@
 /* Feedback Card Styles */
 .feedback-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 5px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
   padding: 22px;
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-family: "Poppins", sans-serif;
+
   animation: feedbackCardEnter 0.6s ease-out both;
   animation-delay: var(--enter-delay, 0ms);
 }
 
 /* Category Color Coding - Only text color */
 .feedback-card.category-general .dispute-reference {
-  color: #3b82f6;
+  color: var(--color-info);
 }
 
 .feedback-card.category-payment .dispute-reference {
-  color: #10b981;
+  color: var(--color-accent);
 }
 
 .feedback-card.category-funding .dispute-reference {
-  color: #8b5cf6;
+  color: var(--color-accent-strong);
 }
 
 .feedback-card.category-technical .dispute-reference {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .feedback-card.category-other .dispute-reference {
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 /* Feedback Header */
@@ -42,14 +42,14 @@
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .feedback-category {
   font-size: 18px;
   font-weight: 700;
-  color: #000;
-  font-family: monospace;
+  color: var(--color-text-primary);
+  
 }
 
 /* Feedback Content Area */
@@ -63,24 +63,24 @@
 .feedback-message {
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .feedback-message-text {
   font-size: 14px;
   line-height: 1.5;
-  color: #555;
+  color: var(--color-text-secondary);
   word-wrap: break-word;
 }
 
 /* Feedback Details */
 .feedback-details {
   font-size: 14px;
-  color: #969696;
+  color: var(--color-text-secondary);
 }
 
 .feedback-details strong {
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 /* Feedback Actions */

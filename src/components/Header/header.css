@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 56px;
-  background: white;
+  background: var(--color-bg);
 }
 
 /* Desktop vs Mobile Visibility Classes */
@@ -19,7 +19,7 @@
 .page-title-header {
   font-size: 24px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -36,9 +36,9 @@
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 5px;
-  border: 1px solid #f0f0f0;
-  background-color: #ffffff;
-  box-shadow: 0 4px 16px rgba(2, 6, 23, 0.06);
+  border: 1px solid var(--color-weak-border);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-1);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -47,14 +47,15 @@
 .user-avatar {
   width: 40px;
   height: 40px;
+  color: var(--color-accent);
 }
 
 .avatar-placeholder {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-secondary-start) 0%, var(--color-secondary-end) 100%);
+  color: var(--color-text-on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,9 +75,9 @@
   position: absolute;
   right: 56px;
   top: 80px;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 8px 30px rgba(32, 32, 32, 0.08);
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
+  box-shadow: var(--shadow-1);
   border-radius: 5px;
   min-width: 160px;
   z-index: 60;
@@ -90,6 +91,7 @@
 }
 .profile-chevron {
   transition: transform 180ms ease;
+  color: var(--color-text-primary);
 }
 .dropdown-item {
   background: transparent;
@@ -97,19 +99,19 @@
   text-align: left;
   padding: 10px 12px;
   font-size: 14px;
-  color: #000;
+  color: var(--color-text-primary);
   cursor: pointer;
 }
 .dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--color-muted-surface);
 }
 .dropdown-divider {
   height: 1px;
-  background: #eef2f5;
+  background: var(--color-weak-border);
   margin: 6px 0;
 }
 .dropdown-item.logout {
-  color: #b91c1c;
+  color: var(--color-error);
   font-weight: 600;
 }
 
@@ -134,20 +136,91 @@
   justify-content: center;
   transition: transform 120ms ease;
 }
+.notif-btn svg {
+  color: var(--color-accent);
+}
 .notif-btn:hover {
   transform: scale(1.06);
+}
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+.theme-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface-100);
+  position: relative;
+  display: inline-block;
+  transition: background 240ms ease;
+  box-shadow: inset 0 0 0 1px var(--color-weak-border);
+}
+.theme-toggle .toggle-icons {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+/* ensure lucide icons use currentColor for stroke and no fill, and size */
+.theme-toggle svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  stroke: currentColor;
+  fill: none;
+}
+.theme-toggle .toggle-sun,
+.theme-toggle .toggle-moon {
+  opacity: 0;
+  transition: opacity 200ms ease;
+  color: var(--color-text-secondary);
+}
+.theme-toggle.is-dark {
+  background: linear-gradient(180deg, var(--color-accent) 0%, var(--color-accent-strong) 100%);
+  box-shadow: none;
+}
+.theme-toggle.is-dark .toggle-moon {
+  opacity: 1;
+  color: var(--color-text-on-accent);
+}
+.theme-toggle:not(.is-dark) .toggle-sun {
+  opacity: 1;
+  color: var(--color-accent);
+}
+.theme-toggle .toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  transition: transform 240ms cubic-bezier(0.2, 0.9, 0.2, 1), background 240ms ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+.theme-toggle.is-dark .toggle-knob {
+  transform: translateX(20px);
+  background: var(--color-surface);
 }
 .notif-badge {
   position: absolute;
   top: 0px;
   right: 0px;
-  background: #007948;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
   font-size: 11px;
   padding: 3px 7px;
   border-radius: 999px;
   line-height: 1;
-  box-shadow: 0 2px 6px rgba(2, 6, 23, 0.12);
+  box-shadow: var(--shadow-1);
 }
 .notif-dropdown {
   position: absolute;
@@ -155,9 +228,9 @@
   top: 40px;
   width: 370px;
   max-height: 720px;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.12);
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
+  box-shadow: var(--shadow-1);
   border-radius: 5px;
   z-index: 70;
   display: flex;
@@ -210,13 +283,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  border-bottom: 1px solid #f3f4f6;
-  color: #000;
+  border-bottom: 1px solid var(--color-weak-border);
+  color: var(--color-text-primary);
 }
 .mark-read {
   background: transparent;
   border: none;
-  color: #007948;
+  color: var(--color-accent);
   cursor: pointer;
   font-size: 13px;
 }
@@ -235,34 +308,34 @@
 }
 .notif-group-title {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   padding: 6px 8px;
   font-weight: 600;
 }
 /* Custom scrollbar styling for notifications list */
 .notif-list::-webkit-scrollbar {
   width: 8px;
-  background: #fff;
+  background: var(--color-surface);
 }
 .notif-list::-webkit-scrollbar-track {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 4px;
 }
 .notif-list::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
+  background: var(--color-border);
   border-radius: 4px;
-  border: 1px solid #d0d0d0;
+  border: 1px solid var(--color-weak-border);
 }
 .notif-list::-webkit-scrollbar-thumb:hover {
-  background: #d0d0d0;
+  background: var(--color-weak-border);
 }
 /* Firefox scrollbar styling */
 .notif-list {
   scrollbar-width: thin;
-  scrollbar-color: #e0e0e0 #fff;
+  scrollbar-color: var(--color-border) var(--color-surface);
 }
 .notif-item {
-  background: #fff;
+  background: var(--color-surface);
   border: 1px solid transparent;
   text-align: left;
   padding: 10px 12px;
@@ -273,9 +346,8 @@
   gap: 6px;
 }
 .notif-item.unread {
-  background: #f8fffb; /* subtle green tint for unread */
-  border-color: #e6f8ef;
-
+  background: var(--color-muted-surface); /* subtle tint for unread */
+  border-color: var(--color-accent-trans);
   padding-left: 10px;
 }
 .notif-item.read {
@@ -283,13 +355,13 @@
 }
 .notif-title {
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   font-size: 13px;
   margin-bottom: 4px;
 }
 .notif-body {
   font-size: 13px;
-  color: #444;
+  color: var(--color-text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -299,24 +371,24 @@
 }
 .notif-time {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 .notif-empty {
   padding: 18px;
   text-align: center;
-  color: #f0f0f0;
+  color: var(--color-weak-border);
 }
 
 .user-name {
   font-weight: 500;
-  color: #000;
+  color: var(--color-text-primary);
   font-size: 14px;
 }
 
 .user-role {
   font-family: "Inter", sans-serif;
   font-size: 12px;
-  color: #007948;
+  color: var(--color-accent);
   font-weight: 500;
 }
 
@@ -347,7 +419,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 50%;
   padding: 8px;
 }
@@ -363,14 +435,12 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--black);
-  font-family: "Poppins", sans-serif;
 }
 
 .mobile-user-subtitle {
   font-size: 12px;
   font-weight: 400;
-  color: #898989;
-  font-family: "Poppins", sans-serif;
+  color: var(--color-text-secondary);
 }
 
 /* ======================================== */
@@ -465,8 +535,8 @@
     position: absolute;
     top: 0px;
     right: 2px;
-    background: #007948;
-    color: #fff;
+    background: var(--color-accent);
+    color: var(--color-text-on-accent);
     font-size: 6px;
     padding: 3px 4px;
   }

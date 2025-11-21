@@ -75,8 +75,8 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 32px;
-  /* darker overlay on top of image */
-  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+  /* darker overlay on top of image - keep semi-transparent black */
+  background: linear-gradient(rgba(2,6,23,0.8), rgba(2,6,23,0.6));
   z-index: 2;
 }
 
@@ -87,8 +87,7 @@
 }
 
 .auth-image-text {
-  color: white;
-  font-family: "Poppins", sans-serif;
+  color: var(--color-text-on-accent);
   font-size: 23px;
   font-weight: 500;
   line-height: 1.4;
@@ -98,7 +97,7 @@
 }
 
 .auth-image-text .highlight {
-  color: #007948;
+  color: var(--color-accent);
   font-weight: 600;
 }
 
@@ -109,10 +108,10 @@
 }
 
 .auth-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
-  border: 1px solid #e4e4e4;
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--color-border);
   padding: 40px 48px 32px 48px;
   max-width: 420px;
   width: 100%;
@@ -125,12 +124,12 @@
 .auth-card-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 2px;
 }
 
 .auth-card-helper {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   font-weight: 400;
   margin-bottom: 16px;
@@ -139,7 +138,7 @@
 .auth-card-footer {
   margin-top: 24px;
   font-size: 1rem;
-  color: #898989;
+  color: var(--color-text-secondary);
   text-align: left;
   display: flex;
   gap: 8px;
@@ -147,7 +146,7 @@
 }
 
 .auth-form-link {
-  color: #6c63ff;
+  color: var(--color-accent);
   text-decoration: none;
   font-weight: 600;
   margin-left: 2px;
@@ -163,30 +162,30 @@
 }
 
 .form-label {
-  color: #898989;
+  color: var(--color-text-secondary);
   font-size: 13px;
   font-weight: 500;
 }
 
 .form-input {
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
   border-radius: 8px;
   padding: 5px 8px;
   font-size: 11px;
   font-family: inherit;
-  background: #fff;
-  color: #000;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   outline: none;
   transition: border 0.2s;
 }
 
 .form-input:focus {
-  border: 1.5px solid #007948;
+  border: 1.5px solid var(--color-accent);
 }
 
 .form-input:disabled {
-  background: #e4e4e4;
-  color: #898989;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
 }
 
@@ -201,25 +200,25 @@
 }
 
 .auth-form-error {
-  color: #dc2626;
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--color-error-trans);
 
   margin-bottom: 16px;
   animation: slideInUp 0.4s ease-out 0.12s both;
 }
 
 .auth-form-success {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-trans);
+  color: var(--color-success);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--color-success-trans);
 
   margin-bottom: 16px;
   animation: slideInUp 0.4s ease-out 0.12s both;
@@ -228,7 +227,7 @@
 .form-row label {
   font-size: 14px;
   font-weight: 500;
-  color: #898989;
+  color: var(--color-text-secondary);
 }
 
 .user-form-grid {
@@ -246,31 +245,31 @@
   margin-top: 12px;
 }
 .form-input {
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
   border-radius: 12px;
   padding: 8px 10px;
   font-size: 13px;
   font-family: inherit;
-  background: #fff;
-  color: var(--black);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   outline: none;
   transition: border 0.2s;
 }
 .form-input:focus {
-  border: 1.5px solid #007948;
+  border: 1.5px solid var(--color-accent);
 }
 
 .auth-form-error {
-  color: #c0392b;
-  background: #ffeaea;
+  color: var(--color-error);
+  background: var(--color-error-trans);
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 12px;
   margin-bottom: 8px;
 }
 .auth-form-success {
-  color: #27ae60;
-  background: #eafaf1;
+  color: var(--color-success);
+  background: var(--color-success-trans);
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 0.98rem;
@@ -309,20 +308,19 @@
   flex-direction: column;
   gap: 0;
   align-items: stretch;
-  font-family: "Poppins", sans-serif;
   /* Removed zoom-based scaling to keep uniform sizing */
 }
 
 .auth-form-title-modern {
   font-size: 32px;
   font-weight: 700;
-  color: #000000;
+  color: var(--color-text-primary);
   margin-bottom: 10px;
   letter-spacing: -0.5px;
 }
 
 .auth-form-subtitle-modern {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 17px;
   font-weight: 400;
   margin-bottom: 20px;
@@ -348,8 +346,8 @@
 
 .login-btn-modern {
   width: 100%;
-  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
-  color: #fff;
+  background: linear-gradient(180deg, var(--color-accent-strong) 0%, var(--color-accent) 100%);
+  color: var(--color-text-on-accent);
   font-size: 12px;
   font-weight: 600;
   border: none;
@@ -361,10 +359,9 @@
   transition: background 0.2s;
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-family: "Poppins", sans-serif;
 }
 .login-btn-modern:disabled {
-  background: #b3b3b3;
+  background: var(--color-disabled-bg);
   cursor: not-allowed;
 }
 
@@ -372,15 +369,13 @@
   margin-top: 30px;
   font-size: 0.93rem;
   text-align: center;
-  color: #18181b;
-  font-family: "Poppins", sans-serif;
+  color: var(--color-text-primary);
 }
 .auth-form-link-modern {
-  color: #007948;
+  color: var(--color-accent);
   text-decoration: none;
   font-weight: 500;
   margin-left: 4px;
-  font-family: "Poppins", sans-serif;
 }
 .auth-form-link-modern:hover {
   text-decoration: underline;
@@ -388,7 +383,7 @@
 
 .form-row-modern label {
   font-size: 15px;
-  color: #898989;
+  color: var(--color-text-secondary);
   font-weight: 500;
   margin-bottom: 1px;
   margin-left: 0px;
@@ -614,7 +609,7 @@
     text-align: left;
     font-size: 12px;
     font-weight: 400;
-    color: #969696;
+    color: var(--color-disabled-text);
     margin-bottom: 20px;
   }
 

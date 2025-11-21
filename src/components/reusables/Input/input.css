@@ -4,7 +4,7 @@
 }
 
 .reusable-input-label-text {
-  color: #7a7d80;
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 8px;
@@ -14,12 +14,12 @@
   width: 100%;
   padding: 12px 14px; /* adjusted to respect variable heights */
   height: var(--form-control-height);
-  border: 1.5px solid #e4e4e4;
+  border: 1.5px solid var(--color-border);
   border-radius: 5px;
   font-size: var(--form-control-font-size, 16px);
   font-family: inherit;
-  background: #fff;
-  color: #000;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   outline: none;
   transition: border 0.15s ease;
   font-weight: 500;
@@ -31,14 +31,14 @@
 .reusable-input:-webkit-autofill:hover,
 .reusable-input:-webkit-autofill:focus,
 .reusable-input:-webkit-autofill:active {
-  -webkit-text-fill-color: #000 !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
   background-color: transparent !important;
   background: transparent !important;
   transition: background-color 5000s ease-in-out 0s !important;
 }
 
 .reusable-input:focus {
-  border: 1.5px solid #10b981;
+  border: 1.5px solid var(--color-accent);
 }
 
 .reusable-input[disabled] {
@@ -54,19 +54,21 @@
 
 /* Visual error state to match ListBox error styling */
 .reusable-input.error {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
-  background: #fff; /* ensure background remains white when errored */
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 4px var(--color-error-trans);
+  background: var(
+    --color-surface
+  ); /* ensure background remains consistent when errored */
 }
 .reusable-input.error:focus {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.08);
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 6px var(--color-error-strong);
 }
 
 .reusable-input-error {
   margin-top: 6px;
   font-size: 12px;
-  color: #dc2626;
+  color: var(--color-error);
   font-weight: 500;
 }
 
@@ -89,7 +91,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 13px;
-  color: #374151;
+  color: var(--color-text-primary);
   max-width: 180px;
   white-space: nowrap;
   overflow: hidden;
@@ -107,8 +109,8 @@
   align-items: center;
   justify-content: center;
   border: none;
-  background: #007948;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
   cursor: pointer;
   padding: 8px 10px;
   border-radius: 3px;

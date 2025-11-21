@@ -10,7 +10,7 @@
   display: block;
   font-size: 5px;
   font-weight: 500;
-  color: #6c7278;
+  color: var(--color-text-secondary);
   margin-bottom: 8px;
 }
 
@@ -23,8 +23,8 @@
   position: relative;
   width: 100%;
   cursor: pointer;
-  background: #fff;
-  border: 1px solid #e9e8e8;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 5px;
   padding: 0 12px 0 12px;
   height: var(--form-control-height, 56px); /* synced with global token */
@@ -35,30 +35,30 @@
   align-items: center;
   justify-content: space-between;
   transition: all 0.15s ease;
-  font-family: "Poppins", sans-serif;
+ 
   z-index: 2; /* ensure listbox buttons are above nearby elements */
 }
 
 .listbox-button:hover {
-  border-color: #10b981;
+  border-color: var(--color-accent);
 }
 
 .listbox-button:focus {
   outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-trans);
 }
 
 .listbox-button:disabled {
-  background: #f9f9f9;
-  color: #9ca3af;
+  background: var(--color-muted-surface);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
-  border-color: #f0f0f0;
+  border-color: var(--color-weak-border);
 }
 
 .listbox-button-text {
   font-weight: 500;
-  color: #626262;
+  color: var(--color-text-secondary);
   text-align: left;
   flex: 1;
   overflow: hidden;
@@ -66,13 +66,13 @@
   white-space: nowrap;
 }
 .listbox-button-text.has-value {
-  color: #000; /* darker when a value is selected */
+  color: var(--color-text-primary); /* darker when a value is selected */
   font-weight: 500;
 }
 
 
 .listbox-button-icon {
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   font-size: 12px;
   margin-left: 8px;
   flex-shrink: 0;
@@ -109,10 +109,10 @@
   max-height: 260px;
   width: 100%;
   overflow: auto;
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
   border-radius: 5px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-1);
   padding: 4px 0;
 }
 
@@ -134,28 +134,28 @@
 /* Custom scrollbar styling for ListBox options */
 .listbox-options::-webkit-scrollbar {
   width: 8px;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .listbox-options::-webkit-scrollbar-track {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 4px;
 }
 
 .listbox-options::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
+  background: var(--color-border);
   border-radius: 4px;
-  border: 1px solid #d0d0d0;
+  border: 1px solid var(--color-weak-border);
 }
 
 .listbox-options::-webkit-scrollbar-thumb:hover {
-  background: #d0d0d0;
+  background: var(--color-weak-border);
 }
 
 /* Firefox scrollbar styling */
 .listbox-options {
   scrollbar-width: thin;
-  scrollbar-color: #e0e0e0 #fff;
+  scrollbar-color: var(--color-border) var(--color-surface);
 }
 
 .listbox-option {
@@ -170,29 +170,29 @@
 
 .listbox-option:hover,
 .listbox-option.focused {
-  background: #f0fdf4;
-  color: #059669;
+  background: var(--color-muted-surface);
+  color: var(--color-accent);
 }
 
 .listbox-option.disabled {
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   cursor: not-allowed;
-  background: #f9f9f9;
+  background: var(--color-muted-surface);
 }
 
 .listbox-option-text {
   font-weight: 500;
-  color: #000;
+  color: var(--color-text-primary);
   flex: 1;
 }
 
 .listbox-option-text.selected {
   font-weight: 600;
-  color: #059669;
+  color: var(--color-accent);
 }
 
 .listbox-option-check {
-  color: #059669;
+  color: var(--color-accent);
   font-size: 16px;
   margin-left: 8px;
 }
@@ -200,14 +200,14 @@
 .listbox-error {
   margin-top: 4px;
   font-size: 12px;
-  color: #dc2626;
+  color: var(--color-error);
   font-weight: 500;
 }
 
 /* Visual error state for the control wrapper */
 .listbox-wrapper.error .listbox-button {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 4px var(--color-error-trans);
 }
 
 /* ======================================== */
@@ -273,6 +273,6 @@
 
 /* Error state styling for TimePicker and DatePicker */
 .timepicker-row.error .listbox-button {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 4px var(--color-error-trans);
 }

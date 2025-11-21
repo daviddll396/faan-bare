@@ -13,6 +13,7 @@ import CheckCircle from "/icons/check-circle.svg";
 import { Eye, EyeOff } from "lucide-react";
 import LoadingSpinner from "../../reusables/LoadingSpinner/LoadingSpinner";
 import DataTable from "../../reusables/DataTable/DataTable";
+import { apiFetch } from "../../../utils/apiClient";
 
 // ITEXPay inline types
 type ItexPayOptions = {
@@ -88,10 +89,10 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
     getAdminTransactionHistoryRef.current = getAdminTransactionHistory;
     refreshUserDetailsRef.current = refreshUserDetails;
   }, [getTransactionHistory, getAdminTransactionHistory, refreshUserDetails]);
-  // On mount, fetch latest wallet amount from server
+  // On mount and when the logged-in user identity changes, refresh wallet/user details
   React.useEffect(() => {
     refreshUserDetailsRef.current();
-  }, []);
+  }, [user?.id]);
   const [showFundWallet, setShowFundWallet] = React.useState(false);
   const [fundAmountDisplay, setFundAmountDisplay] = React.useState("");
   const [fundAmountNum, setFundAmountNum] = React.useState<number | null>(null);
@@ -235,18 +236,119 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
     fetchTransactions();
   }, [user?.role]);
 
-  // Load persisted funding records into state on mount
+  // Load funding records from backend on mount
   React.useEffect(() => {
-    try {
-      const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as FundingTransaction[];
-        setFundingRecords(parsed || []);
+    let mounted = true;
+
+    const fetchFundingRecords = async () => {
+      try {
+        const token = localStorage.getItem("faan_token");
+        const url =
+          user?.role === "Admin"
+            ? "/api/faan/wallet/transactions/deposits-admin"
+            : "/api/faan/wallet/transactions/deposits";
+
+        if (!token) {
+          // no auth available — clear list
+          if (mounted) setFundingRecords([]);
+          return;
+        }
+
+        const response = await apiFetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Client-Auth": "Basic dGVzdDp0ZXN0",
+          },
+        });
+
+        if (!response.ok) {
+          logger.warn(
+            "Wallet",
+            `Failed to load funding records: ${response.status}`
+          );
+          if (mounted) setFundingRecords([]);
+          return;
+        }
+
+        const json = await response.json();
+        if (json && Array.isArray(json.data) && mounted) {
+          const mapped = (json.data as Array<Record<string, unknown>>).map(
+            (d) => {
+              const wallet =
+                (d["wallet"] as Record<string, unknown> | undefined) ??
+                undefined;
+              const walletId =
+                typeof d["walletId"] === "number"
+                  ? (d["walletId"] as number)
+                  : d["walletId"] !== undefined
+                  ? Number(d["walletId"])
+                  : undefined;
+              const transactionType =
+                typeof d["transactionType"] === "string"
+                  ? (d["transactionType"] as string)
+                  : undefined;
+              const id =
+                typeof d["id"] === "number"
+                  ? (d["id"] as number)
+                  : Number(d["id"]);
+              const reference =
+                typeof d["reference"] === "string"
+                  ? (d["reference"] as string)
+                  : String(d["reference"] ?? "");
+              const amount =
+                typeof d["amount"] === "number"
+                  ? (d["amount"] as number)
+                  : Number(d["amount"]);
+              const previousBalance =
+                typeof d["previousBalance"] === "number"
+                  ? (d["previousBalance"] as number)
+                  : Number(d["previousBalance"]);
+              const currentBalance =
+                typeof d["currentBalance"] === "number"
+                  ? (d["currentBalance"] as number)
+                  : Number(d["currentBalance"]);
+              const createdAt =
+                typeof d["createdAt"] === "string"
+                  ? (d["createdAt"] as string)
+                  : String(d["createdAt"] ?? "");
+              const customerId =
+                wallet && typeof wallet["customerId"] === "string"
+                  ? (wallet["customerId"] as string)
+                  : walletId !== undefined
+                  ? String(walletId)
+                  : String(wallet?.["customerId"] ?? "");
+
+              return {
+                id,
+                reference,
+                paymentMethod: transactionType || "DEPOSIT",
+                method: transactionType || "DEPOSIT",
+                amount,
+                balanceBefore: previousBalance,
+                balanceAfter: currentBalance,
+                createdAt,
+                customerId,
+              } as FundingTransaction;
+            }
+          );
+
+          setFundingRecords(mapped);
+        } else {
+          if (mounted) setFundingRecords([]);
+        }
+      } catch (err) {
+        logger.warn("Wallet", "Failed to fetch funding records", err);
+        if (mounted) setFundingRecords([]);
       }
-    } catch (err) {
-      logger.warn("Wallet", "Failed to read persisted funding records", err);
-    }
-  }, []);
+    };
+
+    fetchFundingRecords();
+
+    return () => {
+      mounted = false;
+    };
+  }, [user?.role]);
 
   // Fetch admin dashboard stats for admin users
   React.useEffect(() => {
@@ -665,7 +767,7 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
                 user?.role === "Admin"
                   ? [
                       "Reference",
-                      "Customer ID",
+                      "Wallelt ID",
                       "Method",
                       "Amount",
                       "Balance Before",

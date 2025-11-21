@@ -88,7 +88,7 @@ const ProfilePage: React.FC = () => {
         <div className="profile-header-content">
           <div className="profile-avatar-section">
             <div className="profile-avatar-large">
-              <UserIcon className="profile-avatar-icon" color="#007948" />
+              <UserIcon className="profile-avatar-icon" color="var(--green)" />
             </div>
             <div className="profile-basic-info">
               <h1 className="profile-name">
@@ -116,7 +116,7 @@ const ProfilePage: React.FC = () => {
           {/* Personal Information Card */}
           <div className="profile-card">
             <div className="profile-card-header">
-              <UserIcon className="profile-card-icon" color="#007948" />
+              <UserIcon className="profile-card-icon" color="var(--green)" />
               <h3>Personal Information</h3>
             </div>
             <div className="profile-card-content">
@@ -174,7 +174,7 @@ const ProfilePage: React.FC = () => {
           {/* Contact Information Card */}
           <div className="profile-card">
             <div className="profile-card-header">
-              <Mail className="profile-card-icon" color="#007948" />
+              <Mail className="profile-card-icon" color="var(--green)" />
               <h3>Contact Information</h3>
             </div>
             <div className="profile-card-content">
@@ -231,7 +231,7 @@ const ProfilePage: React.FC = () => {
           {/* Work Information Card */}
           <div className="profile-card">
             <div className="profile-card-header">
-              <Building2 className="profile-card-icon" color="#007948" />
+              <Building2 className="profile-card-icon" color="var(--green)" />
               <h3>Work Information</h3>
             </div>
             <div className="profile-card-content">
@@ -273,7 +273,7 @@ const ProfilePage: React.FC = () => {
           {/* Security Settings Card */}
           <div className="profile-card">
             <div className="profile-card-header">
-              <Shield className="profile-card-icon" color="#007948" />
+              <Shield className="profile-card-icon" color="var(--green)" />
               <h3>Security Settings</h3>
             </div>
             <div className="profile-card-content">

@@ -19,20 +19,20 @@
 }
 
 .reports-date-field label {
-  color: #6c7278;
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 6px;
 }
 
 .reports-date-field input[type="date"] {
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
-  background: #fff;
+  background: var(--color-surface);
   outline: none;
-  color: #6c7278; /* grey text */
+  color: var(--color-text-secondary); /* grey text */
 }
 
 /* make datepicker icons grey */
@@ -76,7 +76,7 @@
 
 .reports-guard {
   padding: 24px;
-  color: #6c7278;
+  color: var(--color-text-secondary);
 }
 
 /* Status badges now defined in Dashboard.css */

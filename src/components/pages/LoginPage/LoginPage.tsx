@@ -191,6 +191,7 @@ const LoginPage: React.FC = () => {
           </div>
           <GradientButton
             type="submit"
+            id="login-button"
             fullWidth
             disabled={isSubmitting || !isFormValid()}
             loading={isSubmitting}

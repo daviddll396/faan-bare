@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 import "./sidebar.css";
 import type { PageType } from "../Dashboard";
@@ -30,7 +31,7 @@ interface MenuItem {
 }
 
 interface SidebarProps {
-  activePage: PageType;
+  activePage?: PageType;
   onPageChange: (page: PageType) => void;
   onLogout: () => void;
   allowedPages: PageType[];
@@ -198,6 +199,37 @@ const Sidebar: React.FC<SidebarProps> = ({
     return item.showForAdmin && (!item.desktopOnly || windowWidth > 768);
   });
 
+  const pathForPage = (page: PageType) => {
+    switch (page) {
+      case "dashboard":
+        return "/";
+      case "users":
+        return "/users";
+      case "services":
+        return "/services";
+      case "customers":
+        return "/customers";
+      case "bills":
+        return "/bills";
+      case "audit-trail":
+        return "/audit-trail";
+      case "reports":
+        return "/reports";
+      case "invoices":
+        return "/invoices";
+      case "payment":
+        return "/payment";
+      case "feedback-disputes":
+        return "/feedback-disputes";
+      case "logout":
+        return "/logout";
+      case "profile":
+        return "/profile";
+      default:
+        return "/";
+    }
+  };
+
   return (
     <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
@@ -235,34 +267,42 @@ const Sidebar: React.FC<SidebarProps> = ({
       <nav className="sidebar-nav">
         {filteredMenuItems
           .filter((item) => allowedPages.includes(item.page))
-          .map((item, index) => (
-            <div
-              key={index}
-              className={`nav-item ${activePage === item.page ? "active" : ""}`}
-              onClick={() => onPageChange(item.page)}
-            >
-              {/* Desktop Icon */}
-              {item.icon && (
-                <div className="desktop-icon">
-                  <item.icon />
-                </div>
-              )}
-              {/* Mobile Icon */}
-              {item.mobileIcon && (
-                <div className="mobile-icon">
-                  <item.mobileIcon />
-                </div>
-              )}
-              {/* Only show labels on mobile for customers, not for admin, and hide in collapsed desktop */}
-              {!(windowWidth <= 768 && userRole !== "Customer") &&
-                !isCollapsed && (
-                  <>
-                    <span className="desktop-label">{item.label}</span>
-                    <span className="mobile-label">{item.mobileLabel}</span>
-                  </>
+          .map((item, index) => {
+            const to = pathForPage(item.page);
+            return (
+              <NavLink
+                key={index}
+                to={to}
+                className={({ isActive }) =>
+                  `nav-item ${
+                    isActive || activePage === item.page ? "active" : ""
+                  }`
+                }
+                onClick={() => onPageChange(item.page)}
+              >
+                {/* Desktop Icon */}
+                {item.icon && (
+                  <div className="desktop-icon">
+                    <item.icon />
+                  </div>
                 )}
-            </div>
-          ))}
+                {/* Mobile Icon */}
+                {item.mobileIcon && (
+                  <div className="mobile-icon">
+                    <item.mobileIcon />
+                  </div>
+                )}
+                {/* Only show labels on mobile for customers, not for admin, and hide in collapsed desktop */}
+                {!(windowWidth <= 768 && userRole !== "Customer") &&
+                  !isCollapsed && (
+                    <>
+                      <span className="desktop-label">{item.label}</span>
+                      <span className="mobile-label">{item.mobileLabel}</span>
+                    </>
+                  )}
+              </NavLink>
+            );
+          })}
       </nav>
 
       <div className="sidebar-footer">
@@ -273,24 +313,25 @@ const Sidebar: React.FC<SidebarProps> = ({
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            style={{ color: "var(--color-text-on-accent)" }}
           >
             <path
               d="M16 17L21 12L16 7"
-              stroke="#fff"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="M21 12H9"
-              stroke="#fff"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="M12 19H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"
-              stroke="#fff"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"

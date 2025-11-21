@@ -222,7 +222,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({
           <h3>Total Bookings vs. Completed Bookings</h3>
           <SolidButton
             text="Export"
-            icon={<Download size={18} color="#fff" />}
+            icon={<Download size={18} color="var(--color-text-on-accent)" />}
             onClick={handleExport}
             variant="primary"
             size={windowWidth <= 768 ? "small" : "medium"}
@@ -241,7 +241,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({
           </div>
           <SolidButton
             text="Export"
-            icon={<Download size={16} color="#fff" />}
+            icon={<Download size={16} color="var(--color-text-on-accent)" />}
             onClick={handleExport}
             variant="primary"
             size={windowWidth <= 768 ? "small" : "medium"}
@@ -258,34 +258,34 @@ const ChartSection: React.FC<ChartSectionProps> = ({
             >
               <defs>
                 <linearGradient id="gradBills" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#0095FF" stopOpacity={0.18} />
-                  <stop offset="100%" stopColor="#0095FF" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="var(--blue-0095ff)" stopOpacity={0.18} />
+                  <stop offset="100%" stopColor="var(--blue-0095ff)" stopOpacity={0.02} />
                 </linearGradient>
                 <linearGradient id="gradPayment" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#00E096" stopOpacity={0.14} />
-                  <stop offset="100%" stopColor="#00E096" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="var(--green-00e096)" stopOpacity={0.14} />
+                  <stop offset="100%" stopColor="var(--green-00e096)" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EFF1F3" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--bg-eff1f3)" />
               <XAxis
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#898989" }}
+                tick={{ fontSize: 12, fill: "var(--gray-898989)" }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#898989" }}
+                tick={{ fontSize: 12, fill: "var(--gray-898989)" }}
                 domain={[0, yAxisMax]}
               />
               <Tooltip
                 contentStyle={{
                   borderRadius: 8,
                   border: "none",
-                  boxShadow: "0 6px 18px rgba(16,24,40,0.08)",
+                  boxShadow: "0 6px 18px var(--shadow-strong)",
                 }}
-                labelStyle={{ color: "#969696" }}
+                labelStyle={{ color: "var(--color-disabled-text)" }}
                 formatter={(value: unknown, name: unknown, props: unknown) => {
                   try {
                     const p = props as
@@ -354,7 +354,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({
                     return (
                       <span
                         style={{
-                          color: "#000",
+                          color: "var(--color-text-primary)",
                           fontSize: 12,
                           fontWeight: 500,
                         }}
@@ -370,7 +370,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({
                     return (
                       <span
                         style={{
-                          color: "#000",
+                          color: "var(--color-text-primary)",
                           fontSize:
                             windowWidth <= 768
                               ? 12
@@ -387,7 +387,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({
                   return (
                     <span
                       style={{
-                        color: "#000",
+                        color: "var(--color-text-primary)",
                         fontSize:
                           windowWidth <= 768
                             ? 12
@@ -405,15 +405,15 @@ const ChartSection: React.FC<ChartSectionProps> = ({
               <Area
                 type="linear"
                 dataKey="Bills"
-                stroke="#0095FF"
+                stroke="var(--blue-0095ff)"
                 strokeWidth={3}
                 fill="url(#gradBills)"
-                dot={{ fill: "#0095FF", strokeWidth: 2, r: 4 }}
+                dot={{ fill: "var(--blue-0095ff)", strokeWidth: 2, r: 4 }}
                 activeDot={{
                   r: 6,
-                  stroke: "#0095FF",
+                  stroke: "var(--blue-0095ff)",
                   strokeWidth: 2,
-                  fill: "#fff",
+                  fill: "var(--color-text-on-accent)",
                 }}
                 name="Total Bookings"
                 animationDuration={800}
@@ -421,15 +421,15 @@ const ChartSection: React.FC<ChartSectionProps> = ({
               <Area
                 type="linear"
                 dataKey="Payment"
-                stroke="#00E096"
+                stroke="var(--green-00e096)"
                 strokeWidth={3}
                 fill="url(#gradPayment)"
-                dot={{ fill: "#00E096", strokeWidth: 2, r: 4 }}
+                dot={{ fill: "var(--green-00e096)", strokeWidth: 2, r: 4 }}
                 activeDot={{
                   r: 6,
-                  stroke: "#00E096",
+                  stroke: "var(--green-00e096)",
                   strokeWidth: 2,
-                  fill: "#fff",
+                  fill: "var(--color-text-on-accent)",
                 }}
                 name="Completed Bookings"
                 animationDuration={900}

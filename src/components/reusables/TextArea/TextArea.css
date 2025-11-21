@@ -4,18 +4,25 @@
   width: 100%;
   padding: 12px 14px; /* adjusted to respect variable heights */
   min-height: 80px;
-  border: 1.5px solid #e4e4e4;
+  border: 1.5px solid var(--color-border);
   border-radius: 5px;
   font-size: var(--form-control-font-size, 16px);
   font-family: inherit;
-  background: #fff;
-  color: #000;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   outline: none;
   transition: border 0.15s ease;
   font-weight: 500;
   box-sizing: border-box;
   resize: vertical; /* Allow vertical resize only */
   line-height: 1.5;
+  font-size: 14px;
+}
+
+/* //this does not work */
+.reusable-textarea::placeholder {
+  font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
 /* Fix autofill background color */
@@ -23,14 +30,14 @@
 .reusable-textarea:-webkit-autofill:hover,
 .reusable-textarea:-webkit-autofill:focus,
 .reusable-textarea:-webkit-autofill:active {
-  -webkit-text-fill-color: #000 !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
   background-color: transparent !important;
   background: transparent !important;
   transition: background-color 5000s ease-in-out 0s !important;
 }
 
 .reusable-textarea:focus {
-  border: 1.5px solid #10b981;
+  border: 1.5px solid var(--color-accent);
 }
 
 .reusable-textarea[disabled] {
@@ -54,17 +61,17 @@
 
 /* Error state */
 .reusable-textarea.error {
-  border-color: #dc2626;
+  border-color: var(--color-error);
 }
 
 .reusable-textarea.error:focus {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px var(--color-error-trans);
 }
 
 /* Placeholder styling */
 .reusable-textarea::placeholder {
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   font-weight: 400;
 }
 
@@ -74,17 +81,17 @@
 }
 
 .reusable-textarea::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--color-surface);
   border-radius: 3px;
 }
 
 .reusable-textarea::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--color-border);
   border-radius: 3px;
 }
 
 .reusable-textarea::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--color-weak-border);
 }
 
 /* Responsive Design */
@@ -105,7 +112,7 @@
 
 /* Focus management for accessibility */
 .reusable-textarea:focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -116,11 +123,11 @@
   }
 
   .reusable-textarea:focus {
-    border-color: #059669;
+    border-color: var(--color-accent);
   }
 
   .reusable-textarea.error {
-    border-color: #b91c1c;
+    border-color: var(--color-error);
   }
 }
 

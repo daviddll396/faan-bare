@@ -1,6 +1,6 @@
 /* ServiceCard Base Styles */
 .service-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
   box-shadow: none;
@@ -11,7 +11,7 @@
   min-width: 0;
   height: 100%;
   transition: transform 0.18s ease;
-  font-family: "Poppins", sans-serif;
+ 
 }
 
 .service-card-img-wrap {
@@ -19,7 +19,7 @@
   height: 220px;
   border-radius: 5px;
   overflow: hidden;
-  background: #f7fafc;
+  background: var(--color-muted-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +48,7 @@
 
 .service-card-name {
   font-size: 22px;
-  color: #000;
+  color: var(--color-text-primary);
   font-weight: 600;
   margin: 0;
   padding: 0;
@@ -60,7 +60,7 @@
 
 .service-card-desc {
   font-size: 18px;
-  color: #969696;
+  color: var(--color-text-secondary);
   line-height: 1.4;
   min-height: 36px;
   flex: 1 1 auto;
@@ -78,12 +78,12 @@
 .service-card-price-left {
   font-size: 22px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .service-card-price-pill {
-  background: #ecfdf5;
-  color: #065f46;
+  background: var(--color-muted-surface);
+  color: var(--color-accent-strong);
   font-weight: 700;
   padding: 6px 10px;
   border-radius: 999px;
@@ -306,7 +306,7 @@
 .services-customer-grid .service-card,
 .available-services .service-card,
 .invoices-grid .service-card {
-  background: #fff !important;
+  background: var(--color-surface) !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
@@ -320,7 +320,7 @@
 .available-services .service-card-img-wrap,
 .invoices-grid .service-card-img-wrap {
   overflow: hidden !important;
-  background: #f7fafc !important;
+  background: var(--color-muted-surface) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;

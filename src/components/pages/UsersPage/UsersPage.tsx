@@ -470,6 +470,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
+                    restrict="alpha"
                   />
 
                   <Input
@@ -478,6 +479,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
+                    restrict="alpha"
                   />
                 </div>
                 <div className="form-row-pair">
@@ -487,6 +489,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                     name="middleName"
                     value={formData.middleName}
                     onChange={handleInputChange}
+                    restrict="alpha"
                   />
 
                   <Input
@@ -495,6 +498,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                     name="userName"
                     value={formData.userName}
                     onChange={handleInputChange}
+                    restrict="alphanumeric"
                   />
                 </div>
                 <div className="form-row-pair">
@@ -512,6 +516,7 @@ const UsersPage: React.FC<UsersPageProps> = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
+                    restrict="numeric"
                   />
                 </div>
 

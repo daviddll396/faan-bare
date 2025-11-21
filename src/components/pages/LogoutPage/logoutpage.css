@@ -19,10 +19,10 @@
 }
 
 .logout-modal {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none; /* borderless card */
-  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  box-shadow: var(--shadow-1);
   padding: 36px 36px 32px 36px;
   min-width: 360px;
   max-width: 520px;
@@ -42,13 +42,13 @@
 .logout-title {
   font-weight: 700;
   font-size: 22px;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 10px;
   text-align: center;
 }
 
 .logout-text {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 26px;
@@ -65,19 +65,19 @@
   cursor: pointer;
   letter-spacing: 0.6px;
   margin-top: 0;
-  box-shadow: 0 8px 28px rgba(2, 6, 23, 0.06);
+  box-shadow: var(--shadow-1);
 }
 
 .logout-btn-confirm {
-  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
-  color: #fff;
+  background: linear-gradient(180deg, var(--green-15976c) 0%, var(--green) 100%);
+  color: var(--color-surface);
   margin-bottom: 12px;
 }
 
 .logout-btn-cancel {
-  background: #fff;
-  color: #000;
-  border: 1px solid #f0f0f0;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-weak-border);
 }
 
 /* ===================== RESPONSIVE DESIGN ===================== */

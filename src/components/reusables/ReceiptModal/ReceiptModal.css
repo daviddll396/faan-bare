@@ -1,0 +1,306 @@
+/* Centralized receipt modal styles (moved from page CSS files)
+   Used by src/components/reusables/ReceiptModal/ReceiptModal.tsx
+*/
+
+.payment-receipt-modal,
+.bill-receipt-modal,
+.service-receipt-modal {
+  min-width: 520px;
+  max-width: 800px;
+}
+
+.receipt-paper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  min-height: 450px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.receipt-paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 16px;
+  background: radial-gradient(
+        circle at 8px 8px,
+        var(--color-surface) 8px,
+        transparent 8px
+      )
+      left top / 16px 16px repeat-x,
+    linear-gradient(var(--color-weak-border), var(--color-weak-border));
+}
+
+.receipt-head {
+  text-align: center;
+  margin: 8px 0;
+}
+
+.receipt-brand {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-size: 14px;
+}
+
+.receipt-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.receipt-sub {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.receipt-meta {
+  border: 1px dashed var(--color-weak-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0 16px 0;
+}
+
+.receipt-meta .meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px dashed var(--color-weak-border);
+}
+
+.receipt-meta .meta-row:last-child {
+  border-bottom: none;
+}
+
+.receipt-meta .meta-row span:first-child {
+  color: var(--color-text-primary);
+  font-size: 12px;
+}
+
+.receipt-items {
+  border-top: 1px solid var(--color-weak-border);
+  border-bottom: 1px solid var(--color-weak-border);
+}
+
+.receipt-items .thead,
+.receipt-items .row,
+.receipt-items .total {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.receipt-items .thead {
+  color: var(--color-text-primary);
+  font-size: 12px;
+}
+
+.receipt-items .row {
+  border-top: 1px dashed var(--color-weak-border);
+}
+
+.receipt-items .right {
+  text-align: right;
+}
+
+.receipt-items .total {
+  border-top: 2px solid var(--color-weak-border);
+  font-weight: 800;
+}
+
+.receipt-foot {
+  margin-top: 10px;
+  color: var(--color-text-primary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.receipt-download {
+  margin-top: 12px;
+}
+
+.receipt-actions {
+  margin-top: 16px;
+}
+
+.receipt-success-icon {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt-title.lead {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 6px;
+}
+
+.receipt-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.receipt-detail-row:last-child {
+  border-bottom: none;
+}
+
+.receipt-detail-label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.receipt-detail-value {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.receipt-detail-value.highlight {
+  color: var(--color-accent);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.receipt-summary {
+  width: 100%;
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-1);
+}
+
+.receipt-summary-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.receipt-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.receipt-summary-item span:first-child {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.receipt-summary-item span:last-child {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.receipt-summary-item.total {
+  border-top: 2px solid var(--color-border);
+  margin-top: 6px;
+  padding-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Responsive receipt tweaks */
+@media (max-width: 991px) {
+  .receipt-paper {
+    padding: 12px;
+  }
+  .receipt-brand {
+    font-size: 10px;
+  }
+  .receipt-title {
+    font-size: 12px;
+  }
+  .receipt-sub {
+    font-size: 8px;
+  }
+  .receipt-meta {
+    padding: 6px 8px;
+    margin: 6px 0 8px 0;
+  }
+  .receipt-meta .meta-row span:first-child {
+    font-size: 8px;
+  }
+  .receipt-items .thead {
+    font-size: 8px;
+  }
+  .receipt-download {
+    margin-top: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .receipt-paper {
+    padding: 8px;
+  }
+  .receipt-brand {
+    font-size: 8px;
+  }
+  .receipt-title {
+    font-size: 10px;
+  }
+  .receipt-sub {
+    font-size: 6px;
+  }
+  .receipt-meta {
+    padding: 4px 6px;
+    margin: 4px 0 6px 0;
+  }
+  .receipt-meta .meta-row span:first-child {
+    font-size: 6px;
+  }
+  .receipt-items .thead {
+    font-size: 6px;
+  }
+  .receipt-download {
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .receipt-paper {
+    padding: 4px;
+  }
+  .receipt-brand {
+    font-size: 6px;
+  }
+  .receipt-title {
+    font-size: 8px;
+  }
+  .receipt-sub {
+    font-size: 4px;
+  }
+  .receipt-meta {
+    padding: 2px 4px;
+    margin: 2px 0 4px 0;
+  }
+  .receipt-meta .meta-row span:first-child {
+    font-size: 4px;
+  }
+  .receipt-items .thead {
+    font-size: 4px;
+  }
+  .receipt-download {
+    margin-top: 2px;
+  }
+}

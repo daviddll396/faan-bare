@@ -1,10 +1,9 @@
 /* Form Validation Styles */
 
 .reusable-input-error {
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 12px;
   margin-top: 4px;
-  font-family: "Poppins", sans-serif;
 }
 
 /* Page Actions */
@@ -62,9 +61,8 @@
 .disputes-history-section h3 {
   font-size: 20px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 16px;
-  font-family: "Poppins", sans-serif;
 }
 
 /* Admin Grid Sections */
@@ -77,9 +75,8 @@
 .admin-disputes-grid-section h3 {
   font-size: 20px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 16px;
-  font-family: "Poppins", sans-serif;
 }
 
 /* ======================================== */
@@ -106,13 +103,13 @@
 .section-header h2 {
   font-size: 24px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0 0 8px 0;
 }
 
 .section-header p {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -143,7 +140,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #007948;
+  color: var(--color-accent);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -153,8 +150,8 @@
 }
 
 .manage-dispute-action:hover {
-  background-color: #f0f9f4;
-  color: #005a3a;
+  background-color: var(--color-muted-surface);
+  color: var(--color-accent-strong);
 }
 
 /* Table Wrapper */
@@ -170,7 +167,7 @@
 .feedback-history-section h3 {
   font-size: 20px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0 0 16px 0;
 }
 
@@ -189,10 +186,10 @@
 
 .feedback-full-message {
   line-height: 1.6;
-  color: #000;
+  color: var(--color-text-primary);
   overflow-y: auto;
   max-width: 450px;
-  text-align: left !important;
+  text-align: right !important;
 }
 
 /* Forms */
@@ -228,7 +225,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .info-row:last-child {
@@ -237,12 +234,12 @@
 
 .info-row .label {
   font-weight: 500;
-  color: #666;
+  color: var(--color-text-secondary);
   min-width: 120px;
 }
 
 .info-row .value {
-  color: #000;
+  color: var(--color-text-primary);
   text-align: right;
   flex: 1;
   word-wrap: break-word;
@@ -268,7 +265,7 @@
 .admin-actions {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   gap: 12px;

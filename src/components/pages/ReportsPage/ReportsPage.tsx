@@ -443,10 +443,10 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ role }) => {
     const title = `${activeTab.toUpperCase()} Report (${fromDate} to ${toDate})`;
     const style = `
       <style>
-        body{font-family:Arial,Helvetica,sans-serif;color:#000;padding:24px}
+        body{font-family:Arial,Helvetica,sans-serif;color:var(--black);padding:24px}
         table{width:100%;border-collapse:collapse}
-        th,td{border:1px solid #f0f0f0;padding:8px;text-align:left}
-        th{background:#f8fafc}
+        th,td{border:1px solid var(--color-weak-border);padding:8px;text-align:left}
+        th{background:var(--surface-100)}
         h1{font-size:18px}
       </style>`;
 

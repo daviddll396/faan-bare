@@ -2,7 +2,7 @@
 .dashboard {
   display: flex;
   height: 100vh;
-  background-color: var(--bg-color);
+  background-color: var(--color-bg);
 }
 
 .main-content {
@@ -37,8 +37,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #059669;
-  color: white;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
   border: none;
   padding: 12px 20px;
   border-radius: 5px;
@@ -48,7 +48,7 @@
 }
 
 .primary-btn:hover {
-  background: #047857;
+  background: var(--color-accent-strong);
   transform: translateY(-1px);
 }
 
@@ -61,11 +61,11 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--color-surface);
   padding: 20px;
   border-radius: 12px;
 
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -82,68 +82,68 @@
 }
 
 .stat-icon.fuel {
-  background: #3b82f6;
+  background: var(--color-info);
 }
 .stat-icon.equipment {
-  background: #8b5cf6;
+  background: var(--color-accent-strong);
 }
 .stat-icon.service {
-  background: #10b981;
+  background: var(--color-accent);
 }
 .stat-icon.airline {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 .stat-icon.cargo {
-  background: #ef4444;
+  background: var(--color-error);
 }
 .stat-icon.individual {
-  background: #6366f1;
+  background: var(--color-info);
 }
 .stat-icon.paid {
-  background: #10b981;
+  background: var(--color-accent);
 }
 .stat-icon.pending {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 .stat-icon.overdue {
-  background: #ef4444;
+  background: var(--color-error);
 }
 .stat-icon.completed {
-  background: #10b981;
+  background: var(--color-accent);
 }
 .stat-icon.processing {
-  background: #3b82f6;
+  background: var(--color-info);
 }
 
 .stat-icon.failed {
-  background: #ef4444;
+  background: var(--color-error);
 }
 
 .stat-info h3 {
   font-size: 24px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .stat-info p {
   font-size: 14px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 4px 0 0 0;
 }
 
 /* Content Card */
 .content-card {
-  background: white;
+  background: var(--color-surface);
   border-radius: 12px;
 
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--color-border);
   overflow: hidden;
 }
 
 .card-header {
   padding: 20px 24px;
-  border-bottom: 1px solid #e4e4e4;
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -155,10 +155,10 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #f8fafc;
+  background: var(--color-muted-surface);
   padding: 10px 16px;
   border-radius: 8px;
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--color-border);
   min-width: 300px;
 }
 
@@ -168,11 +168,11 @@
   outline: none;
   flex: 1;
   font-size: 14px;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .search-bar input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-secondary);
 }
 
 .filter-buttons {
@@ -182,9 +182,9 @@
 
 .filter-btn {
   padding: 8px 16px;
-  border: 1px solid #e4e4e4;
-  background: white;
-  color: #969696;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
@@ -192,13 +192,13 @@
 }
 
 .filter-btn:hover {
-  background: #f8fafc;
+  background: var(--color-muted-surface);
 }
 
 .filter-btn.active {
-  background: #059669;
-  color: white;
-  border-color: #059669;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent);
 }
 
 /* User/Customer/Product Cell Styles */
@@ -264,13 +264,13 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: #fafafa;
-  border: 1.5px solid #f0f0f0;
+  background: var(--color-muted-surface);
+  border: 1.5px solid var(--color-weak-border);
   border-radius: 12px;
   padding: 16px;
   font-size: 17px;
   font-family: inherit;
-  color: #000;
+  color: var(--color-text-primary);
   font-weight: 500;
   outline: none;
   transition: border 0.2s;
@@ -278,7 +278,7 @@
 }
 
 .select-dropdown-wrapper select:focus {
-  border: 1.5px solid #007948;
+  border: 1.5px solid var(--color-accent);
 }
 
 .select-chevron {
@@ -293,8 +293,8 @@
 }
 
 .select-dropdown-wrapper select option {
-  background: #fff;
-  color: #000;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   font-size: 17px;
   font-family: inherit;
   padding: 12px 16px;
@@ -340,8 +340,8 @@
   }
 
   .select-dropdown-wrapper select option {
-    background: #fff;
-    color: #000;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
     font-size: 17px;
     font-family: inherit;
     padding: 10px 12px;

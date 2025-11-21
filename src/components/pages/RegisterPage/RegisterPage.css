@@ -41,7 +41,7 @@
 }
 
 .select-role-text {
-  color: #898989 !important;
+  color: var(--color-text-secondary) !important;
   font-size: 16px !important;
 }
 
@@ -115,14 +115,18 @@
 }
 
 .auth-form-link-modern {
-  color: #007948;
+  color: var(--color-accent);
   font-weight: 600;
   text-decoration: underline;
 }
 
 .register-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--bg-color) 0%, #eafaf3 100%);
+  background: linear-gradient(
+    135deg,
+    var(--bg-color) 0%,
+    var(--color-success-trans) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,10 +134,10 @@
 }
 
 .register-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
-  border: 1px solid #e4e4e4;
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--color-border);
   padding: 48px 40px;
   width: 100%;
   max-width: 540px;
@@ -160,13 +164,13 @@
 .register-title {
   font-size: 28px;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 8px;
   text-align: center;
 }
 
 .register-subtitle {
-  color: #6c7278;
+  color: var(--color-text-secondary);
   font-size: 16px;
   font-weight: 400;
   text-align: center;
@@ -180,18 +184,18 @@
 }
 
 .register-error {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--color-error-trans);
+  color: var(--color-error);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--color-error-strong);
   text-align: center;
 }
 
 .register-file-upload-text {
-  color: #007948;
+  color: var(--color-accent);
   font-weight: 600;
   font-size: 16px;
   margin-bottom: 18px;
@@ -202,11 +206,11 @@
   text-align: center;
   width: 100%;
   font-size: 15px;
-  color: #6c7278;
+  color: var(--color-text-secondary);
 }
 
 .register-login-link {
-  color: #007948;
+  color: var(--color-accent);
   font-weight: 600;
   text-decoration: underline;
   margin-left: 4px;
@@ -252,12 +256,12 @@
   gap: 12px;
   width: 100%;
   padding: 18px 18px;
-  border: 1.5px solid #f0f0f0;
+  border: 1.5px solid var(--color-weak-border);
   border-radius: 5px;
   background: var(--bg-color);
   font-size: 14px;
   font-weight: 500;
-  color: #18181b;
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: border 0.2s, box-shadow 0.2s;
   outline: none;
@@ -267,9 +271,9 @@
 }
 
 .register-role-option-btn.selected {
-  border: 1.5px solid #007948;
-  background: #f8fafc;
-  color: #007948;
+  border: 1.5px solid var(--green);
+  background: var(--surface-100);
+  color: var(--green);
   font-weight: 600;
   z-index: 2;
 }
@@ -277,7 +281,7 @@
 .register-role-radio-outer {
   width: 18px;
   height: 18px;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--border-d1);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -287,7 +291,7 @@
 }
 
 .register-role-option-btn.selected .register-role-radio-outer {
-  border: 2px solid #007948;
+  border: 2px solid var(--green);
 }
 
 .register-role-radio-inner {
@@ -299,18 +303,18 @@
 }
 
 .register-role-radio-inner.checked {
-  background: #007948;
+  background: var(--green);
 }
 
 .register-role-label {
   font-size: 14px;
   font-weight: 500;
-  color: #18181b;
+  color: var(--color-text-primary);
   text-align: left;
 }
 
 .register-role-option-btn.selected .register-role-label {
-  color: #007948;
+  color: var(--green);
 }
 
 .register-role-option-btn:nth-child(1) {
@@ -331,10 +335,10 @@
 }
 
 .register-form-placeholder {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 16px;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.08);
-  border: 1px solid #e4e4e4;
+  box-shadow: 0 4px 32px var(--shadow-strong);
+  border: 1px solid var(--color-border);
   padding: 48px 40px 40px 40px;
   width: 100%;
   max-width: 420px;
@@ -348,8 +352,8 @@
 .register-badge-individual {
   display: inline-block;
   width: fit-content;
-  background: #0079481a;
-  color: #007948;
+  background: var(--accent-hex8);
+  color: var(--green);
   font-size: 14px;
   font-weight: 600;
   border-radius: 6px;
@@ -361,7 +365,7 @@
 }
 
 .register-progress-individual {
-  color: #007948;
+  color: var(--green);
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 24px;
@@ -407,7 +411,7 @@
    Use `Input` (.reusable-input) and `ListBox` for visuals and sizing. */
 
 .register-individual-form-card label {
-  color: #6c7278;
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 2px;
@@ -444,7 +448,7 @@
 }
 
 .register-back-chevron:hover {
-  background: #eafaf3;
+  background: var(--very-light);
 }
 
 /* Make sure the chevron SVG is black. If not, use a filter: invert(0) or update the SVG itself. */
@@ -580,7 +584,7 @@
   }
 
   .select-role-text {
-    color: #898989 !important;
+    color: var(--color-disabled-text) !important;
     font-size: 13px !important;
     margin-bottom: 10px !important;
   }
@@ -604,7 +608,7 @@
   }
 
   .register-file-upload-text {
-    color: #007948;
+    color: var(--green);
     font-weight: 500;
     font-size: 13px;
     margin-bottom: 15px;
@@ -634,17 +638,17 @@ input[type="date"]::-moz-calendar-picker-indicator {
   width: 18px;
   height: 18px;
   margin-top: 2px;
-  accent-color: #007948;
+  accent-color: var(--green);
   cursor: pointer;
-  background: #fff !important;
-  border: 1px solid #d1d5db !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--border-d1) !important;
   border-radius: 3px;
   color-scheme: light;
 }
 
 .terms-label {
   font-size: 14px;
-  color: #6c7278;
+  color: var(--color-text-secondary);
   line-height: 1.5;
   cursor: pointer;
   user-select: none;
@@ -653,7 +657,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .terms-link {
   background: none;
   border: none;
-  color: #007948;
+  color: var(--green);
   text-decoration: underline;
   font-weight: 500;
   cursor: pointer;
@@ -663,7 +667,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 }
 
 .terms-link:hover {
-  color: #005a3a;
+  color: var(--green-005a3a);
 }
 
 /* Indemnity Form Content Styling (for use with existing Modal component) */
@@ -674,14 +678,14 @@ input[type="date"]::-moz-calendar-picker-indicator {
 }
 
 .indemnity-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
 
   box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
   padding: 32px 40px;
   position: relative;
   overflow: hidden;
-  color: #000;
+  color: var(--color-text-primary);
   min-height: 600px;
   width: 800px;
 }
@@ -693,7 +697,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
   margin-bottom: 24px;
   padding: 12px 16px;
   border-radius: 8px;
-  background: #f9fafb;
+  background: var(--color-muted-surface);
 }
 
 .indemnity-logo-wrap {
@@ -714,28 +718,28 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .org-name {
   font-size: 14px;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 4px;
   letter-spacing: 0.05em;
 }
 
 .form-code {
   font-size: 12px;
-  color: #969696;
+  color: var(--color-disabled-text);
   font-weight: 500;
   margin-bottom: 8px;
 }
 
 .org-address {
   font-size: 12px;
-  color: #969696;
+  color: var(--color-disabled-text);
   line-height: 1.4;
 }
 
 .indemnity-title {
   font-size: 22px;
   font-weight: 800;
-  color: #000;
+  color: var(--color-text-primary);
   text-align: center;
   margin-bottom: 24px;
   letter-spacing: 0.05em;
@@ -744,7 +748,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .indemnity-body {
   font-size: 14px;
   line-height: 1.6;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .indemnity-body p {
@@ -752,27 +756,27 @@ input[type="date"]::-moz-calendar-picker-indicator {
 }
 
 .inline-blank {
-  border-bottom: 2px dotted #969696;
+  border-bottom: 2px dotted var(--color-disabled-text);
   padding: 0 4px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .inline-blank.small {
-  border-bottom: 1px dotted #969696;
+  border-bottom: 1px dotted var(--color-disabled-text);
   padding: 0 2px;
 }
 
 .dots {
   display: inline-block;
   width: 40px;
-  border-bottom: 1px dotted #969696;
+  border-bottom: 1px dotted var(--color-disabled-text);
   margin: 0 8px;
 }
 
 .linkish {
   text-decoration: underline;
-  color: #007948;
+  color: var(--green);
   font-weight: 500;
 }
 
@@ -864,7 +868,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 
 /* New aesthetic overrides for register page to match app style */
 .register-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
   box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
@@ -886,23 +890,23 @@ input[type="date"]::-moz-calendar-picker-indicator {
 .register-title {
   font-size: 28px;
   font-weight: 700;
-  color: #000;
+  color: var(--black);
   margin-bottom: 8px;
   text-align: center;
 }
 
 .register-subtitle {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 15px;
   font-weight: 400;
   text-align: center;
 }
 
 .register-form-placeholder {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 12px;
   border: none;
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+  box-shadow: 0 8px 24px var(--shadow-weak);
   padding: 36px;
   width: 100%;
   max-width: 640px;
@@ -920,11 +924,11 @@ input[type="date"]::-moz-calendar-picker-indicator {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
+  box-shadow: 0 8px 24px var(--shadow-0-05);
 }
 
 .register-file-upload-text {
-  color: #007948;
+  color: var(--green);
   font-weight: 700;
   font-size: 16px;
   margin-bottom: 14px;
@@ -933,7 +937,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 
 /* Helper text for TIN upload */
 .tin-upload-helper {
-  color: #7A7D80;
+  color: var(--gray-7a7d80);
   font-size: 13px;
   margin-top: 8px;
 }
@@ -943,5 +947,5 @@ input[type="date"]::-moz-calendar-picker-indicator {
   text-align: center;
   width: 100%;
   font-size: 15px;
-  color: #969696;
+  color: var(--color-disabled-text);
 }

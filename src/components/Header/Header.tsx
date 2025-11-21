@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { ChevronDown, User, Bell } from "lucide-react";
+import { ChevronDown, User, Bell, Sun, Moon } from "lucide-react";
 import { CSSTransition } from "react-transition-group";
 import { logger } from "../../utils/logger";
 import "./header.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface HeaderProps {
   pageTitle?: string;
@@ -138,6 +139,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
   }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const { theme, toggleTheme } = useTheme();
 
   const markAsRead = async (id: number) => {
     // optimistic
@@ -218,6 +220,32 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
           className="header-right"
           style={{ display: "flex", alignItems: "center", gap: 12 }}
         >
+          <button
+            type="button"
+            aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleTheme();
+            }}
+            className="theme-toggle-btn"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 6,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div className={`theme-toggle ${theme === "dark" ? "is-dark" : ""}`} aria-hidden>
+              <div className="toggle-icons">
+                <Sun size={14} className="toggle-sun" />
+                <Moon size={14} className="toggle-moon" />
+              </div>
+              <div className="toggle-knob" />
+            </div>
+          </button>
           <div
             className={`user-profile ${open ? "open" : ""}`}
             ref={containerRef}
@@ -227,17 +255,13 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
             aria-expanded={open}
           >
             <div className="user-avatar">
-              <User color="#007948" width={"100%"} height={"100%"} />
+              <User color="currentColor" width={"100%"} height={"100%"} />
             </div>
             <div className="user-info">
               <span className="user-name">{user?.name || "Guest User"}</span>
               <span className="user-role">{user?.role || "Guest"}</span>
             </div>
-            <ChevronDown
-              size={16}
-              color="#000000"
-              className="profile-chevron"
-            />
+            <ChevronDown size={16} color="currentColor" className="profile-chevron" />
 
             <CSSTransition
               in={open}
@@ -286,7 +310,7 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
                 setNotifOpen((s) => !s);
               }}
             >
-              <Bell size={22} color="#007948" />
+              <Bell size={22} color="currentColor" />
               {unreadCount > 0 && (
                 <span className="notif-badge">{unreadCount}</span>
               )}
@@ -362,8 +386,8 @@ const Header: React.FC<HeaderProps> = ({ onPageChange }) => {
       {/* Mobile Header - Only visible below 768px */}
       <div className="mobile-header mobile-only">
         <div className="mobile-user-profile">
-          <div className="mobile-user-avatar">
-            <User size={48} color="#007948" />
+          <div className="mobile-user-avatar" style={{ color: "var(--color-accent)" }}>
+            <User size={48} color="currentColor" />
           </div>
           <div className="mobile-user-info">
             <span className="mobile-user-greeting">

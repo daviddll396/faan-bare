@@ -1,14 +1,14 @@
 /* Dispute Card Styles */
 .dispute-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 5px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
   padding: 22px;
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  font-family: "Poppins", sans-serif;
+
   animation: disputeCardEnter 0.6s ease-out both;
   animation-delay: var(--enter-delay, 0ms);
 }
@@ -20,44 +20,43 @@
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .dispute-reference {
   font-size: 18px;
   font-weight: 700;
-  color: #000;
-  font-family: monospace;
+  color: var(--color-text-primary);
 }
 
 /* Category Color Coding - Only text color */
 .dispute-card.category-incorrect-amount .dispute-reference {
-  color: #ef4444;
+  color: var(--color-error);
 }
 
 .dispute-card.category-service-not-received .dispute-reference {
-  color: #f97316;
+  color: var(--color-warning);
 }
 
 .dispute-card.category-payment-not-processed .dispute-reference {
-  color: #eab308;
+  color: var(--color-warning);
 }
 
 .dispute-card.category-duplicate-charge .dispute-reference {
-  color: #ec4899;
+  color: var(--color-accent-strong);
 }
 
 .dispute-card.category-refund-not-received .dispute-reference {
-  color: #14b8a6;
+  color: var(--color-accent);
 }
 
 .dispute-card.category-technical-error .dispute-reference {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .dispute-card.category-other .dispute-reference,
 .dispute-card.category-others .dispute-reference {
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 /* Dispute Content Area */
@@ -88,7 +87,7 @@
 
 .detail-label {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
   font-weight: 500;
   min-width: 60px;
   flex-shrink: 0;
@@ -96,7 +95,7 @@
 
 .detail-value {
   font-size: 14px;
-  color: #000;
+  color: var(--color-text-primary);
   text-align: right;
   flex: 1;
   word-wrap: break-word;

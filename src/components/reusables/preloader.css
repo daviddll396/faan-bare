@@ -47,9 +47,9 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 45%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0.4) 55%,
+    var(--white-40) 45%,
+    var(--white-60) 50%,
+    var(--white-40) 55%,
     transparent 100%
   );
   z-index: 2;

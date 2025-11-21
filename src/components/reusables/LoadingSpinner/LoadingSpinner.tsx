@@ -48,13 +48,13 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
                 (activeIndex - 2 + SEGMENTS) % SEGMENTS,
                 (activeIndex - 3 + SEGMENTS) % SEGMENTS,
               ];
-              let stroke = "#e4e4e4";
+              let stroke = "var(--color-border)";
               let opacity = 0.6;
               if (greenIndices.includes(i)) {
-                stroke = "#007948";
+                stroke = "var(--color-accent)";
                 opacity = 1;
               } else if (trailIndices.includes(i)) {
-                stroke = "#b0b0b0";
+                stroke = "var(--color-weak-border)";
                 opacity = 0.8;
               }
               const angle = i * 36 * (Math.PI / 180); // 36° per segment

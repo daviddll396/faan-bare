@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import FaanLogo from "/images/faan-logo.svg";
+import FaanLogo from "/images/faan-logo.png";
 import "./preloader.css";
 
 interface PreloaderProps {

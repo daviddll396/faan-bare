@@ -117,7 +117,7 @@ const InputUpload: React.FC<InputUploadProps> = ({
             aria-label="Upload file"
             disabled={disabled}
           >
-            <Upload size={18} color="#fff" />
+            <Upload size={18} color="currentColor" />
             <span className="input-upload-text">Upload</span>
           </button>
         )}

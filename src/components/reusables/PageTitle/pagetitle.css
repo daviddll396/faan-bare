@@ -13,14 +13,14 @@
   gap: 12px;
   font-size: 30px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0;
   transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .page-subtitle {
   margin: 4px 0 0 0;
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 16px;
   margin: 0;
   transition: color 0.2s ease;
@@ -30,7 +30,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--black);
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,10 +40,10 @@
 }
 
 .mobile-back-btn:hover {
-  background-color: rgba(0, 121, 72, 0.08);
-  color: #007948;
+  background-color: var(--color-overlay-hover);
+  color: var(--color-accent);
   transform: translateX(-1px);
-  box-shadow: 0 2px 8px rgba(0, 121, 72, 0.15);
+  box-shadow: 0 2px 8px var(--green-007948-15);
 }
 
 .mobile-back-btn:active {

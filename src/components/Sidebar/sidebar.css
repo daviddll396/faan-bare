@@ -1,8 +1,8 @@
 /* Sidebar Styles */
 .sidebar {
   width: 345px;
-  background: #007948;
-  color: #ffffff;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -106,7 +106,7 @@
   .collapse-button {
     background: none;
     border: none;
-    color: #ffffff;
+    color: var(--color-text-on-accent);
     padding: 8px;
     margin: 10px 0 0 20px; /* Always position on the left */
     cursor: pointer;
@@ -121,7 +121,7 @@
   }
 
   .collapse-button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--color-overlay-hover);
   }
 
   .chevron-icon {
@@ -139,8 +139,8 @@
 .logo-icon {
   width: 48px;
   height: 48px;
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: var(--color-overlay-hover);
+  color: var(--color-text-on-accent);
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -176,18 +176,18 @@
   width: 241px;
   margin-left: 52px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--color-text-on-accent);
   border-radius: 5px;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: var(--color-overlay-hover);
+  color: var(--color-text-on-accent);
 }
 
 .nav-item.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background: var(--color-overlay-active);
+  color: var(--color-text-on-accent);
 }
 
 /* Collapsed navigation items - only for desktop */
@@ -209,15 +209,15 @@
 
 .sidebar-footer {
   padding: 20px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--color-overlay-hover);
 }
 
 .nav-item.logout {
-  color: #ffffff;
+  color: var(--color-text-on-accent);
 }
 
 .nav-item.logout:hover {
-  color: #ffffff;
+  color: var(--color-text-on-accent);
 }
 
 .nav-item img {
@@ -250,6 +250,15 @@
   align-self: center;
 }
 
+/* Prevent label wrapping and truncate with ellipsis when space is constrained */
+.nav-item .desktop-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  max-width: 100%;
+}
+
 .mobile-icon,
 .mobile-label {
   display: none;
@@ -268,26 +277,26 @@
     transform: translateX(-50%);
     max-width: 90%;
     height: 60px;
-    background: white !important; /* Revert to original white background */
-    color: #979797 !important; /* Revert to original gray text */
+    background: var(--color-surface) !important;
+    color: var(--color-text-secondary) !important;
     width: auto !important; /* Override desktop width */
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-1);
     padding: 0px 0px;
     z-index: 1000;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid #ececec;
+    border: 1px solid var(--color-border);
     transition: none; /* Disable desktop transitions */
   }
 
   /* Ensure collapsed class doesn't affect mobile */
   .sidebar.collapsed {
     width: auto !important;
-    background: white !important;
-    color: #979797 !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text-secondary) !important;
   }
 
   /* Hide header and footer on mobile */
@@ -326,7 +335,7 @@
     padding: 7px 11px;
     border-radius: 5px;
     background: transparent;
-    color: #979797;
+    color: var(--color-text-secondary);
     font-size: 12px;
     font-weight: 500;
     text-align: center;
@@ -336,22 +345,34 @@
 
   /* Active state for mobile bottom navigation */
   .nav-item.active {
-    background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
-    color: white;
+    background: linear-gradient(
+      180deg,
+      var(--color-accent) 0%,
+      var(--color-accent-strong) 100%
+    );
+    color: var(--color-text-on-accent);
     border-radius: 5px;
     height: 100%;
   }
 
   /* Hover state for mobile */
   .nav-item:hover {
-    background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
-    color: white;
+    background: linear-gradient(
+      180deg,
+      var(--color-accent) 0%,
+      var(--color-accent-strong) 100%
+    );
+    color: var(--color-text-on-accent);
   }
 
   /* Active hover state */
   .nav-item.active:hover {
-    background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
-    color: white;
+    background: linear-gradient(
+      180deg,
+      var(--color-accent) 0%,
+      var(--color-accent-strong) 100%
+    );
+    color: var(--color-text-on-accent);
   }
 
   /* Icon styling for mobile */

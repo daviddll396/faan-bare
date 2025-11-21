@@ -1160,12 +1160,16 @@ const RegisterPage: React.FC = () => {
                   height="18"
                   viewBox="0 0 22 22"
                   fill="none"
-                  style={{ marginRight: 7, verticalAlign: "middle" }}
+                  style={{
+                    marginRight: 7,
+                    verticalAlign: "middle",
+                    color: "var(--color-accent)",
+                  }}
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="currentColor"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1183,6 +1187,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="First Name"
                   autoComplete="off"
+                  restrict="alpha"
                   error={formErrors.firstName || false}
                 />
               </div>
@@ -1194,6 +1199,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Last Name"
                   autoComplete="off"
+                  restrict="alpha"
                   error={formErrors.lastName || false}
                 />
               </div>
@@ -1216,6 +1222,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  restrict="numeric"
                   error={formErrors.phoneNumber || false}
                 />
               </div>
@@ -1252,6 +1259,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleIndividualChange}
                   placeholder="Identification Number"
                   autoComplete="off"
+                  restrict="numeric"
                   error={formErrors.idNumber || false}
                 />
               </div>
@@ -1382,12 +1390,16 @@ const RegisterPage: React.FC = () => {
                   height="18"
                   viewBox="0 0 22 22"
                   fill="none"
-                  style={{ marginRight: 7, verticalAlign: "middle" }}
+                  style={{
+                    marginRight: 7,
+                    verticalAlign: "middle",
+                    color: "var(--color-accent)",
+                  }}
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="currentColor"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1409,7 +1421,10 @@ const RegisterPage: React.FC = () => {
                   name="email"
                   value={individualForm.email}
                   disabled
-                  style={{ background: "#f7f7f7", color: "#b0b0b0" }}
+                  style={{
+                    background: "var(--color-muted-surface)",
+                    color: "var(--color-text-secondary)",
+                  }}
                 />
               </div>
               <div className="form-row-modern">
@@ -1533,12 +1548,16 @@ const RegisterPage: React.FC = () => {
                   height="18"
                   viewBox="0 0 22 22"
                   fill="none"
-                  style={{ marginRight: 7, verticalAlign: "middle" }}
+                  style={{
+                    marginRight: 7,
+                    verticalAlign: "middle",
+                    color: "var(--color-accent)",
+                  }}
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="currentColor"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1613,6 +1632,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Year of Incorporation"
                   autoComplete="off"
+                  restrict="numeric"
                   error={corporateFormErrors.yearOfIncorporation || false}
                 />
               </div>
@@ -1647,7 +1667,7 @@ const RegisterPage: React.FC = () => {
                   label={
                     <span>
                       TIN File Upload{" "}
-                      {/* <span style={{ color: "#dc2626", marginLeft: 6 }}>*</span> */}
+                      {/* <span style={{ color: "var(--color-error)", marginLeft: 6 }}>*</span> */}
                     </span>
                   }
                   name="tinNumber"
@@ -1690,6 +1710,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleCorporateChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  restrict="numeric"
                   error={corporateFormErrors.phoneNumber || false}
                 />
               </div>
@@ -1797,12 +1818,16 @@ const RegisterPage: React.FC = () => {
                   height="18"
                   viewBox="0 0 22 22"
                   fill="none"
-                  style={{ marginRight: 7, verticalAlign: "middle" }}
+                  style={{
+                    marginRight: 7,
+                    verticalAlign: "middle",
+                    color: "var(--color-accent)",
+                  }}
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="currentColor"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1813,10 +1838,10 @@ const RegisterPage: React.FC = () => {
             </div>
             <div
               style={{
-                background: "#fff",
+                background: "var(--color-surface)",
                 borderRadius: 5,
-                boxShadow: "0 4px 32px rgba(34, 43, 69, 0.08)",
-                border: "1px solid #e4e4e4",
+                boxShadow: "var(--shadow-1)",
+                border: "1px solid var(--color-border)",
                 padding: 32,
                 width: "100%",
                 marginBottom: 32,
@@ -1830,12 +1855,15 @@ const RegisterPage: React.FC = () => {
                 onDrop={handleFileDrop}
                 onDragOver={(e) => e.preventDefault()}
                 style={{
-                  border: "2px dashed #b6e2d6",
+                  border: "2px dashed var(--green-b6e2d6)",
                   borderRadius: 5,
                   padding: 32,
                   textAlign: "center",
                   marginBottom: 24,
-                  background: uploadedFiles.length === 0 ? "#f8fafc" : "#fff",
+                  background:
+                    uploadedFiles.length === 0
+                      ? "var(--surface-100)"
+                  : "var(--color-surface)",
                   cursor: "pointer",
                   transition: "background 0.2s",
                 }}
@@ -1845,12 +1873,16 @@ const RegisterPage: React.FC = () => {
                 }}
               >
                 <div
-                  style={{ fontSize: 32, color: "#b6e2d6", marginBottom: 8 }}
+                  style={{
+                    fontSize: 32,
+                    color: "var(--green-b6e2d6)",
+                    marginBottom: 8,
+                  }}
                 >
                   <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
                     <path
                       d="M12 4v16m8-8H4"
-                      stroke="#b6e2d6"
+                      stroke="var(--green-b6e2d6)"
                       strokeWidth="2.2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1862,7 +1894,7 @@ const RegisterPage: React.FC = () => {
                 </div>
                 <div
                   style={{
-                    color: "#6C7278",
+                    color: "var(--color-text-secondary)",
                     fontSize: 13,
                     margin: "8px 0 12px 0",
                   }}
@@ -1882,9 +1914,9 @@ const RegisterPage: React.FC = () => {
                   style={{
                     marginTop: 8,
                     minWidth: 140,
-                    color: "#6C7278",
+                    color: "var(--color-text-secondary)",
                     background: "transparent",
-                    border: "1.5px solid #d1d5db",
+                    border: "1.5px solid var(--border-d1)",
                     borderRadius: 5,
                     fontWeight: 500,
                     fontSize: 14,
@@ -1903,7 +1935,13 @@ const RegisterPage: React.FC = () => {
                   Browse Files
                 </button>
                 {fileError && (
-                  <div style={{ color: "#dc2626", fontSize: 13, marginTop: 8 }}>
+                  <div
+                    style={{
+                      color: "var(--color-error)",
+                      fontSize: 13,
+                      marginTop: 8,
+                    }}
+                  >
                     {fileError}
                   </div>
                 )}
@@ -1914,8 +1952,8 @@ const RegisterPage: React.FC = () => {
                     <div
                       key={file.id}
                       style={{
-                        background: "#fff",
-                        border: "1px solid #e4e4e4",
+                        background: "var(--color-surface)",
+                        border: "1px solid var(--color-border)",
                         borderRadius: 5,
                         padding: "12px 18px 10px 18px",
                         marginBottom: 14,
@@ -1931,22 +1969,23 @@ const RegisterPage: React.FC = () => {
                           height="28"
                           viewBox="0 0 24 24"
                           fill="none"
+                          style={{ color: "var(--color-error)" }}
                         >
                           <rect
                             width="24"
                             height="24"
                             rx="6"
-                            fill="#F87171"
+                            fill="currentColor"
                             fillOpacity="0.13"
                           />
                           <path
                             d="M7 7h6l4 4v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"
-                            stroke="#F87171"
+                            stroke="currentColor"
                             strokeWidth="1.5"
                           />
                           <path
                             d="M13 7v4h4"
-                            stroke="#F87171"
+                            stroke="currentColor"
                             strokeWidth="1.5"
                           />
                         </svg>
@@ -1956,14 +1995,14 @@ const RegisterPage: React.FC = () => {
                           style={{
                             fontWeight: 600,
                             fontSize: 15,
-                            color: "#000",
+                            color: "var(--color-text-primary)",
                           }}
                         >
                           {file.name}
                         </div>
                         <div
                           style={{
-                            color: "#6C7278",
+                            color: "var(--color-text-secondary)",
                             fontSize: 13,
                             marginBottom: 2,
                           }}
@@ -1973,7 +2012,7 @@ const RegisterPage: React.FC = () => {
                         <div
                           style={{
                             height: 5,
-                            background: "#e4e4e4",
+                            background: "var(--color-border)",
                             borderRadius: 3,
                             overflow: "hidden",
                           }}
@@ -1982,7 +2021,7 @@ const RegisterPage: React.FC = () => {
                             style={{
                               width: `${file.progress}%`,
                               height: 5,
-                              background: "#22c55e",
+                              background: "var(--color-accent)",
                             }}
                           />
                         </div>
@@ -1995,7 +2034,7 @@ const RegisterPage: React.FC = () => {
                           border: "none",
                           cursor: "pointer",
                           marginLeft: 10,
-                          color: "#6C7278",
+                          color: "var(--color-text-secondary)",
                           fontSize: 18,
                         }}
                         aria-label="Remove file"
@@ -2008,7 +2047,7 @@ const RegisterPage: React.FC = () => {
                         >
                           <path
                             d="M6 6l8 8M6 14L14 6"
-                            stroke="#6C7278"
+                            stroke="currentColor"
                             strokeWidth="1"
                             strokeLinecap="round"
                           />
@@ -2098,7 +2137,7 @@ const RegisterPage: React.FC = () => {
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="var(--green)"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -2334,7 +2373,7 @@ const RegisterPage: React.FC = () => {
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="var(--green)"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -2352,6 +2391,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="First Name"
                   autoComplete="off"
+                  restrict="alpha"
                   error={familyFormErrors.firstName || false}
                 />
               </div>
@@ -2363,6 +2403,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Last Name"
                   autoComplete="off"
+                  restrict="alpha"
                   error={familyFormErrors.lastName || false}
                 />
               </div>
@@ -2385,6 +2426,7 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFamilyChange}
                   placeholder="Phone Number"
                   autoComplete="off"
+                  restrict="numeric"
                   error={familyFormErrors.phoneNumber || false}
                 />
               </div>
@@ -2544,7 +2586,7 @@ const RegisterPage: React.FC = () => {
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="var(--green)"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -2566,7 +2608,10 @@ const RegisterPage: React.FC = () => {
                   name="email"
                   value={familyForm.email}
                   disabled
-                  style={{ background: "#f7f7f7", color: "#b0b0b0" }}
+                  style={{
+                    background: "var(--color-muted-surface)",
+                    color: "var(--color-text-secondary)",
+                  }}
                 />
               </div>
               <div className="form-row-modern">
@@ -2693,7 +2738,7 @@ const RegisterPage: React.FC = () => {
                 >
                   <path
                     d="M14 17L9 11L14 5"
-                    stroke="#007948"
+                    stroke="var(--green)"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -2715,7 +2760,10 @@ const RegisterPage: React.FC = () => {
                   name="email"
                   value={governmentForm.email}
                   disabled
-                  style={{ background: "#f7f7f7", color: "#b0b0b0" }}
+                  style={{
+                    background: "var(--color-muted-surface)",
+                    color: "var(--color-text-secondary)",
+                  }}
                 />
               </div>
               <div className="form-row-modern">
@@ -2818,14 +2866,14 @@ const RegisterPage: React.FC = () => {
               style={{
                 fontWeight: 600,
                 fontSize: 22,
-                color: "#000",
+                color: "var(--color-text-primary)",
                 marginBottom: 18,
               }}
             >
               Registration Form for{" "}
               {roleOptions.find((r) => r.value === selectedRole)?.label}
             </h2>
-            <div style={{ color: "#6C7278", fontSize: 16 }}>
+            <div style={{ color: "var(--color-text-secondary)", fontSize: 16 }}>
               Form fields will appear here in the next step.
             </div>
           </div>

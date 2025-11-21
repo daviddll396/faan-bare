@@ -51,12 +51,12 @@
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 4px 0;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .invoices-search-subtitle {
   font-size: 14px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -73,9 +73,9 @@
   padding: 80px 24px;
   text-align: center;
   min-height: 240px;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 16px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
 }
 
 .no-invoices-icon {
@@ -98,13 +98,13 @@
 .no-invoices-title {
   font-size: 20px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
 }
 
 .no-invoices-message {
   font-size: 15px;
-  color: #969696;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   max-width: 400px;
 }
@@ -153,7 +153,7 @@
 }
 
 .create-invoice-title {
-  color: #000;
+  color: var(--color-text-primary);
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 14px;
@@ -161,7 +161,7 @@
   padding-left: 10px;
 }
 .services-selection-title {
-  color: #000;
+  color: var(--black);
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 14px;
@@ -169,7 +169,7 @@
 }
 
 .services-selection-subtitle {
-  color: #6c6c6c;
+  color: var(--muted-gray);
   font-size: 18px;
   margin-bottom: 16px;
   text-align: left;
@@ -184,7 +184,7 @@
 .services-selection h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   margin-bottom: 16px;
 }
 
@@ -247,10 +247,10 @@
   flex-direction: column;
   align-items: stretch;
   padding: 16px;
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
   min-height: 160px;
 }
 
@@ -267,25 +267,25 @@
 .service-name {
   font-size: 16px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 4px;
 }
 
 .service-description {
   font-size: 14px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin-bottom: 8px;
 }
 
 .service-price {
   font-size: 18px;
   font-weight: 700;
-  color: #007948;
+  color: var(--color-accent);
 }
 
 /* Selected Services */
 .selected-services {
-  border-top: 2px solid #e4e4e4;
+  border-top: 2px solid var(--color-border);
   padding-top: 24px;
   padding-left: 10px;
   padding-right: 10px;
@@ -294,7 +294,7 @@
 .selected-services h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   margin-bottom: 16px;
 }
 
@@ -303,7 +303,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #fafafa;
+  background: var(--surface-300);
   border-radius: 8px;
   margin-bottom: 12px;
 }
@@ -317,14 +317,14 @@
 .service-details .service-name {
   font-size: 14px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   margin: 0;
 }
 
 .service-details .service-price {
   font-size: 14px;
   font-weight: 600;
-  color: #007948;
+  color: var(--color-accent);
   margin: 0;
 }
 
@@ -337,26 +337,26 @@
 .quantity-btn {
   width: 32px;
   height: 32px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border-d1);
+  background: var(--color-surface);
   border-radius: 6px;
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .quantity-btn:hover {
-  border-color: #007948;
-  color: #007948;
-  background: #f0fdf4;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-success-trans);
 }
 
 .quantity {
   font-size: 16px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   min-width: 20px;
   text-align: center;
 }
@@ -365,7 +365,7 @@
 .modal-actions {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #e4e4e4;
+  border-top: 1px solid var(--color-border);
   text-align: center;
 }
 
@@ -381,7 +381,7 @@
 .payment-methods h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   margin-bottom: 16px;
 }
 
@@ -390,23 +390,23 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .payment-option:hover {
-  border-color: #007948;
-  background: #f8fafc;
+  border-color: var(--green);
+  background: var(--surface-100);
 }
 
 /* Wallet note shown in invoice summary modal */
 .wallet-note {
   font-size: 14px;
-  color: #000;
+  color: var(--color-text-secondary);
   margin-top: 12px;
   text-align: center;
 }
@@ -416,8 +416,8 @@
   height: 20px;
   margin: 0;
   cursor: pointer;
-  background: #fff;
-  border: 2px solid #d1d5db;
+  background: var(--color-surface);
+  border: 2px solid var(--border-d1);
   border-radius: 50%;
   appearance: none;
   -webkit-appearance: none;
@@ -427,8 +427,8 @@
 }
 
 .payment-option input[type="radio"]:checked {
-  border-color: #007948;
-  background: #fff;
+  border-color: var(--green);
+  background: var(--color-surface);
 }
 
 .payment-option input[type="radio"]:checked::after {
@@ -439,14 +439,14 @@
   transform: translate(-50%, -50%);
   width: 10px;
   height: 10px;
-  background: #007948;
+  background: var(--green);
   border-radius: 50%;
 }
 
 .payment-option label {
   font-size: 16px;
   font-weight: 500;
-  color: #000;
+  color: var(--black);
   cursor: pointer;
   margin: 0;
   flex: 1;
@@ -456,7 +456,7 @@
 /* Make the entire payment option clickable */
 .payment-option input[type="radio"]:focus + label,
 .payment-option:hover label {
-  color: #007948;
+  color: var(--green);
 }
 
 /* View Details Modal */
@@ -467,12 +467,12 @@
 }
 
 .invoice-details-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
   padding: 24px 28px;
   position: relative;
   overflow: hidden;
-  color: #000;
+  color: var(--color-text-primary);
   min-height: 400px;
   width: 100%;
   max-width: 580px;
@@ -485,9 +485,13 @@
   right: 0;
   top: -8px;
   height: 16px;
-  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
-      top / 16px 16px repeat-x,
-    linear-gradient(#f0f0f0, #f0f0f0);
+  background: radial-gradient(
+        circle at 8px 8px,
+        var(--color-surface) 8px,
+        transparent 8px
+      )
+      left top / 16px 16px repeat-x,
+    linear-gradient(var(--color-weak-border), var(--color-weak-border));
 }
 
 .invoice-details-head {
@@ -497,26 +501,26 @@
 
 .invoice-details-brand {
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   font-size: 14px;
 }
 
 .invoice-details-title {
   font-size: 16px;
   font-weight: 800;
-  color: #000;
+  color: var(--color-text-primary);
   letter-spacing: 0.06em;
   margin-top: 2px;
 }
 
 .invoice-details-sub {
   font-size: 12px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin-top: 2px;
 }
 
 .invoice-details-meta {
-  border: 1px dashed #f0f0f0;
+  border: 1px dashed var(--color-weak-border);
   border-radius: 10px;
   padding: 12px 14px;
   margin: 12px 0 16px 0;
@@ -527,7 +531,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 4px;
-  border-bottom: 1px dashed #f0f0f0;
+  border-bottom: 1px dashed var(--color-weak-border);
 }
 
 .invoice-details-meta .meta-row:last-child {
@@ -535,7 +539,7 @@
 }
 
 .invoice-details-meta .meta-row span:first-child {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 12px;
 }
 
@@ -550,23 +554,23 @@
 }
 
 .invoice-details-meta .status-indicator.status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--bg-fef3c7);
+  color: var(--color-warning);
 }
 
 .invoice-details-meta .status-indicator.status-paid {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-success-trans);
+  color: var(--color-success);
 }
 
 .invoice-details-meta .status-indicator.status-cancelled {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-error-trans);
+  color: var(--color-error);
 }
 
 .invoice-details-items {
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-weak-border);
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .invoice-details-items .thead,
@@ -579,12 +583,12 @@
 }
 
 .invoice-details-items .thead {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 12px;
 }
 
 .invoice-details-items .row {
-  border-top: 1px dashed #f0f0f0;
+  border-top: 1px dashed var(--color-weak-border);
 }
 
 .invoice-details-items .right {
@@ -592,28 +596,22 @@
 }
 
 .invoice-details-items .total {
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid var(--color-weak-border);
   font-weight: 800;
-}
-
-.mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-weight: 700;
 }
 
 .payment-summary,
 .invoice-modal-summary {
   margin-bottom: 24px;
   padding: 20px;
-  background: #f8fafc;
+  background: var(--surface-100);
 }
 
 .payment-summary h3,
 .invoice-modal-summary .booking-summary-title {
   font-size: 18px;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
 }
 
@@ -621,25 +619,25 @@
 .invoice-modal-summary .booking-summary-row span {
   margin-bottom: 8px;
   font-size: 14px;
-  color: #000; /* ensure default readable text color */
+  color: var(--color-text-primary);
 }
 
 .invoice-summary-details strong,
 .invoice-modal-summary .booking-summary-row strong {
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 /* Make sure booking-summary-card (reused) has readable text */
 .booking-summary-card {
-  background: #fff;
+  background: var(--color-surface);
   padding: 18px;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .booking-summary-title {
   font-size: 14px;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 12px;
 }
 
@@ -648,14 +646,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px dashed #eef2f7;
-}
-
-.booking-summary-row.total {
-  border-top: 2px solid #eef2f7;
-  padding-top: 12px;
-  margin-top: 8px;
-  font-weight: 800;
+  border-bottom: 1px dashed var(--color-eef2f7);
 }
 
 /* Animations */
@@ -1037,94 +1028,7 @@
   }
 }
 
-/* Thermal receipt styling for InvoicesPage (reuse styles similar to Services) */
-.invoice-receipt-modal {
-  min-width: 520px;
-  max-width: 720px;
-}
-
-.receipt-head {
-  text-align: center;
-  margin: 8px 0;
-}
-.receipt-brand {
-  font-weight: 700;
-  color: #000;
-  font-size: 14px;
-}
-.receipt-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #000;
-  letter-spacing: 0.06em;
-  margin-top: 2px;
-}
-.receipt-sub {
-  font-size: 12px;
-  color: #969696;
-  margin-top: 2px;
-}
-.receipt-meta {
-  border: 1px dashed #f0f0f0;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin: 12px 0 16px 0;
-}
-.receipt-meta .meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4px;
-  border-bottom: 1px dashed #f0f0f0;
-}
-.receipt-meta .meta-row:last-child {
-  border-bottom: none;
-}
-.receipt-meta .meta-row span:first-child {
-  color: #969696;
-  font-size: 12px;
-}
-.mono,
-.monospace {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-weight: 700;
-}
-.receipt-items {
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
-}
-.receipt-items .thead,
-.receipt-items .row,
-.receipt-items .total {
-  display: grid;
-  grid-template-columns: 1fr 160px;
-  gap: 12px;
-  padding: 10px 0;
-}
-.receipt-items .thead {
-  color: #969696;
-  font-size: 12px;
-}
-.receipt-items .row {
-  border-top: 1px dashed #f0f0f0;
-}
-.receipt-items .right {
-  text-align: right;
-}
-.receipt-items .total {
-  border-top: 2px solid #f0f0f0;
-  font-weight: 800;
-}
-.receipt-foot {
-  margin-top: 10px;
-  color: #969696;
-  font-size: 12px;
-  text-align: center;
-}
-.receipt-download {
-  margin-top: 12px;
-}
+/* Receipt modal styles consolidated into src/components/reusables/ReceiptModal/ReceiptModal.tsx */
 
 /* Create Invoice Subpage */
 .create-invoice-subpage {
@@ -1137,7 +1041,7 @@
 }
 
 .services-selection-subtitle {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 14px;
   margin-bottom: 16px;
 }
@@ -1150,8 +1054,8 @@
   padding: 0;
   border: none; /* borderless card */
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
+  background: var(--color-surface);
+  box-shadow: 0 6px 24px var(--shadow-weak);
   min-height: 160px;
   transition: transform 180ms ease, box-shadow 180ms ease;
   overflow: hidden;
@@ -1159,7 +1063,7 @@
 
 .service-option:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(16, 24, 40, 0.08);
+  box-shadow: 0 12px 40px var(--shadow-strong);
 }
 
 /* Service card content area */
@@ -1172,9 +1076,9 @@
   padding-top: 20px;
   padding-left: 10px;
   padding-right: 10px;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.05);
+  box-shadow: 0 6px 24px var(--shadow-0-05);
 }
 
 /* Border button zoom scaling is handled by the BorderButton component CSS */
@@ -1182,10 +1086,10 @@
 /* FieldButton styling for invoices page buttons */
 .fieldbutton-btn-invoicespage {
   border: none;
-  background: #f8f8f8;
+  background: var(--muted-lighter);
   border-radius: 8px;
   padding: 0 12px;
-  color: #007948;
+  color: var(--green);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -1200,7 +1104,7 @@
 }
 
 .fieldbutton-btn-invoicespage:hover {
-  background: #0079480d;
+  background: var(--color-accent-trans);
 }
 
 /* Responsive FieldButton styling */

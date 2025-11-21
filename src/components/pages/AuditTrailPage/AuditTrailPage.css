@@ -25,14 +25,14 @@
 }
 
 .content-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
   padding: 28px;
   animation: slideInUp 0.6s ease-out 0.4s both;
   zoom: 1;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
-  box-shadow: 0 8px 28px rgba(16, 24, 40, 0.06);
+  box-shadow: var(--shadow-very-weak);
 }
 
 /* Audit Summary Section */
@@ -49,16 +49,16 @@
   align-items: center;
   text-align: center;
   padding: 18px;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 5px;
-  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.008);
-  border: 1px solid #f0f0f0;
+  box-shadow: var(--shadow-very-weak);
+  border: 1px solid var(--color-weak-border);
 }
 
 .summary-label {
   font-size: 15px;
   font-weight: 600;
-  color: #969696;
+  color: var(--color-disabled-text);
   
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -67,19 +67,19 @@
 .summary-value {
   font-size: 20px;
   font-weight: 700;
-  color: #000;
+  color: var(--black);
 }
 
 .summary-value.success {
-  color: #10b981;
+  color: var(--green-10b981);
 }
 
 .summary-value.failed {
-  color: #ef4444;
+  color: var(--red-ef4444);
 }
 
 .summary-value.warning {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 /* Status Badges */

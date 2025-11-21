@@ -18,12 +18,30 @@ class Logger {
     includeTimestamp: true,
   };
 
+  private getCssVar(varName: string, fallback: string): string {
+    try {
+      if (
+        typeof window !== "undefined" &&
+        typeof (window as unknown as { getComputedStyle?: unknown }).getComputedStyle ===
+          "function"
+      ) {
+        const v = window.getComputedStyle(document.documentElement).getPropertyValue(
+          varName
+        );
+        if (v && v.trim()) return v.trim();
+      }
+    } catch {
+      // ignore and fallback
+    }
+    return fallback;
+  }
+
   private readonly colors = {
-    debug: "#6B7280", // Gray
-    info: "#3B82F6", // Blue
-    warn: "#F59E0B", // Orange
-    error: "#EF4444", // Red
-    success: "#10B981", // Green
+    debug: this.getCssVar("--logger-debug", "#6B7280"), // Gray
+    info: this.getCssVar("--logger-info", "#3B82F6"), // Blue
+    warn: this.getCssVar("--logger-warn", "#F59E0B"), // Orange
+    error: this.getCssVar("--logger-error", "#EF4444"), // Red
+    success: this.getCssVar("--logger-success", "#10B981"), // Green
   };
 
   private readonly icons = {

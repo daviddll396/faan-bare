@@ -13,6 +13,7 @@ import CheckCircle from "/icons/check-circle.svg";
 
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import Modal from "../../reusables/Modal/Modal";
+import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
 import SolidButton from "../../reusables/SolidButton";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 
@@ -37,6 +38,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
   const [showInvoiceModal, setShowInvoiceModal] = React.useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
   const [showReceiptModal, setShowReceiptModal] = React.useState(false);
+  const [showPrintableReceipt, setShowPrintableReceipt] = React.useState(false);
   const [selectedBill, setSelectedBill] = React.useState<Bill | null>(null);
   const [toast, setToast] = React.useState<{
     message: string;
@@ -206,7 +208,6 @@ const BillsPage: React.FC<BillsPageProps> = () => {
     });
   };
 
-
   const removeBillItem = (idx: number) => {
     if (billItems.length === 1) return;
     setBillItems(billItems.filter((_, i) => i !== idx));
@@ -301,6 +302,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                         customerName: e.target.value,
                       }))
                     }
+                    restrict="alpha"
                   />
                 </div>
 
@@ -314,6 +316,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                         customerId: e.target.value,
                       }))
                     }
+                    restrict="numeric"
                   />
                 </div>
 
@@ -327,6 +330,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                         customerNin: e.target.value,
                       }))
                     }
+                    restrict="numeric"
                   />
                 </div>
               </div>
@@ -343,8 +347,11 @@ const BillsPage: React.FC<BillsPageProps> = () => {
           <div className="bills-customer-details">
             {/* Customer Header */}
             <div className="bills-customer-header">
-              <div className="bills-customer-avatar">
-                <User size={60} color="#007948" />
+              <div
+                className="bills-customer-avatar"
+                style={{ color: "var(--color-accent)" }}
+              >
+                <User size={60} color="currentColor" />
               </div>
               <div className="bills-customer-info">
                 <h2 className="bills-customer-name">
@@ -368,8 +375,11 @@ const BillsPage: React.FC<BillsPageProps> = () => {
             <div className="bills-info-grid">
               {/* Personal Information */}
               <div className="bills-info-card">
-                <div className="bills-info-card-header">
-                  <User size={20} color="#007948" />
+                <div
+                  className="bills-info-card-header"
+                  style={{ color: "var(--color-accent)" }}
+                >
+                  <User size={20} color="currentColor" />
                   <h3>Personal Information</h3>
                 </div>
                 <div className="bills-info-card-content">
@@ -394,8 +404,11 @@ const BillsPage: React.FC<BillsPageProps> = () => {
 
               {/* Contact Information */}
               <div className="bills-info-card">
-                <div className="bills-info-card-header">
-                  <Mail size={20} color="#007948" />
+                <div
+                  className="bills-info-card-header"
+                  style={{ color: "var(--color-accent)" }}
+                >
+                  <Mail size={20} color="currentColor" />
                   <h3>Contact Information</h3>
                 </div>
                 <div className="bills-info-card-content">
@@ -477,8 +490,8 @@ const BillsPage: React.FC<BillsPageProps> = () => {
             <div className="service-creation-section">
               <div className="modal-form-header">
                 <p className="modal-form-helper">
-                  Create a bill for the customer by adding items, setting tariffs,
-                  quantities, and amounts.
+                  Create a bill for the customer by adding items, setting
+                  tariffs, quantities, and amounts.
                 </p>
               </div>
 
@@ -495,19 +508,20 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                     return;
                   }
                   showLoading("Generating invoice...");
-                  
+
                   // Generate invoice from bill items
                   const invoiceNumber = `INV-${Date.now()}-${Math.random()
                     .toString(36)
                     .substring(2, 8)}`;
-                  
+
                   const invoiceItems = billItems
                     .filter((item) => item.item && item.amount && item.qty)
                     .map((item, idx) => {
-                      const amountNum = parseFloat(item.amount.replace(/,/g, "")) || 0;
+                      const amountNum =
+                        parseFloat(item.amount.replace(/,/g, "")) || 0;
                       const qtyNum = parseFloat(item.qty) || 0;
                       const totalNum = amountNum * qtyNum;
-                      
+
                       return {
                         id: `${Date.now()}-${idx}`,
                         name: item.item,
@@ -516,19 +530,20 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                         total: formatNumberWithCommas(String(totalNum)),
                       };
                     });
-                  
+
                   const totalAmount = invoiceItems.reduce(
-                    (sum, item) => sum + parseFloat(item.total.replace(/,/g, "")),
+                    (sum, item) =>
+                      sum + parseFloat(item.total.replace(/,/g, "")),
                     0
                   );
-                  
+
                   setGeneratedInvoice({
                     invoiceNumber,
                     customerId: customer.idNo,
                     items: invoiceItems,
                     total: formatNumberWithCommas(String(totalAmount)),
                   });
-                  
+
                   setTimeout(() => {
                     hideLoading();
                     setShowBillCreation(false);
@@ -591,6 +606,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                                   e.target.value
                                 )
                               }
+                              restrict="numeric"
                             />
                             {billItemErrors[idx]?.baseTariff && (
                               <div className="validation-error">
@@ -607,6 +623,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                               onChange={(e) =>
                                 handleBillItemChange(idx, "qty", e.target.value)
                               }
+                              restrict="numeric"
                             />
                             {billItemErrors[idx]?.qty && (
                               <div className="validation-error">
@@ -628,6 +645,7 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                                 )
                               }
                               className="bill-amount-input"
+                              restrict="numeric"
                             />
                             {billItemErrors[idx]?.amount && (
                               <div className="validation-error">
@@ -805,7 +823,9 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 <span className="right">Amount</span>
               </div>
               <div className="row">
-                <span>{selectedBill.itemName} (Qty: {selectedBill.qty})</span>
+                <span>
+                  {selectedBill.itemName} (Qty: {selectedBill.qty})
+                </span>
                 <span className="right mono">{selectedBill.paid}</span>
               </div>
               <div className="total">
@@ -819,75 +839,33 @@ const BillsPage: React.FC<BillsPageProps> = () => {
                 text="Download PDF"
                 fullWidth
                 onClick={() => {
-                  const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
-                    selectedBill.billNo
-                  }</title>
-                  <style>
-                    @page { margin: 10mm; }
-                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
-                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #f0f0f0;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
-                    .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#f0f0f0,#f0f0f0)}
-                    .receipt-head{text-align:center;margin:8px 0}
-                    .receipt-brand{font-weight:700;color:#000;font-size:14px}
-                    .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
-                    .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
-                    .receipt-meta{border:1px dashed #f0f0f0;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
-                    .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #f0f0f0}
-                    .receipt-meta .meta-row:last-child{border-bottom:none}
-                    .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
-                    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
-                    .receipt-items{border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
-                    .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
-                    .receipt-items .thead{color:#969696;font-size:12px}
-                    .receipt-items .row{border-top:1px dashed #f0f0f0}
-                    .right{text-align:right}
-                    .receipt-items .total{border-top:2px solid #f0f0f0;font-weight:800}
-                    .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
-                  </style>
-                  </head><body>
-                    <div class='receipt-paper'>
-                      <div class='receipt-head'>
-                        <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
-                        <div class='receipt-title'>PAYMENT RECEIPT</div>
-                        <div class='receipt-sub'>Thank you for your payment.</div>
-                      </div>
-                      <div class='receipt-meta'>
-                        <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
-                          selectedBill.billNo
-                        }</span></div>
-                        <div class='meta-row'><span>Payment Date</span><span>${selectedBill.date}</span></div>
-                        <div class='meta-row'><span>Payment Channel</span><span>Web</span></div>
-                        <div class='meta-row'><span>Payment Method</span><span>Wallet</span></div>
-                      </div>
-                      <div class='receipt-items'>
-                        <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
-                        <div class='row'><span>${
-                          selectedBill.itemName
-                        } (Qty: ${selectedBill.qty})</span><span class='right mono'>${
-                    selectedBill.paid
-                  }</span></div>
-                        <div class='total'><span>Total</span><span class='right mono'>${
-                          selectedBill.paid
-                        }</span></div>
-                      </div>
-                      <div class='receipt-foot'>Customer ID: ${customer.idNo}</div>
-                    </div>
-                    <script>
-                      window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
-                    </script>
-                  </body></html>`;
-                  const win = window.open("", "_blank");
-                  if (win) {
-                    win.document.open();
-                    win.document.write(html);
-                    win.document.close();
-                  }
+                  // open printable receipt modal (uses ReceiptModal component)
+                  setShowPrintableReceipt(true);
                 }}
               />
             </div>
           </div>
         )}
       </Modal>
+      {/* Printable receipt modal */}
+      <ReceiptModal
+        isOpen={showPrintableReceipt}
+        onClose={() => setShowPrintableReceipt(false)}
+        receiptData={
+          selectedBill
+            ? {
+                invoiceNumber: selectedBill.billNo,
+                transactionId: selectedBill.billNo,
+                amount:
+                  Number(String(selectedBill.paid).replace(/[^0-9.-]+/g, "")) ||
+                  0,
+                serviceName: selectedBill.itemName,
+                customerId: customer.idNo,
+                paymentDate: selectedBill.date,
+              }
+            : null
+        }
+      />
     </div>
   );
 };

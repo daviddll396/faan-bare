@@ -64,7 +64,13 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
   // parse incoming value which may be "HH:MM" (24h) or "h:MM AM/PM"
   const parseIncoming = (val?: string) => {
-    if (!val) return { hour12: "12", minute: "00", period: "AM", hour24: 0 };
+    if (!val)
+      return {
+        hour12: undefined as string | undefined,
+        minute: undefined as string | undefined,
+        period: undefined as string | undefined,
+        hour24: undefined as number | undefined,
+      };
     const trimmed = String(val).trim();
     const ampmMatch = /(AM|PM)$/i.test(trimmed);
     if (ampmMatch) {
@@ -99,23 +105,36 @@ const TimePicker: React.FC<TimePickerProps> = ({
       };
     }
 
-    return { hour12: "12", minute: "00", period: "AM", hour24: 0 };
+    return {
+      hour12: undefined as string | undefined,
+      minute: undefined as string | undefined,
+      period: undefined as string | undefined,
+      hour24: undefined as number | undefined,
+    };
   };
 
   const parsed = parseIncoming(value);
 
-  const [selectedHour, setSelectedHour] = useState<string>(
-    parsed.hour12.padStart(2, "0")
+  const [selectedHour, setSelectedHour] = useState<string | undefined>(
+    parsed.hour12 ? parsed.hour12.padStart(2, "0") : undefined
   );
-  const [selectedMinute, setSelectedMinute] = useState<string>(parsed.minute);
-  const [selectedPeriod, setSelectedPeriod] = useState<string>(parsed.period);
+  const [selectedMinute, setSelectedMinute] = useState<string | undefined>(
+    parsed.minute ?? undefined
+  );
+  const [selectedPeriod, setSelectedPeriod] = useState<string | undefined>(
+    parsed.period ?? undefined
+  );
+
+  const handleHourChange = (val: string) => setSelectedHour(val);
+  const handleMinuteChange = (val: string) => setSelectedMinute(val);
+  const handlePeriodChange = (val: string) => setSelectedPeriod(val);
 
   // Keep local state in sync when external value changes
   useEffect(() => {
     const p = parseIncoming(value);
-    setSelectedHour(p.hour12.padStart(2, "0"));
-    setSelectedMinute(p.minute);
-    setSelectedPeriod(p.period);
+    setSelectedHour(p.hour12 ? p.hour12.padStart(2, "0") : undefined);
+    setSelectedMinute(p.minute ?? undefined);
+    setSelectedPeriod(p.period ?? undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
@@ -127,6 +146,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
       didMountRef.current = true;
       return;
     }
+
+    // Only emit when all parts are selected (matches DatePicker behavior)
+    if (!selectedHour || !selectedMinute || !selectedPeriod) return;
 
     let hour24 = parseInt(selectedHour, 10) % 12;
     if (selectedPeriod === "PM") hour24 += 12;
@@ -155,7 +177,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
               value: o.value,
             }))}
             selected={hourOptions.find((o) => o.value === selectedHour) ?? null}
-            onChange={(opt) => setSelectedHour(String(opt.value))}
+            onChange={(opt) => handleHourChange(String(opt.value))}
             placeholder="HH"
             className="timepicker-hour"
             disabled={disabled}
@@ -163,16 +185,16 @@ const TimePicker: React.FC<TimePickerProps> = ({
         </div>
 
         <div style={{ flex: "1 1 0" }}>
-      <ListBox
+          <ListBox
             options={minuteOptions.map((o) => ({
-          id: o.id,
-          name: o.name,
-          value: o.value,
-        }))}
+              id: o.id,
+              name: o.name,
+              value: o.value,
+            }))}
             selected={
               minuteOptions.find((o) => o.value === selectedMinute) ?? null
             }
-            onChange={(opt) => setSelectedMinute(String(opt.value))}
+            onChange={(opt) => handleMinuteChange(String(opt.value))}
             placeholder="MM"
             className="timepicker-minute"
             disabled={disabled}
@@ -185,12 +207,12 @@ const TimePicker: React.FC<TimePickerProps> = ({
             selected={
               periodOptions.find((o) => o.value === selectedPeriod) ?? null
             }
-            onChange={(opt) => setSelectedPeriod(String(opt.value))}
-        placeholder="AM/PM"
+            onChange={(opt) => handlePeriodChange(String(opt.value))}
+            placeholder="AM/PM"
             className="timepicker-period"
             disabled={disabled}
-      />
-    </div>
+          />
+        </div>
       </div>
 
       {hasError && (

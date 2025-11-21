@@ -54,7 +54,7 @@ const FieldButton: React.FC<FieldButtonProps> = ({
               }`}
             >
               {!cfg.hideIcon && (
-                <FiSearch className="fieldbutton-search-icon" color="#626262" />
+                <FiSearch className="fieldbutton-search-icon" color="currentColor" />
               )}
               {cfg.options ? (
                 <select
@@ -93,7 +93,7 @@ const FieldButton: React.FC<FieldButtonProps> = ({
                 />
               )}
               {cfg.withDropdown && (
-                <FiChevronDown className="fieldbutton-search-chevron" />
+                <FiChevronDown className="fieldbutton-search-chevron" color="currentColor" />
               )}
             </div>
           </div>

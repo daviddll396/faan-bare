@@ -48,22 +48,22 @@
 .fieldbutton-search-wrapper {
   display: flex;
   align-items: center;
-  background: #fff;
-  border: 1px solid #e4e4e4;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 5px;
   padding: 0 16px 0 12px;
   /* Height will be set by media queries to match SolidButton exactly */
   font-size: var(--form-control-font-size, 16px);
   /* Avoid forcing a minimum width here so wrapper can remain compact */
   min-width: 0;
-  max-width: 200px;
+  max-width: 300px;
   flex: 0 1 auto;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
 }
 .fieldbutton-search-icon {
-  color: #626262 !important;
+  color: var(--color-text-secondary) !important;
   margin-right: 8px;
   width: 14px; /* 70% of 20px */
   height: 14px; /* 70% of 20px */
@@ -76,12 +76,11 @@
   background: transparent;
   font-size: inherit;
   font-weight: 500;
-  color: #000;
+  color: var(--color-text-primary);
   flex: 1;
   min-width: 0;
   width: 100%;
   max-width: 100%;
-  font-family: "Poppins", sans-serif;
   cursor: text;
   height: 100%;
   box-sizing: border-box;
@@ -92,12 +91,11 @@
   background: transparent;
   /* Font size will be set by global overrides to match SolidButton */
   font-weight: 500;
-  color: #969696;
+  color: var(--color-text-secondary);
   flex: 1;
   min-width: 0;
   width: 100%;
   max-width: 100%;
-  font-family: "Poppins", sans-serif;
   padding: 10px 6px;
   cursor: pointer;
   appearance: none;
@@ -106,7 +104,7 @@
 .fieldbutton-search-dropdown-wrapper {
   padding-right: 32px;
   /* let dropdown wrapper size naturally; don't fix width here */
-  max-width: 208px;
+  max-width: 312px;
   flex: 0 1 auto;
   box-sizing: border-box;
   overflow: hidden;
@@ -116,7 +114,7 @@
   right: 12px;
   width: 16px;
   height: 16px;
-  color: #969696;
+  color: var(--color-text-secondary);
   display: block;
 }
 
@@ -139,10 +137,10 @@
   .fieldbutton-search-wrapper {
     border-radius: 5px;
     padding: 0 15px 0 11px;
-    max-width: 190px;
+    max-width: 285px;
   }
   .fieldbutton-search-dropdown-wrapper {
-    max-width: 198px;
+    max-width: 297px;
   }
   .fieldbutton-search-icon {
     width: 13px; /* 70% of 19px */
@@ -163,7 +161,7 @@
   }
   .fieldbutton-search-wrapper {
     padding: 0 14px 0 10px;
-    max-width: 180px;
+    max-width: 270px;
     /* Match SolidButton height at this breakpoint exactly */
     height: 48px !important;
     min-height: 48px !important;
@@ -173,7 +171,7 @@
     min-height: 48px !important;
   }
   .fieldbutton-search-dropdown-wrapper {
-    max-width: 188px;
+    max-width: 282px;
   }
   .fieldbutton-search-icon {
     width: 13px; /* 70% of 18px */
@@ -220,10 +218,10 @@
   }
   .fieldbutton-search-wrapper {
     padding: 0 12px 0 8px;
-    max-width: 170px;
+    max-width: 255px;
   }
   .fieldbutton-search-dropdown-wrapper {
-    max-width: 178px;
+    max-width: 267px;
   }
   .fieldbutton-search-icon {
     width: 12px; /* 70% of 17px */
@@ -252,7 +250,7 @@
   .fieldbutton-search-wrapper {
     border-radius: 6px;
     padding: 0 10px 0 6px;
-    max-width: 160px;
+    max-width: 240px;
     /* Match SolidButton height at this breakpoint exactly */
     height: 40px !important;
     min-height: 40px !important;
@@ -262,7 +260,7 @@
     min-height: 40px !important;
   }
   .fieldbutton-search-dropdown-wrapper {
-    max-width: 168px;
+    max-width: 252px;
   }
   .fieldbutton-search-icon {
     width: 11px; /* 70% of 16px */
@@ -291,6 +289,7 @@
     /* Match SolidButton height at this breakpoint exactly */
     height: 36px !important;
     min-height: 36px !important;
+    max-width: 54%;
   }
   .fieldbutton-search-dropdown-wrapper {
     height: 36px !important;

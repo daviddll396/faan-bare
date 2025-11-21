@@ -15,6 +15,7 @@ import { FiUserPlus } from "react-icons/fi";
 import CheckCircle from "/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
+import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
 import Grid from "../../reusables/Grid/Grid";
 import ServiceCard from "../../reusables/ServiceCard/ServiceCard";
 import SlideIndicator from "../../reusables/SlideIndicator";
@@ -264,6 +265,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
   );
   const [showPaymentSuccess, setShowPaymentSuccess] = React.useState(false);
   const [showReceiptModal, setShowReceiptModal] = React.useState(false);
+  const [showPrintableReceipt, setShowPrintableReceipt] = React.useState(false);
   const [lastOrderId] = React.useState<string>("");
   const [receiptData, setReceiptData] = React.useState<{
     invoiceNumber: string;
@@ -496,7 +498,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     if (prevHadError) {
       setFieldErrors((prev) => ({ ...prev, [fieldName]: false }));
       // Clear any form-level error message only when the user addresses a missing field
-    if (bookingFormError) setBookingFormError(null);
+      if (bookingFormError) setBookingFormError(null);
     }
   };
 
@@ -506,7 +508,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
     setBookingForm((prev) => ({ ...prev, [name]: value }));
     if (prevHadError) {
       setFieldErrors((prev) => ({ ...prev, [name]: false }));
-    if (bookingFormError) setBookingFormError(null);
+      if (bookingFormError) setBookingFormError(null);
     }
   };
 
@@ -986,6 +988,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         name="firstName"
                         value={bookingForm.firstName}
                         onChange={handleBookingFormChange}
+                        restrict="alpha"
                       />
                     </div>
                     <div className="booking-form-field-col">
@@ -1001,6 +1004,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         name="lastName"
                         value={bookingForm.lastName}
                         onChange={handleBookingFormChange}
+                        restrict="alpha"
                       />
                     </div>
                     <div className="booking-form-field-col">
@@ -1078,6 +1082,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         name="mobile"
                         value={bookingForm.mobile}
                         onChange={handleBookingFormChange}
+                        restrict="numeric"
                       />
                     </div>
                     <div className="booking-form-field-col">
@@ -1235,6 +1240,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                         name="mobile"
                         value={bookingForm.mobile}
                         onChange={handleBookingFormChange}
+                        restrict="numeric"
                       />
                     </div>
 
@@ -1388,6 +1394,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           name="flightNumber"
                           value={bookingForm.flightNumber}
                           onChange={handleBookingFormChange}
+                          restrict="numeric"
                         />
                       </div>
                       <div className="booking-form-field-col">
@@ -1547,6 +1554,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                           name="flightNumber"
                           value={bookingForm.flightNumber}
                           onChange={handleBookingFormChange}
+                          restrict="numeric"
                         />
                       </div>
 
@@ -1651,7 +1659,12 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                   </div>
                   <div className="booking-passengers-list">
                     {passengers.length === 0 ? (
-                      <div style={{ textAlign: "center", color: "#6c6c6c" }}>
+                      <div
+                        style={{
+                          textAlign: "center",
+                          color: "var(--muted-gray)",
+                        }}
+                      >
                         <span
                           style={{
                             display: "inline-flex",
@@ -1917,8 +1930,8 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             </div>
           </Modal>
 
-          {/* Receipt Modal */}
-          <Modal
+          {/* Receipt Modal (uses reusable ReceiptModal component) */}
+          <ReceiptModal
             isOpen={showReceiptModal}
             onClose={() => {
               setShowReceiptModal(false);
@@ -1927,133 +1940,14 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               setReceiptData(null);
               setActiveTab("passenger");
             }}
-            showHeader={true}
-            headerTitle="PAYMENT RECEIPT"
-            className="service-receipt-modal"
-          >
-            {receiptData && (
-              <div className="receipt-paper">
-                <div className="receipt-head">
-                  <div className="receipt-brand">
-                    Federal Airports Authority of Nigeria
-                  </div>
-                  <div className="receipt-title">PAYMENT RECEIPT</div>
-                  <div className="receipt-sub">Thank you for your payment.</div>
-                </div>
-                <div className="receipt-meta">
-                  <div className="meta-row">
-                    <span>Invoice Number</span>
-                    <span className="mono">{receiptData.invoiceNumber}</span>
-                  </div>
-                  {/* RRR removed - Remita no longer used */}
-                  <div className="meta-row">
-                    <span>Transaction ID</span>
-                    <span className="mono">{receiptData.transactionId}</span>
-                  </div>
-                  <div className="meta-row">
-                    <span>Payment Date</span>
-                    <span>{receiptData.paymentDate}</span>
-                  </div>
-                </div>
-                <div className="receipt-items">
-                  <div className="thead">
-                    <span>Item</span>
-                    <span className="right">Amount</span>
-                  </div>
-                  <div className="row">
-                    <span>{receiptData.serviceName}</span>
-                    <span className="right mono">
-                      ₦{receiptData.amount.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="total">
-                    <span>Total</span>
-                    <span className="right mono">
-                      ₦{receiptData.amount.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-                <div className="receipt-foot">
-                  Customer ID: {receiptData.customerId}
-                </div>
-                <div className="receipt-download">
-                  <GradientButton
-                    fullWidth
-                    onClick={() => {
-                      if (!receiptData) return;
-                      const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
-                        receiptData.invoiceNumber
-                      }</title>
-                      <style>
-                        @page { margin: 10mm; }
-                        body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
-                        .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #f0f0f0;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
-                        .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#f0f0f0,#f0f0f0)}
-                        .receipt-head{text-align:center;margin:8px 0}
-                        .receipt-brand{font-weight:700;color:#000;font-size:14px}
-                        .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
-                        .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
-                        .receipt-meta{border:1px dashed #f0f0f0;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
-                        .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #f0f0f0}
-                        .receipt-meta .meta-row:last-child{border-bottom:none}
-                        .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
-                        .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
-                        .receipt-items{border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
-                        .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
-                        .receipt-items .thead{color:#969696;font-size:12px}
-                        .receipt-items .row{border-top:1px dashed #f0f0f0}
-                        .right{text-align:right}
-                        .receipt-items .total{border-top:2px solid #f0f0f0;font-weight:800}
-                        .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
-                      </style>
-                      </head><body>
-                        <div class='receipt-paper'>
-                          <div class='receipt-head'>
-                            <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
-                            <div class='receipt-title'>PAYMENT RECEIPT</div>
-                            <div class='receipt-sub'>Thank you for your payment.</div>
-                      </div>
-                          <div class='receipt-meta'>
-                            <div class='meta-row'><span>Invoice Number</span><span class='mono'>${
-                              receiptData.invoiceNumber
-                            }</span></div>
-                            <!-- RRR removed - Remita no longer used -->
-                            <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
-                              receiptData.transactionId
-                            }</span></div>
-                            <div class='meta-row'><span>Payment Date</span><span>${
-                              receiptData.paymentDate
-                            }</span></div>
-                      </div>
-                          <div class='receipt-items'>
-                            <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
-                            <div class='row'><span>${
-                              receiptData.serviceName
-                            }</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
-                            <div class='total'><span>Total</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
-                    </div>
-                          <div class='receipt-foot'>Customer ID: ${
-                            receiptData.customerId
-                          }</div>
-                      </div>
-                        <script>
-                          window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };
-                        </script>
-                      </body></html>`;
-                      const win = window.open("", "_blank");
-                      if (win) {
-                        win.document.open();
-                        win.document.write(html);
-                        win.document.close();
-                      }
-                    }}
-                  >
-                    Download PDF
-                  </GradientButton>
-                </div>
-              </div>
-            )}
-          </Modal>
+            receiptData={receiptData}
+          />
+          {/* Printable receipt modal implemented as its own component */}
+          <ReceiptModal
+            isOpen={showPrintableReceipt}
+            onClose={() => setShowPrintableReceipt(false)}
+            receiptData={receiptData}
+          />
         </div>
       );
     }
@@ -2226,14 +2120,16 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                     <button
                       className="action-btn-table edit"
                       onClick={() => handleOpenEditService(service)}
+                      aria-label={`Edit ${service.name}`}
                     >
-                      <Edit size={16} /> Edit
+                      <Edit size={16} />
                     </button>
                     <button
                       className="action-btn-table delete"
                       onClick={() => promptDeleteService(service)}
+                      aria-label={`Delete ${service.name}`}
                     >
-                      <Trash2 size={16} /> Delete
+                      <Trash2 size={16} />
                     </button>
                   </div>,
                 ])}
@@ -2288,6 +2184,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               )
                             }
                             className="service-input"
+                            restrict="alphanumeric"
                           />
                         </div>
                       </div>
@@ -2309,6 +2206,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
                               handleServiceChange(0, "price", e.target.value)
                             }
                             className="service-input service-price-input"
+                            restrict="numeric"
                           />
                         </div>
 

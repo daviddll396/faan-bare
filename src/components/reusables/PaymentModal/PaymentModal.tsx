@@ -52,9 +52,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   // Responsive modal styles
   const isMobile = windowWidth <= 768;
   const modalContainerStyle: React.CSSProperties = {
-    background: "#fff",
     borderRadius: isMobile ? 12 : 16,
-    boxShadow: "0 4px 32px rgba(34, 43, 69, 0.1)",
+    boxShadow: "0 4px 32px var(--shadow-0-1)",
     padding: isMobile ? 20 : 36,
     width: isMobile ? "100%" : 686,
     maxWidth: isMobile ? "100vw" : "95vw",
@@ -79,7 +78,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               border: "none",
               fontSize: 24,
               cursor: "pointer",
-              color: "#222",
+                color: "var(--text-222)",
             }}
             onClick={onClose}
             aria-label="Close"
@@ -106,7 +105,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               style={{
                 fontWeight: isMobile ? 600 : 700,
                 fontSize: isMobile ? 13 : 18,
-                color: "var(--black)",
+                color: "var(--color-text-primary)",
                 letterSpacing: 0.2,
                 textAlign: "left",
               }}
@@ -115,10 +114,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           </div>
 
-          <div style={{ width: "100%", marginBottom: 8 }}>
+            <div style={{ width: "100%", marginBottom: 8 }}>
             <div
               style={{
-                color: "var(--black)",
+                color: "var(--color-text-primary)",
                 fontWeight: 600,
                 fontSize: isMobile ? 13 : 16,
                 marginBottom: 8,
@@ -134,8 +133,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <div
               style={{
                 width: "100%",
-                background: "#0079480D",
-
+                background: "var(--green-007948-0d)",
                 borderRadius: 12,
                 padding: isMobile ? "10px" : "14px",
                 marginBottom: 24,
@@ -143,13 +141,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             >
               <div style={{ marginBottom: 10 }}>
                 <span
-                  style={{ color: "#6c7278", fontWeight: 500, fontSize: 14 }}
+                  style={{ color: "var(--color-text-secondary)", fontWeight: 500, fontSize: 14 }}
                 >
                   Amount
                 </span>
                 <span
                   style={{
-                    color: "var(--black)",
+                    color: "var(--color-text-primary)",
                     fontWeight: 600,
                     fontSize: isMobile ? 13 : 16,
                     float: "right",
@@ -162,18 +160,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               {paymentMethod === "transfer" && (
                 <>
                   <div style={{ marginBottom: 12 }}>
-                    <span
-                      style={{
-                        color: "#6c7278",
-                        fontWeight: 500,
-                        fontSize: isMobile ? 13 : 14,
-                      }}
-                    >
+                <span
+                  style={{
+                    color: "var(--color-text-secondary)",
+                    fontWeight: 500,
+                    fontSize: isMobile ? 13 : 14,
+                  }}
+                >
                       Account Number
                     </span>
                     <span
                       style={{
-                        color: "var(--black)",
+                        color: "var(--color-text-primary)",
                         fontWeight: 600,
                         fontSize: isMobile ? 13 : 16,
                         float: "right",
@@ -185,7 +183,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div style={{ marginBottom: 12 }}>
                     <span
                       style={{
-                        color: "#6c7278",
+                        color: "var(--color-text-secondary)",
                         fontWeight: 500,
                         fontSize: isMobile ? 13 : 14,
                       }}
@@ -194,7 +192,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     </span>
                     <span
                       style={{
-                        color: "var(--black)",
+                        color: "var(--color-text-primary)",
                         fontWeight: 600,
                         fontSize: isMobile ? 13 : 16,
                         float: "right",
@@ -206,7 +204,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div>
                     <span
                       style={{
-                        color: "#6c7278",
+                        color: "var(--color-text-secondary)",
                         fontWeight: 500,
                         fontSize: isMobile ? 13 : 14,
                       }}
@@ -215,7 +213,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     </span>
                     <span
                       style={{
-                        color: "var(--black)",
+                        color: "var(--color-text-primary)",
                         fontWeight: 600,
                         fontSize: isMobile ? 13 : 16,
                         float: "right",
@@ -230,14 +228,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {/* Payment Method Selection */}
             <div style={{ width: "100%", marginBottom: 24 }}>
-              <div
-                style={{
-                    color: "var(--black)",
-                  fontWeight: 600,
-                  fontSize: isMobile ? 13 : 16,
-                  marginBottom: 12,
-                }}
-              >
+            <div
+              style={{
+                color: "var(--color-text-primary)",
+                fontWeight: 600,
+                fontSize: isMobile ? 13 : 16,
+                marginBottom: 12,
+              }}
+            >
                 Pay With:
               </div>
               <div style={{ display: "flex", gap: 24 }}>
@@ -261,13 +259,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     style={{
                       width: 18,
                       height: 18,
-                      border: `2px solid ${
-                        paymentMethod === "card" ? "#007948" : "#d1d5db"
-                      }`,
+                      border: `2px solid ${paymentMethod === "card" ? "var(--green)" : "var(--border-d1)"}`,
                       borderRadius: "50%",
                       position: "relative",
                       background:
-                        paymentMethod === "card" ? "#007948" : "transparent",
+                        paymentMethod === "card" ? "var(--green)" : "transparent",
                     }}
                   >
                     {paymentMethod === "card" && (
@@ -286,7 +282,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     )}
                   </div>
                   <span
-                    style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: "var(--black)" }}
+                    style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: "var(--color-text-primary)" }}
                   >
                     Card
                   </span>
@@ -311,14 +307,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     style={{
                       width: 18,
                       height: 18,
-                      border: `2px solid ${
-                        paymentMethod === "transfer" ? "#007948" : "#d1d5db"
-                      }`,
+                      border: `2px solid ${paymentMethod === "transfer" ? "var(--green)" : "var(--border-d1)"}`,
                       borderRadius: "50%",
                       position: "relative",
                       background:
                         paymentMethod === "transfer"
-                          ? "#007948"
+                          ? "var(--green)"
                           : "transparent",
                     }}
                   >
@@ -338,7 +332,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     )}
                   </div>
                   <span
-                    style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: "var(--black)" }}
+                    style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: "var(--color-text-primary)" }}
                   >
                     Transfer
                   </span>
@@ -354,7 +348,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     display: "block",
                     fontSize: isMobile ? 13 : 14,
                     fontWeight: 600,
-                    color: "var(--black)",
+                    color: "var(--color-text-primary)",
                     marginBottom: 6,
                   }}
                 >
@@ -369,12 +363,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   style={{
                     width: "100%",
                     padding: "12px 16px",
-                    border: "1.5px solid #e4e4e7",
+                    border: "1.5px solid var(--color-e4e4e7)",
                     borderRadius: 8,
                     fontSize: isMobile ? 13 : 14,
                     fontWeight: 500,
-                    background: "#fff",
-                    color: "#18181b",
+                    background: "var(--color-surface)",
+                    color: "var(--color-text-primary)",
                     outline: "none",
                   }}
                 />
@@ -393,7 +387,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                       display: "block",
                       fontSize: isMobile ? 13 : 14,
                       fontWeight: 600,
-                      color: "var(--black)",
+                      color: "var(--color-text-primary)",
                       marginBottom: 6,
                     }}
                   >
@@ -408,12 +402,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     style={{
                       width: "100%",
                       padding: "12px 16px",
-                      border: "1.5px solid #e4e4e7",
+                      border: "1.5px solid var(--color-e4e4e7)",
                       borderRadius: 8,
                       fontSize: isMobile ? 13 : 14,
                       fontWeight: 500,
-                      background: "#fff",
-                      color: "#18181b",
+                      background: "var(--color-surface)",
+                      color: "var(--color-text-primary)",
                       outline: "none",
                     }}
                   />
@@ -424,7 +418,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                       display: "block",
                       fontSize: isMobile ? 13 : 14,
                       fontWeight: 600,
-                      color: "var(--black)",
+                      color: "var(--color-text-primary)",
                       marginBottom: 6,
                     }}
                   >
@@ -439,12 +433,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     style={{
                       width: "100%",
                       padding: "12px 16px",
-                      border: "1.5px solid #e4e4e7",
+                      border: "1.5px solid var(--color-e4e4e7)",
                       borderRadius: 8,
                       fontSize: isMobile ? 13 : 14,
                       fontWeight: 500,
-                      background: "#fff",
-                      color: "#18181b",
+                      background: "var(--color-surface)",
+                      color: "var(--color-text-primary)",
                       outline: "none",
                     }}
                   />
@@ -468,10 +462,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   style={{
                     width: 16,
                     height: 16,
-                    border: `2px solid ${saveCard ? "#007948" : "#d1d5db"}`,
+                    border: `2px solid ${saveCard ? "var(--green)" : "var(--border-d1)"}`,
                     borderRadius: 4,
                     position: "relative",
-                    background: saveCard ? "#007948" : "transparent",
+                    background: saveCard ? "var(--green)" : "transparent",
                   }}
                 >
                   {saveCard && (
@@ -481,7 +475,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        color: "white",
+                          color: "var(--color-surface)",
                         fontSize: 10,
                         fontWeight: "bold",
                       }}
@@ -491,7 +485,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   )}
                 </div>
                 <span
-                  style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: "var(--black)" }}
+                  style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: "var(--color-text-primary)" }}
                 >
                   Save card details
                 </span>
@@ -507,7 +501,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <p
               style={{
                 fontSize: isMobile ? 10 : 12,
-                color: "#acacac",
+                color: "var(--gray-acacac)",
                 textAlign: "center",
                 lineHeight: 1.5,
                 marginTop: "15px",
@@ -518,7 +512,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               described in our{" "}
               <a
                 href="#"
-                style={{ color: "#007948", textDecoration: "underline" }}
+                style={{ color: "var(--green)", textDecoration: "underline" }}
               >
                 privacy policy
               </a>

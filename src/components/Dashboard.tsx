@@ -1,20 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Sidebar from "./Sidebar/Sidebar";
 import Header from "./Header/Header";
-import DashboardPage from "./pages/DashoardPage/DashboardPage";
-import UsersPage from "./pages/UsersPage/UsersPage";
-import ServicesPage from "./pages/ServicesPage/ServicesPage";
-import CustomersPage from "./pages/CustomersPage/CustomersPage";
-import BillsPage from "./pages/BillsPage/BillsPage";
-import PaymentPage from "./pages/PaymentPage/PaymentPage";
-import LogoutPage from "./pages/LogoutPage/LogoutPage";
-import ProfilePage from "./pages/ProfilePage";
-import InvoicesPage from "./pages/InvoicesPage";
-import ReportsPage from "./pages/ReportsPage/ReportsPage";
-import AuditTrailPage from "./pages/AuditTrailPage/AuditTrailPage";
-import FeedbackDisputesPage from "./pages/FeedbackDisputesPage/FeedbackDisputesPage";
+import LoadingSpinner from "./reusables/LoadingSpinner/LoadingSpinner";
+
+const DashboardPage = React.lazy(
+  () => import("./pages/DashoardPage/DashboardPage")
+);
+const UsersPage = React.lazy(() => import("./pages/UsersPage/UsersPage"));
+const ServicesPage = React.lazy(
+  () => import("./pages/ServicesPage/ServicesPage")
+);
+const CustomersPage = React.lazy(
+  () => import("./pages/CustomersPage/CustomersPage")
+);
+const BillsPage = React.lazy(() => import("./pages/BillsPage/BillsPage"));
+const PaymentPage = React.lazy(() => import("./pages/PaymentPage/PaymentPage"));
+const LogoutPage = React.lazy(() => import("./pages/LogoutPage/LogoutPage"));
+const ProfilePage = React.lazy(() => import("./pages/ProfilePage"));
+const InvoicesPage = React.lazy(() => import("./pages/InvoicesPage"));
+const ReportsPage = React.lazy(() => import("./pages/ReportsPage/ReportsPage"));
+const AuditTrailPage = React.lazy(
+  () => import("./pages/AuditTrailPage/AuditTrailPage")
+);
+const FeedbackDisputesPage = React.lazy(
+  () => import("./pages/FeedbackDisputesPage/FeedbackDisputesPage")
+);
 import { useAuth } from "../contexts/AuthContext";
 import "./Dashboard.css";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 export type PageType =
   | "dashboard"
@@ -38,6 +51,8 @@ const Dashboard: React.FC = () => {
   const [prevPage, setPrevPage] = useState<PageType>(
     user?.role === "Guest" ? "services" : "dashboard"
   );
+  const navigate = useNavigate();
+  const location = useLocation();
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -109,55 +124,83 @@ const Dashboard: React.FC = () => {
     };
     return titles[page];
   };
-
-  const renderPageContent = () => {
-    if (!allowedPages.includes(activePage)) {
-      // For guest users, redirect to services if they try to access dashboard
-      if (user?.role === "Guest" && activePage === "dashboard") {
-        return <ServicesPage role={user?.role} />;
-      }
-      return <DashboardPage role={user?.role} />;
-    }
-    switch (activePage) {
+  // Map PageType to route path
+  const pathForPage = (page: PageType) => {
+    switch (page) {
       case "dashboard":
-        return <DashboardPage role={user?.role} />;
+        return "/";
       case "users":
-        return <UsersPage role={user?.role} />;
+        return "/users";
       case "services":
-        return <ServicesPage role={user?.role} />;
+        return "/services";
       case "customers":
-        return <CustomersPage role={user?.role} />;
+        return "/customers";
       case "bills":
-        return <BillsPage role={user?.role} />;
+        return "/bills";
       case "audit-trail":
-        return <AuditTrailPage role={user?.role} />;
+        return "/audit-trail";
       case "reports":
-        return <ReportsPage role={user?.role} />;
+        return "/reports";
       case "invoices":
-        return <InvoicesPage role={user?.role} />;
+        return "/invoices";
       case "payment":
-        return <PaymentPage role={user?.role} />;
+        return "/payment";
       case "feedback-disputes":
-        return <FeedbackDisputesPage />;
+        return "/feedback-disputes";
       case "logout":
-        return <LogoutPage />;
+        return "/logout";
       case "profile":
-        return <ProfilePage />;
+        return "/profile";
       default:
-        return <DashboardPage role={user?.role} />;
+        return "/";
     }
   };
 
-  const handlePageChange = (page: PageType) => {
+  // derive page from current location pathname
+  useEffect(() => {
+    const pathname = location.pathname || "/";
+    const match =
+      pathname === "/"
+        ? "dashboard"
+        : pathname.replace(/^\//, "").split("/")[0];
+    const page = [
+      "dashboard",
+      "users",
+      "services",
+      "customers",
+      "bills",
+      "audit-trail",
+      "reports",
+      "invoices",
+      "payment",
+      "feedback-disputes",
+      "logout",
+      "profile",
+    ].includes(match)
+      ? (match as PageType)
+      : "dashboard";
     if (allowedPages.includes(page)) {
       setActivePage(page);
+    } else {
+      // redirect to first allowed page if current path is not allowed
+      const defaultPage = allowedPages[0] || "dashboard";
+      navigate(pathForPage(defaultPage), { replace: true });
+      setActivePage(defaultPage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  const handlePageChange = (page: PageType) => {
+    if (allowedPages.includes(page)) {
       setPrevPage(page);
+      const path = pathForPage(page);
+      navigate(path);
     }
   };
 
   const handleLogout = () => {
     setPrevPage(activePage);
-    setActivePage("logout");
+    navigate(pathForPage("logout"));
   };
 
   return (
@@ -178,7 +221,50 @@ const Dashboard: React.FC = () => {
             onPageChange={(page) => handlePageChange(page as PageType)}
           />
         ) : null}
-        <div className="dashboard-content">{renderPageContent()}</div>
+
+        <div className="dashboard-content">
+          <Suspense
+            fallback={
+              <LoadingSpinner isVisible={true} message="Loading Data" />
+            }
+          >
+            <Routes>
+              <Route path="/" element={<DashboardPage role={user?.role} />} />
+              <Route path="/users" element={<UsersPage role={user?.role} />} />
+              <Route
+                path="/services"
+                element={<ServicesPage role={user?.role} />}
+              />
+              <Route
+                path="/customers"
+                element={<CustomersPage role={user?.role} />}
+              />
+              <Route path="/bills" element={<BillsPage role={user?.role} />} />
+              <Route
+                path="/audit-trail"
+                element={<AuditTrailPage role={user?.role} />}
+              />
+              <Route
+                path="/reports"
+                element={<ReportsPage role={user?.role} />}
+              />
+              <Route
+                path="/invoices"
+                element={<InvoicesPage role={user?.role} />}
+              />
+              <Route
+                path="/payment"
+                element={<PaymentPage role={user?.role} />}
+              />
+              <Route
+                path="/feedback-disputes"
+                element={<FeedbackDisputesPage />}
+              />
+              <Route path="/logout" element={<LogoutPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Routes>
+          </Suspense>
+        </div>
       </div>
     </div>
   );

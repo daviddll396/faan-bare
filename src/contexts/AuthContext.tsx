@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import CryptoJS from "crypto-js";
 import { logger } from "../utils/logger";
+import { apiFetch, abortPendingRequests } from "../utils/apiClient";
 
 // API Base URL - configure for different environments
 const getApiBaseUrl = (): string => {
@@ -609,7 +610,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       logger.info("Auth", "Fetching user details...");
 
-      const response = await fetch(API_ENDPOINTS.USER_DETAILS, {
+      const response = await apiFetch(API_ENDPOINTS.USER_DETAILS, {
         method: "GET",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -699,6 +700,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<{ success: boolean; message?: string }> => {
     try {
+      // Abort any pending API requests to avoid using stale tokens/responses
+      abortPendingRequests();
       // Check for mock admin credentials first
       if (
         email === MOCK_ADMIN_CREDENTIALS.email &&
@@ -807,7 +810,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         );
       });
 
-      const response = await fetch(API_ENDPOINTS.LOGIN, {
+      const response = await apiFetch(API_ENDPOINTS.LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -968,6 +971,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    // Abort any pending API requests to ensure no in-flight calls continue with old token
+    abortPendingRequests();
     setUser(null);
     localStorage.removeItem(STORAGE_KEYS.USER);
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
@@ -1083,7 +1088,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           amount: paidAmount,
         });
 
-        const response = await fetch(API_ENDPOINTS.FUND_WALLET, {
+        const response = await apiFetch(API_ENDPOINTS.FUND_WALLET, {
           method: "POST",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1187,7 +1192,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           API_ENDPOINTS.GET_ALL_TARIFFS
         );
 
-        const requestPromise = fetch(API_ENDPOINTS.GET_ALL_TARIFFS, {
+        const requestPromise = apiFetch(API_ENDPOINTS.GET_ALL_TARIFFS, {
           method: "GET",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1263,7 +1268,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Service", "Creating tariff", request);
 
-        const response = await fetch(API_ENDPOINTS.CREATE_TARIFF, {
+        const response = await apiFetch(API_ENDPOINTS.CREATE_TARIFF, {
           method: "POST",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1339,7 +1344,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log("📤 Request body:", requestBody);
 
-      const response = await fetch(API_ENDPOINTS.MAKE_PAYMENT, {
+      const response = await apiFetch(API_ENDPOINTS.MAKE_PAYMENT, {
         method: "POST",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1454,7 +1459,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log("📤 Request body:", requestBody);
 
-      const response = await fetch(API_ENDPOINTS.GENERATE_INVOICE, {
+      const response = await apiFetch(API_ENDPOINTS.GENERATE_INVOICE, {
         method: "POST",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1552,7 +1557,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("🔑 Using token:", token);
       console.log("⏰ Request timestamp:", new Date().toISOString());
 
-      const response = await fetch(API_ENDPOINTS.USER_DETAILS, {
+      const response = await apiFetch(API_ENDPOINTS.USER_DETAILS, {
         method: "GET",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1665,7 +1670,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
       const url = `${API_BASE_URL}/api/faan/transactions/history?startdate=${startDate}&&enddate=${endDate}`;
-      const response = await fetch(url, {
+      const response = await apiFetch(url, {
         method: "GET",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1724,7 +1729,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("🚀 === FETCHING ADMIN TRANSACTION HISTORY ===");
       console.log("📍 Request URL:", API_ENDPOINTS.ADMIN_TRANSACTION_HISTORY);
 
-      const response = await fetch(API_ENDPOINTS.ADMIN_TRANSACTION_HISTORY, {
+      const response = await apiFetch(API_ENDPOINTS.ADMIN_TRANSACTION_HISTORY, {
         method: "GET",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1801,7 +1806,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log("🚀 === FETCHING ADMIN DASHBOARD STATS ===");
         console.log("📍 Request URL:", API_ENDPOINTS.ADMIN_DASHBOARD_STATS);
 
-        const response = await fetch(API_ENDPOINTS.ADMIN_DASHBOARD_STATS, {
+        const response = await apiFetch(API_ENDPOINTS.ADMIN_DASHBOARD_STATS, {
           method: "GET",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1887,7 +1892,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("📍 Request URL:", searchUrl);
       console.log("🔍 Search Parameters:", { nin, firstName, lastName });
 
-      const response = await fetch(searchUrl, {
+      const response = await apiFetch(searchUrl, {
         method: "GET",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -1965,7 +1970,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("📍 Request URL:", customersUrl);
       console.log("🔍 Status Filter:", status);
 
-      const response = await fetch(customersUrl, {
+      const response = await apiFetch(customersUrl, {
         method: "GET",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2057,7 +2062,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("📋 New Status:", status);
       console.log("📤 Request Body:", requestBody);
 
-      const response = await fetch(changeStatusUrl, {
+      const response = await apiFetch(changeStatusUrl, {
         method: "POST",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2168,7 +2173,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("🔐 Encrypted payload length:", encryptedPayload.length);
 
       // Make the API call
-      const response = await fetch(API_ENDPOINTS.CREATE_CUSTOMER, {
+      const response = await apiFetch(API_ENDPOINTS.CREATE_CUSTOMER, {
         method: "POST",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2232,7 +2237,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         Authorization: `Bearer ${token}`,
       });
 
-      const response = await fetch(API_ENDPOINTS.USER_DETAILS, {
+      const response = await apiFetch(API_ENDPOINTS.USER_DETAILS, {
         method: "PATCH",
         headers: {
           "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2364,7 +2369,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify(request),
         });
 
-        const response = await fetch(API_ENDPOINTS.SUBMIT_FEEDBACK, {
+        const response = await apiFetch(API_ENDPOINTS.SUBMIT_FEEDBACK, {
           method: "POST",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2461,7 +2466,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Feedback", "Fetching customer feedback");
 
-        const response = await fetch(API_ENDPOINTS.GET_CUSTOMER_FEEDBACK, {
+        const response = await apiFetch(API_ENDPOINTS.GET_CUSTOMER_FEEDBACK, {
           method: "GET",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2567,7 +2572,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Feedback", "Fetching admin feedback", filters);
 
-        const response = await fetch(url, {
+        const response = await apiFetch(url, {
           method: "GET",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2649,7 +2654,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Dispute", "Submitting dispute", request);
 
-        const response = await fetch(API_ENDPOINTS.SUBMIT_DISPUTE, {
+        const response = await apiFetch(API_ENDPOINTS.SUBMIT_DISPUTE, {
           method: "POST",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2727,7 +2732,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Dispute", "Fetching customer disputes");
 
-        const response = await fetch(API_ENDPOINTS.CUSTOMER_DISPUTES, {
+        const response = await apiFetch(API_ENDPOINTS.CUSTOMER_DISPUTES, {
           method: "GET",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2833,7 +2838,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         logger.info("Dispute", "Fetching admin disputes", filters);
 
-        const response = await fetch(url, {
+        const response = await apiFetch(url, {
           method: "GET",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,
@@ -2925,7 +2930,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           status: request.status,
         };
 
-        const response = await fetch(API_ENDPOINTS.UPDATE_DISPUTE_STATUS, {
+        const response = await apiFetch(API_ENDPOINTS.UPDATE_DISPUTE_STATUS, {
           method: "PATCH",
           headers: {
             "Content-Type": REQUEST_HEADERS.CONTENT_TYPE,

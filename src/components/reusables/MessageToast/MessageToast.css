@@ -11,7 +11,7 @@
   text-align: center;
   min-width: 300px;
   max-width: 500px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-1);
   transition: all 0.3s ease-in-out;
   opacity: 0;
   pointer-events: none;
@@ -22,13 +22,13 @@
 }
 
 .message-toast-success {
-  background-color: #10b981;
-  color: white;
+  background-color: var(--color-success);
+  color: var(--color-text-on-accent);
 }
 
 .message-toast-error {
-  background-color: #ef4444;
-  color: white;
+  background-color: var(--color-error);
+  color: var(--color-text-on-accent);
 }
 
 .message-toast-in {

@@ -95,6 +95,11 @@ const FeedbackDisputesPage: React.FC = () => {
   const [showFeedbackDetailsModal, setShowFeedbackDetailsModal] =
     useState(false);
   const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
+  const [adminSelectedStatus, setAdminSelectedStatus] = useState<string>("");
+  // keep local admin-selected status in sync when a dispute is selected
+  useEffect(() => {
+    setAdminSelectedStatus(selectedDispute?.status ?? "");
+  }, [selectedDispute]);
   const [selectedFeedback, setSelectedFeedback] =
     useState<FeedbackHistory | null>(null);
   const [feedbackForm, setFeedbackForm] = useState<FeedbackFormData>({
@@ -173,8 +178,8 @@ const FeedbackDisputesPage: React.FC = () => {
         const adminFeedbackResult = await getAdminFeedback({});
 
         if (adminFeedbackResult?.data) {
-          const feedbackData: FeedbackHistory[] =
-            adminFeedbackResult.data.map((f) => ({
+          const feedbackData: FeedbackHistory[] = adminFeedbackResult.data.map(
+            (f) => ({
               id: f.id,
               message: f.message,
               category: f.category,
@@ -182,7 +187,8 @@ const FeedbackDisputesPage: React.FC = () => {
               status: f.status,
               customerId: f.customerId,
               customerName: f.customerName,
-            }));
+            })
+          );
           setFeedbackHistory(feedbackData);
         } else {
           setFeedbackHistory([]);
@@ -192,24 +198,22 @@ const FeedbackDisputesPage: React.FC = () => {
         const adminDisputesResult = await getAdminDisputes({});
 
         if (adminDisputesResult?.data) {
-          const disputesData: Dispute[] = adminDisputesResult.data.map(
-            (d) => ({
-              id: d.id,
-              reference: d.reference,
-              invoiceId: d.invoiceId,
-              paymentId: d.paymentId,
-              reason: d.reason,
-              category: d.category || "Others",
-              comments: d.comments,
-              status: d.status,
-              resolutionNotes: d.resolutionNotes,
-              customerId: d.customerId,
-              customerName: d.customerName,
-              createdAt: d.createdAt,
-              updatedAt: d.updatedAt,
-              attachmentUrl: d.attachmentUrl,
-            })
-          );
+          const disputesData: Dispute[] = adminDisputesResult.data.map((d) => ({
+            id: d.id,
+            reference: d.reference,
+            invoiceId: d.invoiceId,
+            paymentId: d.paymentId,
+            reason: d.reason,
+            category: d.category || "Others",
+            comments: d.comments,
+            status: d.status,
+            resolutionNotes: d.resolutionNotes,
+            customerId: d.customerId,
+            customerName: d.customerName,
+            createdAt: d.createdAt,
+            updatedAt: d.updatedAt,
+            attachmentUrl: d.attachmentUrl,
+          }));
           setDisputes(disputesData);
         } else {
           setDisputes([]);
@@ -231,11 +235,7 @@ const FeedbackDisputesPage: React.FC = () => {
             status:
               d.status === "CREATED"
                 ? "Pending"
-                : (d.status as
-                    | "Pending"
-                    | "In Review"
-                    | "Resolved"
-                    | "Closed"),
+                : (d.status as "Pending" | "In Review" | "Resolved" | "Closed"),
             resolutionNotes: d.resolutionNote || undefined,
             customerId: d.customerId,
             createdAt: d.createdAt,
@@ -306,24 +306,24 @@ const FeedbackDisputesPage: React.FC = () => {
       // Filter by status
       if (statusFilter) {
         filtered = filtered.filter(
-          (f) => f.status.toLowerCase() === statusFilter.toLowerCase()
+          (f) => (f.status || "").toLowerCase() === statusFilter.toLowerCase()
         );
       }
 
       // Filter by category
       if (categoryFilter) {
         filtered = filtered.filter(
-          (f) => f.category.toUpperCase() === categoryFilter.toUpperCase()
+          (f) =>
+            (f.category || "").toUpperCase() === categoryFilter.toUpperCase()
         );
       }
 
       // Filter by customer ID
       if (customerIdFilter) {
-        filtered = filtered.filter(
-          (f) =>
-            f.customerId
-              ?.toLowerCase()
-              .includes(customerIdFilter.toLowerCase())
+        filtered = filtered.filter((f) =>
+          (f.customerId || "")
+            .toLowerCase()
+            .includes(customerIdFilter.toLowerCase())
         );
       }
 
@@ -361,37 +361,34 @@ const FeedbackDisputesPage: React.FC = () => {
         };
         const displayStatus = statusMap[statusFilter] || statusFilter;
         filtered = filtered.filter(
-          (d) => d.status.toLowerCase() === displayStatus.toLowerCase()
+          (d) => (d.status || "").toLowerCase() === displayStatus.toLowerCase()
         );
       }
 
       // Filter by customer ID
       if (customerIdFilter) {
-        filtered = filtered.filter(
-          (d) =>
-            d.customerId
-              ?.toLowerCase()
-              .includes(customerIdFilter.toLowerCase())
+        filtered = filtered.filter((d) =>
+          (d.customerId || "")
+            .toLowerCase()
+            .includes(customerIdFilter.toLowerCase())
         );
       }
 
       // Filter by invoice ID
       if (invoiceFilter) {
-        filtered = filtered.filter(
-          (d) =>
-            d.invoiceId
-              ?.toLowerCase()
-              .includes(invoiceFilter.toLowerCase())
+        filtered = filtered.filter((d) =>
+          (d.invoiceId || "")
+            .toLowerCase()
+            .includes(invoiceFilter.toLowerCase())
         );
       }
 
       // Filter by payment ID
       if (paymentFilter) {
-        filtered = filtered.filter(
-          (d) =>
-            d.paymentId
-              ?.toLowerCase()
-              .includes(paymentFilter.toLowerCase())
+        filtered = filtered.filter((d) =>
+          (d.paymentId || "")
+            .toLowerCase()
+            .includes(paymentFilter.toLowerCase())
         );
       }
 
@@ -1736,21 +1733,13 @@ const FeedbackDisputesPage: React.FC = () => {
                       { value: "RESOLVED", label: "Resolved" },
                       { value: "CLOSED", label: "Closed" },
                     ]}
-                    value={selectedDispute.status}
+                    value={adminSelectedStatus || selectedDispute.status}
                     onChange={(option) => {
-                      // Store the selected status for later use
-                      const statusSelect = document.getElementById(
-                        "selectedStatus"
-                      ) as HTMLInputElement;
-                      if (statusSelect) statusSelect.value = option.value;
+                      // update local selected status for admin before saving
+                      setAdminSelectedStatus(option.value);
                     }}
                   />
-                  {/* Hidden input to store selected status */}
-                  <input
-                    type="hidden"
-                    id="selectedStatus"
-                    defaultValue={selectedDispute.status}
-                  />
+                  {/* local selected status is stored in `adminSelectedStatus` */}
                 </div>
 
                 <TextArea
@@ -1766,16 +1755,12 @@ const FeedbackDisputesPage: React.FC = () => {
                     text="Update Status"
                     onClick={() => {
                       const newStatus =
-                        (
-                          document.getElementById(
-                            "selectedStatus"
-                          ) as HTMLInputElement
-                        ).value || selectedDispute.status;
+                        adminSelectedStatus || selectedDispute.status;
                       const resolutionNotes = (
                         document.getElementById(
                           "resolutionNotes"
                         ) as HTMLInputElement
-                      ).value;
+                      )?.value;
                       handleUpdateDisputeStatus(
                         selectedDispute.id,
                         newStatus,
@@ -1833,7 +1818,10 @@ const FeedbackDisputesPage: React.FC = () => {
 
               <div className="info-row">
                 <span className="label">Message:</span>
-                <div className="value feedback-full-message">
+                <div
+                  className="value feedback-full-message"
+                 
+                >
                   {selectedFeedback.message}
                 </div>
               </div>

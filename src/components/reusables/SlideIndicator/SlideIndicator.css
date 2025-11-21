@@ -4,7 +4,7 @@
   justify-content: center;
   gap: 4px;
   padding: 8px 0;
-  color: #666;
+  color: var(--gray-666);
   font-size: 12px;
   font-weight: 500;
   opacity: 0.8;
@@ -18,7 +18,7 @@
 .slide-text {
   font-size: 12px;
   font-weight: 500;
-  color: #666;
+  color: var(--gray-666);
   justify-self: center;
   align-self: center;
 }

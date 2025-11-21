@@ -3,7 +3,6 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-family: "Poppins", sans-serif;
   font-weight: 600;
   letter-spacing: 1px;
   position: relative;
@@ -40,22 +39,38 @@
 
 /* Primary Variant (Green) */
 .gradient-button--primary {
-  background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
-  color: #fff;
+  background: linear-gradient(
+    180deg,
+    var(--color-accent) 0%,
+    var(--color-accent-strong) 100%
+  );
+  color: var(--color-text-on-accent);
 }
 
 .gradient-button--primary::before {
-  background: linear-gradient(180deg, #1aa476 0%, #058e5b 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-accent) 0%,
+    var(--color-accent-strong) 100%
+  );
 }
 
 /* Secondary Variant (Gray) */
 .gradient-button--secondary {
-  background: linear-gradient(180deg, #6c7278 0%, #4a5568 100%);
-  color: #fff;
+  background: linear-gradient(
+    180deg,
+    var(--color-secondary-start) 0%,
+    var(--color-secondary-end) 100%
+  );
+  color: var(--color-text-on-accent);
 }
 
 .gradient-button--secondary::before {
-  background: linear-gradient(180deg, #8a91a0 0%, #4a5568 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-secondary-start) 0%,
+    var(--color-secondary-end) 100%
+  );
 }
 
 /* Size Variants */
@@ -91,8 +106,8 @@
 /* Disabled State */
 .gradient-button--disabled,
 .gradient-button:disabled {
-  background: #e4e4e4 !important;
-  color: #969696 !important;
+  background: var(--color-disabled-bg) !important;
+  color: var(--color-disabled-text) !important;
   cursor: not-allowed !important;
   transform: none !important;
 }
@@ -109,11 +124,11 @@
 
 /* Focus State */
 .gradient-button:focus {
-  box-shadow: 0 0 0 3px rgba(23, 151, 108, 0.2);
+  box-shadow: 0 0 0 3px var(--color-accent-trans);
 }
 
 .gradient-button--secondary:focus {
-  box-shadow: 0 0 0 3px rgba(108, 114, 120, 0.2);
+  box-shadow: 0 0 0 3px var(--color-text-secondary-trans);
 }
 
 /* Loading State (for future use) */
@@ -141,8 +156,8 @@
 
 /* Close Variant (Light Green) */
 .gradient-button--close {
-  background: #eafaf3;
-  color: #007948;
+  background: var(--color-muted-surface);
+  color: var(--color-accent);
 }
 
 .gradient-button--close:hover {
@@ -174,6 +189,6 @@
     border-radius: 50%;
     align-self: flex-end;
 
-    background: #0079481a;
+    background: var(--color-accent-trans);
   }
 }

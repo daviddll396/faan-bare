@@ -11,6 +11,7 @@ interface GradientButtonProps {
   size?: "small" | "medium" | "large" | "tiny";
   fullWidth?: boolean;
   loading?: boolean;
+  id?: string;
 }
 
 const GradientButton: React.FC<GradientButtonProps> = ({
@@ -23,6 +24,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   size = "medium",
   fullWidth = false,
   loading = false,
+  id,
 }) => {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
@@ -48,6 +50,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
 
   return (
     <button
+      id={id}
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
@@ -65,19 +68,25 @@ const GradientButton: React.FC<GradientButtonProps> = ({
             height: "100%",
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            style={{ color: "currentColor" }}
+          >
             <circle
               cx="10"
               cy="10"
               r="8"
-              stroke="#666666"
+              stroke="currentColor"
               strokeWidth="3"
               fill="none"
               opacity="0.4"
             />
             <path
               d="M18 10a8 8 0 0 1-8 8"
-              stroke="#666666"
+              stroke="currentColor"
               strokeWidth="3"
               fill="none"
               strokeLinecap="round"

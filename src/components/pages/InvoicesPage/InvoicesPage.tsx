@@ -5,6 +5,7 @@ import PageTitle from "../../reusables/PageTitle/PageTitle";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Modal from "../../reusables/Modal/Modal";
+import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import InvoiceCard from "../../reusables/InvoiceCard/InvoiceCard";
 import "./InvoicesPage.css";
@@ -161,6 +162,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
   // Receipt modal state for invoice payments
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [showPrintableReceipt, setShowPrintableReceipt] = useState(false);
   const [receiptData, setReceiptData] = useState<{
     invoiceNumber: string;
     transactionId: number;
@@ -874,7 +876,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
         className="invoice-summary-modal"
       >
         <div className="modal-content">
-          <h2 style={{ color: "#000" }}>Invoice Summary</h2>
+          <h2 style={{ color: "var(--black)" }}>Invoice Summary</h2>
 
           {selectedInvoice && (
             <div
@@ -883,18 +885,20 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
             >
               {selectedInvoice.services.map((s) => (
                 <div key={s.id} className="booking-summary-row">
-                  <span style={{ color: "#000" }}>
+                  <span style={{ color: "var(--black)" }}>
                     {s.name} x{s.quantity}
                   </span>
-                  <span style={{ color: "#000" }}>
+                  <span style={{ color: "var(--black)" }}>
                     ₦{(s.amount * s.quantity).toLocaleString()}
                   </span>
                 </div>
               ))}
 
               <div className="booking-summary-row">
-                <span style={{ color: "#969696" }}>SUB-TOTAL</span>
-                <span style={{ color: "#000" }}>
+                <span style={{ color: "var(--color-disabled-text)" }}>
+                  SUB-TOTAL
+                </span>
+                <span style={{ color: "var(--black)" }}>
                   ₦
                   {invoiceBreakdown
                     ? invoiceBreakdown.subtotal.toLocaleString()
@@ -903,13 +907,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               </div>
 
               <div className="booking-summary-row">
-                <span style={{ color: "#969696" }}>
+                <span style={{ color: "var(--color-disabled-text)" }}>
                   VAT{" "}
                   {invoiceBreakdown
                     ? `(${(invoiceBreakdown.vatRate * 100).toFixed(2)}%)`
                     : ""}
                 </span>
-                <span style={{ color: "#000" }}>
+                <span style={{ color: "var(--black)" }}>
                   ₦
                   {invoiceBreakdown
                     ? invoiceBreakdown.vatAmount.toLocaleString()
@@ -918,13 +922,15 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               </div>
 
               <div className="booking-summary-row">
-                <span style={{ color: "#969696" }}>OTHER CHARGES</span>
-                <span style={{ color: "#000" }}>₦0</span>
+                <span style={{ color: "var(--color-disabled-text)" }}>
+                  OTHER CHARGES
+                </span>
+                <span style={{ color: "var(--black)" }}>₦0</span>
               </div>
 
               <div className="booking-summary-row total">
-                <span style={{ color: "#000" }}>TOTAL</span>
-                <span style={{ color: "#000" }}>
+                <span style={{ color: "var(--black)" }}>TOTAL</span>
+                <span style={{ color: "var(--black)" }}>
                   ₦
                   {invoiceBreakdown
                     ? invoiceBreakdown.total.toLocaleString()
@@ -932,21 +938,39 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
                 </span>
               </div>
 
-              <div style={{ marginTop: 12, fontSize: 13, color: "#969696" }}>
-                <strong style={{ color: "#000" }}>Invoice:</strong>{" "}
+              <div
+                style={{
+                  marginTop: 12,
+                  fontSize: 13,
+                  color: "var(--color-disabled-text)",
+                }}
+              >
+                <strong style={{ color: "var(--black)" }}>Invoice:</strong>{" "}
                 {selectedInvoice.invoiceNumber}
               </div>
 
-              <div style={{ marginTop: 6, fontSize: 13, color: "#969696" }}>
-                <strong style={{ color: "#000" }}>Customer:</strong>{" "}
+              <div
+                style={{
+                  marginTop: 6,
+                  fontSize: 13,
+                  color: "var(--color-disabled-text)",
+                }}
+              >
+                <strong style={{ color: "var(--black)" }}>Customer:</strong>{" "}
                 {selectedInvoice.customerName}
               </div>
 
-              <div style={{ marginTop: 6, fontSize: 13, color: "#969696" }}>
-                <strong style={{ color: "#000" }}>Created:</strong>{" "}
+              <div
+                style={{
+                  marginTop: 6,
+                  fontSize: 13,
+                  color: "var(--color-disabled-text)",
+                }}
+              >
+                <strong style={{ color: "var(--black)" }}>Created:</strong>{" "}
                 {selectedInvoice.createdAt.toLocaleDateString()}
                 {/* •
-                <strong style={{ color: "#000", marginLeft: 8 }}>
+                <strong style={{ color: "var(--black)", marginLeft: 8 }}>
                   Due:
                 </strong>{" "}
                 {selectedInvoice.dueDate.toLocaleDateString()} */}
@@ -1049,87 +1073,8 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               <GradientButton
                 fullWidth
                 onClick={() => {
-                  const html = `<!doctype html><html><head><meta charset='utf-8'><title>Receipt ${
-                    receiptData.invoiceNumber
-                  }</title>
-                  <style>
-                    @page { margin: 10mm; }
-                    body{background:#eef2f7;margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#000}
-                    .receipt-paper{position:relative;max-width:720px;margin:0 auto;background:#fff;border:1px solid #f0f0f0;border-radius:14px;box-shadow:0 2px 10px rgba(17,24,39,0.06);padding:24px;color:#000}
-                    .receipt-paper:before{content:"";position:absolute;left:0;right:0;top:-8px;height:16px;background:radial-gradient(circle at 8px 8px,#fff 8px,transparent 8px) left top/16px 16px repeat-x,linear-gradient(#f0f0f0,#f0f0f0)}
-                    .receipt-head{text-align:center;margin:8px 0}
-                    .receipt-brand{font-weight:700;color:#000;font-size:14px}
-                    .receipt-title{font-size:16px;font-weight:800;color:#000;letter-spacing:0.06em;margin-top:2px}
-                    .receipt-sub{font-size:12px;color:#969696;margin-top:2px}
-                    .receipt-meta{border:1px dashed #f0f0f0;border-radius:10px;padding:12px 14px;margin:12px 0 16px 0}
-                    .receipt-meta .meta-row{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;border-bottom:1px dashed #f0f0f0}
-                    .receipt-meta .meta-row:last-child{border-bottom:none}
-                    .receipt-meta .meta-row span:first-child{color:#969696;font-size:12px}
-                    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-weight:700}
-                    .receipt-items{border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
-                    .receipt-items .thead,.receipt-items .row,.receipt-items .total{display:grid;grid-template-columns:1fr 160px;gap:12px;padding:10px 0}
-                    .receipt-items .thead{color:#969696;font-size:12px}
-                    .receipt-items .row{border-top:1px dashed #f0f0f0}
-                    .right{text-align:right}
-                    .receipt-items .total{border-top:2px solid #f0f0f0;font-weight:800}
-                    .receipt-foot{margin-top:10px;color:#969696;font-size:12px;text-align:center}
-                  </style>
-                  </head><body>
-                    <div class='receipt-paper'>
-                      <div class='receipt-head'>
-                        <div class='receipt-brand'>Federal Airports Authority of Nigeria</div>
-                        <div class='receipt-title'>PAYMENT RECEIPT</div>
-                        <div class='receipt-sub'>Thank you for your payment.</div>
-                      </div>
-                      <div class='receipt-meta'>
-                        <div class='meta-row'><span>Invoice Number</span><span class='mono'>${
-                          receiptData.invoiceNumber
-                        }</span></div>
-                        <div class='meta-row'><span>Transaction ID</span><span class='mono'>${
-                          receiptData.transactionId
-                        }</span></div>
-                        <div class='meta-row'><span>Payment Date</span><span>${
-                          receiptData.paymentDate
-                        }</span></div>
-                        <div class='meta-row'><span>Payment Channel</span><span>${
-                          receiptData.paymentChannel || "Web"
-                        }</span></div>
-                        <div class='meta-row'><span>Payment Method</span><span>${
-                          receiptData.paymentMethod || "Wallet"
-                        }</span></div>
-                      </div>
-                      <div class='receipt-items'>
-                        <div class='thead'><span>Item</span><span class='right'>Amount</span></div>
-                        ${receiptData.items
-                          .map(
-                            (it) =>
-                              `<div class='row'><span>${it.name} x${
-                                it.quantity
-                              }</span><span class='right mono'>₦${(
-                                it.amount * it.quantity
-                              ).toLocaleString()}</span></div>`
-                          )
-                          .join("")}
-                        <div class='row'><span>SUBTOTAL</span><span class='right mono'>₦${receiptData.subtotal.toLocaleString()}</span></div>
-                        <div class='row'><span>VAT (${(
-                          receiptData.vatRate * 100
-                        ).toFixed(
-                          2
-                        )}%)</span><span class='right mono'>₦${receiptData.vatAmount.toLocaleString()}</span></div>
-                        <div class='total'><span>Total</span><span class='right mono'>₦${receiptData.amount.toLocaleString()}</span></div>
-                      </div>
-                      <div class='receipt-foot'>Customer ID: ${
-                        user?.customerId || ""
-                      }</div>
-                    </div>
-                    <script>window.onload = function(){ setTimeout(function(){ window.print(); window.close(); }, 250); };</script>
-                  </body></html>`;
-                  const win = window.open("", "_blank");
-                  if (win) {
-                    win.document.open();
-                    win.document.write(html);
-                    win.document.close();
-                  }
+                  // open printable receipt modal
+                  setShowPrintableReceipt(true);
                 }}
               >
                 Download PDF
@@ -1138,6 +1083,23 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           </div>
         )}
       </Modal>
+      {/* Printable receipt modal */}
+      <ReceiptModal
+        isOpen={showPrintableReceipt}
+        onClose={() => setShowPrintableReceipt(false)}
+        receiptData={
+          receiptData
+            ? {
+                invoiceNumber: receiptData.invoiceNumber,
+                transactionId: receiptData.transactionId,
+                amount: receiptData.amount,
+                serviceName: receiptData.items?.[0]?.name ?? "Invoice",
+                customerId: receiptData.customerId ?? "",
+                paymentDate: receiptData.paymentDate,
+              }
+            : null
+        }
+      />
       {/* View Details Modal */}
       <Modal
         isOpen={showViewDetailsModal}

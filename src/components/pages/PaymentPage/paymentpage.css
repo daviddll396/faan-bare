@@ -25,12 +25,12 @@
   font-size: 20px;
   font-weight: 700;
   margin: 0;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .payment-search-subtitle {
   margin: 6px 0 0 0;
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 14px;
 }
 
@@ -59,12 +59,12 @@
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 4px 0;
-  color: #000;
+  color: var(--color-text-primary);
 }
 
 .payment-search-subtitle {
   font-size: 14px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .payment-invoice-details-title {
-  color: #000;
+  color: var(--color-text-primary);
   font-weight: 600;
   font-size: 16px;
   margin-bottom: 8px;
@@ -145,7 +145,7 @@
 }
 
 .payment-invoice-table thead tr {
-  background: #fafafa;
+  background: var(--color-muted-surface);
 }
 
 .payment-invoice-actions {
@@ -153,232 +153,9 @@
   width: 100%;
 }
 
-/* Receipt Modal Styles */
-.payment-receipt-modal {
-  min-width: 520px;
-  max-width: 720px;
-}
+/* Receipt modal styles moved into reusable ReceiptModal component */
 
-/* Thermal receipt styles (aligned with other pages) */
-.receipt-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-
-  padding: 24px 28px;
-  position: relative;
-  overflow: hidden;
-  color: #000;
-  min-height: 450px;
-  width: 100%;
-  max-width: 580px;
-}
-.receipt-paper::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -8px;
-  height: 16px;
-  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
-      top / 16px 16px repeat-x,
-    linear-gradient(#f0f0f0, #f0f0f0);
-}
-
-.receipt-head {
-  text-align: center;
-  margin: 8px 0;
-}
-.receipt-brand {
-  font-weight: 700;
-  color: #000;
-  font-size: 14px;
-}
-.receipt-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #000;
-  letter-spacing: 0.06em;
-  margin-top: 2px;
-}
-.receipt-sub {
-  font-size: 12px;
-  color: #969696;
-  margin-top: 2px;
-}
-.receipt-meta {
-  border: 1px dashed #f0f0f0;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin: 12px 0 16px 0;
-}
-.receipt-meta .meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4px;
-  border-bottom: 1px dashed #f0f0f0;
-}
-.receipt-meta .meta-row:last-child {
-  border-bottom: none;
-}
-.receipt-meta .meta-row span:first-child {
-  color: #969696;
-  font-size: 12px;
-}
-.receipt-items {
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
-}
-.receipt-items .thead,
-.receipt-items .row,
-.receipt-items .total {
-  display: grid;
-  grid-template-columns: 1fr 160px;
-  gap: 12px;
-  padding: 10px 0;
-}
-.receipt-items .thead {
-  color: #969696;
-  font-size: 12px;
-}
-.receipt-items .row {
-  border-top: 1px dashed #f0f0f0;
-}
-.receipt-items .right {
-  text-align: right;
-}
-.receipt-items .total {
-  border-top: 2px solid #f0f0f0;
-  font-weight: 800;
-}
-.receipt-foot {
-  margin-top: 10px;
-  color: #969696;
-  font-size: 12px;
-  text-align: center;
-}
-.receipt-download {
-  margin-top: 12px;
-}
-
-/* Receipt Header */
-/* legacy styles below kept for reference but thermal receipt is used now */
-
-.receipt-success-icon {
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.receipt-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #10b981;
-  margin-bottom: 6px;
-}
-
-.receipt-subtitle {
-  font-size: 15px;
-  color: #6c7278;
-  font-weight: 500;
-}
-
-/* Receipt Details */
-.receipt-details {
-  width: 100%;
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #e4e4e4;
-}
-
-.receipt-detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #e4e4e4;
-}
-
-.receipt-detail-row:last-child {
-  border-bottom: none;
-}
-
-.receipt-detail-label {
-  color: #6c7278;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.receipt-detail-value {
-  color: #000;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.receipt-detail-value.highlight {
-  color: #10b981;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-/* Receipt Summary */
-.receipt-summary {
-  width: 100%;
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #e4e4e4;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.receipt-summary-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.receipt-summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  font-size: 14px;
-}
-
-.receipt-summary-item span:first-child {
-  color: #6c7278;
-  font-weight: 500;
-}
-
-.receipt-summary-item span:last-child {
-  color: #000;
-  font-weight: 600;
-}
-
-.receipt-summary-item.total {
-  border-top: 2px solid #e4e4e4;
-  margin-top: 6px;
-  padding-top: 12px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.receipt-summary-item.total span:first-child {
-  color: #000;
-}
-
-.receipt-summary-item.total span:last-child {
-  color: #10b981;
-}
-
-.payment-receipt-actions {
-  margin-top: 8px;
-  width: 100%;
-}
+/* receipt styles moved to src/components/reusables/ReceiptModal/ReceiptModal.css */
 
 /* Reason Modal Styles */
 .payment-reason-modal {
@@ -395,15 +172,15 @@
 
 .payment-reason-message {
   width: 100%;
-  background: #fff7f7; /* subtle red tint */
+  background: var(--color-error-trans); /* subtle red tint */
   border-radius: 12px;
   padding: 16px 18px;
-  color: #b91c1c;
+  color: var(--color-error);
   font-weight: 700;
   font-size: 15px;
   margin-bottom: 16px;
   text-align: center;
-  box-shadow: 0 6px 20px rgba(185, 28, 28, 0.06);
+  box-shadow: 0 6px 20px var(--color-error-trans);
 }
 
 .payment-reason-details {
@@ -419,19 +196,19 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background: #fbfbfb;
+  background: var(--color-muted-surface);
   border-radius: 8px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
 }
 
 .payment-reason-label {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-weight: 600;
   font-size: 13px;
 }
 
 .payment-reason-value {
-  color: #000;
+  color: var(--color-text-primary);
   font-weight: 700;
   font-size: 14px;
 }
@@ -468,13 +245,13 @@
 .payment-total-label {
   text-align: left;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   padding: 10px 8px;
 }
 
 .payment-total-value {
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   padding: 10px 8px;
 }
 
@@ -574,50 +351,7 @@
     max-width: 420px;
   }
 
-  /* Receipt adjustments */
-  .receipt-paper {
-    padding: 12px;
-  }
-
-  .receipt-brand {
-    font-size: 10px;
-  }
-
-  .receipt-title {
-    font-size: 12px;
-  }
-
-  .receipt-sub {
-    font-size: 8px;
-  }
-
-  .receipt-meta {
-    padding: 6px 8px;
-    margin: 6px 0 8px 0;
-  }
-
-  .receipt-meta .meta-row {
-    padding: 3px 2px;
-  }
-
-  .receipt-meta .meta-row span:first-child {
-    font-size: 8px;
-  }
-
-  .receipt-items .thead,
-  .receipt-items .row,
-  .receipt-items .total {
-    gap: 6px;
-    padding: 4px 0;
-  }
-
-  .receipt-items .thead {
-    font-size: 8px;
-  }
-
-  .receipt-download {
-    margin-top: 6px;
-  }
+  /* receipt responsive tweaks moved to ReceiptModal.css */
 
   /* Reason modal adjustments */
   .payment-reason-message {
@@ -677,50 +411,7 @@
     max-width: 85vw;
   }
 
-  /* Receipt adjustments */
-  .receipt-paper {
-    padding: 8px;
-  }
-
-  .receipt-brand {
-    font-size: 8px;
-  }
-
-  .receipt-title {
-    font-size: 10px;
-  }
-
-  .receipt-sub {
-    font-size: 6px;
-  }
-
-  .receipt-meta {
-    padding: 4px 6px;
-    margin: 4px 0 6px 0;
-  }
-
-  .receipt-meta .meta-row {
-    padding: 2px 1px;
-  }
-
-  .receipt-meta .meta-row span:first-child {
-    font-size: 6px;
-  }
-
-  .receipt-items .thead,
-  .receipt-items .row,
-  .receipt-items .total {
-    gap: 4px;
-    padding: 2px 0;
-  }
-
-  .receipt-items .thead {
-    font-size: 6px;
-  }
-
-  .receipt-download {
-    margin-top: 4px;
-  }
+  /* receipt responsive tweaks moved to ReceiptModal.css */
 
   /* Reason modal adjustments */
   .payment-reason-message {
@@ -780,50 +471,7 @@
     max-width: 90vw;
   }
 
-  /* Receipt adjustments */
-  .receipt-paper {
-    padding: 4px;
-  }
-
-  .receipt-brand {
-    font-size: 6px;
-  }
-
-  .receipt-title {
-    font-size: 8px;
-  }
-
-  .receipt-sub {
-    font-size: 4px;
-  }
-
-  .receipt-meta {
-    padding: 2px 4px;
-    margin: 2px 0 4px 0;
-  }
-
-  .receipt-meta .meta-row {
-    padding: 1px 0px;
-  }
-
-  .receipt-meta .meta-row span:first-child {
-    font-size: 4px;
-  }
-
-  .receipt-items .thead,
-  .receipt-items .row,
-  .receipt-items .total {
-    gap: 2px;
-    padding: 1px 0;
-  }
-
-  .receipt-items .thead {
-    font-size: 4px;
-  }
-
-  .receipt-download {
-    margin-top: 2px;
-  }
+  /* receipt responsive tweaks moved to ReceiptModal.css */
 
   /* Reason modal adjustments */
   .payment-reason-message {
@@ -857,13 +505,13 @@
 
 /* Cancellation Reason Modal Styles */
 .reason-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
+  box-shadow: 0 2px 10px var(--shadow-17-24-39-006);
   padding: 24px 28px;
   position: relative;
   overflow: hidden;
-  color: #000;
+  color: var(--color-text-primary);
   min-height: 450px;
   width: 100%;
   max-width: 580px;
@@ -876,7 +524,7 @@
 
 .reason-brand {
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   font-size: 14px;
   margin-bottom: 4px;
 }
@@ -884,22 +532,22 @@
 .reason-title {
   font-size: 18px;
   font-weight: 800;
-  color: #000;
+  color: var(--color-text-primary);
   letter-spacing: 0.06em;
   margin-bottom: 2px;
 }
 
 .reason-sub {
   font-size: 12px;
-  color: #969696;
+  color: var(--color-text-secondary);
 }
 
 .reason-meta {
-  border: 1px dashed #f0f0f0;
+  border: 1px dashed var(--color-weak-border);
   border-radius: 10px;
   padding: 16px 18px;
   margin: 16px 0 20px 0;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .reason-meta .meta-row {
@@ -907,7 +555,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 4px;
-  border-bottom: 1px dashed #f0f0f0;
+  border-bottom: 1px dashed var(--color-weak-border);
 }
 
 .reason-meta .meta-row:last-child {
@@ -915,16 +563,9 @@
 }
 
 .reason-meta .meta-row span:first-child {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 13px;
   font-weight: 500;
-}
-
-.mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-weight: 600;
-  color: #000;
 }
 
 .status-indicator {
@@ -938,9 +579,9 @@
 }
 
 .status-indicator.cancelled {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  background: var(--color-error-trans);
+  border: 1px solid var(--color-error-strong);
+  color: var(--color-error);
 }
 
 .status-icon {
@@ -964,27 +605,27 @@
 
 .reason-label {
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 8px;
   font-size: 14px;
 }
 
 .reason-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-trans);
+  border: 1px solid var(--color-error-strong);
   border-radius: 8px;
   padding: 16px;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 14px;
   line-height: 1.5;
 }
 
 .reason-help {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-trans);
+  border: 1px solid var(--color-success-trans);
   border-radius: 8px;
   padding: 16px;
-  color: #166534;
+  color: var(--color-success);
   font-size: 14px;
   line-height: 1.5;
 }

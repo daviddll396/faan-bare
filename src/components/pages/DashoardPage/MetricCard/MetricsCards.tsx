@@ -37,11 +37,26 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
   const { user, getTransactionHistory } = useAuth();
 
   // convert hex color to rgba string with alpha
-  const hexToRgba = (hex?: string, alpha = 0.08) => {
-    if (!hex || typeof hex !== "string") return `rgba(16,24,40,${alpha})`;
+  const hexToRgba = (hexOrVar?: string, alpha = 0.08) => {
+    if (!hexOrVar || typeof hexOrVar !== "string")
+      return `rgba(16,24,40,${alpha})`;
+
+    // resolve CSS var() values at runtime when provided
+    let resolved = hexOrVar.trim();
+    if (resolved.startsWith("var(")) {
+      try {
+        const varName = resolved.replace(/^var\(\s*([^,\s)]+).*\)$/, "$1");
+        const computed = getComputedStyle(
+          document.documentElement
+        ).getPropertyValue(varName.replace(/^--/, "--"));
+        if (computed) resolved = computed.trim();
+      } catch {
+        // fall through and attempt to parse the original string
+      }
+    }
+
     // normalize: allow '#RRGGBB' or '#RRGGBBAA'
-    const cleaned = hex.trim();
-    const m = cleaned.match(/^#?([a-fA-F0-9]{6})([a-fA-F0-9]{2})?$/);
+    const m = resolved.match(/^#?([a-fA-F0-9]{6})([a-fA-F0-9]{2})?$/);
     if (!m) return `rgba(16,24,40,${alpha})`;
     const hex6 = m[1];
     const r = parseInt(hex6.slice(0, 2), 16);
@@ -194,29 +209,29 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
       key: "total",
       title: "Total Bookings",
       icon: BillIcon,
-      color: "#3B82F6",
-      bgColor: "#EFF6FF",
+      color: "var(--blue-3b82f6)",
+      bgColor: "var(--blue-3b82f6-bg)",
     },
     {
       key: "completed",
       title: "Completed Bookings",
       icon: PaymentIcon,
-      color: "#10B981",
-      bgColor: "#ECFDF5",
+      color: "var(--green-10b981)",
+      bgColor: "var(--pale-green)",
     },
     {
       key: "cancelled",
       title: "Cancelled/Abandoned Bookings",
       icon: CancelledIcon,
-      color: "#EF4444",
-      bgColor: "#FEF2F2",
+      color: "var(--red-ef4444)",
+      bgColor: "var(--red-ef4444-bg)",
     },
     {
       key: "pending",
       title: "Pending Bookings",
       icon: PendingIcon,
-      color: "#CC52001A",
-      bgColor: "#FEF3C7",
+      color: "var(--pending-cc52001a)",
+      bgColor: "var(--bg-fef3c7)",
     },
   ];
 
@@ -270,9 +285,17 @@ const MetricsCards: React.FC<MetricsCardsProps> = ({ adminStats }) => {
           <div
             key={index}
             className="metric-card"
-            style={{
-              boxShadow: `0 10px 30px ${hexToRgba(metric.color, 0.08)}`,
-            }}
+            style={(() => {
+              const cssVarName = "--metric-shadow-color";
+              const isDark =
+                typeof document !== "undefined" &&
+                document.documentElement.getAttribute("data-theme") === "dark";
+              const alpha = isDark ? 0.04 : 0.08;
+              const styleObj = {
+                [cssVarName]: hexToRgba(metric.color, alpha),
+              } as unknown as React.CSSProperties;
+              return styleObj;
+            })()}
           >
             <div className="metric-card-top">
               <div className="metric-card-title">{metric.title}</div>

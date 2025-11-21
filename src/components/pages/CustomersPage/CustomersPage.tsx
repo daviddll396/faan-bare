@@ -16,6 +16,7 @@ import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Input from "../../reusables/Input/Input";
+import DatePicker from "../../reusables/DatePicker/DatePicker";
 import ListBox from "../../reusables/ListBox/ListBox";
 
 interface CustomersPageProps {
@@ -138,6 +139,15 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     creationType: "ADMIN",
     customerType: "INDIVIDUAL",
   });
+
+  // Maximum allowed DOB (users must be at least 18 years old)
+  const today = new Date();
+  const maxDob = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  );
+  const maxDobIso = maxDob.toISOString().slice(0, 10);
 
   const customerTypeOptions = [
     { id: "individual", name: "Individual", value: "INDIVIDUAL" },
@@ -321,6 +331,22 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       return false;
     }
 
+    // Validate age: must be 18 years or older
+    if (form.dob) {
+      const dobDate = new Date(form.dob);
+      if (isNaN(dobDate.getTime())) {
+        showToastMessage("Please enter a valid date of birth", "error");
+        return false;
+      }
+      const ageDiffMs = Date.now() - dobDate.getTime();
+      const ageDate = new Date(ageDiffMs);
+      const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+      if (age < 18) {
+        showToastMessage("You must be at least 18 years old to register", "error");
+        return false;
+      }
+    }
+
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) {
@@ -459,6 +485,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                     firstName: e.target.value,
                   }))
                 }
+                  restrict="alpha"
               />
               <Input
                 placeholder="Last name"
@@ -469,6 +496,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                     lastName: e.target.value,
                   }))
                 }
+                  restrict="alpha"
               />
               <Input
                 placeholder="NIN number"
@@ -476,6 +504,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 onChange={(e) =>
                   setSearchForm((prev) => ({ ...prev, nin: e.target.value }))
                 }
+                  restrict="numeric"
               />
             </div>
 
@@ -635,6 +664,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   type="text"
                   value={form.firstName}
                   onChange={handleCreateChange}
+                      restrict="alpha"
                   placeholder="Enter first name"
                   required
                 />
@@ -646,6 +676,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   type="text"
                   value={form.lastName}
                   onChange={handleCreateChange}
+                      restrict="alpha"
                   placeholder="Enter last name"
                   required
                 />
@@ -654,12 +685,11 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
             <div className="customer-form-row">
               <div className="customer-form-group">
                 <label>Date of Birth *</label>
-                <Input
-                  name="dob"
-                  type="date"
+                <DatePicker
                   value={form.dob}
-                  onChange={handleCreateChange}
-                  required
+                  onChange={(v) => setForm((prev) => ({ ...prev, dob: v }))}
+                  max={maxDobIso}
+                  className="customer-dob-picker"
                 />
               </div>
               <div className="customer-form-group">
@@ -669,6 +699,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   type="tel"
                   value={form.phoneNumber}
                   onChange={handleCreateChange}
+                  restrict="numeric"
                   placeholder="08012345678"
                   required
                 />
@@ -693,6 +724,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   type="text"
                   value={form.nin}
                   onChange={handleCreateChange}
+                  restrict="numeric"
                   placeholder="12345678901"
                   required
                 />

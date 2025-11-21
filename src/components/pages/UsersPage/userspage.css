@@ -74,7 +74,7 @@
   gap: 12px;
   justify-content: space-between;
   padding-top: 8px;
-  border-top: 1px solid #f5f5f5;
+  border-top: 1px solid var(--muted-light);
 }
 
 /* FieldButton customizations for UsersPage */
@@ -124,13 +124,13 @@
 .userspage-search-title {
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   margin: 0 0 4px 0;
 }
 
 .userspage-search-subtitle {
   font-size: 14px;
-  color: #969696;
+  color: var(--color-disabled-text);
   margin: 0;
   line-height: 1.5;
 }
@@ -196,7 +196,7 @@
 .user-form-grid label {
   font-size: 14px;
   font-weight: 500;
-  color: #6c7278;
+  color: var(--color-text-secondary);
 }
 
 .form-actions {
@@ -206,8 +206,8 @@
 
 .save-btn-full {
   width: 100%;
-  background: linear-gradient(180deg, #17976c 0%, #058e5b 100%);
-  color: #fff;
+  background: linear-gradient(180deg, var(--green) 0%, var(--color-accent-strong) 100%);
+  color: var(--color-surface);
   font-size: 14px;
   font-weight: 600;
   border: none;
@@ -220,7 +220,7 @@
   overflow: hidden;
   transition: transform 0.16s ease, box-shadow 0.16s ease;
   z-index: 1;
-  box-shadow: 0 8px 28px rgba(2, 6, 23, 0.06);
+  box-shadow: 0 8px 28px var(--shadow-very-weak);
 }
 
 .save-btn-full::before {
@@ -230,7 +230,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, #1aa476 0%, #058e5b 100%);
+  background: linear-gradient(180deg, var(--green-1aa476) 0%, var(--color-accent-strong) 100%);
   opacity: 0;
   transition: opacity 0.2s ease;
   border-radius: 10px;
@@ -259,7 +259,7 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .select-chevron {
@@ -544,7 +544,7 @@
     padding: 0;
     margin: 0 0 12px 0;
     box-shadow: none;
-    background: #fff;
+    background: var(--color-surface);
     overflow-x: auto;
   }
   /* add-user-form-card styles migrated to Card component */

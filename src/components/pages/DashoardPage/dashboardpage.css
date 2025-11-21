@@ -36,13 +36,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none; /* borderless elevated style */
   padding: 28px 28px;
   min-width: 340px;
   max-width: 100%;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08);
+  box-shadow: 0 6px 24px var(--shadow-strong);
 }
 .all-transactions-header {
   display: flex;
@@ -62,12 +62,12 @@
   height: 48px;
 }
 .wallet-label {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 16px;
   font-weight: 500;
 }
 .wallet-balance {
-  color: #007948;
+  color: var(--color-accent);
   font-size: 28px;
   font-weight: 700;
   margin-top: 2px;
@@ -85,7 +85,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #6c7278;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,12 +95,12 @@
 }
 
 .balance-toggle-btn:hover {
-  color: #007948;
+  color: var(--color-accent);
 }
 
 .balance-toggle-btn:focus {
   outline: none;
-  color: #007948;
+  color: var(--color-accent);
 }
 
 .balance-toggle-btn:active {
@@ -114,7 +114,7 @@
 }
 .booking-card {
   flex: 1;
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
   padding: 24px 18px;
@@ -122,10 +122,10 @@
   flex-direction: column;
   align-items: center;
   min-width: 160px;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08);
+  box-shadow: 0 6px 24px var(--shadow-strong);
 }
 .booking-label {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 15px;
   font-weight: 500;
   margin-bottom: 8px;
@@ -133,19 +133,19 @@
 .booking-value {
   font-size: 24px;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
 }
 .booking-card.completed .booking-value {
-  color: #22c55e;
+  color: var(--color-success);
 }
 .booking-card.cancelled .booking-value {
-  color: #ef4444;
+  color: var(--color-error);
 }
 .booking-card.pending .booking-value {
-  color: #f59e42;
+  color: var(--color-warning);
 }
 .booking-card.total .booking-value {
-  color: #2563eb;
+  color: var(--color-info);
 }
 
 @media (max-width: 768px) {
@@ -168,7 +168,7 @@
 .fund-wallet-title {
   font-weight: 700;
   font-size: 22px;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 10px;
   text-align: left;
   width: 100%;
@@ -177,7 +177,7 @@
 .fund-wallet-divider {
   width: 100%;
   height: 1px;
-  background: #e4e4e4;
+  background: var(--color-border);
   margin-bottom: 22px;
 }
 
@@ -189,7 +189,7 @@
 }
 
 .fund-wallet-label {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 6px;
@@ -206,7 +206,7 @@
   left: 18px;
   top: 50%;
   transform: translateY(-50%);
-  color: #007948;
+  color: var(--color-accent);
   font-size: 22px;
   font-weight: 600;
   pointer-events: none;
@@ -214,20 +214,20 @@
 
 .fund-wallet-input {
   width: 100%;
-  border: 2px solid #007948;
+  border: 2px solid var(--color-accent);
   border-radius: 5px;
   padding: 16px 18px 16px 44px;
   font-size: 22px;
   font-family: inherit;
-  background: #fff;
-  color: #000;
+  background: var(--color-surface);
+  color: var(--black);
   outline: none;
   font-weight: 600;
   box-sizing: border-box;
 }
 
 .fund-wallet-input:focus {
-  border: 2px solid #15976c;
+  border: 2px solid var(--green-15976c);
 }
 
 /* Remove up/down arrows from number input */
@@ -243,8 +243,12 @@
 
 .fund-wallet-submit-btn {
   width: 100%;
-  background: linear-gradient(180deg, #15976c 0%, #007948 100%);
-  color: #fff;
+  background: linear-gradient(
+    180deg,
+    var(--green-15976c) 0%,
+    var(--green) 100%
+  );
+  color: var(--color-surface);
   font-size: 18px;
   font-weight: 700;
   border: none;
@@ -257,17 +261,21 @@
 }
 
 .fund-wallet-submit-btn.disabled {
-  background: #e4e4e4;
-  color: #969696;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
 }
 
 .fund-wallet-submit-btn.disabled:hover {
-  background: #e4e4e4;
+  background: var(--color-border);
 }
 
 .fund-wallet-submit-btn:hover:not(.disabled) {
-  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+  background: linear-gradient(
+    180deg,
+    var(--green-1ec28b) 0%,
+    var(--color-accent-strong) 100%
+  );
 }
 
 /* Fund Wallet Success Content */
@@ -296,14 +304,14 @@
 .fund-wallet-success-title {
   font-size: 28px;
   font-weight: 800;
-  color: #000;
+  color: var(--black);
   text-align: center;
   margin-bottom: 10px;
   margin-top: 0;
 }
 
 .fund-wallet-success-desc {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 18px;
   font-weight: 400;
   margin-bottom: 32px;
@@ -418,7 +426,6 @@
   .dashboard-bottom-grid {
     display: flex;
     flex-direction: column;
-    
   }
 
   .dashboard-page-content {
@@ -491,7 +498,7 @@
 .all-transactions-title {
   font-size: 22px;
   font-weight: 500;
-  color: #000;
+  color: var(--black);
 
   margin: 0;
 }
@@ -505,7 +512,7 @@
 .funding-records-title {
   font-size: 18px;
   font-weight: 700;
-  color: #000;
+  color: var(--black);
   margin: 0 0 12px 0;
 }
 

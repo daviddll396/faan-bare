@@ -41,7 +41,6 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
   expiryWarning,
   onViewDetails,
   onPayNow,
-  onDownloadReceipt,
   className = "",
 }) => {
   const formatCurrency = (amount: number) => {
@@ -134,14 +133,6 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
             size="small"
             variant="primary"
             onClick={onPayNow}
-          />
-        )}
-        {status === "paid" && onDownloadReceipt && (
-          <SolidButton
-            text="Download"
-            size="small"
-            variant="secondary"
-            onClick={onDownloadReceipt}
           />
         )}
       </div>

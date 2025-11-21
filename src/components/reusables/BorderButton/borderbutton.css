@@ -1,10 +1,10 @@
 /* BorderButton Base Styles */
 .border-button {
-  background: #f7f9fc;
-  border: 1px solid #007948;
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent);
   border-radius: 12px;
   padding: 12px 18px;
-  color: #007948;
+  color: var(--color-accent);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -13,11 +13,11 @@
   gap: 8px;
   height: var(--form-control-height, 56px);
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+ 
 }
 
 .border-button:hover {
-  background: #0079480d;
+  background: var(--color-accent-trans);
 }
 
 .button-icon {

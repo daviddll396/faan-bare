@@ -17,13 +17,13 @@
 .bill-search-title {
   font-size: 24px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0 0 8px 0;
 }
 
 .bill-search-subtitle {
   font-size: 16px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -95,13 +95,13 @@
 .bill-creation-title {
   font-size: 24px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0 0 8px 0;
 }
 
 .bill-creation-subtitle {
   font-size: 19px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -121,7 +121,7 @@
 .bill-item-card {
   border-radius: 12px;
   padding: 12px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
 }
 
 .bill-item-header {
@@ -130,7 +130,7 @@
   gap: 8px;
   margin-bottom: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .bill-item-number {
@@ -139,8 +139,8 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: #007948;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
   border-radius: 50%;
   font-size: 12px;
   font-weight: 600;
@@ -150,7 +150,7 @@
 .bill-item-title {
   font-size: 14px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0;
   flex: 1;
 }
@@ -158,7 +158,7 @@
 .bill-item-remove {
   background: transparent;
   border: none;
-  color: #d32f2f;
+  color: var(--color-error);
   font-weight: 600;
   cursor: pointer;
   padding: 4px 8px;
@@ -168,8 +168,8 @@
 }
 
 .bill-item-remove:hover {
-  color: #a50d0d;
-  background: rgba(213, 36, 36, 0.04);
+  color: var(--color-error);
+  background: var(--color-error-trans);
 }
 
 .bill-item-fields {
@@ -279,11 +279,11 @@
 
 /* Customer Header */
 .bill-customer-header {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 16px;
   padding: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px var(--shadow-black-04);
+  border: 1px solid var(--color-weak-border);
 }
 
 .customer-header-content {
@@ -305,9 +305,9 @@
   justify-content: center;
   width: 80px;
   height: 80px;
-  background: #f0f9ff;
+  background: var(--color-muted-surface);
   border-radius: 50%;
-  border: 3px solid #007948;
+  border: 3px solid var(--color-accent);
 }
 
 .customer-basic-info {
@@ -317,19 +317,19 @@
 .customer-name {
   font-size: 28px;
   font-weight: 700;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0 0 8px 0;
 }
 
 .customer-id {
   font-size: 16px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 0 0 4px 0;
 }
 
 .customer-nin {
   font-size: 16px;
-  color: #969696;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -376,7 +376,7 @@
   border-radius: 0;
   margin-top: 0;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-weak-border);
 }
 
 /* Customer Cards */
@@ -387,13 +387,13 @@
   gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .customer-card-header h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -419,7 +419,7 @@
 .customer-field label {
   font-size: 12px;
   font-weight: 500;
-  color: #969696;
+  color: var(--color-disabled-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -427,7 +427,7 @@
 .customer-field span {
   font-size: 16px;
   font-weight: 500;
-  color: #000;
+  color: var(--color-text-primary);
   word-break: break-word;
 }
 
@@ -443,10 +443,10 @@
 }
 
 .bill-search-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
+  box-shadow: var(--shadow-1);
   padding: 28px 28px;
   width: 420px;
   max-width: 95vw;
@@ -458,13 +458,13 @@
 .bill-search-title {
   font-size: 20px;
   font-weight: 500;
-  color: #000;
+  color: var(--color-text-primary);
   margin-bottom: 6px;
   text-align: left;
 }
 
 .bill-search-subtitle {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 15px;
   font-weight: 400;
   margin-bottom: 28px;
@@ -484,7 +484,7 @@
 }
 
 .bill-form-group label {
-  color: #6c7278;
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
 }
@@ -540,8 +540,12 @@
 
 .bill-search-btn {
   width: 100%;
-  background: linear-gradient(180deg, #007948 0%, #007948 100%);
-  color: #fff;
+  background: linear-gradient(
+    180deg,
+    var(--color-accent) 0%,
+    var(--color-accent-strong) 100%
+  );
+  color: var(--color-text-on-accent);
   font-size: 16px;
   font-weight: 700;
   border: none;
@@ -554,7 +558,11 @@
 }
 
 .bill-search-btn:hover {
-  background: linear-gradient(180deg, #1ec28b 0%, #058e5b 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-accent-strong) 0%,
+    var(--color-accent) 100%
+  );
 }
 
 .bill-modal-backdrop {
@@ -565,7 +573,7 @@
   bottom: 0;
   width: 100% !important;
   height: 100% !important;
-  background: rgba(34, 43, 69, 0.32);
+  background: var(--color-backdrop);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -588,13 +596,13 @@
 }
 
 .bill-loader-spinner {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 32px 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 32px rgba(34, 43, 69, 0.1);
+  box-shadow: 0 4px 32px var(--shadow-0-1);
   width: 128px !important;
   height: 128px !important;
   flex-shrink: 0;
@@ -618,9 +626,9 @@
 }
 
 .bill-customer-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
 
   padding: 20px 20px;
   display: flex;
@@ -639,7 +647,7 @@
 }
 
 .bill-customer-label {
-  color: #969696;
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
   text-align: left;
@@ -664,7 +672,7 @@
 .bill-results-title {
   font-size: 18px;
   font-weight: 600;
-  color: #333333;
+  color: var(--dark-black);
   zoom: 1;
   transition: zoom 0.3s ease;
 }
@@ -684,142 +692,16 @@
 }
 
 /* Bill Receipt Modal Styles */
-.bill-receipt-modal {
-  min-width: 520px;
-  max-width: 800px;
-}
-
-/* Receipt Paper Styles (matching PaymentPage) */
-.receipt-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  padding: 24px 28px;
-  position: relative;
-  overflow: hidden;
-  color: #000;
-  min-height: 450px;
-  width: 100%;
-  max-width: 580px;
-}
-
-.receipt-paper::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -8px;
-  height: 16px;
-  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
-      top / 16px 16px repeat-x,
-    linear-gradient(#f0f0f0, #f0f0f0);
-}
-
-.receipt-head {
-  text-align: center;
-  margin: 8px 0;
-}
-
-.receipt-brand {
-  font-weight: 700;
-  color: #000;
-  font-size: 14px;
-}
-
-.receipt-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #000;
-  letter-spacing: 0.06em;
-  margin-top: 2px;
-}
-
-.receipt-sub {
-  font-size: 12px;
-  color: #969696;
-  margin-top: 2px;
-}
-
-.receipt-meta {
-  border: 1px dashed #f0f0f0;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin: 12px 0 16px 0;
-}
-
-.receipt-meta .meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4px;
-  border-bottom: 1px dashed #f0f0f0;
-}
-
-.receipt-meta .meta-row:last-child {
-  border-bottom: none;
-}
-
-.receipt-meta .meta-row span:first-child {
-  color: #969696;
-  font-size: 12px;
-}
-
-.receipt-items {
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.receipt-items .thead,
-.receipt-items .row,
-.receipt-items .total {
-  display: grid;
-  grid-template-columns: 1fr 160px;
-  gap: 12px;
-  padding: 10px 0;
-}
-
-.receipt-items .thead {
-  color: #969696;
-  font-size: 12px;
-}
-
-.receipt-items .row {
-  border-top: 1px dashed #f0f0f0;
-}
-
-.receipt-items .right {
-  text-align: right;
-}
-
-.receipt-items .total {
-  border-top: 2px solid #f0f0f0;
-  font-weight: 800;
-}
-
-.receipt-foot {
-  margin-top: 10px;
-  color: #969696;
-  font-size: 12px;
-  text-align: center;
-}
-
-.receipt-download {
-  margin-top: 12px;
-}
-
-.mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-weight: 700;
-}
+/* Receipt modal styles moved into `ReceiptModal` component */
 
 /* Invoice Details Paper Styles (matching InvoicesPage) */
 .invoice-details-paper {
-  background: #fff;
-  border: 1px solid #f0f0f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-weak-border);
   padding: 24px 28px;
   position: relative;
   overflow: hidden;
-  color: #000;
+  color: var(--color-text-primary);
   min-height: 400px;
   width: 100%;
   max-width: 580px;
@@ -832,9 +714,13 @@
   right: 0;
   top: -8px;
   height: 16px;
-  background: radial-gradient(circle at 8px 8px, #fff 8px, transparent 8px) left
-      top / 16px 16px repeat-x,
-    linear-gradient(#f0f0f0, #f0f0f0);
+  background: radial-gradient(
+        circle at 8px 8px,
+        var(--color-surface) 8px,
+        transparent 8px
+      )
+      left top / 16px 16px repeat-x,
+    linear-gradient(var(--color-weak-border), var(--color-weak-border));
 }
 
 .invoice-details-head {
@@ -844,26 +730,26 @@
 
 .invoice-details-brand {
   font-weight: 700;
-  color: #000;
+  color: var(--black);
   font-size: 14px;
 }
 
 .invoice-details-title {
   font-size: 16px;
   font-weight: 800;
-  color: #000;
+  color: var(--black);
   letter-spacing: 0.06em;
   margin-top: 2px;
 }
 
 .invoice-details-sub {
   font-size: 12px;
-  color: #969696;
+  color: var(--color-disabled-text);
   margin-top: 2px;
 }
 
 .invoice-details-meta {
-  border: 1px dashed #f0f0f0;
+  border: 1px dashed var(--color-weak-border);
   border-radius: 10px;
   padding: 12px 14px;
   margin: 12px 0 16px 0;
@@ -874,7 +760,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 4px;
-  border-bottom: 1px dashed #f0f0f0;
+  border-bottom: 1px dashed var(--color-weak-border);
 }
 
 .invoice-details-meta .meta-row:last-child {
@@ -882,13 +768,13 @@
 }
 
 .invoice-details-meta .meta-row span:first-child {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 12px;
 }
 
 .invoice-details-items {
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-weak-border);
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .invoice-details-items .thead,
@@ -901,12 +787,12 @@
 }
 
 .invoice-details-items .thead {
-  color: #969696;
+  color: var(--color-disabled-text);
   font-size: 12px;
 }
 
 .invoice-details-items .row {
-  border-top: 1px dashed #f0f0f0;
+  border-top: 1px dashed var(--color-weak-border);
 }
 
 .invoice-details-items .right {
@@ -914,7 +800,7 @@
 }
 
 .invoice-details-items .total {
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid var(--color-weak-border);
   font-weight: 800;
 }
 
@@ -935,24 +821,24 @@
 .bill-total-label {
   text-align: left;
   font-weight: 700;
-  color: #000;
+  color: var(--black);
   padding: 10px 8px;
 }
 
 .bill-total-value {
   font-weight: 700;
-  color: #000;
+  color: var(--black);
   padding: 10px 8px;
   text-align: right;
 }
 
 .bill-results-table-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
   margin-top: 12px;
   padding: 0;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
+  box-shadow: var(--shadow-strong);
 }
 
 .bill-results-table {
@@ -962,14 +848,14 @@
 }
 
 .invoice-header-item {
-  color: #000;
+  color: var(--black);
 }
 
 .add-service-form-bill {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 8px;
   border: none;
-  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
+  box-shadow: var(--shadow-strong);
   padding: 24px 28px;
   width: 100%;
   zoom: 1;
@@ -985,7 +871,7 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background-color: #cd00000d;
+  background-color: var(--danger-tint);
   margin-left: 8px;
   width: 48px;
   height: 48px;
@@ -1007,7 +893,7 @@
 }
 
 .bill-customer-value.highlight {
-  color: #007948;
+  color: var(--green);
 }
 
 .customer-modal-backdrop {
@@ -1499,7 +1385,7 @@
     padding: 18px 15px;
     margin: 0 0 12px 0;
     box-shadow: none;
-    background: #fff;
+    background: var(--color-surface);
     width: 100%;
     max-width: 100%;
     border-width: 1px;
@@ -1542,7 +1428,7 @@
     padding: 18px 15px;
     margin: 0 0 12px 0;
     box-shadow: none;
-    background: #fff;
+    background: var(--color-surface);
     width: 100%;
     max-width: 100%;
     border-width: 1px;
@@ -1606,7 +1492,7 @@
     margin-top: 8px;
     padding: 0;
     box-shadow: none;
-    background: #fff;
+    background: var(--color-surface);
     overflow-x: auto;
   }
   .bill-results-table {
@@ -1698,8 +1584,6 @@
     width: 100%;
   }
 
-
-
   .bill-invoice-title {
     font-size: 14px;
     font-weight: 500;
@@ -1724,56 +1608,7 @@
     gap: 4px;
   }
 
-  /* Mobile Receipt Modal Adjustments */
-  .bill-receipt-modal {
-    min-width: 90vw;
-    max-width: 95vw;
-  }
-
-  .receipt-paper {
-    padding: 16px;
-    max-width: 100%;
-  }
-
-  .receipt-brand {
-    font-size: 12px;
-  }
-
-  .receipt-title {
-    font-size: 14px;
-  }
-
-  .receipt-sub {
-    font-size: 10px;
-  }
-
-  .receipt-meta {
-    padding: 10px 12px;
-    margin: 10px 0 12px 0;
-  }
-
-  .receipt-meta .meta-row {
-    padding: 6px 4px;
-  }
-
-  .receipt-meta .meta-row span:first-child {
-    font-size: 11px;
-  }
-
-  .receipt-items .thead,
-  .receipt-items .row,
-  .receipt-items .total {
-    gap: 8px;
-    padding: 8px 0;
-  }
-
-  .receipt-items .thead {
-    font-size: 11px;
-  }
-
-  .receipt-foot {
-    font-size: 11px;
-  }
+  /* receipt modal styles moved to src/components/reusables/ReceiptModal/ReceiptModal.css */
 
   .bill-receipt-cards {
     flex-direction: column;
@@ -2107,9 +1942,12 @@
   height: 80px;
   border-radius: 50%;
   /* background: #fcfcfc; */
+  /* exact match variable for #fcfcfc */
+  /* background: var(--fcfcfc); */
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-accent);
 
   flex-shrink: 0;
 }
@@ -2124,14 +1962,14 @@
 .bills-customer-name {
   font-size: 28px;
   font-weight: 700;
-  color: #000;
+  color: var(--black);
   margin: 0;
 }
 
 .bills-customer-id,
 .bills-customer-nin {
   font-size: 16px;
-  color: #969696;
+  color: var(--color-disabled-text);
   margin: 0;
   font-weight: 500;
 }
@@ -2156,10 +1994,10 @@
 }
 
 .bills-info-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 5px;
   padding: 24px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
 }
 
 .bills-info-card-header {
@@ -2168,13 +2006,13 @@
   gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--color-weak-border);
 }
 
 .bills-info-card-header h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #000;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -2193,7 +2031,7 @@
 .bills-info-label {
   font-size: 12px;
   font-weight: 500;
-  color: #969696;
+  color: var(--color-disabled-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -2201,7 +2039,7 @@
 .bills-info-value {
   font-size: 16px;
   font-weight: 500;
-  color: #000;
+  color: var(--black);
   word-break: break-word;
 }
 
@@ -2236,7 +2074,7 @@
   border-radius: 0;
   margin-top: 0;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-weak-border);
 }
 
 /* Responsive Design */
@@ -2302,11 +2140,11 @@
 }
 
 .bills-receipt-card {
-  background: #fff;
+  background: var(--color-surface);
   border-radius: 12px;
   padding: 15px;
 
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--color-weak-border);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -2341,7 +2179,7 @@
 .bills-receipt-card-label {
   font-size: 12px;
   font-weight: 500;
-  color: #969696;
+  color: var(--color-disabled-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -2349,7 +2187,7 @@
 .bills-receipt-card-value {
   font-size: 16px;
   font-weight: 600;
-  color: #000;
+  color: var(--black);
   word-break: break-word;
 }
 

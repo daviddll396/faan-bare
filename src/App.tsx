@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LoadingProvider, useLoading } from "./contexts/LoadingContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
 import OneTimeOnboardingPage from "./components/pages/OneTimeOnboardingPage/OneTimeOnboardingPage";
@@ -71,6 +72,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <ThemeProvider>
       <LoadingProvider>
         <BrowserRouter>
           <div className="App">
@@ -81,6 +83,7 @@ function App() {
           </div>
         </BrowserRouter>
       </LoadingProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

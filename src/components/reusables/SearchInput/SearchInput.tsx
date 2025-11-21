@@ -50,7 +50,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         className={`search-input-wrapper search-input-dropdown-wrapper`}
         ref={wrapperRef}
       >
-        <FiSearch className="search-input-icon" color="#626262" />
+        <FiSearch className="search-input-icon" color="currentColor" />
         <select
           className="search-input-select"
           value={value ?? ""}
@@ -66,7 +66,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           ))}
         </select>
         {withDropdown && (
-          <FiChevronDown className="search-input-chevron" color="#969696" />
+          <FiChevronDown className="search-input-chevron" color="currentColor" />
         )}
       </div>
     );
@@ -74,7 +74,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <div className="search-input-wrapper">
-      <FiSearch className="search-input-icon" color="#626262" />
+      <FiSearch className="search-input-icon" color="currentColor" />
       <input
         className="search-input"
         type="text"
@@ -83,7 +83,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         onChange={onChange}
       />
       {withDropdown && (
-        <FiChevronDown className="search-input-chevron" color="#969696" />
+        <FiChevronDown className="search-input-chevron" color="currentColor" />
       )}
     </div>
   );
