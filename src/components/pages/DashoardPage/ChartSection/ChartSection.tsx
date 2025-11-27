@@ -196,16 +196,80 @@ const ChartSection: React.FC<ChartSectionProps> = ({
 
   // Export chart data as CSV
   const handleExport = () => {
-    const csvRows = [
+    // Build summary rows
+    const summaryRows = [
       ["Month", "Total Bookings", "Completed Bookings"],
-      ...data.map((row) => [row.month, row.Bills, row.Payment]),
+      ...data.map((row) => [row.month, String(row.Bills), String(row.Payment)]),
     ];
-    const csvContent = csvRows.map((e) => e.join(",")).join("\n");
+
+    // Build transaction rows grouped by month
+    const transactionHeader = [
+      "Month",
+      "Transaction ID",
+      "Tariff/Service",
+      "Service",
+      "Amount",
+      "Price",
+      "Status",
+      "Created At",
+      "Customer Name",
+      "Customer ID",
+    ];
+
+    const txRows: string[][] = [];
+    if (transactions && transactions.length > 0) {
+      // Group transactions by month for consistent ordering
+      const txByMonth = new Map<string, Transaction[]>();
+      transactions.forEach((t) => {
+        const month = t.createdAt ? getMonthFromDate(t.createdAt) : "Unknown";
+        if (!txByMonth.has(month)) txByMonth.set(month, []);
+        txByMonth.get(month)!.push(t);
+      });
+
+      // Iterate months in the known months order so CSV is predictable
+      months.forEach((m) => {
+        const txs = txByMonth.get(m) || [];
+        if (txs.length === 0) return; // skip empty months
+        // Add a month separator row to make the CSV easier to read
+        txRows.push([`Month: ${m}`]);
+        // Add header for transactions under this month
+        txRows.push(transactionHeader);
+        txs.forEach((t) => {
+          txRows.push([
+            m,
+            String(t.id ?? ""),
+            String(t.tariffName ?? ""),
+            String(t.service ?? ""),
+            String(t.amount ?? ""),
+            String(t.price ?? ""),
+            String(t.status ?? ""),
+            String(t.createdAt ?? ""),
+            String(t.customerName ?? ""),
+            String(t.customerId ?? ""),
+          ]);
+        });
+        // Blank line after each month's transactions
+        txRows.push([""]);
+      });
+    } else {
+      txRows.push(["No transactions available"]);
+    }
+
+    // Combine summary and transaction sections into one CSV
+    const combinedRows = [
+      ...summaryRows,
+      [""],
+      ["All Transactions by Month"],
+      [""],
+      ...txRows,
+    ];
+
+    const csvContent = combinedRows.map((r) => r.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "dashboard-bookings.csv";
+    a.download = "dashboard-bookings-and-transactions.csv";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

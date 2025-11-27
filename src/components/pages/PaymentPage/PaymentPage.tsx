@@ -8,6 +8,7 @@ import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
 // icons intentionally not used here (invoice modal uses compact summary)
 import CheckCircle from "/icons/check-circle.svg";
 import { FiInfo, FiEye } from "react-icons/fi";
+import { Download } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
 import "./paymentpage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
@@ -277,6 +278,28 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     return matchesTab && matchesName && matchesBillNo;
   });
 
+  // Export filtered payments to CSV
+  const handleExport = () => {
+    const header = ["Bill No", "Customer Name", "Service", "Amount", "Status", "Date"];
+    const rows = [header, ...filteredPayments.map((p) => [p.billNo, p.customerName ?? "", p.service, p.amount, p.status, p.date])];
+    const csvContent = rows
+      .map((r) =>
+        r
+          .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+          .join(",")
+      )
+      .join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "payments-export.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Debug logging for search state
   console.log("Search state:", {
     searchName,
@@ -324,7 +347,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       )}
       <div className="payment-search-row">
         <div className="payment-search-section">
-          <div className="payment-search-inputs payment-action-buttons">
+          <div
+            className="payment-search-inputs payment-action-buttons"
+            style={{ display: "flex", alignItems: "center", gap: 12 }}
+          >
             <FieldButton
               inputs={[
                 {
@@ -386,6 +412,16 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               ]}
               className="payment-search-fieldbutton payment-actions-fieldbutton"
             />
+
+            <div style={{ marginLeft: "auto", display: "flex" }}>
+              <SolidButton
+                text="Export"
+                icon={<Download size={16} color="var(--color-text-on-accent)" />}
+                onClick={handleExport}
+                variant="primary"
+                size={windowWidth <= 768 ? "small" : "medium"}
+              />
+            </div>
           </div>
         </div>
       </div>

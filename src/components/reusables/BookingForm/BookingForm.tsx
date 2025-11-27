@@ -33,6 +33,10 @@ interface BookingFormProps {
   activeTab: "passenger" | "airport";
   setActiveTab: (id: "passenger" | "airport") => void;
   windowWidth: number;
+  /** If false, hide the Add New Passenger button (useful in single-passenger flows) */
+  showAddPassenger?: boolean;
+  /** Optional form-level error message provided by parent */
+  bookingFormError?: string | null;
 }
 
 const BookingForm: React.FC<BookingFormProps> = ({
@@ -44,7 +48,39 @@ const BookingForm: React.FC<BookingFormProps> = ({
   activeTab,
   setActiveTab,
   windowWidth,
+  showAddPassenger = true,
+  bookingFormError = null,
 }) => {
+  // Precompute common option lists to ensure selected can find the same objects
+  const airlineOptions: ListBoxOption[] = [
+    "DELTA",
+    "ARIK",
+    "AIR PEACE",
+    "DANA AIR",
+    "IBOM AIR",
+    "AZMAN AIR",
+    "MAX AIR",
+    "ETHIOPIAN AIRLINES",
+    "TURKISH AIRLINES",
+    "KLM",
+    "AIR FRANCE",
+  ].map((al, i) => ({ id: i, name: al, value: al }));
+
+  const destinationOptions: ListBoxOption[] = [
+    "LAGOS",
+    "ABUJA",
+    "PORT HARCOURT",
+    "KANO",
+    "KADUNA",
+    "JOS",
+    "YOLA",
+    "LONDON",
+    "DUBAI",
+    "DOHA",
+    "JOHANNESBURG",
+    "ACCRA",
+  ].map((d, i) => ({ id: i, name: d, value: d }));
+
   return (
     <>
       <BookingTabs
@@ -343,18 +379,23 @@ const BookingForm: React.FC<BookingFormProps> = ({
           )}
 
           {/* Show form-level error above add button handled by parent */}
-          <div className="booking-add-passenger-row">
-            <SolidButton
-              type="button"
-              onClick={onAddPassenger}
-              size="medium"
-              variant="primary"
-              rounded={false}
-              style={{ marginTop: 12, marginBottom: 0 }}
-            >
-              + Add New Passenger
-            </SolidButton>
-          </div>
+          {bookingFormError ? (
+            <div className="booking-form-error-text">{bookingFormError}</div>
+          ) : null}
+          {showAddPassenger && (
+            <div className="booking-add-passenger-row">
+              <SolidButton
+                type="button"
+                onClick={onAddPassenger}
+                size="medium"
+                variant="primary"
+                rounded={false}
+                style={{ marginTop: 12, marginBottom: 0 }}
+              >
+                + Add New Passenger
+              </SolidButton>
+            </div>
+          )}
         </>
       )}
 
@@ -461,21 +502,9 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   label={
                     <span className="booking-form-label required">Airline</span>
                   }
-                  options={[
-                    "DELTA",
-                    "ARIK",
-                    "AIR PEACE",
-                    "DANA AIR",
-                    "IBOM AIR",
-                    "AZMAN AIR",
-                    "MAX AIR",
-                    "ETHIOPIAN AIRLINES",
-                    "TURKISH AIRLINES",
-                    "KLM",
-                    "AIR FRANCE",
-                  ].map((al, i) => ({ id: i, name: al, value: al }))}
+                  options={airlineOptions}
                   selected={
-                    ([{ id: 0, name: "", value: "" }].find(
+                    (airlineOptions.find(
                       (o) => o.value === bookingForm.airline
                     ) as ListBoxOption | undefined) ?? null
                   }
@@ -491,22 +520,9 @@ const BookingForm: React.FC<BookingFormProps> = ({
                       Destination
                     </span>
                   }
-                  options={[
-                    "LAGOS",
-                    "ABUJA",
-                    "PORT HARCOURT",
-                    "KANO",
-                    "KADUNA",
-                    "JOS",
-                    "YOLA",
-                    "LONDON",
-                    "DUBAI",
-                    "DOHA",
-                    "JOHANNESBURG",
-                    "ACCRA",
-                  ].map((d, i) => ({ id: i, name: d, value: d }))}
+                  options={destinationOptions}
                   selected={
-                    ([{ id: 0, name: "", value: "" }].find(
+                    (destinationOptions.find(
                       (o) => o.value === bookingForm.destination
                     ) as ListBoxOption | undefined) ?? null
                   }
@@ -591,13 +607,9 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   label={
                     <span className="booking-form-label required">Airline</span>
                   }
-                  options={["DELTA", "ARIK", "AIR PEACE"].map((al, i) => ({
-                    id: i,
-                    name: al,
-                    value: al,
-                  }))}
+                  options={airlineOptions.slice(0, 3)}
                   selected={
-                    ([{ id: 0, name: "", value: "" }].find(
+                    (airlineOptions.find(
                       (o) => o.value === bookingForm.airline
                     ) as ListBoxOption | undefined) ?? null
                   }
@@ -606,6 +618,24 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   className={fieldErrors.airline ? "error" : ""}
                 />
               </div>
+            </div>
+          )}
+          {/* Show form-level error above add button handled by parent */}
+          {bookingFormError ? (
+            <div className="booking-form-error-text">{bookingFormError}</div>
+          ) : null}
+          {showAddPassenger && (
+            <div className="booking-add-passenger-row">
+              <SolidButton
+                type="button"
+                onClick={onAddPassenger}
+                size="medium"
+                variant="primary"
+                rounded={false}
+                style={{ marginTop: 12, marginBottom: 0 }}
+              >
+                + Add New Passenger
+              </SolidButton>
             </div>
           )}
         </>

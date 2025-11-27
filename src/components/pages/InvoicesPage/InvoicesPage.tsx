@@ -3,6 +3,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { useLoading } from "../../../contexts/LoadingContext";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import GradientButton from "../../reusables/GradientButton/GradientButton";
+import SolidButton from "../../reusables/SolidButton/SolidButton";
 import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Modal from "../../reusables/Modal/Modal";
 import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
@@ -11,6 +12,7 @@ import InvoiceCard from "../../reusables/InvoiceCard/InvoiceCard";
 import "./InvoicesPage.css";
 import Grid from "../../reusables/Grid/Grid";
 import ServiceCard from "../../reusables/ServiceCard/ServiceCard";
+import BookingForm from "../../reusables/BookingForm/BookingForm";
 
 // helper to map service names to images (reuses same assets as ServicesPage)
 const getImageForService = (serviceName: string): string => {
@@ -148,6 +150,8 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
   // State for current time (for countdown timers)
   const [currentTime, setCurrentTime] = useState(new Date());
+  // window width for responsive booking form
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // State for toast messages
   const [toast, setToast] = useState<{
@@ -290,6 +294,12 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     }
   }, []);
 
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Save invoices to localStorage whenever invoices change
   useEffect(() => {
     if (invoices.length > 0) {
@@ -410,16 +420,13 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     const existingService = selectedServices.find((s) => s.id === service.id);
 
     if (existingService) {
-      // Update quantity if service already selected
-      setSelectedServices(
-        selectedServices.map((s) =>
-          s.id === service.id ? { ...s, quantity: s.quantity + 1 } : s
-        )
-      );
-    } else {
-      // Add new service
-      setSelectedServices([...selectedServices, { ...service, quantity: 1 }]);
+      // Prevent duplicate service entries - only one of each service allowed
+      showToast("Service already added to the invoice", "error");
+      return;
     }
+
+    // Add new service with quantity 1
+    setSelectedServices([...selectedServices, { ...service, quantity: 1 }]);
 
     // Scroll to bottom to show the newly added selection section
     requestAnimationFrame(() => {
@@ -501,7 +508,129 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
 
   // Handle payment
   const handlePayment = (invoice: Invoice) => {
+    // Before payment, collect customer details using BookingForm in a modal
     setSelectedInvoice(invoice);
+    setShowCustomerDetailsModal(true);
+  };
+
+  // Customer details modal state (collected before payment)
+  const [showCustomerDetailsModal, setShowCustomerDetailsModal] =
+    useState(false);
+  const [customerBookingForm, setCustomerBookingForm] = useState<{
+    firstName: string;
+    lastName: string;
+    designation: string;
+    gender: string;
+    mobile: string;
+    specialReq: string;
+    airport: string;
+    travelDate: string;
+    flightNumber: string;
+    airportTime: string;
+    airline: string;
+    destination: string;
+  }>({
+    firstName: "",
+    lastName: "",
+    designation: "",
+    gender: "",
+    mobile: "",
+    specialReq: "",
+    airport: "",
+    travelDate: "",
+    flightNumber: "",
+    airportTime: "",
+    airline: "",
+    destination: "",
+  });
+  const [customerFieldErrors, setCustomerFieldErrors] = useState<{
+    [k: string]: string | false;
+  }>({});
+  const [customerActiveTab, setCustomerActiveTab] = useState<
+    "passenger" | "airport"
+  >("passenger");
+
+  const handleCustomerBookingFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const name = e.target.name as keyof typeof customerBookingForm;
+    setCustomerBookingForm((prev) => ({ ...prev, [name]: e.target.value }));
+    if (customerFieldErrors[name])
+      setCustomerFieldErrors((prev) => ({ ...prev, [name]: false }));
+  };
+
+  const setCustomerBookingField = (
+    name: keyof typeof customerBookingForm,
+    value: string
+  ) => {
+    setCustomerBookingForm((prev) => ({ ...prev, [name]: value }));
+    if (customerFieldErrors[name])
+      setCustomerFieldErrors((prev) => ({ ...prev, [name]: false }));
+  };
+
+  // Compute overall validity for the customer booking form so we can enable/disable Continue
+  const isCustomerFormValid = React.useMemo(() => {
+    const f = customerBookingForm;
+    // Basic phone validation: 7-15 digits (covers international and local short numbers)
+    const phoneValid = /^\d{7,15}$/.test((f.mobile || "").replace(/\s+/g, ""));
+    // Travel date valid if provided and parseable
+    const travelDateValid =
+      !f.travelDate || !isNaN(new Date(f.travelDate).getTime());
+
+    return Boolean(
+      f.firstName.trim() &&
+        f.lastName.trim() &&
+        f.designation &&
+        f.gender &&
+        phoneValid &&
+        f.specialReq &&
+        f.airport &&
+        travelDateValid &&
+        f.flightNumber.trim() &&
+        f.airportTime &&
+        f.airline &&
+        f.destination
+    );
+  }, [customerBookingForm]);
+
+  const handleCustomerDetailsContinue = () => {
+    // Minimal validation: require first and last name
+    const missing: string[] = [];
+    if (!customerBookingForm.firstName.trim()) missing.push("First Name");
+    if (!customerBookingForm.lastName.trim()) missing.push("Last Name");
+
+    if (missing.length > 0) {
+      // set errors and keep modal open
+      const errs: { [k: string]: string | false } = {};
+      if (!customerBookingForm.firstName.trim())
+        errs.firstName = "First name is required";
+      if (!customerBookingForm.lastName.trim())
+        errs.lastName = "Last name is required";
+      setCustomerFieldErrors(errs);
+      showToast(
+        "Please fill in required customer details before paying",
+        "error"
+      );
+      return;
+    }
+
+    // Optionally attach customer name to selectedInvoice for display/receipt
+    if (selectedInvoice) {
+      const custName = `${customerBookingForm.firstName} ${customerBookingForm.lastName}`;
+      setInvoices((prev) =>
+        prev.map((inv) =>
+          inv.id === selectedInvoice.id
+            ? { ...inv, customerName: custName }
+            : inv
+        )
+      );
+    }
+
+    // Record single passenger for this invoice flow
+    // setCustomerPassenger({ ...customerBookingForm }); // This line is removed
+
+    setShowCustomerDetailsModal(false);
+    // Proceed to payment flow (existing modal/process)
     setShowPaymentModal(true);
   };
 
@@ -987,6 +1116,47 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
           {/* Notice about payment method (wallet-only) */}
           <div className="wallet-note" role="status">
             Your wallet will be used to pay this invoice automatically.
+          </div>
+        </div>
+      </Modal>
+
+      {/* Customer Details Modal (reusable BookingForm) */}
+      <Modal
+        isOpen={showCustomerDetailsModal}
+        onClose={() => setShowCustomerDetailsModal(false)}
+        showHeader={true}
+        headerTitle="Customer Details"
+        className="customer-details-modal"
+      >
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <BookingForm
+            bookingForm={customerBookingForm}
+            fieldErrors={customerFieldErrors}
+            onChange={handleCustomerBookingFormChange}
+            setBookingField={setCustomerBookingField}
+            onAddPassenger={() => handleCustomerDetailsContinue()}
+            showAddPassenger={false}
+            activeTab={customerActiveTab}
+            setActiveTab={(id) =>
+              setCustomerActiveTab(id as "passenger" | "airport")
+            }
+            windowWidth={windowWidth}
+          />
+
+          <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+            <SolidButton
+              text="Continue to Pay"
+              onClick={handleCustomerDetailsContinue}
+              variant="primary"
+              fullWidth
+              disabled={!isCustomerFormValid}
+            />
+            <SolidButton
+              text="Cancel"
+              onClick={() => setShowCustomerDetailsModal(false)}
+              variant="secondary"
+              fullWidth
+            />
           </div>
         </div>
       </Modal>

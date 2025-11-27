@@ -928,6 +928,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
               activeTab={activeTab}
               setActiveTab={(id) => setActiveTab(id as "passenger" | "airport")}
               windowWidth={windowWidth}
+              bookingFormError={bookingFormError}
             />
             {/* Only show passengers table and summary card inside form card on desktop */}
             {windowWidth > 768 && (
