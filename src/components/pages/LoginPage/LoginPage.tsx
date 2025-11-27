@@ -50,14 +50,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Check if form is valid
-  const isFormValid = (): boolean => {
-    const isEmailValid =
-      email.trim() !== "" && validateField("email", email) === "";
-    const isPasswordValid =
-      password.trim() !== "" && validateField("password", password) === "";
-    return isEmailValid && isPasswordValid;
-  };
+  // Note: validation runs on submit now; helper removed to avoid unused warning
 
   // Handle field changes with validation
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,8 +81,13 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Run validation now (after button click) and surface errors
+    const emailError = validateField("email", email);
+    const passwordError = validateField("password", password);
+    setValidationErrors({ email: emailError, password: passwordError });
+
     // Final validation check
-    if (!isFormValid()) {
+    if (emailError || passwordError) {
       showToast("Please fix the errors in the form", "error");
       setIsSubmitting(false);
       return;
@@ -193,7 +191,7 @@ const LoginPage: React.FC = () => {
             type="submit"
             id="login-button"
             fullWidth
-            disabled={isSubmitting || !isFormValid()}
+            disabled={isSubmitting}
             loading={isSubmitting}
           >
             LOG IN

@@ -114,7 +114,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           </div>
 
-            <div style={{ width: "100%", marginBottom: 8 }}>
+          <div style={{ width: "100%", marginBottom: 8 }}>
             <div
               style={{
                 color: "var(--color-text-primary)",
@@ -160,13 +160,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               {paymentMethod === "transfer" && (
                 <>
                   <div style={{ marginBottom: 12 }}>
-                <span
-                  style={{
+                    <span
+                      style={{
                     color: "var(--color-text-secondary)",
-                    fontWeight: 500,
-                    fontSize: isMobile ? 13 : 14,
-                  }}
-                >
+                        fontWeight: 500,
+                        fontSize: isMobile ? 13 : 14,
+                      }}
+                    >
                       Account Number
                     </span>
                     <span
@@ -228,14 +228,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {/* Payment Method Selection */}
             <div style={{ width: "100%", marginBottom: 24 }}>
-            <div
-              style={{
+              <div
+                style={{
                 color: "var(--color-text-primary)",
-                fontWeight: 600,
-                fontSize: isMobile ? 13 : 16,
-                marginBottom: 12,
-              }}
-            >
+                  fontWeight: 600,
+                  fontSize: isMobile ? 13 : 16,
+                  marginBottom: 12,
+                }}
+              >
                 Pay With:
               </div>
               <div style={{ display: "flex", gap: 24 }}>

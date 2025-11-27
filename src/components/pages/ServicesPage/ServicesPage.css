@@ -524,53 +524,6 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.booking-tabs-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 30px;
-  margin-top: 18px;
-  align-items: center;
-}
-
-/* Tabs styled like the Book Service control: pill buttons */
-.booking-tab {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-secondary); /* muted grey text for inactive */
-  background: var(--color-weak-border); /* light grey background for inactive */
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  border: none;
-  transition: background-color 150ms ease, color 150ms ease,
-    transform 150ms ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.booking-tab:focus {
-  outline: 2px solid var(--color-accent-trans);
-  border-radius: 5px;
-}
-
-.booking-tab:hover {
-  background: var(--color-border);
-  color: var(--color-text-primary);
-}
-
-.booking-tab.active {
-  color: var(--color-accent); /* green text */
-  background: var(--color-muted-surface); /* light green background */
-  box-shadow: 0 6px 18px var(--shadow-accent);
-
-  font-weight: 700;
-}
-
-.booking-tab-underline {
-  display: none; /* no divider under tabs */
-}
-
 .booking-form-fields-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1101,9 +1054,6 @@
   .booking-form-fields-row {
     gap: 16px;
   }
-  .booking-tab {
-    font-size: 13px;
-  }
   .booking-form-error-text {
     font-size: 13px;
   }
@@ -1165,9 +1115,6 @@
   .booking-form-fields-row {
     gap: 14px;
   }
-  .booking-tab {
-    font-size: 12px;
-  }
   .booking-form-error-text {
     font-size: 12px;
   }
@@ -1228,9 +1175,6 @@
   }
   .booking-form-fields-row {
     gap: 12px;
-  }
-  .booking-tab {
-    font-size: 11px;
   }
   .booking-form-error-text {
     font-size: 11px;
@@ -1367,23 +1311,6 @@
     background: var(--color-surface);
   }
 
-  .booking-tabs-row {
-    gap: 10px;
-    margin-top: 16px;
-    margin-bottom: 0;
-  }
-  .booking-tab {
-    font-size: 13px;
-    padding-bottom: 4px;
-    width: 100%;
-    text-align: center;
-    color: var(--gray-898989);
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .booking-tab-underline {
-    margin-bottom: 12px;
-  }
   .booking-form-fields-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

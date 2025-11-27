@@ -1,0 +1,41 @@
+.booking-tabs-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.booking-tab {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-weak-border);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 150ms ease, color 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-tab:focus {
+  outline: 2px solid var(--color-accent-trans);
+  border-radius: 6px;
+}
+
+.booking-tab:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.booking-tab.active {
+  color: var(--color-accent);
+  background: var(--color-muted-surface);
+  box-shadow: 0 6px 18px var(--shadow-accent);
+  font-weight: 700;
+}
+
+

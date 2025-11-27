@@ -50,6 +50,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [showSmallLogo, setShowSmallLogo] = React.useState(false);
   const [mainLogoFadingOut, setMainLogoFadingOut] = React.useState(false);
   const [smallLogoFadingIn, setSmallLogoFadingIn] = React.useState(false);
+  const headerRef = React.useRef<HTMLDivElement | null>(null);
+  const navRef = React.useRef<HTMLElement | null>(null);
+  const footerRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -83,6 +86,52 @@ const Sidebar: React.FC<SidebarProps> = ({
       setSmallLogoFadingIn(false);
     }
   }, [isCollapsed]);
+
+  // Compress sidebar vertically only when necessary so nav content fits the viewport.
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let rafId: number | null = null;
+    const minScale = 0.75; // don't compress past this
+
+    const updateCompression = () => {
+      rafId = null;
+      const headerEl = headerRef.current;
+      const navEl = navRef.current;
+      const footerEl = footerRef.current;
+      if (!navEl) return;
+
+      const headerH = headerEl ? headerEl.getBoundingClientRect().height : 0;
+      const footerH = footerEl ? footerEl.getBoundingClientRect().height : 0;
+      const available = Math.max(80, window.innerHeight - headerH - footerH - 24);
+      const contentH = navEl.scrollHeight;
+
+      if (contentH > available) {
+        const scale = Math.max(minScale, available / contentH);
+        navEl.style.transform = `scaleY(${scale})`;
+        navEl.style.transformOrigin = "top left";
+        navEl.style.height = `${Math.ceil(available / scale)}px`;
+        navEl.style.setProperty("--sidebar-scale", String(scale));
+      } else {
+        navEl.style.transform = "";
+        navEl.style.height = "";
+        navEl.style.setProperty("--sidebar-scale", "1");
+      }
+    };
+
+    const schedule = () => {
+      if (rafId != null) return;
+      rafId = window.requestAnimationFrame(updateCompression);
+    };
+
+    schedule();
+    window.addEventListener("resize", schedule);
+
+    return () => {
+      if (rafId != null) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [isCollapsed, /* recalc when items change */]);
 
   const menuItems: MenuItem[] = [
     {

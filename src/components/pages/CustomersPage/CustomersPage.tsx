@@ -8,13 +8,14 @@ import { useAuth } from "../../../contexts/AuthContext";
 import "./customerspage.css";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SwitchingTabs from "../../reusables/SwitchingTabs/SwitchingTabs";
+import BookingTabs from "../../reusables/BookingTabs/BookingTabs";
 import Card from "../../reusables/Card/Card";
 import CustomersIcon from "/icons/nav-customer-icon.svg";
 import SlideIndicator from "../../reusables/SlideIndicator/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Modal from "../../reusables/Modal/Modal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
-import FieldButton from "../../reusables/FieldButton/FieldButton";
+// FieldButton removed; replaced with SolidButton in the UI
 import Input from "../../reusables/Input/Input";
 import DatePicker from "../../reusables/DatePicker/DatePicker";
 import ListBox from "../../reusables/ListBox/ListBox";
@@ -25,12 +26,7 @@ interface CustomersPageProps {
 
 const CustomersPage: React.FC<CustomersPageProps> = () => {
   const { showLoading, hideLoading } = useLoading();
-  const {
-    searchCustomers,
-    getAllCustomers,
-    changeCustomerStatus,
-    createCustomer,
-  } = useAuth();
+  const { getAllCustomers, changeCustomerStatus, createCustomer } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
   const [fetched, setFetched] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -187,22 +183,74 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
     setFetched(false);
 
     try {
-      const searchResult = await searchCustomers(
-        searchForm.nin || undefined,
-        searchForm.firstName || undefined,
-        searchForm.lastName || undefined
-      );
+      // Fetch all customers and filter client-side to allow using the same endpoint as All Customers
+      const allResp = await getAllCustomers();
 
-      if (searchResult && searchResult.status && searchResult.data) {
-        console.log("✅ Customer search successful:", searchResult.data);
-        setFetchedCustomers(searchResult.data);
+      if (allResp && allResp.status && Array.isArray(allResp.data)) {
+        console.log(
+          "✅ Retrieved all customers for client-side filtering",
+          allResp.data.length
+        );
+
+        // Normalize items to the same shape used elsewhere in this page
+        type RawCustomer = {
+          id: number;
+          firstName: string;
+          lastName: string;
+          customerId?: string;
+          idNo?: string;
+          phoneNumber?: string;
+          phone?: string;
+          email?: string;
+          address?: string;
+          nin?: string;
+        };
+
+        const normalized = allResp.data.map((c: RawCustomer) => ({
+          id: c.id,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          idNo: c.customerId ?? c.idNo ?? "",
+          phone: c.phoneNumber ?? c.phone ?? "",
+          email: c.email ?? "",
+          address: c.address,
+          nin: c.nin ?? "",
+        }));
+
+        const filtered = normalized.filter((u) => {
+          const firstMatch = searchForm.firstName
+            ? u.firstName
+                ?.toLowerCase()
+                .includes(searchForm.firstName.toLowerCase())
+            : true;
+          const lastMatch = searchForm.lastName
+            ? u.lastName
+                ?.toLowerCase()
+                .includes(searchForm.lastName.toLowerCase())
+            : true;
+          const ninMatch = searchForm.nin
+            ? (u.nin || "").toLowerCase().includes(searchForm.nin.toLowerCase())
+            : true;
+          return firstMatch && lastMatch && ninMatch;
+        });
+
+        console.log("🔎 Filtered customers count:", filtered.length);
+        setFetchedCustomers(filtered);
         setFetched(true);
-        showToastMessage("Customer search completed successfully", "success");
+        showToastMessage(
+          filtered.length > 0
+            ? "Customer search completed successfully"
+            : "No customers found matching your criteria",
+          filtered.length > 0 ? "success" : "error"
+        );
       } else {
-        console.log("⚠️ No customers found or search failed");
+        console.log("⚠️ Failed to retrieve customers for filtering");
         setFetchedCustomers([]);
         setFetched(true);
-        showToastMessage("No customers found matching your criteria", "error");
+        showToastMessage(
+          "Failed to retrieve customers. Please try again.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("💥 Error searching customers:", error);
@@ -342,7 +390,10 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       const ageDate = new Date(ageDiffMs);
       const age = Math.abs(ageDate.getUTCFullYear() - 1970);
       if (age < 18) {
-        showToastMessage("You must be at least 18 years old to register", "error");
+        showToastMessage(
+          "You must be at least 18 years old to register",
+          "error"
+        );
         return false;
       }
     }
@@ -485,7 +536,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                     firstName: e.target.value,
                   }))
                 }
-                  restrict="alpha"
+                restrict="alpha"
               />
               <Input
                 placeholder="Last name"
@@ -496,7 +547,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                     lastName: e.target.value,
                   }))
                 }
-                  restrict="alpha"
+                restrict="alpha"
               />
               <Input
                 placeholder="NIN number"
@@ -504,7 +555,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                 onChange={(e) =>
                   setSearchForm((prev) => ({ ...prev, nin: e.target.value }))
                 }
-                  restrict="numeric"
+                restrict="numeric"
               />
             </div>
 
@@ -513,13 +564,20 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
 
           <div className="customer-action-buttons">
             <div className="customer-actions-fieldbutton">
-              <FieldButton
-                buttons={[
-                  { text: "Search", onClick: handleFetch },
-                  { text: "Clear", onClick: handleClearSearch },
-                ]}
-                className="customer-actions-fieldbutton"
-              />
+              <div style={{ display: "flex", gap: 12 }}>
+                <SolidButton
+                  onClick={handleFetch}
+                  text="Search"
+                  size="medium"
+                  variant="primary"
+                />
+                <SolidButton
+                  onClick={handleClearSearch}
+                  text="Clear"
+                  size="medium"
+                  variant="secondary"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -563,31 +621,18 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
       )}
       {activeTab === "all" && (
         <>
-          {/* Status Sub-tabs (use booking-tabs-row styles for consistency) */}
-          <div className="booking-tabs-row">
-            <div
-              className={`booking-tab${
-                allCustomersStatus === "PENDING" ? " active" : ""
-              }`}
-              onClick={() => {
-                setAllCustomersStatus("PENDING");
-                handleFetchAllCustomers("PENDING");
-              }}
-            >
-              PENDING
-            </div>
-            <div
-              className={`booking-tab${
-                allCustomersStatus === "APPROVED" ? " active" : ""
-              }`}
-              onClick={() => {
-                setAllCustomersStatus("APPROVED");
-                handleFetchAllCustomers("APPROVED");
-              }}
-            >
-              APPROVED
-            </div>
-          </div>
+          {/* Status Sub-tabs */}
+          <BookingTabs
+            items={[
+              { id: "PENDING", label: "PENDING" },
+              { id: "APPROVED", label: "APPROVED" },
+            ]}
+            activeId={allCustomersStatus}
+            onChange={(id) => {
+              setAllCustomersStatus(id);
+              handleFetchAllCustomers(id);
+            }}
+          />
 
           {/* All Customers Data Table */}
           {allCustomersFetched && (
@@ -664,7 +709,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   type="text"
                   value={form.firstName}
                   onChange={handleCreateChange}
-                      restrict="alpha"
+                  restrict="alpha"
                   placeholder="Enter first name"
                   required
                 />
@@ -676,7 +721,7 @@ const CustomersPage: React.FC<CustomersPageProps> = () => {
                   type="text"
                   value={form.lastName}
                   onChange={handleCreateChange}
-                      restrict="alpha"
+                  restrict="alpha"
                   placeholder="Enter last name"
                   required
                 />

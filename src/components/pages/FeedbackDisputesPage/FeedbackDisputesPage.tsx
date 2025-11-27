@@ -189,6 +189,11 @@ const FeedbackDisputesPage: React.FC = () => {
               customerName: f.customerName,
             })
           );
+          // ensure most-recent first for admin view
+          feedbackData.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
           setFeedbackHistory(feedbackData);
         } else {
           setFeedbackHistory([]);
@@ -214,6 +219,11 @@ const FeedbackDisputesPage: React.FC = () => {
             updatedAt: d.updatedAt,
             attachmentUrl: d.attachmentUrl,
           }));
+          // sort so newest disputes appear first
+          disputesData.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
           setDisputes(disputesData);
         } else {
           setDisputes([]);
@@ -767,7 +777,11 @@ const FeedbackDisputesPage: React.FC = () => {
                 attachmentUrl: d.attachmentUrl,
               })
             );
-            setDisputes(disputesData);
+          disputesData.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setDisputes(disputesData);
             setFilteredDisputes(disputesData);
           } else {
             setDisputes([]);
@@ -940,19 +954,6 @@ const FeedbackDisputesPage: React.FC = () => {
         return <CheckCircle size={16} className="status-icon resolved" />;
       case "Closed":
         return <XCircle size={16} className="status-icon closed" />;
-      default:
-        return <Clock size={16} className="status-icon" />;
-    }
-  };
-
-  const getFeedbackStatusIcon = (status: string) => {
-    switch (status) {
-      case "Submitted":
-        return <Clock size={16} className="status-icon pending" />;
-      case "In Review":
-        return <AlertCircle size={16} className="status-icon review" />;
-      case "Resolved":
-        return <CheckCircle size={16} className="status-icon resolved" />;
       default:
         return <Clock size={16} className="status-icon" />;
     }
@@ -1795,19 +1796,7 @@ const FeedbackDisputesPage: React.FC = () => {
                 <span className="value">{selectedFeedback.category}</span>
               </div>
 
-              <div className="info-row">
-                <span className="label">Status:</span>
-                <span className="value status-value">
-                  <span
-                    className={`status-badge ${(selectedFeedback.status || "")
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}`}
-                  >
-                    {getFeedbackStatusIcon(selectedFeedback.status || "")}
-                    {selectedFeedback.status}
-                  </span>
-                </span>
-              </div>
+              {/* Status removed from feedback details per request */}
 
               <div className="info-row">
                 <span className="label">Submitted:</span>
