@@ -9,9 +9,7 @@ import Input from "../../reusables/Input/Input";
 import PageTitle from "../../reusables/PageTitle/PageTitle";
 import SwitchingTabs from "../../reusables/SwitchingTabs/SwitchingTabs";
 import ListBox from "../../reusables/ListBox/ListBox";
-import FeedbackCard from "../../reusables/FeedbackCard/FeedbackCard";
-import DisputeCard from "../../reusables/DisputeCard/DisputeCard";
-import Grid from "../../reusables/Grid/Grid";
+import DataTable from "../../reusables/DataTable/DataTable";
 import SearchInput from "../../reusables/SearchInput/SearchInput";
 import FileUpload from "../../reusables/FileUpload/FileUpload";
 import TextArea from "../../reusables/TextArea/TextArea";
@@ -1032,22 +1030,34 @@ const FeedbackDisputesPage: React.FC = () => {
             {filteredFeedbackHistory.length > 0 ? (
               <div className="feedback-history-section">
                 <h3>Your Feedback:</h3>
-                <Grid className="grid-no-max">
-                  {filteredFeedbackHistory.map((feedback, idx) => (
-                    <FeedbackCard
-                      key={feedback.id || `feedback-${idx}`}
-                      id={feedback.id}
-                      category={feedback.category}
-                      message={feedback.message}
-                      status={feedback.status}
-                      createdAt={feedback.createdAt}
-                      onViewDetails={() => {
+                <div style={{ paddingTop: '32px' }}>
+                <DataTable
+                  headers={["Feedback ID", "Category", "Message", "Status", "Date", "Action"]}
+                  data={filteredFeedbackHistory.map((feedback) => [
+                    <span className="reference-code">{feedback.id}</span>,
+                    <span className={`category-badge ${(feedback.category || "").toLowerCase()}`}>
+                      {feedback.category}
+                    </span>,
+                    <span className="message-preview" style={{ maxWidth: '300px', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {feedback.message}
+                    </span>,
+                    <span className={`status-badge ${(feedback.status || "unknown").toLowerCase().replace(" ", "-")}`}>
+                      {feedback.status || "Unknown"}
+                    </span>,
+                    new Date(feedback.createdAt).toLocaleDateString(),
+                    <button
+                      className="view-reason-btn"
+                      onClick={() => {
                         setSelectedFeedback(feedback);
                         setShowFeedbackDetailsModal(true);
                       }}
-                    />
-                  ))}
-                </Grid>
+                    >
+                      View Details
+                    </button>
+                  ])}
+                  itemsPerPage={10}
+                />
+                </div>
               </div>
             ) : (
               <EmptyState
@@ -1103,23 +1113,33 @@ const FeedbackDisputesPage: React.FC = () => {
             {filteredDisputes.length > 0 ? (
               <div className="disputes-history-section">
                 <h3>Your Disputes:</h3>
-                <Grid className="grid-no-max">
-                  {filteredDisputes.map((dispute, idx) => (
-                    <DisputeCard
-                      key={dispute.id || `dispute-${idx}`}
-                      reference={dispute.reference}
-                      type={dispute.invoiceId ? "Invoice" : "Payment"}
-                      reason={dispute.reason}
-                      category={dispute.category}
-                      status={dispute.status}
-                      createdAt={dispute.createdAt}
-                      onViewDetails={() => {
+                <div style={{ paddingTop: '32px' }}>
+                <DataTable
+                  headers={["Dispute ID", "Reference", "Type", "Reason", "Status", "Date", "Action"]}
+                  data={filteredDisputes.map((dispute) => [
+                    <span className="reference-code">{dispute.id}</span>,
+                    <span className="tx-ref">{dispute.reference}</span>,
+                    <span className={`type-badge ${dispute.invoiceId ? 'invoice' : 'payment'}`}>
+                      {dispute.invoiceId ? "Invoice" : "Payment"}
+                    </span>,
+                    dispute.reason,
+                    <span className={`status-badge ${(dispute.status || "unknown").toLowerCase().replace(" ", "-")}`}>
+                      {dispute.status || "Unknown"}
+                    </span>,
+                    new Date(dispute.createdAt).toLocaleDateString(),
+                    <button
+                      className="view-reason-btn"
+                      onClick={() => {
                         setSelectedDispute(dispute);
                         setShowDisputeDetailsModal(true);
                       }}
-                    />
-                  ))}
-                </Grid>
+                    >
+                      View Details
+                    </button>
+                  ])}
+                  itemsPerPage={10}
+                />
+                </div>
               </div>
             ) : (
               <EmptyState
@@ -1248,22 +1268,34 @@ const FeedbackDisputesPage: React.FC = () => {
             <div className="admin-feedback-grid-section">
               <h3>All Feedback</h3>
               {filteredFeedbackHistory.length > 0 ? (
-                <Grid>
-                  {filteredFeedbackHistory.map((feedback) => (
-                    <FeedbackCard
-                      key={feedback.id}
-                      id={feedback.id}
-                      category={feedback.category}
-                      message={feedback.message}
-                      status={feedback.status}
-                      createdAt={feedback.createdAt}
-                      onViewDetails={() => {
+                <div style={{ paddingTop: '32px' }}>
+                  <DataTable
+                    headers={["Feedback ID", "Category", "Message", "Status", "Date", "Action"]}
+                    data={filteredFeedbackHistory.map((feedback) => [
+                    <span className="reference-code">{feedback.id}</span>,
+                    <span className={`category-badge ${(feedback.category || "").toLowerCase()}`}>
+                      {feedback.category}
+                    </span>,
+                    <span className="message-preview" style={{ maxWidth: '300px', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {feedback.message}
+                    </span>,
+                    <span className={`status-badge ${(feedback.status || "unknown").toLowerCase().replace(" ", "-")}`}>
+                      {feedback.status || "Unknown"}
+                    </span>,
+                    new Date(feedback.createdAt).toLocaleDateString(),
+                    <button
+                      className="view-reason-btn"
+                      onClick={() => {
                         setSelectedFeedback(feedback);
                         setShowFeedbackDetailsModal(true);
                       }}
-                    />
-                  ))}
-                </Grid>
+                    >
+                      View Details
+                    </button>
+                  ])}
+                  itemsPerPage={10}
+                />
+                </div>
               ) : (
                 <EmptyState
                   title="No Feedback Available"
@@ -1368,23 +1400,33 @@ const FeedbackDisputesPage: React.FC = () => {
             <div className="admin-disputes-grid-section">
               <h3>All Disputes</h3>
               {filteredDisputes.length > 0 ? (
-                <Grid>
-                  {filteredDisputes.map((dispute) => (
-                    <DisputeCard
-                      key={dispute.id}
-                      reference={dispute.reference}
-                      type={dispute.invoiceId ? "Invoice" : "Payment"}
-                      reason={dispute.reason}
-                      category={dispute.category}
-                      status={dispute.status}
-                      createdAt={dispute.createdAt}
-                      onViewDetails={() => {
+                <div style={{ paddingTop: '32px' }}>
+                  <DataTable
+                    headers={["Dispute ID", "Reference", "Type", "Reason", "Status", "Date", "Action"]}
+                    data={filteredDisputes.map((dispute) => [
+                    <span className="reference-code">{dispute.id}</span>,
+                    <span className="tx-ref">{dispute.reference}</span>,
+                    <span className={`type-badge ${dispute.invoiceId ? 'invoice' : 'payment'}`}>
+                      {dispute.invoiceId ? "Invoice" : "Payment"}
+                    </span>,
+                    dispute.reason,
+                    <span className={`status-badge ${(dispute.status || "unknown").toLowerCase().replace(" ", "-")}`}>
+                      {dispute.status || "Unknown"}
+                    </span>,
+                    new Date(dispute.createdAt).toLocaleDateString(),
+                    <button
+                      className="view-reason-btn"
+                      onClick={() => {
                         setSelectedDispute(dispute);
                         setShowDisputeDetailsModal(true);
                       }}
-                    />
-                  ))}
-                </Grid>
+                    >
+                      View Details
+                    </button>
+                  ])}
+                  itemsPerPage={10}
+                />
+                </div>
               ) : (
                 <EmptyState
                   title="No Disputes Available"

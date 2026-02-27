@@ -8,10 +8,9 @@ import FieldButton from "../../reusables/FieldButton/FieldButton";
 import Modal from "../../reusables/Modal/Modal";
 import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
-import InvoiceCard from "../../reusables/InvoiceCard/InvoiceCard";
+import DataTable from "../../reusables/DataTable/DataTable";
 import "./InvoicesPage.css";
-import Grid from "../../reusables/Grid/Grid";
-import ServiceCard from "../../reusables/ServiceCard/ServiceCard";
+
 import BookingForm from "../../reusables/BookingForm/BookingForm";
 
 // helper to map service names to images (reuses same assets as ServicesPage)
@@ -50,33 +49,6 @@ const getImageForService = (serviceName: string): string => {
   const idx = Math.abs(hash) % availableImages.length;
   return availableImages[idx];
 };
-
-// Remita Payment Engine types
-declare global {
-  interface Window {
-    RmPaymentEngine: {
-      init: (config: RemitaPaymentConfig) => RemitaPaymentHandler;
-    };
-  }
-}
-
-interface RemitaPaymentConfig {
-  key: string;
-  customerId: string;
-  transactionId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  amount: number;
-  narration: string;
-  onSuccess: (response: Record<string, unknown>) => void;
-  onError: (response: Record<string, unknown>) => void;
-  onClose: () => void;
-}
-
-interface RemitaPaymentHandler {
-  showPaymentWidget: () => void;
-}
 
 interface InvoiceService {
   id: number;
@@ -755,21 +727,7 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
     );
   };
 
-  // Helper function to get time remaining until expiry
-  const getTimeUntilExpiry = (invoice: Invoice): string => {
-    if (invoice.status !== "pending") return "";
-    const oneHourFromCreation = new Date(
-      invoice.createdAt.getTime() + 60 * 60 * 1000
-    );
-    const timeRemaining = oneHourFromCreation.getTime() - currentTime.getTime();
 
-    if (timeRemaining <= 0) return "Expired";
-
-    const minutes = Math.floor(timeRemaining / (1000 * 60));
-    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-    return `${minutes}m ${seconds}s`;
-  };
 
   return (
     <div className="invoices-page">
@@ -861,23 +819,32 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
       {showCreateInvoicePage && (
         <div className="create-invoice-subpage">
           <div className="services-selection">
-            <Grid className="available-services">
-              {availableServices.map((s) => (
-                <ServiceCard
-                  key={s.id}
-                  id={s.id}
-                  image={getImageForService(s.name)}
-                  name={s.name}
-                  price={s.amount}
-                  description={s.description}
-                  actionText="Add to Invoice"
-                  onAction={() => {
-                    const svc = availableServices.find((a) => a.id === s.id);
-                    if (svc) handleServiceSelection(svc);
-                  }}
-                />
-              ))}
-            </Grid>
+            <div className="available-services">
+              <DataTable
+                headers={["Image", "Service Name", "Description", "Status", "Price", "Action"]}
+                data={availableServices.map((s) => [
+                  <div key={`img-${s.id}`} style={{ width: '96px', height: '64px', borderRadius: '8px', overflow: 'hidden', backgroundColor: 'var(--color-muted-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={getImageForService(s.name)} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>,
+                  <span key={`name-${s.id}`} style={{ fontWeight: 600 }}>{s.name}</span>,
+                  <span key={`desc-${s.id}`} style={{ maxWidth: '300px', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.description}</span>,
+                  <span key={`status-${s.id}`} className="status-badge active">Available</span>,
+                  <span key={`price-${s.id}`} style={{ fontWeight: 600 }}>₦{s.amount.toLocaleString()}</span>,
+                  <button
+                    key={`btn-${s.id}`}
+                    className="view-receipt-btn"
+                    onClick={() => {
+                      const svc = availableServices.find((a) => a.id === s.id);
+                      if (svc) handleServiceSelection(svc);
+                    }}
+                    style={{ background: 'var(--color-accent)', color: 'white', padding: '6px 16px', borderRadius: '6px' }}
+                  >
+                    Add to Invoice
+                  </button>
+                ])}
+                itemsPerPage={12}
+              />
+            </div>
           </div>
 
           {selectedServices.length > 0 && (
@@ -955,44 +922,51 @@ const InvoicesPage: React.FC<InvoicesPageProps> = () => {
               </div>
             </div>
           ) : (
-            <div className="invoices-grid">
-              {filteredInvoices.map((invoice) => (
-                <InvoiceCard
-                  key={invoice.id}
-                  id={invoice.id}
-                  invoiceNumber={invoice.invoiceNumber}
-                  status={invoice.status}
-                  customerName={invoice.customerName}
-                  services={invoice.services.map((service) => ({
-                    name: service.name,
-                    price: service.amount,
-                    quantity: service.quantity,
-                  }))}
-                  totalAmount={invoice.totalAmount}
-                  createdAt={invoice.createdAt.toISOString()}
-                  expiryWarning={
-                    invoice.status === "pending"
-                      ? {
-                          message: isInvoiceExpiringSoon(invoice)
-                            ? `⚠️ Expires in: ${getTimeUntilExpiry(invoice)}`
-                            : `⏰ Expires in: ${getTimeUntilExpiry(invoice)}`,
-                          isUrgent: isInvoiceExpiringSoon(invoice),
-                        }
-                      : undefined
-                  }
-                  onViewDetails={() => handleViewDetails(invoice)}
-                  onPayNow={
-                    invoice.status === "pending"
-                      ? () => handlePayment(invoice)
-                      : undefined
-                  }
-                  onDownloadReceipt={
-                    invoice.status === "paid"
-                      ? () => handleViewDetails(invoice)
-                      : undefined
-                  }
+            <div className="invoices-list-section">
+              <div style={{ paddingTop: '32px' }}>
+                <DataTable
+                  headers={["Invoice No.", "Customer", "Amount", "Status", "Date", "Action"]}
+                  data={filteredInvoices.map((invoice) => [
+                    <span
+                      className="reference-code"
+                      style={{ cursor: "pointer", textDecoration: "underline" }}
+                      title="Click to copy"
+                      onClick={() => {
+                        window.navigator.clipboard.writeText(invoice.invoiceNumber).then(() => {
+                          showToast("Invoice number copied!", "success");
+                        }).catch((e) => console.error("Copy failed", e));
+                      }}
+                    >
+                      {invoice.invoiceNumber}
+                    </span>,
+                    <span className="customer-name">{invoice.customerName}</span>,
+                    <span style={{ fontWeight: 600 }}>₦{invoice.totalAmount.toLocaleString()}</span>,
+                    <span className={`status-badge ${(invoice.status || "").toLowerCase()}`}>
+                      {invoice.status}
+                      {invoice.status === "pending" && isInvoiceExpiringSoon(invoice) && " ⚠️"}
+                    </span>,
+                    new Date(invoice.createdAt).toLocaleDateString(),
+                    <div className="invoice-action-buttons">
+                      <button
+                        className="view-reason-btn"
+                        onClick={() => handleViewDetails(invoice)}
+                      >
+                        View
+                      </button>
+                      {invoice.status === "pending" && (
+                        <button
+                          className="pay-invoice-table-btn"
+                          onClick={() => handlePayment(invoice)}
+                          style={{ marginLeft: 8, background: 'var(--color-accent)', color: 'white', padding: '6px 16px', borderRadius: '6px' }}
+                        >
+                          Pay
+                        </button>
+                      )}
+                    </div>
+                  ])}
+                  itemsPerPage={10}
                 />
-              ))}
+              </div>
             </div>
           )}
         </div>

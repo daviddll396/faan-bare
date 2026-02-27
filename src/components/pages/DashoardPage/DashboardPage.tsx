@@ -39,9 +39,30 @@ interface ItexPayNS {
   ItexPay: new (opts: ItexPayOptions) => ItexPayInstance;
 }
 
+interface RemitaPaymentConfig {
+  key: string;
+  customerId: string;
+  transactionId: string | number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  amount: number; // In kobo!
+  narration: string;
+  onSuccess: (response: Record<string, unknown>) => void;
+  onError: (response: Record<string, unknown>) => void;
+  onClose: () => void;
+}
+
+interface RemitaPaymentHandler {
+  showPaymentWidget: () => void;
+}
+
 type WindowWithItex = Window & {
   ItexPayNS?: ItexPayNS;
   ITEX_PUBLIC_API_KEY?: string;
+  RmPaymentEngine?: {
+    init: (config: RemitaPaymentConfig) => RemitaPaymentHandler;
+  };
 };
 
 interface DashboardPageProps {
@@ -96,6 +117,7 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
   const [showFundWallet, setShowFundWallet] = React.useState(false);
   const [fundAmountDisplay, setFundAmountDisplay] = React.useState("");
   const [fundAmountNum, setFundAmountNum] = React.useState<number | null>(null);
+  const [selectedProvider, setSelectedProvider] = React.useState<'itexpay' | 'remita' | null>(null);
   const [showFundLoading, setShowFundLoading] = React.useState(false);
   const [showFundSuccess, setShowFundSuccess] = React.useState(false);
   const [showBalance, setShowBalance] = React.useState(true);
@@ -134,13 +156,18 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
   const paymentInitializedRef = React.useRef(false);
   const hasProcessedCompletionRef = React.useRef(false);
   const [itexReady, setItexReady] = React.useState(false);
+  const [remitaReady, setRemitaReady] = React.useState(false);
 
-  // Dynamically load ITEXPay script once
+  // Dynamically load ITEXPay and Remita scripts once
   React.useEffect(() => {
     const script = document.createElement("script");
     script.src =
       "https://checkout.itexpay.com/v1.0.0/itexpay-inline-staging-min.js";
     script.async = true;
+
+    const remitaScript = document.createElement("script");
+    remitaScript.src = "https://remita.net/payment/v1/remita-pay-inline.bundle.js";
+    remitaScript.async = true;
     // Expose the VITE env key to window for the ITEX SDK to read if needed
     try {
       const envKey = (
@@ -183,12 +210,17 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
     script.addEventListener("error", onError);
     document.body.appendChild(script);
 
+    remitaScript.addEventListener("load", () => setRemitaReady(true));
+    remitaScript.addEventListener("error", () => setRemitaReady(false));
+    document.body.appendChild(remitaScript);
+
     return () => {
       mounted = false;
       script.removeEventListener("load", onLoad);
       script.removeEventListener("error", onError);
       try {
         document.body.removeChild(script);
+        document.body.removeChild(remitaScript);
       } catch {
         // ignore
       }
@@ -445,12 +477,18 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
     setShowFundWallet(false);
     setFundAmountDisplay("");
     setFundAmountNum(null);
+    setSelectedProvider(null);
     setShowFundLoading(false);
     setShowFundSuccess(false);
   };
 
   const handleFund = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!selectedProvider) {
+      showToast("Please select a payment provider", "error");
+      return;
+    }
 
     // Get minimum amount based on customer type
     const getMinimumAmount = () => {
@@ -500,194 +538,306 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
         logger.warn("Payment", "Could not read import.meta.env", err);
       }
 
-      // Use ITEXPay inline checkout if available
+      // Payment execution
       const win = window as WindowWithItex;
-      const itexAvailable = !!(win && win.ItexPayNS);
-      if (itexAvailable) {
-        paymentInitializedRef.current = true;
-        hasProcessedCompletionRef.current = false;
-        if (!itexReady) {
-          logger.warn(
-            "Payment",
-            "ITEXPay script not yet ready, waiting for load"
-          );
-        }
-
-        const reference = generatePaymentReference();
-        // NOTE: API key hardcoded for testing per request
-        const apiKey =
-          "ITXPUB_STAGING_N9OSLGOKR2WT6KNKMRPHI0TNDZF3FEMCFDUO2PFN-6011000252-04GPRVVTV0CPUVD";
-        logger.debug("Payment", "Using ITEX API key: [REDACTED]");
-        if (!apiKey) {
-          logger.error("Payment", "ITEX API key is missing");
-          setShowFundLoading(false);
-          paymentInitializedRef.current = false;
-          setShowFundWallet(true);
-          showToast("Payment unavailable: missing API key.", "error");
-          return;
-        }
-
-        // Validate required fields for ITEXPay
-        const firstName = user?.firstName || "Customer";
-        const lastName = user?.lastName || "User";
-        const phoneNumber = user?.phoneNumber || "";
-        const email = user?.email || "";
-
-        // Check if we have minimum required information
-        if (!firstName || !lastName || !phoneNumber || !email) {
-          logger.error("Payment", "Missing required user information", {
-            hasFirstName: !!firstName,
-            hasLastName: !!lastName,
-            hasPhone: !!phoneNumber,
-            hasEmail: !!email,
-          });
-          setShowFundLoading(false);
-          paymentInitializedRef.current = false;
-          setShowFundWallet(true);
-          showToast(
-            "Please complete your profile information before funding wallet.",
-            "error"
-          );
-          return;
-        }
-
-        const Pay = new win.ItexPayNS!.ItexPay({
-          api_key: apiKey,
-          first_name: firstName,
-          last_name: lastName,
-          phone_number: phoneNumber,
-          email: email,
-          amount: Math.round(amount),
-          // redirecturl: window.location.origin + "/",
-          currency: "NGN",
-          reference,
-          onCompleted: async (data: unknown) => {
-            logger.success("Payment", "ITEXPay payment completed", data);
-            if (hasProcessedCompletionRef.current) {
-              logger.warn("Payment", "Duplicate completion trigger, ignoring");
-              return;
-            }
-            hasProcessedCompletionRef.current = true;
-
-            // Call backend to record the successful fund (include provider response)
-            logger.info("Wallet", "Recording fund wallet transaction");
-            const result = await fundWallet(amount, reference, data);
-            setShowFundLoading(false);
-            paymentInitializedRef.current = false;
-            if (result) {
-              setShowFundSuccess(true);
-              setShowFundWallet(true);
-              showToast("Wallet funded successfully!", "success");
-              // Sync wallet from server to ensure accurate balance
-              try {
-                await refreshUserDetailsRef.current();
-              } catch {
-                // Ignore refresh errors - wallet balance will be updated on next page load
-              }
-              // Persist funding record locally so it shows up in Recent Funding Records
-              try {
-                const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
-                const existing: FundingTransaction[] = stored
-                  ? JSON.parse(stored)
-                  : [];
-                const now = new Date().toISOString();
-                const record: FundingTransaction = {
-                  id: Date.now(),
-                  reference,
-                  paymentMethod: "ITEXPay",
-                  method: "ITEXPay",
-                  amount: Math.round(amount),
-                  balanceBefore: localWalletBalance,
-                  balanceAfter: localWalletBalance + Math.round(amount),
-                  createdAt: now,
-                };
-                const updated = [record, ...existing].slice(0, 50); // keep recent 50
-                localStorage.setItem(
-                  FUNDING_STORAGE_KEY,
-                  JSON.stringify(updated)
-                );
-                // update fundingRecords state so Recent Funding Records table updates
-                setFundingRecords((prev) => [record, ...prev].slice(0, 50));
-                // local wallet balance will be refreshed from server via refreshUserDetails
-              } catch (err) {
-                logger.warn("Wallet", "Failed to persist funding record", err);
-              }
-            } else {
-              setShowFundWallet(true);
-              showToast("Failed to record funding on server.", "error");
-            }
-          },
-          onError: (err: unknown) => {
-            logger.error("Payment", "ITEXPay error", err);
-            setShowFundLoading(false);
-            paymentInitializedRef.current = false;
-            setShowFundWallet(true);
-            showToast("Payment failed or was cancelled.", "error");
-          },
-          onClose: () => {
-            logger.info("Payment", "ITEXPay closed by user");
-            setShowFundLoading(false);
-            paymentInitializedRef.current = false;
-            setShowFundWallet(true);
-          },
-        });
-
-        try {
-          Pay.init();
-        } catch (err) {
-          logger.error("Payment", "Failed to init ITEXPay", err);
-          setShowFundLoading(false);
-          paymentInitializedRef.current = false;
-          setShowFundWallet(true);
-          showToast(
-            "Payment system unavailable. Please try again later.",
-            "error"
-          );
-        }
-      } else {
-        // Fallback: call backend fundWallet directly (useful for testing without ITEX)
-        const success = await fundWallet(amount);
-
-        if (success) {
-          setShowFundLoading(false);
-          setShowFundSuccess(true);
-          // Reopen modal to show success state
-          setShowFundWallet(true);
-          showToast("Wallet funded successfully!", "success");
-          // Persist funding record locally for fallback path as well
-          try {
-            const referenceFallback = `fund-${Date.now()}-fallback`;
-            const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
-            const existing: FundingTransaction[] = stored
-              ? JSON.parse(stored)
-              : [];
-            const now = new Date().toISOString();
-            const record: FundingTransaction = {
-              id: Date.now(),
-              reference: referenceFallback,
-              paymentMethod: "BACKEND",
-              method: "BACKEND",
-              amount: Math.round(amount),
-              balanceBefore: localWalletBalance,
-              balanceAfter: localWalletBalance + Math.round(amount),
-              createdAt: now,
-            };
-            const updated = [record, ...existing].slice(0, 50);
-            localStorage.setItem(FUNDING_STORAGE_KEY, JSON.stringify(updated));
-            setTransactions((prev) => [record as Transaction, ...prev]);
-            // local wallet balance will be refreshed from server via refreshUserDetails
-          } catch (err) {
+      
+      if (selectedProvider === "itexpay") {
+        const itexAvailable = !!(win && win.ItexPayNS);
+        if (itexAvailable) {
+          paymentInitializedRef.current = true;
+          hasProcessedCompletionRef.current = false;
+          if (!itexReady) {
             logger.warn(
-              "Wallet",
-              "Failed to persist fallback funding record",
-              err
+              "Payment",
+              "ITEXPay script not yet ready, waiting for load"
+            );
+          }
+
+          const reference = generatePaymentReference();
+          // NOTE: API key hardcoded for testing per request
+          const apiKey =
+            "ITXPUB_STAGING_N9OSLGOKR2WT6KNKMRPHI0TNDZF3FEMCFDUO2PFN-6011000252-04GPRVVTV0CPUVD";
+          logger.debug("Payment", "Using ITEX API key: [REDACTED]");
+          if (!apiKey) {
+            logger.error("Payment", "ITEX API key is missing");
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            setShowFundWallet(true);
+            showToast("Payment unavailable: missing API key.", "error");
+            return;
+          }
+
+          // Validate required fields for ITEXPay
+          const firstName = user?.firstName || "Customer";
+          const lastName = user?.lastName || "User";
+          const phoneNumber = user?.phoneNumber || "";
+          const email = user?.email || "";
+
+          // Check if we have minimum required information
+          if (!firstName || !lastName || !phoneNumber || !email) {
+            logger.error("Payment", "Missing required user information", {
+              hasFirstName: !!firstName,
+              hasLastName: !!lastName,
+              hasPhone: !!phoneNumber,
+              hasEmail: !!email,
+            });
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            setShowFundWallet(true);
+            showToast(
+              "Please complete your profile information before funding wallet.",
+              "error"
+            );
+            return;
+          }
+
+          const Pay = new win.ItexPayNS!.ItexPay({
+            api_key: apiKey,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phoneNumber,
+            email: email,
+            amount: Math.round(amount),
+            currency: "NGN",
+            reference,
+            onCompleted: async (data: unknown) => {
+              logger.success("Payment", "ITEXPay payment completed", data);
+              if (hasProcessedCompletionRef.current) {
+                logger.warn("Payment", "Duplicate completion trigger, ignoring");
+                return;
+              }
+              hasProcessedCompletionRef.current = true;
+
+              // Call backend to record the successful fund (include provider response)
+              logger.info("Wallet", "Recording fund wallet transaction");
+              const result = await fundWallet(amount, reference, data);
+              setShowFundLoading(false);
+              paymentInitializedRef.current = false;
+              if (result) {
+                setShowFundSuccess(true);
+                setShowFundWallet(true);
+                showToast("Wallet funded successfully!", "success");
+                try {
+                  await refreshUserDetailsRef.current();
+                } catch {
+                  // Ignore refresh errors - wallet balance will be updated on next page load
+                }
+                try {
+                  const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+                  const existing: FundingTransaction[] = stored
+                    ? JSON.parse(stored)
+                    : [];
+                  const now = new Date().toISOString();
+                  const record: FundingTransaction = {
+                    id: Date.now(),
+                    reference,
+                    paymentMethod: "ITEXPay",
+                    method: "ITEXPay",
+                    amount: Math.round(amount),
+                    balanceBefore: localWalletBalance,
+                    balanceAfter: localWalletBalance + Math.round(amount),
+                    createdAt: now,
+                  };
+                  const updated = [record, ...existing].slice(0, 50); // keep recent 50
+                  localStorage.setItem(
+                    FUNDING_STORAGE_KEY,
+                    JSON.stringify(updated)
+                  );
+                  setFundingRecords((prev) => [record, ...prev].slice(0, 50));
+                } catch (err) {
+                  logger.warn("Wallet", "Failed to persist funding record", err);
+                }
+              } else {
+                setShowFundWallet(true);
+                showToast("Failed to record funding on server.", "error");
+              }
+            },
+            onError: (err: unknown) => {
+              logger.error("Payment", "ITEXPay error", err);
+              setShowFundLoading(false);
+              paymentInitializedRef.current = false;
+              setShowFundWallet(true);
+              showToast("Payment failed or was cancelled.", "error");
+            },
+            onClose: () => {
+              logger.info("Payment", "ITEXPay closed by user");
+              setShowFundLoading(false);
+              paymentInitializedRef.current = false;
+              setShowFundWallet(true);
+            },
+          });
+
+          try {
+            Pay.init();
+          } catch (err) {
+            logger.error("Payment", "Failed to init ITEXPay", err);
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            setShowFundWallet(true);
+            showToast(
+              "Payment system unavailable. Please try again later.",
+              "error"
             );
           }
         } else {
-          setShowFundLoading(false);
-          // Reopen modal to show error state
-          setShowFundWallet(true);
-          showToast("Failed to fund wallet. Please try again.", "error");
+          // Fallback: call backend fundWallet directly (useful for testing without ITEX)
+          const success = await fundWallet(amount);
+
+          if (success) {
+            setShowFundLoading(false);
+            setShowFundSuccess(true);
+            setShowFundWallet(true);
+            showToast("Wallet funded successfully!", "success");
+            try {
+              const referenceFallback = `fund-${Date.now()}-fallback`;
+              const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+              const existing: FundingTransaction[] = stored
+                ? JSON.parse(stored)
+                : [];
+              const now = new Date().toISOString();
+              const record: FundingTransaction = {
+                id: Date.now(),
+                reference: referenceFallback,
+                paymentMethod: "BACKEND",
+                method: "BACKEND",
+                amount: Math.round(amount),
+                balanceBefore: localWalletBalance,
+                balanceAfter: localWalletBalance + Math.round(amount),
+                createdAt: now,
+              };
+              const updated = [record, ...existing].slice(0, 50);
+              localStorage.setItem(FUNDING_STORAGE_KEY, JSON.stringify(updated));
+              setTransactions((prev) => [record as Transaction, ...prev]);
+            } catch (err) {
+              logger.warn(
+                "Wallet",
+                "Failed to persist fallback funding record",
+                err
+              );
+            }
+          } else {
+            setShowFundLoading(false);
+            setShowFundWallet(true);
+            showToast("Failed to fund wallet. Please try again.", "error");
+          }
+        }
+      } else if (selectedProvider === "remita") {
+        const remitaAvailable = !!(win && win.RmPaymentEngine);
+        if (remitaAvailable) {
+          paymentInitializedRef.current = true;
+          hasProcessedCompletionRef.current = false;
+          
+          if (!remitaReady) {
+            logger.warn("Payment", "Remita script not yet ready, waiting for load");
+          }
+          
+          const reference = generatePaymentReference().replace("itex", "remita");
+          // NOTE: Replace with real public key from env in a real scenario
+          const publicKey = import.meta.env.VITE_REMITA_PUBLIC_KEY || "QzAwMDAyNzEyNTl8MTEwNjE4Njc3MzEwfGQ5NzE3MWU5MTk4NWZiZGY2Yjg1ZTViNjVkOWY3ZTE4NDM3OWQ5MDExNTk4NWUyMjUxZTBmYjQ4ZDUxY2U2MmRmMDA1ZDAyOWMyN2I0YmRkMjIzZGI1ZjNmMjA5NGVhNmZiNzBhYzY2Nzg0MmExNzQxNmM1OGQ0MjI4OTk3ODU4"; 
+          
+          const paymentEngine = win.RmPaymentEngine!.init({
+            key: publicKey,
+            customerId: user?.customerId || String(user?.id) || "customer",
+            transactionId: reference,
+            firstName: user?.firstName || "Customer",
+            lastName: user?.lastName || "User",
+            email: user?.email || "customer@example.com",
+            amount: Math.round(amount), // REMITA INLINE SEEMS TO EXPECT NAIRA, NOT KOBO
+            narration: 'FAAN Wallet Funding',
+            onSuccess: async (response) => {
+              logger.success("Payment", "Remita payment completed", response);
+              if (hasProcessedCompletionRef.current) return;
+              hasProcessedCompletionRef.current = true;
+              
+              // Call backend to record successful fund
+              const result = await fundWallet(amount, reference, response);
+              setShowFundLoading(false);
+              paymentInitializedRef.current = false;
+              
+              if (result) {
+                setShowFundSuccess(true);
+                setShowFundWallet(true);
+                showToast("Wallet funded successfully!", "success");
+                try { await refreshUserDetailsRef.current(); } catch {}
+                
+                try {
+                  const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+                  const existing: FundingTransaction[] = stored ? JSON.parse(stored) : [];
+                  const record: FundingTransaction = {
+                    id: Date.now(),
+                    reference,
+                    paymentMethod: "Remita",
+                    method: "Remita",
+                    amount: Math.round(amount),
+                    balanceBefore: localWalletBalance,
+                    balanceAfter: localWalletBalance + Math.round(amount),
+                    createdAt: new Date().toISOString(),
+                  };
+                  const updated = [record, ...existing].slice(0, 50);
+                  localStorage.setItem(FUNDING_STORAGE_KEY, JSON.stringify(updated));
+                  setFundingRecords((prev) => [record, ...prev].slice(0, 50));
+                } catch (err) { logger.warn("Wallet", "Failed to persist funding record", err); }
+              } else {
+                setShowFundWallet(true);
+                showToast("Failed to record funding on server.", "error");
+              }
+            },
+            onError: (err) => {
+              logger.error("Payment", "Remita error", err);
+              setShowFundLoading(false);
+              paymentInitializedRef.current = false;
+              setShowFundWallet(true);
+              showToast("Payment failed or was cancelled.", "error");
+            },
+            onClose: () => {
+              logger.info("Payment", "Remita closed by user");
+              setShowFundLoading(false);
+              paymentInitializedRef.current = false;
+              setShowFundWallet(true);
+            }
+          });
+          
+          try {
+            paymentEngine.showPaymentWidget();
+          } catch (err) {
+            logger.error("Payment", "Failed to show Remita widget", err);
+            setShowFundLoading(false);
+            paymentInitializedRef.current = false;
+            setShowFundWallet(true);
+            showToast("Payment system unavailable.", "error");
+          }
+        } else {
+          // Fallback for remita
+          const success = await fundWallet(amount);
+          
+          if (success) {
+            setShowFundLoading(false);
+            setShowFundSuccess(true);
+            setShowFundWallet(true);
+            showToast("Wallet funded successfully!", "success");
+            try {
+              const referenceFallback = `fund-${Date.now()}-fallback`;
+              const stored = localStorage.getItem(FUNDING_STORAGE_KEY);
+              const existing: FundingTransaction[] = stored ? JSON.parse(stored) : [];
+              const record: FundingTransaction = {
+                id: Date.now(),
+                reference: referenceFallback,
+                paymentMethod: "BACKEND",
+                method: "BACKEND",
+                amount: Math.round(amount),
+                balanceBefore: localWalletBalance,
+                balanceAfter: localWalletBalance + Math.round(amount),
+                createdAt: new Date().toISOString(),
+              };
+              const updated = [record, ...existing].slice(0, 50);
+              localStorage.setItem(FUNDING_STORAGE_KEY, JSON.stringify(updated));
+              setTransactions((prev) => [record as Transaction, ...prev]);
+            } catch (err) { logger.warn("Wallet", "Failed to persist fallback funding record", err); }
+          } else {
+            setShowFundLoading(false);
+            setShowFundWallet(true);
+            showToast("Failed to fund wallet. Please try again.", "error");
+          }
         }
       }
     } catch (error) {
@@ -912,6 +1062,26 @@ const DashboardPage: React.FC<DashboardPageProps> = () => {
             <div className="fund-wallet-title">Fund Wallet:</div>
             <div className="fund-wallet-divider" />
             <form className="fund-wallet-form" onSubmit={handleFund}>
+              <label className="fund-wallet-label" style={{ marginBottom: "10px", display: "block" }}>
+                Select Payment Provider
+              </label>
+              <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                <SolidButton
+                  text="Pay with ItexPay"
+                  variant={selectedProvider === "itexpay" ? "primary" : "secondary"}
+                  onClick={() => setSelectedProvider("itexpay")}
+                  type="button"
+                  fullWidth
+                />
+                <SolidButton
+                  text="Pay with Remita"
+                  variant={selectedProvider === "remita" ? "primary" : "secondary"}
+                  onClick={() => setSelectedProvider("remita")}
+                  type="button"
+                  fullWidth
+                />
+              </div>
+
               <label className="fund-wallet-label">Enter an Amount</label>
               <div className="fund-wallet-input-wrapper">
                 <span className="fund-wallet-currency">₦</span>

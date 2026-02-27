@@ -73,6 +73,7 @@
 .data-table .table-data-item {
   padding: 12px 16px !important;
   text-align: left;
+  vertical-align: middle; /* Added to improve layout with rich content like images/buttons */
   border-bottom: 1px solid var(--color-weak-border);
   white-space: nowrap; /* Prevent text wrapping in cells */
   max-width: none; /* Allow cells to shrink */
@@ -357,6 +358,11 @@
   color: var(--color-warning);
 }
 
+.status-badge.unknown {
+  background: var(--color-muted-surface);
+  color: var(--color-text-secondary);
+}
+
 /* Status Badge Table Variant (text-only, no background) */
 .status-badge-table {
   font-size: 12px;
@@ -393,6 +399,10 @@
 }
 
 /* Category Badges */
+.category-badge.general {
+  background: var(--color-muted-surface);
+  color: var(--color-text-secondary);
+}
 .category-badge.fuel {
   background: var(--color-muted-surface);
   color: var(--color-info);
@@ -485,7 +495,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-error);
+  color: var(--color-accent);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

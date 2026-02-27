@@ -16,8 +16,6 @@ import CheckCircle from "/icons/check-circle.svg";
 import MessageToast from "../../reusables/MessageToast/MessageToast";
 import Modal from "../../reusables/Modal/Modal";
 import ReceiptModal from "../../reusables/ReceiptModal/ReceiptModal";
-import Grid from "../../reusables/Grid/Grid";
-import ServiceCard from "../../reusables/ServiceCard/ServiceCard";
 import SlideIndicator from "../../reusables/SlideIndicator";
 import DataTable from "../../reusables/DataTable/DataTable";
 import Input from "../../reusables/Input/Input";
@@ -1291,25 +1289,41 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ role }) => {
             </div>
 
             {/* Show services inside the search container */}
-            <Grid className="available-services">
-              {customerFilteredServices.map((s) => (
-                <ServiceCard
-                  key={s.id}
-                  id={s.id}
-                  image={s.image}
-                  name={s.name}
-                  price={`₦${s.price}`}
-                  description={s.description}
-                  actionText="Book Service"
-                  onAction={() => {
-                    const svc = customerFilteredServices.find(
-                      (c) => c.id === s.id
-                    );
-                    if (svc) setSelectedService(svc as CustomerService);
-                  }}
+            <div className="available-services">
+              <div style={{ paddingTop: '32px' }}>
+                <DataTable
+                  headers={[
+                    "Image",
+                    "Service Name",
+                    "Description",
+                    "Status",
+                    "Price",
+                    "Action"
+                  ]}
+                  data={customerFilteredServices.map((s) => [
+                    <div key={`img-${s.id}`} style={{ width: '96px', height: '64px', borderRadius: '8px', overflow: 'hidden', backgroundColor: 'var(--color-muted-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={s.image} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>,
+                    <span key={`name-${s.id}`} style={{ fontWeight: 600 }}>{s.name}</span>,
+                    <span key={`desc-${s.id}`} style={{ maxWidth: '300px', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.description}</span>,
+                    <span key={`status-${s.id}`} className="status-badge active">Available</span>,
+                    <span key={`price-${s.id}`} style={{ fontWeight: 600 }}>₦{s.price}</span>,
+                    <button
+                      key={`btn-${s.id}`}
+                      className="view-receipt-btn"
+                      onClick={() => {
+                        const svc = customerFilteredServices.find((c) => c.id === s.id);
+                        if (svc) setSelectedService(svc as CustomerService);
+                      }}
+                      style={{ background: 'var(--color-accent)', color: 'white', padding: '6px 16px', borderRadius: '6px' }}
+                    >
+                      Book Service
+                    </button>
+                  ])}
+                  itemsPerPage={12}
                 />
-              ))}
-            </Grid>
+              </div>
+            </div>
           </div>
         </div>
       </div>
